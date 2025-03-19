@@ -1,0 +1,7 @@
+[user]
+	name = Morgan Joyce
+	email = mjoyce@sertifi.com
+[core]
+	editor = nvim
+[init]
+	defaultBranch = main
