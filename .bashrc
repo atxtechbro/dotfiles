@@ -2,8 +2,6 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
-alias xclipc='xclip -selection clipboard'
-alias grabout='PREV_CMD=$(fc -ln -2 -2 | sed "s/^ *//"); (echo "Command: $PREV_CMD" && eval "$PREV_CMD" 2>&1) | xclipc'
 # # .bashrc or .zshrc
 # alias linusfiles='function _linusfiles() {
 #     echo "Listing files tracked by git and copying contents to clipboard, approved by Linus Torvalds himself!";
@@ -132,21 +130,16 @@ if ! shopt -oq posix; then
   fi
 fi
 PS1='\W \$ '
-export OPENAI_API_KEY="sk-proj-REMOVED"
-export PATH=$PATH:$HOME/sqlitestudio/SQLiteStudio
-export PATH=$PATH:/home/morgan/sqlitestudio/SQLiteStudio
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-
-alias git-tree="git ls-tree -r HEAD --name-only | tree --fromfile"
 
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 
 bind 'set enable-bracketed-paste off'
 . "$HOME/.cargo/env"
 
-export NOTES_DIR=/home/morgan/Dropbox/dev-notes
-export EDITOR=cursor
+if [ -f ~/.bash_exports ]; then
+    . ~/.bash_exports
+fi
