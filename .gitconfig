@@ -5,3 +5,5 @@
 	editor = nvim
 [init]
 	defaultBranch = main
+[includeIf "gitdir:C/Sertifi/"]
+	path=C:/.gitconfig-work
