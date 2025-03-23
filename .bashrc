@@ -138,7 +138,6 @@ export NVM_DIR="$HOME/.nvm"
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 
 bind 'set enable-bracketed-paste off'
-. "$HOME/.cargo/env"
 
 if [ -f ~/.bash_exports ]; then
     . ~/.bash_exports
