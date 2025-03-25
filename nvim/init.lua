@@ -67,6 +67,8 @@ local treesitter_config = function()
       "lua", "vim", "vimdoc", "python",
       "html", "css", "json", "bash", "markdown"
     },
+    modules = {},
+    ignore_install = {},
     sync_install = false,
     auto_install = true,
     highlight = {
