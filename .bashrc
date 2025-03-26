@@ -142,3 +142,10 @@ bind 'set enable-bracketed-paste off'
 if [ -f ~/.bash_exports ]; then
     . ~/.bash_exports
 fi
+
+# This finds the location of your dotfiles directory
+DOTFILES_DIR="$HOME/dotfiles"
+
+# Add your scripts directory to the PATH
+export PATH="$DOTFILES_DIR/bin:$PATH"
+
