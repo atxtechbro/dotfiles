@@ -53,11 +53,12 @@ end)
 -- Keymaps
 local opts = { noremap = true, silent = true }
 
--- Also add the leader-based keymaps (for when leader works correctly)
 vim.keymap.set('n', '<leader>ff', '<cmd>Telescope find_files<cr>', opts)
 vim.keymap.set('n', '<leader>fg', '<cmd>Telescope live_grep<cr>', opts)
 vim.keymap.set('n', '<leader>fb', '<cmd>Telescope buffers<cr>', opts)
 vim.keymap.set('n', '<leader>fh', '<cmd>Telescope help_tags<cr>', opts)
+
+vim.keymap.set('i', '<Caps_Lock>', '<Esc>')
 
 -- TreeSitter Configuration
 local treesitter_config = function()
