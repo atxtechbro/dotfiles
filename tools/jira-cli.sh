@@ -25,8 +25,9 @@ mkdir -p "$INSTALL_DIR"
 
 # Check if jira is already installed
 if [ -f "$JIRA_BIN" ]; then
-    INSTALLED_VERSION=$("$JIRA_BIN" version 2>/dev/null | grep -o 'Version="[^"]*"' | cut -d'"' -f2)
-    if [ "$INSTALLED_VERSION" = "$VERSION" ]; then
+    # Extract just the version number without any extra text
+    INSTALLED_VERSION=$("$JIRA_BIN" version 2>/dev/null | grep -o 'Version="[^"]*"' | cut -d'"' -f2 | head -1)
+    if [[ "$INSTALLED_VERSION" == "$VERSION"* ]]; then
         echo "jira-cli v$VERSION is already installed at $JIRA_BIN"
         exit 0
     else
