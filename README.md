@@ -16,3 +16,21 @@ source ~/.bashrc
 ```
 
 That's it! Any changes you make to files in this repository will be reflected in your environment.
+
+## CLI Tools
+
+The following CLI tools can be installed using the scripts in the `tools/` directory:
+
+- jira-cli - Jira command line interface
+
+## Installing Tools
+
+To install a tool, run its installation script:
+
+```bash
+# Make the script executable
+chmod +x ~/dotfiles/tools/jira-cli.sh
+
+# Run the installation script
+~/dotfiles/tools/jira-cli.sh
+```
