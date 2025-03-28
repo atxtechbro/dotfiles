@@ -23,9 +23,18 @@ cd "$TEMP_DIR"
 curl -L "https://github.com/ankitpokhrel/jira-cli/releases/download/v$VERSION/jira_${VERSION}_${OS}_${ARCH}.tar.gz" -o jira.tar.gz
 tar -xzf jira.tar.gz
 mkdir -p "$INSTALL_DIR"
-cp bin/jira "$INSTALL_DIR/"
-chmod +x "$INSTALL_DIR/jira"
+
+# The tarball has a nested directory structure
+EXTRACT_DIR="jira_${VERSION}_${OS}_${ARCH}"
+if [ -d "$EXTRACT_DIR" ]; then
+    cp "$EXTRACT_DIR/bin/jira" "$INSTALL_DIR/"
+    chmod +x "$INSTALL_DIR/jira"
+    echo "jira-cli v$VERSION installed to $INSTALL_DIR/jira"
+else
+    echo "Error: Expected directory structure not found in tarball"
+    ls -la
+    exit 1
+fi
 
 # Clean up
 rm -rf "$TEMP_DIR"
-echo "jira-cli v$VERSION installed to $INSTALL_DIR/jira"
