@@ -19,13 +19,6 @@ source ~/.bashrc
 
 That's it! Any changes you make to files in this repository will be reflected in your environment.
 
-## Structure
-
-- `bin/` - Custom scripts and binaries
-- `tools/` - Installation scripts for CLI tools
-- `nvim/` - Neovim configuration
-- `.bashrc`, `.bash_aliases`, etc. - Shell configuration files
-
 ## CLI Tools
 
 The following CLI tools can be installed using the scripts in the `tools/` directory:
