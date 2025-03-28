@@ -23,7 +23,10 @@ if [ -f "$JIRA_BIN" ]; then
     INSTALLED_VERSION=$("$JIRA_BIN" version 2>/dev/null | grep -o 'Version="[^"]*"' | cut -d'"' -f2)
     if [ "$INSTALLED_VERSION" = "$VERSION" ]; then
         echo "jira-cli v$VERSION is already installed at $JIRA_BIN"
-        exit 0
+        # IMPORTANT: When a script is sourced (using 'source' or '.'), 'exit' will terminate the parent shell
+        # This pattern tries 'return' first (works when sourced) and falls back to 'exit' (when run directly)
+        # This allows the script to work both when sourced from install-tools.sh and when executed directly
+        return 0 2>/dev/null || exit 0
     else
         echo "Updating jira-cli from v$INSTALLED_VERSION to v$VERSION..."
     fi
@@ -47,7 +50,8 @@ if [ -d "$EXTRACT_DIR" ]; then
 else
     echo "Error: Expected directory structure not found in tarball"
     ls -la
-    exit 1
+    # Same pattern as above for error case
+    return 1 2>/dev/null || exit 1
 fi
 
 # Clean up
