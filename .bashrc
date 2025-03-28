@@ -1,3 +1,5 @@
+# Amazon Q pre block. Keep at the top of this file.
+[[ -f "${HOME}/.local/share/amazon-q/shell/bashrc.pre.bash" ]] && builtin source "${HOME}/.local/share/amazon-q/shell/bashrc.pre.bash"
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
@@ -143,9 +145,13 @@ if [ -f ~/.bash_exports ]; then
     . ~/.bash_exports
 fi
 
-# This finds the location of your dotfiles directory
 DOTFILES_DIR="$HOME/dotfiles"
 
 # Add your scripts directory to the PATH
 export PATH="$DOTFILES_DIR/bin:$PATH"
 
+# This line sources Amazon Q's environment file - required for Amazon Q CLI to function properly
+. "$HOME/.local/bin/env"
+
+# Amazon Q post block. Keep at the bottom of this file.
+[[ -f "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash"
