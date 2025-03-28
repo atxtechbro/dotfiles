@@ -1,7 +1,5 @@
 # Dotfiles
 
-My personal dotfiles for setting up a consistent development environment across machines.
-
 ## Manual Setup
 
 To use these dotfiles, manually create symlinks from your home directory to this repository:
