@@ -58,5 +58,5 @@ fi
 # Clean up
 rm -rf "$TEMP_DIR"
 
-echo "Installation complete. Make sure $INSTALL_DIR is in your PATH."
-echo "You can add it by running: export PATH=\"$INSTALL_DIR:\$PATH\""
+echo "Installation complete!"
+echo "Run 'jira --help' to get started."
