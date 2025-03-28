@@ -1,0 +1,32 @@
+# Ignore sensitive files
+*.key
+*.pem
+*.env
+*credentials*
+*.secret
+*.token
+*.password
+*.cert
+*.crt
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# Private SSH keys
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# OS specific files
+.DS_Store
+Thumbs.db

@@ -2,38 +2,44 @@
 
 My personal dotfiles for setting up a consistent development environment across machines.
 
-## Installation
+## Manual Setup
 
-Clone this repository and run the setup script:
+To use these dotfiles, manually create symlinks from your home directory to this repository:
 
 ```bash
-git clone https://github.com/yourusername/dotfiles.git
-cd dotfiles
-./setup.sh
+# Create symlinks for configuration files
+ln -sf ~/dotfiles/.bashrc ~/.bashrc
+ln -sf ~/dotfiles/.bash_aliases ~/.bash_aliases
+ln -sf ~/dotfiles/.bash_exports ~/.bash_exports
+ln -sf ~/dotfiles/.gitconfig ~/.gitconfig
+
+# Apply changes
+source ~/.bashrc
 ```
+
+That's it! Any changes you make to files in this repository will be reflected in your environment.
 
 ## Structure
 
 - `bin/` - Custom scripts and binaries
-- `install/` - Installation scripts for CLI tools
+- `tools/` - Installation scripts for CLI tools
 - `nvim/` - Neovim configuration
-- `keys/` - SSH keys and other credentials
 - `.bashrc`, `.bash_aliases`, etc. - Shell configuration files
 
 ## CLI Tools
 
-The following CLI tools are automatically installed:
+The following CLI tools can be installed using the scripts in the `tools/` directory:
 
 - jira-cli - Jira command line interface
 
-## Adding New Tools
+## Installing Tools
 
-To add a new CLI tool:
+To install a tool, run its installation script:
 
-1. Create an installation script in the `install/` directory (e.g., `install/new-tool.sh`)
-2. Add the tool name to the `TOOLS` array in `install/install-tools.sh`
-3. Run `./setup.sh` to install all tools or `./install/new-tool.sh` to install just the new tool
+```bash
+# Make the script executable
+chmod +x ~/dotfiles/tools/jira-cli.sh
 
-## License
-
-MIT
+# Run the installation script
+~/dotfiles/tools/jira-cli.sh
+```
