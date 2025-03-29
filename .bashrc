@@ -150,8 +150,10 @@ DOTFILES_DIR="$HOME/dotfiles"
 # Add your scripts directory to the PATH
 export PATH="$DOTFILES_DIR/bin:$PATH"
 
-# This line sources Amazon Q's environment file - required for Amazon Q CLI to function properly
-. "$HOME/.local/bin/env"
+# Source Amazon Q environment if installed
+if [ -f "$HOME/.local/bin/env" ]; then
+    . "$HOME/.local/bin/env"
+fi
 
 # Amazon Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash"
