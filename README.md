@@ -27,6 +27,27 @@ The following CLI tools can be installed using the scripts in the `tools/` direc
 
 - jira-cli - Jira command line interface
 
+### Neovim
+
+For the latest version of Neovim, build from source:
+
+```bash
+# Install build prerequisites (Ubuntu/Debian)
+sudo apt-get install ninja-build gettext cmake unzip curl
+
+# Clone Neovim repository using GitHub CLI
+gh repo clone neovim/neovim
+cd neovim
+
+# Build and install
+make CMAKE_BUILD_TYPE=RelWithDebInfo
+sudo make install
+```
+
+This ensures you get the latest version with all features, rather than the potentially outdated version from package repositories.
+
+For more build options, see the [official build instructions](https://github.com/neovim/neovim/blob/master/BUILD.md).
+
 ## Installing Tools
 
 To install a tool, run its installation script:
