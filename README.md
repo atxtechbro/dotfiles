@@ -56,3 +56,7 @@ rm amazon-q.deb
 ```
 
 *Note:* You'll need to provide your start URL during first-time setup (requires Pro license and SSO configuration).
+The URL typically follows this format:
+```bash
+https://d-XXXXXXXXXX.awsapps.com/start/#/console?account_id=XXXXXXXXXXXX&role_name=YOUR_ROLE_NAME
+```
