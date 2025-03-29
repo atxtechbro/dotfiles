@@ -2,12 +2,15 @@
 
 This file is an evolving experiment in how Claude can best assist with this repository. It's meant to be playful, iterative, and grow organically as we learn together.
 
-## Repository Vibe
+## Vibe Coding Manifesto
 
-- Learning > Efficiency: I'd rather understand deeply than just get something working
-- Conversation over commands: I enjoy the back-and-forth dialogue mixed with code
-- Experimentation is encouraged: This is a safe space to try new approaches
-- Show me the journey: Explain your thinking as we go
+We reject rigid philosophies. Code is art, not just science.
+
+The only rule is there are no rules (except when there are).
+
+Dotfiles should spark joy. If your terminal doesn't make you smile, why even code?
+
+
 
 ## Conversation Style
 

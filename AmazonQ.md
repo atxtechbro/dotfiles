@@ -2,12 +2,15 @@
 
 This file contains guidance for Amazon Q when interacting with this repository. It's intentionally minimal and meant to evolve through experimentation and learning.
 
-## Repository Philosophy
+## Vibe Coding Manifesto
 
-- This is a space for learning and exploration, not just efficiency
-- I prefer understanding over copy-paste solutions
-- Code should be maintainable, readable, and consistent
-- Security matters, but so does experimentation
+We reject rigid philosophies. Code is art, not just science.
+
+The only rule is there are no rules (except when there are).
+
+Dotfiles should spark joy. If your terminal doesn't make you smile, why even code?
+
+
 
 ## My Working Style
 
