@@ -38,3 +38,18 @@ chmod +x ~/dotfiles/tools/jira-cli.sh
 # Run the installation script
 ~/dotfiles/tools/jira-cli.sh
 ```
+
+## CLI AI tools
+
+### Claude Code
+```bash
+npm install -g @anthropic-ai/claude-code
+claude
+```
+
+### Amazon Q CLI
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://desktop-release.q.us-east-1.amazonaws.com/latest/amazon-q.deb -o amazon-q.deb
+sudo apt install -y ./amazon-q.deb
+q
+```
