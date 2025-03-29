@@ -54,3 +54,5 @@ sudo apt install -y ./amazon-q.deb
 q
 rm amazon-q.deb
 ```
+
+*Note:* You'll need to provide your start URL during first-time setup (requires Pro license and SSO configuration).
