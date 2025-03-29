@@ -1,8 +1,8 @@
 #!/bin/bash
 
 essentials=(
-  neovim
   git
+  gh
 )
 
 for package in "${essentials[@]}"; do
