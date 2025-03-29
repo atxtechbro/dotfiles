@@ -2,23 +2,27 @@
 
 > **IMPORTANT**: This is a public repository. Do not add any proprietary information, secrets, API keys, or personal credentials to this repository.
 
-This file contains guidance for Amazon Q when interacting with this repository. It represents my preferences, opinions, and domain-specific knowledge that I want Amazon Q to consider when providing assistance.
+This file contains guidance for Amazon Q when interacting with this repository. It's intentionally minimal and meant to evolve through experimentation and learning.
 
-## Repository Purpose & Philosophy
+## Repository Philosophy
 
-This dotfiles repository serves as my personal development environment configuration. Its purpose is to:
-- Maintain consistent development environments across different machines
-- Allow quick setup of a new development environment
-- Store configurations as code for version control and portability
-- Serve as a reference for useful commands and tools
+- This is a space for learning and exploration, not just efficiency
+- I prefer understanding over copy-paste solutions
+- Code should be maintainable, readable, and consistent
+- Security matters, but so does experimentation
 
-When helping with this repository, prioritize:
-- Maintainability over complexity
-- Clear documentation over clever code
-- Consistency with existing patterns
-- Security best practices
+## My Working Style
 
-## GitHub CLI Commands
+- I use branch naming convention: `type/description` (e.g., `feat/add-new-tool`, `fix/bash-alias-bug`)
+- I enjoy the back-and-forth of pair programming - quick iterations and stacking wins
+- I value the journey of learning as much as the destination
+
+## Assumptions to Challenge
+
+(Add your assumptions here as you discover them)
+- 
+- 
+- 
 
 ## Git Best Practices
 
@@ -31,80 +35,10 @@ When moving files in a Git repository, use `git mv` instead of regular file syst
 git mv file.txt new/location/file.txt
 ```
 
-This ensures that Git tracks the file movement as a rename operation rather than as a deletion and creation of a new file, preserving the commit history associated with the file.
+## Your Space for Notes and Discoveries
 
-## Repository Metadata Management
+(This section is intentionally left blank for you to fill in as you learn and experiment)
 
-### Setting Repository Description (About Section)
 
-To update the description (about section) of a repository:
 
-```bash
-# Format: gh repo edit [<repository>] --description "<description>"
-gh repo edit --description "My personal dotfiles configuration"
-```
 
-If you're not in the repository directory, specify the repository name:
-
-```bash
-gh repo edit username/repo-name --description "My personal dotfiles configuration"
-```
-
-### Managing Repository Topics
-
-To set topics for a repository (space-separated):
-
-```bash
-# Format: gh repo edit [<repository>] --add-topic topic1,topic2,topic3
-gh repo edit --add-topic dotfiles,linux,configuration,bash,neovim
-```
-
-To remove topics:
-
-```bash
-# Format: gh repo edit [<repository>] --remove-topic topic1,topic2
-gh repo edit --remove-topic old-topic
-```
-
-To replace all topics:
-
-```bash
-# Format: gh repo edit [<repository>] --topic topic1,topic2,topic3
-gh repo edit --topic dotfiles,linux,configuration,bash,neovim
-```
-
-### Viewing Current Repository Metadata
-
-To view the current repository information:
-
-```bash
-gh repo view --json name,description,topics
-```
-
-## Authentication
-
-If you haven't authenticated with GitHub CLI yet:
-
-```bash
-gh auth login
-```
-
-Follow the prompts to authenticate with your GitHub account.
-
-## Other Useful Repository Commands
-
-```bash
-# Create a new repository
-gh repo create [name] [flags]
-
-# Clone a repository
-gh repo clone [repository]
-
-# Fork a repository
-gh repo fork [repository]
-
-# View repository in browser
-gh repo view --web
-```
-
-For more information, run `gh repo --help` or visit the [GitHub CLI documentation](https://cli.github.com/manual/).
