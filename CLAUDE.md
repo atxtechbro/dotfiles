@@ -1,7 +1,5 @@
 # AI Assistant Guide - Claude
 
-> **IMPORTANT**: This is a public repository. Do not add any proprietary information, secrets, API keys, or personal credentials to this repository.
-
 This file is an evolving experiment in how Claude can best assist with this repository. It's meant to be playful, iterative, and grow organically as we learn together.
 
 ## Repository Vibe
@@ -28,6 +26,3 @@ This file is an evolving experiment in how Claude can best assist with this repo
 ## Discoveries & Learnings
 
 (This space is for capturing insights we stumble upon)
-
-
-

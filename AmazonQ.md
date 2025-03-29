@@ -1,7 +1,5 @@
 # AI Assistant Guide - Amazon Q
 
-> **IMPORTANT**: This is a public repository. Do not add any proprietary information, secrets, API keys, or personal credentials to this repository.
-
 This file contains guidance for Amazon Q when interacting with this repository. It's intentionally minimal and meant to evolve through experimentation and learning.
 
 ## Repository Philosophy
@@ -38,7 +36,3 @@ git mv file.txt new/location/file.txt
 ## Your Space for Notes and Discoveries
 
 (This section is intentionally left blank for you to fill in as you learn and experiment)
-
-
-
-
