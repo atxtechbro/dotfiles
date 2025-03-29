@@ -5,7 +5,11 @@
 To use these dotfiles, manually create symlinks from your home directory to this repository:
 
 ```bash
+# Create Neovim config directory if it doesn't exist
+mkdir -p ~/.config/nvim
+
 # Create symlinks for configuration files
+ln -sf ~/dotfiles/nvim/init.lua ~/.config/nvim/init.lua
 ln -sf ~/dotfiles/.bashrc ~/.bashrc
 ln -sf ~/dotfiles/.bash_aliases ~/.bash_aliases
 ln -sf ~/dotfiles/.bash_exports ~/.bash_exports
