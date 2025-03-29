@@ -132,20 +132,6 @@ end
 
 pcall(mason_setup)
 
--- Add nvim-cmp capabilities to lspconfig
-local setup_lsp_capabilities = function()
-  local lspconfig = require('lspconfig')
-  local cmp_nvim_lsp = require('cmp_nvim_lsp')
-  
-  local lspconfig_defaults = lspconfig.util.default_config
-  lspconfig_defaults.capabilities = vim.tbl_deep_extend(
-    'force',
-    lspconfig_defaults.capabilities,
-    cmp_nvim_lsp.default_capabilities()
-  )
-end
-
-pcall(setup_lsp_capabilities)
 
 -- Set up LSP keybindings when a server attaches to a buffer
 vim.api.nvim_create_autocmd('LspAttach', {
@@ -200,51 +186,6 @@ local setup_language_servers = function()
 end
 
 pcall(setup_language_servers)
-
--- Set up nvim-cmp for autocompletion
-local setup_completion = function()
-  local cmp = require('cmp')
-  local luasnip = require('luasnip')
-  
-  cmp.setup({
-    sources = {
-      { name = 'nvim_lsp' },  -- LSP completions
-      { name = 'luasnip' },   -- Snippets source
-      { name = 'buffer' },    -- Text in current buffer
-      { name = 'path' },      -- File paths
-    },
-    mapping = cmp.mapping.preset.insert({
-      ['<C-Space>'] = cmp.mapping.complete(),  -- Trigger completion
-      ['<C-e>'] = cmp.mapping.abort(),         -- Close completion window
-      ['<CR>'] = cmp.mapping.confirm({ select = true }),  -- Accept selected item
-      ['<Tab>'] = function(fallback)
-        if cmp.visible() then
-          cmp.select_next_item()
-        elseif luasnip.expand_or_jumpable() then
-          luasnip.expand_or_jump()
-        else
-          fallback()
-        end
-      end,
-      ['<S-Tab>'] = function(fallback)
-        if cmp.visible() then
-          cmp.select_prev_item()
-        elseif luasnip.jumpable(-1) then
-          luasnip.jump(-1)
-        else
-          fallback()
-        end
-      end,
-    }),
-    snippet = {
-      expand = function(args)
-        luasnip.lsp_expand(args.body)
-      end,
-    },
-  })
-end
-
-pcall(setup_completion)
 
 -- Quick clear file content keybinding
 vim.keymap.set('n', '<leader>da', ':%d<CR>', { noremap = true, silent = true, desc = "Delete all content" })
