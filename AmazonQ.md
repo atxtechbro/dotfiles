@@ -1,8 +1,24 @@
-# GitHub CLI Commands
+# AI Assistant Guide - Amazon Q
 
 > **IMPORTANT**: This is a public repository. Do not add any proprietary information, secrets, API keys, or personal credentials to this repository.
 
-The GitHub CLI (`gh`) allows you to manage your GitHub repositories directly from the command line.
+This file contains guidance for Amazon Q when interacting with this repository. It represents my preferences, opinions, and domain-specific knowledge that I want Amazon Q to consider when providing assistance.
+
+## Repository Purpose & Philosophy
+
+This dotfiles repository serves as my personal development environment configuration. Its purpose is to:
+- Maintain consistent development environments across different machines
+- Allow quick setup of a new development environment
+- Store configurations as code for version control and portability
+- Serve as a reference for useful commands and tools
+
+When helping with this repository, prioritize:
+- Maintainability over complexity
+- Clear documentation over clever code
+- Consistency with existing patterns
+- Security best practices
+
+## GitHub CLI Commands
 
 ## Git Best Practices
 
