@@ -44,6 +44,13 @@ require('packer').startup(function(use)
     'nvim-telescope/telescope.nvim',
     requires = {{'nvim-lua/plenary.nvim'}}
   }
+  -- Git integration with blame support
+  use 'lewis6991/gitsigns.nvim'
+  -- Git integration with blame support
+  use {
+    'lewis6991/gitsigns.nvim',
+    requires = {'nvim-lua/plenary.nvim'}
+  }
   -- Automatically set up configuration after cloning packer.nvim
   if packer_bootstrap then
     require('packer').sync()
@@ -195,5 +202,16 @@ if packer_bootstrap then
   vim.cmd([[autocmd User PackerComplete lua print("Packer setup complete!")]])
   require('packer').sync()
 end
+
+-- Simple GitSigns setup for git blame functionality
+pcall(function()
+  require('gitsigns').setup {
+    current_line_blame = true,
+    current_line_blame_opts = {
+      virt_text = true,
+      virt_text_pos = 'eol',
+    }
+  }
+end)
 
 print("Neovim configuration loaded")
