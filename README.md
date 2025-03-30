@@ -23,6 +23,24 @@ That's it! Any changes you make to files in this repository will be reflected in
 
 ## CLI Tools
 
+### Google Chrome
+
+Install Google Chrome with automatic updates via the official Google repository:
+
+```bash
+# Add Google Chrome repository key
+wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+
+# Add the Google Chrome repository
+sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
+
+# Update package lists and install Chrome
+sudo apt update
+sudo apt install -y google-chrome-stable
+```
+
+Chrome will automatically update when you run `sudo apt update` and `sudo apt upgrade` as part of your regular system maintenance.
+
 ### jira-cli
 
 [jira-cli](https://github.com/ankitpokhrel/jira-cli) is a feature-rich interactive Jira command line tool.
