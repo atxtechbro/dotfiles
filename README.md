@@ -71,6 +71,7 @@ Basic usage:
 - Split pane horizontally: `Ctrl+a -`
 - Split pane vertically: `Ctrl+a |`
 - Navigate between panes: `Alt+Arrow Keys`
+- Close current pane: `Ctrl+a x`
 - Detach from session: `Ctrl+a d`
 - Reattach to session: `tmux attach`
 
