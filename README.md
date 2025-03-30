@@ -24,6 +24,7 @@ ln -sf ~/dotfiles/.bashrc ~/.bashrc
 ln -sf ~/dotfiles/.bash_aliases ~/.bash_aliases
 ln -sf ~/dotfiles/.bash_exports ~/.bash_exports
 ln -sf ~/dotfiles/.gitconfig ~/.gitconfig
+ln -sf ~/dotfiles/.tmux.conf ~/.tmux.conf
 
 # Apply changes
 source ~/.bashrc
@@ -52,6 +53,26 @@ sudo apt install -y google-chrome-stable
 Chrome will automatically update when you run `sudo apt update` and `sudo apt upgrade` as part of your regular system maintenance.
 
 ## CLI Tools
+
+### tmux
+
+tmux is a terminal multiplexer that allows you to split your terminal into multiple panes and switch between them easily.
+
+```bash
+# Install tmux
+sudo apt install -y tmux
+
+# Create symlink for tmux configuration
+ln -sf ~/dotfiles/.tmux.conf ~/.tmux.conf
+```
+
+Basic usage:
+- Start a new session: `tmux`
+- Split pane horizontally: `Ctrl+a -`
+- Split pane vertically: `Ctrl+a |`
+- Navigate between panes: `Alt+Arrow Keys`
+- Detach from session: `Ctrl+a d`
+- Reattach to session: `tmux attach`
 
 ### jira-cli
 
