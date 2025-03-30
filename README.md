@@ -23,9 +23,11 @@ That's it! Any changes you make to files in this repository will be reflected in
 
 ## CLI Tools
 
-The following CLI tools can be installed using the scripts in the `tools/` directory:
+### jira-cli
 
-- jira-cli - Jira command line interface
+[jira-cli](https://github.com/ankitpokhrel/jira-cli) is a feature-rich interactive Jira command line tool.
+
+For installation instructions, see the [official installation guide](https://github.com/ankitpokhrel/jira-cli/wiki/Installation).
 
 ### Neovim
 
@@ -48,17 +50,7 @@ This ensures you get the latest version with all features, rather than the poten
 
 For more build options, see the [official build instructions](https://github.com/neovim/neovim/blob/master/BUILD.md).
 
-## Installing Tools
 
-To install a tool, run its installation script:
-
-```bash
-# Make the script executable
-chmod +x ~/dotfiles/tools/jira-cli.sh
-
-# Run the installation script
-~/dotfiles/tools/jira-cli.sh
-```
 
 ## CLI AI tools
 
