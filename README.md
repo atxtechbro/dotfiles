@@ -1,5 +1,15 @@
 # Dotfiles
 
+## Essential Packages
+
+Install the core command-line tools needed for this setup:
+
+```bash
+# Core development tools
+sudo apt update
+sudo apt install -y git gh jq
+```
+
 ## Manual Setup
 
 To use these dotfiles, manually create symlinks from your home directory to this repository:
