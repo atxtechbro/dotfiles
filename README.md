@@ -21,7 +21,7 @@ source ~/.bashrc
 
 That's it! Any changes you make to files in this repository will be reflected in your environment.
 
-## CLI Tools
+## Applications
 
 ### Google Chrome
 
@@ -40,6 +40,8 @@ sudo apt install -y google-chrome-stable
 ```
 
 Chrome will automatically update when you run `sudo apt update` and `sudo apt upgrade` as part of your regular system maintenance.
+
+## CLI Tools
 
 ### jira-cli
 
@@ -67,8 +69,6 @@ sudo make install
 This ensures you get the latest version with all features, rather than the potentially outdated version from package repositories.
 
 For more build options, see the [official build instructions](https://github.com/neovim/neovim/blob/master/BUILD.md).
-
-
 
 ## CLI AI tools
 
