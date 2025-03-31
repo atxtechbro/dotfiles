@@ -145,6 +145,11 @@ if [ -f ~/.bash_exports ]; then
     . ~/.bash_exports
 fi
 
+# Load secrets file if it exists
+if [ -f ~/.bash_secrets ]; then
+    . ~/.bash_secrets
+fi
+
 DOTFILES_DIR="$HOME/dotfiles"
 
 # Add your scripts directory to the PATH
