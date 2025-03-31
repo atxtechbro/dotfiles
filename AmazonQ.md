@@ -12,6 +12,6 @@ See [VIBE.md](./VIBE.md) for the Vibe Coding Manifesto that guides this reposito
 
 Feel free to add your discoveries and insights below as you learn:
 
-- Always include an empty line at the end of files when appending content
-- When creating PR descriptions, use actual line breaks instead of \n or \n\n, otherwise they'll appear as literal characters on GitHub
+- 
+- 
 - 

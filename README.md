@@ -51,6 +51,17 @@ sudo apt install -y google-chrome-stable
 
 Chrome will automatically update when you run `sudo apt update` and `sudo apt upgrade` as part of your regular system maintenance.
 
+## Secret Management
+
+Sensitive information like API tokens are stored in `~/.bash_secrets` (not tracked in git).
+
+```bash
+# Create your personal secrets file from the example template
+cp ~/dotfiles/.bash_secrets.example ~/.bash_secrets
+```
+
+The `.bash_secrets` file is automatically loaded by `.bashrc`.
+
 ## CLI Tools
 
 ### tmux
@@ -77,6 +88,14 @@ Basic usage:
 ### jira-cli
 
 [jira-cli](https://github.com/ankitpokhrel/jira-cli) is a feature-rich interactive Jira command line tool.
+
+For Atlassian Cloud authentication:
+```bash
+# Generate an API token at: https://id.atlassian.com/manage-profile/security/api-tokens
+# Add it to your ~/.bash_secrets file
+# Initialize jira-cli
+jira init
+```
 
 For installation instructions, see the [official installation guide](https://github.com/ankitpokhrel/jira-cli/wiki/Installation).
 
