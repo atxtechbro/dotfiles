@@ -12,6 +12,7 @@
 *.pfx
 *.jks
 *.keystore
+.bash_secrets
 
 # Private SSH keys
 id_rsa
