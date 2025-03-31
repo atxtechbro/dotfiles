@@ -1,0 +1,79 @@
+name: Validate Dotfiles
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  # Run monthly to ensure continued compatibility
+  schedule:
+    - cron: '0 0 1 * *'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  validate:
+    strategy:
+      matrix:
+        environment: [ubuntu-linux, ubuntu-wsl]
+        include:
+          - environment: ubuntu-linux
+            runs-on: ubuntu-latest
+            setup-cmd: ln -sf $GITHUB_WORKSPACE /tmp/test-home/dotfiles
+          - environment: ubuntu-wsl
+            runs-on: ubuntu-latest
+            setup-cmd: |
+              mkdir -p /tmp/test-home/mnt/c
+              ln -sf $GITHUB_WORKSPACE /tmp/test-home/mnt/c/dotfiles
+              ln -sf /tmp/test-home/mnt/c/dotfiles /tmp/test-home/dotfiles
+      fail-fast: false  # Continue with other environments if one fails
+
+    runs-on: ${{ matrix.runs-on }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Setup test environment
+        run: |
+          # Create a fake home directory for testing
+          mkdir -p /tmp/test-home
+          export HOME=/tmp/test-home
+          
+          # Setup environment-specific symlinks
+          ${{ matrix.setup-cmd }}
+
+      - name: Install minimal essential packages
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends git tmux
+          
+      - name: Setup dotfiles
+        run: |
+          export HOME=/tmp/test-home
+          
+          # Create required directories
+          mkdir -p $HOME/.config/nvim
+          
+          # Create symlinks (only the critical ones to save time)
+          ln -sf $HOME/dotfiles/nvim/init.lua $HOME/.config/nvim/init.lua
+          ln -sf $HOME/dotfiles/.bashrc $HOME/.bashrc
+          ln -sf $HOME/dotfiles/.bash_aliases $HOME/.bash_aliases
+          ln -sf $HOME/dotfiles/.bash_exports $HOME/.bash_exports
+          ln -sf $HOME/dotfiles/.gitconfig $HOME/.gitconfig
+          ln -sf $HOME/dotfiles/.tmux.conf $HOME/.tmux.conf
+
+      - name: Validate configurations
+        run: |
+          export HOME=/tmp/test-home
+          
+          echo "Validating bash configuration..."
+          bash -c "source $HOME/.bashrc" || exit 1
+          
+          echo "Validating tmux configuration..."
+          tmux -f $HOME/.tmux.conf new-session -d || exit 1
+          tmux kill-server
+          
+          echo "Validating git configuration..."
+          git config --list || exit 1
+          
+          echo "All configurations validated successfully"
