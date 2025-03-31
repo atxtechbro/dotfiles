@@ -58,6 +58,9 @@ Sensitive information like API tokens are stored in `~/.bash_secrets` (not track
 ```bash
 # Create your personal secrets file from the example template
 cp ~/dotfiles/.bash_secrets.example ~/.bash_secrets
+
+# Set proper permissions to protect your secrets
+chmod 600 ~/.bash_secrets
 ```
 
 The `.bash_secrets` file is automatically loaded by `.bashrc`.
