@@ -12,13 +12,12 @@ sudo apt install -y git gh jq
 
 ## Manual Setup
 
-To use these dotfiles, manually create symlinks from your home directory to this repository:
-
 ```bash
-# Create Neovim config directory if it doesn't exist
-mkdir -p ~/.config/nvim
+# Link dotfiles directory (WSL users)
+ln -sf /mnt/c/dotfiles ~/dotfiles
 
 # Create symlinks for configuration files
+mkdir -p ~/.config/nvim
 ln -sf ~/dotfiles/nvim/init.lua ~/.config/nvim/init.lua
 ln -sf ~/dotfiles/.bashrc ~/.bashrc
 ln -sf ~/dotfiles/.bash_aliases ~/.bash_aliases

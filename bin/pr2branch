@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# Convert PR number (integer) to branch name (string)
+#
+# Usage: pr2branch <pr-number>
+
+set -e
+
+if [ -z "$1" ]; then
+  echo "Error: PR number is required"
+  echo "Usage: pr2branch <pr-number>"
+  exit 1
+fi
+
+PR_NUMBER=$1
+
+# Check if gh command is available
+if ! command -v gh &> /dev/null; then
+  echo "Error: GitHub CLI (gh) is not installed"
+  exit 1
+fi
+
+# Get branch name from PR
+BRANCH_NAME=$(gh pr view "$PR_NUMBER" --json headRefName -q .headRefName)
+
+if [ -z "$BRANCH_NAME" ]; then
+  echo "Error: Could not find branch name for PR #$PR_NUMBER"
+  exit 1
+fi
+
+# Output just the branch name
+echo "$BRANCH_NAME"
