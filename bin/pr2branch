@@ -1,14 +1,14 @@
 #!/bin/bash
 #
-# Get branch name from PR number
+# Convert PR number (integer) to branch name (string)
 #
-# Usage: pr-branch <pr-number>
+# Usage: pr2branch <pr-number>
 
 set -e
 
 if [ -z "$1" ]; then
   echo "Error: PR number is required"
-  echo "Usage: pr-branch <pr-number>"
+  echo "Usage: pr2branch <pr-number>"
   exit 1
 fi
 
