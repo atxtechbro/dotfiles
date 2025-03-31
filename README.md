@@ -102,6 +102,21 @@ jira init
 
 For installation instructions, see the [official installation guide](https://github.com/ankitpokhrel/jira-cli/wiki/Installation).
 
+### Zephyr Scale
+
+Zephyr Scale is a test management tool integrated with Jira.
+
+```bash
+# Generate an API token in Jira:
+# 1. Click on your profile icon in the top right corner
+# 2. Select "Zephyr Scale API Access Tokens"
+# 3. Click "Create access token" and follow the instructions
+# 4. Add the token to your ~/.bash_secrets file:
+echo '
+# Zephyr Scale API token (Jira test management)
+export ZEPHYR_API_KEY="your_zephyr_api_token_here"' >> ~/.bash_secrets
+```
+
 ### Neovim
 
 For the latest version of Neovim, build from source:
