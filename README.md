@@ -145,6 +145,8 @@ The URL typically follows this format:
 https://d-XXXXXXXXXX.awsapps.com/start/#/console?account_id=XXXXXXXXXXXX&role_name=YOUR_ROLE_NAME
 ```
 
+Next step: run `q telemetry disable` - 'nuff said.
+
 ### Tmux Config Comparison
 
 To compare different tmux configurations (like at an optometrist):
