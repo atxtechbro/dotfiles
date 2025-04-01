@@ -9,6 +9,7 @@ See [VIBE.md](./VIBE.md) for the Vibe Coding Manifesto that guides this reposito
 - Follow Conventional Commits style (e.g., `feat:`, `fix:`, `docs:`)
 - For GitHub CLI comments use: `gh pr comment <number> -b "text"` (not `---comment`)
 - Don't thank yourself when closing your own PRs
+- Always add an empty line at the end of new files or when appending to existing files
 
 Feel free to add your discoveries and insights below as you learn:
 
