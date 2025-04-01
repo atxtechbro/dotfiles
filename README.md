@@ -61,9 +61,14 @@ cp ~/dotfiles/.bash_secrets.example ~/.bash_secrets
 
 # Set proper permissions to protect your secrets
 chmod 600 ~/.bash_secrets
+
+# Edit the file to add your specific secrets
+nano ~/.bash_secrets
 ```
 
-The `.bash_secrets` file is automatically loaded by `.bashrc`.
+The `.bash_secrets` file is automatically loaded by `.bashrc`. It provides a framework for managing your secrets and environment variables, with examples of common patterns. You should customize it based on your needs.
+
+For company-specific secrets, consider maintaining a separate private repository with additional templates and documentation.
 
 ## CLI Tools
 
