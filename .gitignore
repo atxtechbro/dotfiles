@@ -31,3 +31,6 @@ id_ed25519
 # OS specific files
 .DS_Store
 Thumbs.db
+
+# Documentation
+tmux-cheatsheet.md
