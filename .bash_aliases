@@ -8,3 +8,6 @@ alias gha-fails='get-latest-failed-gha-logs.sh'
 alias tmux-main="git checkout main && tmux source-file ~/.tmux.conf && echo 'Switched to main branch config'"
 alias tmux-pr="git checkout - && tmux source-file ~/.tmux.conf && echo 'Switched to branch: $(git branch --show-current)'"
 
+# Tmux cheatsheet quick access
+alias tmux-help="less ~/dotfiles/tmux-cheatsheet.md"
+
