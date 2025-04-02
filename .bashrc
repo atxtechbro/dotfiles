@@ -133,10 +133,7 @@ if ! shopt -oq posix; then
 fi
 # Git branch in prompt
 parse_git_branch() {
-  branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-  if [[ -n "$branch" ]]; then
-    echo " ($branch)"
-  fi
+  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
 
 # Set prompt to show current directory and git branch
