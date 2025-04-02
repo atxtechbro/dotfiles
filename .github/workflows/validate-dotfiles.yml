@@ -85,3 +85,9 @@ jobs:
           git config --list || exit 1
           
           echo "All configurations validated successfully"
+          
+      - name: Test terminal startup output
+        run: |
+          export HOME=/tmp/test-home
+          chmod +x $GITHUB_WORKSPACE/tests/terminal_startup_test.sh
+          $GITHUB_WORKSPACE/tests/terminal_startup_test.sh
