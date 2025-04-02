@@ -10,13 +10,20 @@ if [[ $# -eq 2 ]]; then
   echo "Repository owner: $repo_owner"
   echo "Repository name: $repo_name"
 elif [[ $# -eq 0 ]]; then
-  # Get the repository owner and name from the origin remote
-  remote_url=$(git remote get-url origin)
-  repo_owner=$(echo "$remote_url" | sed -E 's#.*github.com[:/]([^/]+)/.*#\1#')
-  repo_name=$(echo "$remote_url" | sed -E 's#.*github.com[:/].*/([^/]+).*#\1#' | sed 's/\.git$//') # Remove .git
-  # Log the repository information
-  echo "Repository owner: $repo_owner"
-  echo "Repository name: $repo_name"
+  # Check if we're in a git repository first
+  if git rev-parse --is-inside-work-tree &>/dev/null; then
+    # Get the repository owner and name from the origin remote
+    remote_url=$(git remote get-url origin)
+    repo_owner=$(echo "$remote_url" | sed -E 's#.*github.com[:/]([^/]+)/.*#\1#')
+    repo_name=$(echo "$remote_url" | sed -E 's#.*github.com[:/].*/([^/]+).*#\1#' | sed 's/\.git$//') # Remove .git
+    # Log the repository information
+    echo "Repository owner: $repo_owner"
+    echo "Repository name: $repo_name"
+  else
+    echo "Error: Not in a git repository. Please provide owner and repo name."
+    echo "Usage: $0 [owner] [repo]"
+    exit 1
+  fi
 else
   echo "Usage: $0 [owner] [repo]"
   echo "Or run in a git repository to use the origin remote."
