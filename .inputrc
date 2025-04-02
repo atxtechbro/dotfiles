@@ -1,0 +1,5 @@
+# ~/.inputrc - Minimal configuration for readline
+# Amazon Q CLI often asks for "y" confirmation prompts
+# This binding allows quick confirmation with Ctrl+Space
+# instead of having to type "y" followed by Enter
+"\C-@": "y\C-m"
