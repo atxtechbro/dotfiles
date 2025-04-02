@@ -133,11 +133,8 @@ if ! shopt -oq posix; then
 fi
 # Git branch in prompt
 parse_git_branch() {
-  # First check if we're in a git directory without using git commands
-  # This prevents any git errors from appearing in the prompt
-  if [ -d .git ] || [ -d ../.git ] || [ -d ../../.git ] || [ -d ../../../.git ]; then
-    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
-  fi
+  # Redirect all git commands to /dev/null to prevent any errors
+  git rev-parse --is-inside-work-tree &>/dev/null && git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/' || echo ""
 }
 
 # Set prompt to show current directory and git branch
