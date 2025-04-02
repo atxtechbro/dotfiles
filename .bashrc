@@ -144,7 +144,11 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-export PYTHONPATH=$PYTHONPATH:$(pwd)
+# Don't add pwd to PYTHONPATH if not in a Python project
+# This prevents unnecessary environment pollution
+if [ -f "setup.py" ] || [ -f "pyproject.toml" ] || [ -d "venv" ] || [ -d ".venv" ]; then
+  export PYTHONPATH=$PYTHONPATH:$(pwd)
+fi
 
 bind 'set enable-bracketed-paste off'
 
