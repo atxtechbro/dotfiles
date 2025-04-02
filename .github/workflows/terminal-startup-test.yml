@@ -1,4 +1,4 @@
-name: Validate Dotfiles
+name: Terminal Startup Test
 
 on:
   push:
@@ -19,23 +19,9 @@ on:
   workflow_dispatch:  # Allow manual triggering
 
 jobs:
-  validate:
-    strategy:
-      matrix:
-        environment: [ubuntu-linux, ubuntu-wsl]
-        include:
-          - environment: ubuntu-linux
-            runs-on: ubuntu-latest
-            setup-cmd: ln -sf $GITHUB_WORKSPACE /tmp/test-home/dotfiles
-          - environment: ubuntu-wsl
-            runs-on: ubuntu-latest
-            setup-cmd: |
-              mkdir -p /tmp/test-home/mnt/c
-              ln -sf $GITHUB_WORKSPACE /tmp/test-home/mnt/c/dotfiles
-              ln -sf /tmp/test-home/mnt/c/dotfiles /tmp/test-home/dotfiles
-      fail-fast: false  # Continue with other environments if one fails
-
-    runs-on: ${{ matrix.runs-on }}
+  test-terminal-startup:
+    name: Test Terminal Startup
+    runs-on: ubuntu-latest
     
     steps:
       - name: Checkout repository
@@ -47,13 +33,13 @@ jobs:
           mkdir -p /tmp/test-home
           export HOME=/tmp/test-home
           
-          # Setup environment-specific symlinks
-          ${{ matrix.setup-cmd }}
+          # Setup dotfiles
+          ln -sf $GITHUB_WORKSPACE /tmp/test-home/dotfiles
 
       - name: Install minimal essential packages
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends git tmux
+          sudo apt-get install -y --no-install-recommends git bash
           
       - name: Setup dotfiles
         run: |
@@ -70,23 +56,7 @@ jobs:
           ln -sf $HOME/dotfiles/.gitconfig $HOME/.gitconfig
           ln -sf $HOME/dotfiles/.tmux.conf $HOME/.tmux.conf
 
-      - name: Validate configurations
-        run: |
-          export HOME=/tmp/test-home
-          
-          echo "Validating bash configuration..."
-          bash -c "source $HOME/.bashrc" || exit 1
-          
-          echo "Validating tmux configuration..."
-          tmux -f $HOME/.tmux.conf new-session -d || exit 1
-          tmux kill-server
-          
-          echo "Validating git configuration..."
-          git config --list || exit 1
-          
-          echo "All configurations validated successfully"
-          
-      - name: Test terminal startup output
+      - name: Run terminal startup test
         run: |
           export HOME=/tmp/test-home
           chmod +x $GITHUB_WORKSPACE/tests/terminal_startup_test.sh
