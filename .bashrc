@@ -133,8 +133,9 @@ if ! shopt -oq posix; then
 fi
 # Git branch in prompt
 parse_git_branch() {
-  # First check if we're in a git repository to avoid any error messages
-  if [ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1; then
+  # Completely silent check for git repository
+  git rev-parse --git-dir > /dev/null 2>&1
+  if [ $? -eq 0 ]; then
     # Only run git branch if we're in a git repository
     git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
   fi
