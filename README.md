@@ -152,6 +152,8 @@ https://d-XXXXXXXXXX.awsapps.com/start/#/console?account_id=XXXXXXXXXXXX&role_na
 
 Next step: run `q telemetry disable` - 'nuff said.
 
+**Pro tip:** Check out the `.inputrc` binding (Ctrl+Space → "y" + Enter). Solves the ergonomic friction of "y" being miles from Enter on keyboards. Security without the finger gymnastics.
+
 ### Tmux Config Comparison
 
 To compare different tmux configurations (like at an optometrist):
