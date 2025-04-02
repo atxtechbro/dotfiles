@@ -24,9 +24,11 @@ ln -sf ~/dotfiles/.bash_aliases ~/.bash_aliases
 ln -sf ~/dotfiles/.bash_exports ~/.bash_exports
 ln -sf ~/dotfiles/.gitconfig ~/.gitconfig
 ln -sf ~/dotfiles/.tmux.conf ~/.tmux.conf
+ln -sf ~/dotfiles/.inputrc ~/.inputrc
 
 # Apply changes
 source ~/.bashrc
+bind -f ~/.inputrc
 ```
 
 That's it! Any changes you make to files in this repository will be reflected in your environment.
