@@ -134,7 +134,7 @@ fi
 # Git branch in prompt
 parse_git_branch() {
   # Redirect ALL output (stdout and stderr) to /dev/null for the check
-  if git rev-parse --is-inside-work-tree &>/dev/null 2>&1; then
+  if git rev-parse --is-inside-work-tree &>/dev/null; then
     # Only run git branch if we're in a git repository
     git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
   fi
