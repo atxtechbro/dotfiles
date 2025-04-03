@@ -161,8 +161,10 @@ DOTFILES_DIR="$HOME/dotfiles"
 # Add your scripts directory to the PATH
 export PATH="$DOTFILES_DIR/bin:$PATH"
 
-# Change to dotfiles directory when opening a new terminal
-cd "$DOTFILES_DIR"
+# Only change to dotfiles directory when NOT in a tmux session
+if [ -z "$TMUX" ]; then
+    cd "$DOTFILES_DIR"
+fi
 
 # Source Amazon Q environment if installed
 if [ -f "$HOME/.local/bin/env" ]; then
