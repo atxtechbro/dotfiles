@@ -16,6 +16,12 @@ See [VIBE.md](./VIBE.md) for the Vibe Coding Manifesto that guides this reposito
 - Example: `gh pr create --title "Title" --body "First line.` (press Enter) `Second line."` ✓
 - NOT: `gh pr create --title "Title" --body "First line.\n\nSecond line."` ✗
 
+## Branching Strategy
+- When making discrete changes, always branch from main unless specifically asked otherwise
+- Use `git checkout main && git pull && git checkout -b type/description` to ensure clean branches
+- For changes to documentation or configuration files like AmazonQ.md, especially prefer branching from main
+- This prevents unintended changes from feature branches being included in your PR
+
 Feel free to add your discoveries and insights below as you learn:
 
 - Always use `uv` instead of `pip` for Python package management (e.g., `uv pip install package-name` not `pip install package-name`)
