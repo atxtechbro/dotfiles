@@ -10,10 +10,14 @@ See [VIBE.md](./VIBE.md) for the Vibe Coding Manifesto that guides this reposito
 - For GitHub CLI comments use: `gh pr comment <number> -b "text"` (not `---comment`)
 - Don't thank yourself when closing your own PRs
 - Always add an empty line at the end of new files or when appending to existing files
-- Don't use `\n\n` for line breaks in GitHub PR descriptions or comments; use actual line breaks instead
+
+## PR Description Formatting
+- IMPORTANT: When creating PR descriptions, use actual line breaks instead of `\n\n` escape sequences
+- Example: `gh pr create --title "Title" --body "First line.` (press Enter) `Second line."` ✓
+- NOT: `gh pr create --title "Title" --body "First line.\n\nSecond line."` ✗
 
 Feel free to add your discoveries and insights below as you learn:
 
-- 
-- 
+- Always use `uv` instead of `pip` for Python package management (e.g., `uv pip install package-name` not `pip install package-name`)
+- For Datadog CLI setup: `uv pip install datadog-cli` and store API keys in `~/.bash_secrets`
 - 
