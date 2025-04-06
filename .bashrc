@@ -172,7 +172,7 @@ if [ -f "$HOME/.local/bin/env" ]; then
 fi
 
 # Auto-start tmux if not already in a tmux session and it's an interactive shell
-if [ -z "$TMUX" ] && [ "$-" = *i* ] && command -v tmux >/dev/null 2>&1; then
+if [ -z "$TMUX" ] && [[ "$-" == *i* ]] && command -v tmux >/dev/null 2>&1; then
     # Start a new tmux session or attach to an existing one
     exec tmux new-session -A -s main
 fi
