@@ -37,8 +37,28 @@ chmod +x /tmp/arch-install.sh
 
 ```bash
 cd /tmp
+cd /tmp
 ./arch-install.sh
 ```
+
+The installation script will guide you through the process. Here's what to expect:
+
+1. **Disk Selection**: The script will display a list of available disks and prompt you to choose one for installation.
+   ```
+   Available disks:
+   NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+   sda      8:0    0 119.2G  0 disk 
+   ├─sda1   8:1    0   512M  0 part 
+   └─sda2   8:2    0 118.7G  0 part 
+   
+   Enter the disk to install Arch Linux (e.g., /dev/sda): 
+   ```
+   - Enter the full path (e.g., `/dev/sda`) of the disk you want to use
+   - The script will ask for confirmation before erasing the disk
+
+2. **User Setup**: You'll be prompted to create a username and password
+
+3. **Installation**: The script will install the base system and configure it for your ThinkPad T400
 
 Follow the prompts to complete the installation.
 
