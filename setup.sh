@@ -103,6 +103,7 @@ fi
 
 # Apply bash configuration
 echo -e "${YELLOW}Applying bash configuration...${NC}"
+# shellcheck disable=SC1090
 source ~/.bashrc 2>/dev/null || true
 
 echo -e "${GREEN}Dotfiles setup complete!${NC}"
