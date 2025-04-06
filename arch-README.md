@@ -134,7 +134,8 @@ curl -L https://raw.githubusercontent.com/atxtechbro/dotfiles/feature/arch-minim
 - **Minimal Installation**: Only essential packages are installed
 - **Terminal-focused**: No graphical environment, perfect for older hardware
 - **Power Optimized**: Includes ThinkPad-specific optimizations for better battery life
-- **Dotfiles Integration**: Automatically sets up your configuration files
+- **Complete Dotfiles Integration**: Automatically clones your dotfiles repository and sets up all configuration files
+- **Ready to Use**: Your familiar environment is immediately available after installation
 
 ## Troubleshooting
 

@@ -7,9 +7,25 @@ set -e  # Exit on error
 # Colors for output
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 echo -e "${GREEN}Starting post-installation setup...${NC}"
+
+# Install git first to clone dotfiles repository
+echo -e "${YELLOW}Installing git...${NC}"
+sudo pacman -S --needed --noconfirm git
+
+# Clone dotfiles repository if it doesn't exist
+if [ ! -d ~/dotfiles ]; then
+    echo -e "${YELLOW}Cloning dotfiles repository...${NC}"
+    git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
+    echo -e "${GREEN}Dotfiles repository cloned successfully!${NC}"
+else
+    echo -e "${BLUE}Dotfiles repository already exists, updating...${NC}"
+    cd ~/dotfiles
+    git pull
+fi
 
 # Install terminal-focused packages
 echo -e "${YELLOW}Installing terminal utilities...${NC}"
@@ -81,5 +97,10 @@ sudo ufw default allow outgoing
 sudo ufw allow ssh
 sudo ufw enable
 
+# Apply bash configuration immediately
+echo -e "${YELLOW}Applying bash configuration...${NC}"
+source ~/.bashrc
+
 echo -e "${GREEN}Post-installation setup complete!${NC}"
-echo -e "${YELLOW}Remember to source your bashrc: source ~/.bashrc${NC}"
+echo -e "${YELLOW}Your dotfiles have been set up and configured.${NC}"
+echo -e "${BLUE}Enjoy your new Arch Linux environment!${NC}"
