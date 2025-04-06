@@ -1,10 +1,6 @@
 name: Test General Dotfiles Setup (Pre-OS Installation)
 
 on:
-  push:
-    branches: [ feature/auto-setup, feature/combined-setup ]
-    paths:
-      - 'setup.sh'
   pull_request:
     branches: [ main ]
     paths:

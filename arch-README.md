@@ -30,7 +30,7 @@ ping -c 3 google.com
 
 ```bash
 # Download the installation script using curl
-curl -L https://raw.githubusercontent.com/atxtechbro/dotfiles/feature/combined-setup/arch-install.sh -o /tmp/arch-install.sh
+curl -L https://raw.githubusercontent.com/atxtechbro/dotfiles/main/arch-install.sh -o /tmp/arch-install.sh
 ```
 
 ### 3. Run the Installation Script
@@ -119,7 +119,7 @@ station wlan0 connect <your_wifi_name>
 exit
 
 # Clone the dotfiles repository and run setup
-git clone -b feature/combined-setup https://github.com/atxtechbro/dotfiles.git ~/dotfiles
+git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ./setup.sh
 
