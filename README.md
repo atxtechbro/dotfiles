@@ -1,33 +1,26 @@
 # Dotfiles
 
-## Essential Packages
+A collection of configuration files for a consistent development environment across different machines.
 
-Install the core command-line tools needed for this setup:
+## Quick Setup
 
-```bash
-# Core development tools
-sudo apt update
-sudo apt install -y git gh jq
-```
-
-## Manual Setup
+For a fully automated setup, run:
 
 ```bash
-# Link dotfiles directory (WSL users)
-ln -sf /mnt/c/dotfiles ~/dotfiles
+# Option 1: Run directly from GitHub
+curl -fsSL https://raw.githubusercontent.com/atxtechbro/dotfiles/main/setup.sh | bash
 
-# Create symlinks for configuration files
-mkdir -p ~/.config/nvim
-ln -sf ~/dotfiles/nvim/init.lua ~/.config/nvim/init.lua
-ln -sf ~/dotfiles/.bashrc ~/.bashrc
-ln -sf ~/dotfiles/.bash_aliases ~/.bash_aliases
-ln -sf ~/dotfiles/.bash_exports ~/.bash_exports
-ln -sf ~/dotfiles/.gitconfig ~/.gitconfig
-ln -sf ~/dotfiles/.tmux.conf ~/.tmux.conf
-
-# Apply changes
-source ~/.bashrc
+# Option 2: Clone first, then run setup
+git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+./setup.sh
 ```
+
+The setup script will:
+- Install essential packages based on your OS
+- Create all necessary symlinks
+- Set up your secrets file from the template
+- Apply configurations immediately
 
 That's it! Any changes you make to files in this repository will be reflected in your environment.
 
