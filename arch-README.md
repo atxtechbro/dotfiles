@@ -113,7 +113,7 @@ When the system restarts, remove the USB drive during the boot process so that y
 
 ### 6. After Rebooting
 
-Log in with your user credentials (the username and password you created during installation) and set up your environment:
+Log in with your user credentials (the username and password you created during installation). Now we'll pull in your personalized environment:
 
 ```bash
 # Connect to WiFi first
@@ -125,7 +125,7 @@ exit
 # Download and run the setup script directly
 curl -fsSL https://raw.githubusercontent.com/atxtechbro/dotfiles/main/setup.sh | bash
 
-# After setup completes, your dotfiles will be configured and ready to use
+# After setup completes, your familiar environment will be ready with all your personal configurations
 ```
 
 ## ThinkPad T400 Specific Optimizations
