@@ -12,12 +12,6 @@ NC='\033[0m' # No Color
 
 echo -e "${GREEN}Starting Arch Linux post-installation setup...${NC}"
 
-# Install git first if it's not already installed
-if ! command -v git &> /dev/null; then
-    echo -e "${YELLOW}Installing git...${NC}"
-    sudo pacman -S --needed --noconfirm git
-fi
-
 # First run the universal setup script
 echo -e "${YELLOW}Running universal setup script...${NC}"
 # Make sure we're in the dotfiles directory
