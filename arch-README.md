@@ -117,7 +117,7 @@ Log in with your user credentials (the username and password you created during 
 # Connect to WiFi first
 sudo iwctl
 station wlan0 connect <your_wifi_name>
-# Enter password when prompted
+# Enter your WiFi password when prompted (or press Enter if network is open)
 exit
 
 # Download the post-installation script
