@@ -37,20 +37,20 @@ if [[ "$OS_TYPE" == "Linux" ]]; then
     if command -v apt-get &> /dev/null; then
         echo -e "${YELLOW}Installing essential packages with apt...${NC}"
         sudo apt update
-        sudo apt install -y git gh jq tmux neovim curl wget
+        sudo apt install -y git gh jq tmux curl wget
     elif command -v pacman &> /dev/null; then
         echo -e "${YELLOW}Installing essential packages with pacman...${NC}"
-        sudo pacman -S --needed --noconfirm git github-cli jq tmux neovim curl wget
+        sudo pacman -S --needed --noconfirm git github-cli jq tmux curl wget
     elif command -v dnf &> /dev/null; then
         echo -e "${YELLOW}Installing essential packages with dnf...${NC}"
-        sudo dnf install -y git gh jq tmux neovim curl wget
+        sudo dnf install -y git gh jq tmux curl wget
     else
-        echo -e "${RED}Unsupported package manager. Please install git, gh, jq, tmux, neovim, curl, and wget manually.${NC}"
+        echo -e "${RED}Unsupported package manager. Please install git, gh, jq, tmux, curl, and wget manually.${NC}"
     fi
 elif [[ "$OS_TYPE" == "macOS" ]]; then
     if command -v brew &> /dev/null; then
         echo -e "${YELLOW}Installing essential packages with Homebrew...${NC}"
-        brew install git gh jq tmux neovim curl wget
+        brew install git gh jq tmux curl wget
     else
         echo -e "${RED}Homebrew not found. Please install Homebrew first: https://brew.sh${NC}"
         exit 1
@@ -80,6 +80,9 @@ fi
 # Create necessary directories
 echo -e "${YELLOW}Creating config directories...${NC}"
 mkdir -p ~/.config/nvim
+
+# Add a note about Neovim installation
+echo -e "${BLUE}Note: Neovim should be installed from source as per README instructions${NC}"
 
 # Create symlinks
 echo -e "${YELLOW}Creating symlinks for configuration files...${NC}"
