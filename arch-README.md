@@ -23,7 +23,7 @@ exit
 
 Verify connection:
 ```bash
-ping -c 3 archlinux.org
+ping -c 3 google.com
 ```
 
 ### 3. Download the Installation Script
