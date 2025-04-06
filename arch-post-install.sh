@@ -99,6 +99,7 @@ sudo ufw enable
 
 # Apply bash configuration immediately
 echo -e "${YELLOW}Applying bash configuration...${NC}"
+# shellcheck disable=SC1090
 source ~/.bashrc
 
 echo -e "${GREEN}Post-installation setup complete!${NC}"
