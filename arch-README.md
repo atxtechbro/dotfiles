@@ -56,7 +56,35 @@ The installation script will guide you through the process. Here's what to expec
    - Enter the full path (e.g., `/dev/sda`) of the disk you want to use
    - The script will ask for confirmation before erasing the disk
 
-2. **User Setup**: You'll be prompted to create a username and password
+2. **System Configuration**: You'll be prompted for several important settings in this order:
+   
+   a. **Hostname**: This is your computer's network name (not your username)
+   ```
+   Enter hostname: 
+   ```
+   - Example: "thinkpad-t400" or "arch-machine"
+   
+   b. **Root Password**: You'll need to set the administrator password
+   ```
+   Setting root password...
+   ```
+   - You'll be asked to enter this password twice
+   - This is for the "root" superuser account (like Administrator in Windows)
+   - You'll use this password when logging in as root or when using the `su` command
+   
+   c. **User Account**: Then create your personal user account
+   ```
+   Enter username: 
+   ```
+   - This is your regular login name, different from the hostname
+   
+   d. **User Password**: Set a password for your user account
+   ```
+   Setting password for username...
+   ```
+   - You'll be asked to enter this password twice
+   - This is the password you'll use for daily logins and when using `sudo` commands
+   - This is separate from the root password and should be different for security
 
 3. **Installation**: The script will install the base system and configure it for your ThinkPad T400
 
