@@ -28,13 +28,7 @@ ping -c 3 archlinux.org
 ### 3. Download the Installation Script
 
 ```bash
-# If git is available on the live environment
-git clone https://github.com/atxtechbro/dotfiles.git /tmp/dotfiles
-cd /tmp/dotfiles
-# Checkout the feature branch (remove this line once merged into main)
-git checkout feature/arch-minimal
-
-# If git is not available, use curl
+# Download the installation script using curl
 curl -L https://raw.githubusercontent.com/atxtechbro/dotfiles/feature/arch-minimal/arch-install.sh -o /tmp/arch-install.sh
 chmod +x /tmp/arch-install.sh
 ```
@@ -59,14 +53,11 @@ station wlan0 connect <your_wifi_name>
 # Enter password when prompted
 exit
 
-# Clone your dotfiles repository if not already done
-git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-# Checkout the feature branch (remove this line once merged into main)
-git checkout feature/arch-minimal
+# Download the post-installation script
+curl -L https://raw.githubusercontent.com/atxtechbro/dotfiles/feature/arch-minimal/arch-post-install.sh -o ~/arch-post-install.sh
+chmod +x ~/arch-post-install.sh
 
 # Run the post-installation script
-chmod +x ./arch-post-install.sh
 ./arch-post-install.sh
 ```
 
