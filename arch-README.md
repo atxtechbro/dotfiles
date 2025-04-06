@@ -113,7 +113,7 @@ When the system restarts, remove the USB drive during the boot process so that y
 
 ### 6. After Rebooting
 
-Log in with your user credentials (the username and password you created during installation) and run the post-installation script:
+Log in with your user credentials (the username and password you created during installation) and set up your environment:
 
 ```bash
 # Connect to WiFi first
@@ -122,11 +122,48 @@ station wlan0 connect <your_wifi_name>
 # Enter your WiFi password when prompted (or press Enter if network is open)
 exit
 
-# Download the post-installation script
-curl -L https://raw.githubusercontent.com/atxtechbro/dotfiles/feature/arch-minimal/arch-post-install.sh -o ~/arch-post-install.sh
+# Clone dotfiles repository and run setup script
+git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+./setup.sh
 
-# Run the post-installation script
-./arch-post-install.sh
+# Apply ThinkPad T400 specific optimizations
+```
+
+## ThinkPad T400 Specific Optimizations
+
+After running the setup script, you may want to apply these ThinkPad-specific optimizations:
+
+### CPU Frequency Scaling for Better Battery Life
+```bash
+sudo pacman -S --needed --noconfirm cpupower
+sudo systemctl enable cpupower
+sudo sed -i 's/#governor=.*/governor="powersave"/' /etc/default/cpupower
+```
+
+### Audio Configuration
+```bash
+sudo pacman -S --needed --noconfirm alsa-utils
+amixer sset Master unmute
+amixer sset Speaker unmute
+amixer sset Headphone unmute
+```
+
+### Console Font for Better Readability
+```bash
+sudo pacman -S --needed --noconfirm terminus-font
+echo "FONT=ter-v16n" | sudo tee /etc/vconsole.conf
+```
+
+### Simple Firewall Setup
+```bash
+sudo pacman -S --needed --noconfirm ufw
+sudo systemctl enable ufw
+sudo systemctl start ufw
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow ssh
+sudo ufw enable
 ```
 
 ## Key Features
@@ -134,8 +171,15 @@ curl -L https://raw.githubusercontent.com/atxtechbro/dotfiles/feature/arch-minim
 - **Minimal Installation**: Only essential packages are installed
 - **Terminal-focused**: No graphical environment, perfect for older hardware
 - **Power Optimized**: Includes ThinkPad-specific optimizations for better battery life
-- **Complete Dotfiles Integration**: Automatically clones your dotfiles repository and sets up all configuration files
+- **Complete Dotfiles Integration**: Automatically sets up all configuration files
 - **Ready to Use**: Your familiar environment is immediately available after installation
+
+## Important Note on Configuration
+
+After running the setup script and reloading your `.bashrc` file:
+1. All your personal configurations from the dotfiles repository are automatically applied
+2. Any changes you make to files in the dotfiles repository will be reflected in your environment
+3. Your secrets are securely stored in `~/.bash_secrets` (not tracked in git)
 
 ## Troubleshooting
 
@@ -154,14 +198,6 @@ If the system fails to boot:
 2. Mount your partitions: `mount /dev/sdaX /mnt`
 3. Chroot into the system: `arch-chroot /mnt`
 4. Reinstall the bootloader or fix configuration issues
-
-## Customization
-
-The minimal setup provides a solid foundation. You can further customize by:
-
-1. Installing additional terminal utilities
-2. Configuring your dotfiles
-3. Setting up a terminal-based workflow with tmux and neovim
 
 ## Resources
 
