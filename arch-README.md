@@ -118,8 +118,10 @@ station wlan0 connect <your_wifi_name>
 # Enter your WiFi password when prompted (or press Enter if network is open)
 exit
 
-# Download and run the setup script directly
-curl -fsSL https://raw.githubusercontent.com/atxtechbro/dotfiles/feature/combined-setup/setup.sh | bash
+# Clone the dotfiles repository and run setup
+git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+./setup.sh
 
 # After setup completes, your familiar environment will be ready with all your personal configurations
 ```
