@@ -2,13 +2,17 @@
 
 This guide provides instructions for installing a minimal, terminal-only Arch Linux setup on a ThinkPad T400. The installation is optimized for older hardware while maintaining a functional and efficient system.
 
+## Prerequisites
+
+This guide assumes you have:
+- Downloaded the Arch Linux ISO image
+- Created a bootable USB drive with the ISO
+- Booted your ThinkPad T400 from the USB drive (press F12 during startup to access the boot menu)
+- Basic familiarity with Linux command line
+
 ## Installation Process
 
-### 1. Boot from Arch Linux ISO
-
-Boot your ThinkPad T400 from the Arch Linux installation media.
-
-### 2. Connect to the Internet
+### 1. Connect to the Internet
 
 We assume you're using WiFi:
 ```bash
