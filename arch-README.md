@@ -121,7 +121,7 @@ exit
 # Clone the dotfiles repository and run setup
 sudo git clone -b feature/combined-setup https://github.com/atxtechbro/dotfiles.git ~/dotfiles
 cd ~/dotfiles
-./setup.sh
+sudo ./setup.sh
 
 # After setup completes, your familiar environment will be ready with all your personal configurations
 ```
