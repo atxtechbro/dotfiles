@@ -15,7 +15,6 @@ This guide assumes you have:
 We assume you're using WiFi:
 ```bash
 iwctl
-station wlan0 scan
 station wlan0 get-networks
 station wlan0 connect <your_wifi_name>
 # Enter your WiFi password when prompted (or press Enter if network is open)
