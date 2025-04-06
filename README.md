@@ -22,37 +22,6 @@ The setup script will:
 - Set up your secrets file from the template
 - Apply configurations immediately
 
-## Essential Packages
-
-Core command-line tools needed for this setup:
-
-```bash
-# Core development tools
-sudo apt update
-sudo apt install -y git gh jq tmux neovim curl wget
-```
-
-## Manual Setup
-
-If you prefer to set things up manually:
-
-```bash
-# Link dotfiles directory (WSL users)
-ln -sf /mnt/c/dotfiles ~/dotfiles
-
-# Create symlinks for configuration files
-mkdir -p ~/.config/nvim
-ln -sf ~/dotfiles/nvim/init.lua ~/.config/nvim/init.lua
-ln -sf ~/dotfiles/.bashrc ~/.bashrc
-ln -sf ~/dotfiles/.bash_aliases ~/.bash_aliases
-ln -sf ~/dotfiles/.bash_exports ~/.bash_exports
-ln -sf ~/dotfiles/.gitconfig ~/.gitconfig
-ln -sf ~/dotfiles/.tmux.conf ~/.tmux.conf
-
-# Apply changes
-source ~/.bashrc
-```
-
 That's it! Any changes you make to files in this repository will be reflected in your environment.
 
 ## Applications
