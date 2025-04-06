@@ -10,12 +10,12 @@ Boot your ThinkPad T400 from the Arch Linux installation media.
 
 ### 2. Connect to the Internet
 
-If using WiFi:
+We assume you're using WiFi:
 ```bash
 iwctl
 station wlan0 scan
 station wlan0 get-networks
-station wlan0 connect SSID
+station wlan0 connect <your_wifi_name>
 # Enter password when prompted
 exit
 ```
@@ -29,12 +29,13 @@ ping -c 3 archlinux.org
 
 ```bash
 # If git is available on the live environment
-git clone https://github.com/yourusername/dotfiles.git /tmp/dotfiles
+git clone https://github.com/atxtechbro/dotfiles.git /tmp/dotfiles
 cd /tmp/dotfiles
+# Checkout the feature branch (remove this line once merged into main)
 git checkout feature/arch-minimal
 
 # If git is not available, use curl
-curl -L https://raw.githubusercontent.com/yourusername/dotfiles/feature/arch-minimal/arch-install.sh -o /tmp/arch-install.sh
+curl -L https://raw.githubusercontent.com/atxtechbro/dotfiles/feature/arch-minimal/arch-install.sh -o /tmp/arch-install.sh
 chmod +x /tmp/arch-install.sh
 ```
 
@@ -54,13 +55,14 @@ Log in with your user credentials and run the post-installation script:
 ```bash
 # Connect to WiFi first
 sudo iwctl
-station wlan0 connect SSID
+station wlan0 connect <your_wifi_name>
 # Enter password when prompted
 exit
 
 # Clone your dotfiles repository if not already done
-git clone https://github.com/yourusername/dotfiles.git ~/dotfiles
+git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
 cd ~/dotfiles
+# Checkout the feature branch (remove this line once merged into main)
 git checkout feature/arch-minimal
 
 # Run the post-installation script
