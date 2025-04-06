@@ -96,11 +96,22 @@ The installation script will guide you through the process. Here's what to expec
 
 3. **Installation**: The script will install the base system and configure it for your ThinkPad T400
 
-Follow the prompts to complete the installation.
+Follow the prompts to complete the installation. When the installation is finished, you'll see a message indicating it's complete.
 
-### 5. After Rebooting
+### 5. Reboot into Your New System
 
-Log in with your user credentials and run the post-installation script:
+Once the installation is complete, reboot your system and remove the USB drive:
+
+```bash
+# Exit the installation environment and reboot
+reboot
+```
+
+When the system restarts, remove the USB drive during the boot process so that your computer boots from the newly installed system.
+
+### 6. After Rebooting
+
+Log in with your user credentials (the username and password you created during installation) and run the post-installation script:
 
 ```bash
 # Connect to WiFi first
