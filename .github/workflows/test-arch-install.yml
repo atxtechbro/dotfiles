@@ -1,10 +1,6 @@
 name: Test Arch Linux Installation
 
 on:
-  push:
-    branches: [ feature/arch-minimal, feature/combined-setup ]
-    paths:
-      - 'arch-install.sh'
   pull_request:
     branches: [ main ]
     paths:
