@@ -1,5 +1,6 @@
 #!/bin/bash
 # Dotfiles Automated Setup Script
+# Universal configuration for all environments
 
 set -e  # Exit on error
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Arch Linux Post-Installation Setup for ThinkPad T400
-# Minimal terminal-only configuration
+# OS-specific configuration (extends universal dotfiles setup)
 
 set -e  # Exit on error
 
