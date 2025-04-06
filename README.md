@@ -26,14 +26,6 @@ sudo pacman -S --needed git github-cli jq tmux curl wget
 ```
 </details>
 
-<details>
-<summary><b>Fedora/RHEL</b></summary>
-
-```bash
-sudo dnf update
-sudo dnf install -y git gh jq tmux curl wget
-```
-</details>
 
 <details>
 <summary><b>macOS</b></summary>
