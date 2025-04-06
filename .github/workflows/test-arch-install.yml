@@ -1,16 +1,14 @@
-name: Test Arch Linux Post-Installation Setup
+name: Test Arch Linux Installation
 
 on:
   push:
     branches: [ feature/arch-minimal, feature/combined-setup ]
     paths:
       - 'arch-install.sh'
-      - 'arch-post-install.sh'
   pull_request:
     branches: [ main ]
     paths:
       - 'arch-install.sh'
-      - 'arch-post-install.sh'
   workflow_dispatch:
 
 jobs:
@@ -25,7 +23,6 @@ jobs:
       - name: Lint installation scripts
         run: |
           shellcheck arch-install.sh
-          shellcheck arch-post-install.sh
 
   test-in-container:
     runs-on: ubuntu-latest
@@ -42,20 +39,8 @@ jobs:
       - name: Make scripts executable
         run: |
           chmod +x arch-install.sh
-          chmod +x arch-post-install.sh
       
-      - name: Validate arch-post-install.sh
+      - name: Validate arch-install.sh
         run: |
           # We can't run the full install script in CI, but we can check syntax
           bash -n arch-install.sh
-          
-          # For post-install, we can do a dry run by modifying the script temporarily
-          sed -i 's/sudo pacman -S/echo "Would install:"/g' arch-post-install.sh
-          sed -i 's/sudo systemctl/echo "Would run systemctl:"/g' arch-post-install.sh
-          sed -i 's/sudo sed/echo "Would modify:"/g' arch-post-install.sh
-          sed -i 's/amixer/echo "Would run amixer:"/g' arch-post-install.sh
-          sed -i 's/sudo ufw/echo "Would run ufw:"/g' arch-post-install.sh
-          sed -i 's/sudo tee/echo "Would write to:"/g' arch-post-install.sh
-          
-          # Run the modified script
-          ./arch-post-install.sh
