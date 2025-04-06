@@ -4,9 +4,29 @@ A collection of configuration files for a consistent development environment acr
 
 ## Quick Setup
 
-### Step 1: Install Essential Packages
+### Set Up Your Dotfiles
 
-First, install the essential packages for your operating system:
+Get started with your personalized environment:
+
+```bash
+# Clone the repository and run setup
+git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+./setup.sh
+```
+
+The setup script will:
+- Create all necessary symlinks
+- Set up your secrets file from the template
+- Apply configurations immediately
+
+That's it! Any changes you make to files in this repository will be reflected in your environment.
+
+> **Note:** The setup script requires `git` and `curl`. Most systems have these installed by default, but if you encounter errors, see the package installation section below.
+
+### Recommended Packages
+
+These packages enhance your development experience but are not required for the dotfiles setup:
 
 <details>
 <summary><b>Ubuntu/Debian</b></summary>
@@ -26,7 +46,6 @@ sudo pacman -S --needed git github-cli jq tmux curl wget
 ```
 </details>
 
-
 <details>
 <summary><b>macOS</b></summary>
 
@@ -38,27 +57,6 @@ sudo pacman -S --needed git github-cli jq tmux curl wget
 brew install git gh jq tmux curl wget
 ```
 </details>
-
-### Step 2: Set Up Dotfiles
-
-After installing the essential packages, set up your dotfiles:
-
-```bash
-# Option 1: Run directly from GitHub
-curl -fsSL https://raw.githubusercontent.com/atxtechbro/dotfiles/main/setup.sh | bash
-
-# Option 2: Clone first, then run setup
-git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-./setup.sh
-```
-
-The setup script will:
-- Create all necessary symlinks
-- Set up your secrets file from the template
-- Apply configurations immediately
-
-That's it! Any changes you make to files in this repository will be reflected in your environment.
 
 ## Applications
 
