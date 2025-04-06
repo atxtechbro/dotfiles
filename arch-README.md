@@ -26,14 +26,14 @@ Verify connection:
 ping -c 3 google.com
 ```
 
-### 3. Download the Installation Script
+### 2. Download the Installation Script
 
 ```bash
 # Download the installation script using curl
 curl -L https://raw.githubusercontent.com/atxtechbro/dotfiles/feature/combined-setup/arch-install.sh -o /tmp/arch-install.sh
 ```
 
-### 4. Run the Installation Script
+### 3. Run the Installation Script
 
 ```bash
 bash /tmp/arch-install.sh
@@ -96,7 +96,7 @@ The installation script will guide you through the process. Here's what to expec
 
 Follow the prompts to complete the installation. When the installation is finished, you'll see a message indicating it's complete.
 
-### 5. Reboot into Your New System
+### 4. Reboot into Your New System
 
 Once the installation is complete, reboot your system and remove the USB drive:
 
@@ -107,7 +107,7 @@ reboot
 
 When the system restarts, remove the USB drive during the boot process so that your computer boots from the newly installed system.
 
-### 6. After Rebooting
+### 5. After Rebooting
 
 Log in with your user credentials (the username and password you created during installation). Now we'll pull in your personalized environment:
 
