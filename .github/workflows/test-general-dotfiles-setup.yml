@@ -1,0 +1,84 @@
+name: Test General Dotfiles Setup (Pre-OS Installation)
+
+on:
+  push:
+    branches: [ feature/auto-setup, feature/combined-setup ]
+    paths:
+      - 'setup.sh'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'setup.sh'
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install shellcheck
+        run: sudo apt-get install -y shellcheck
+      
+      - name: Lint setup script
+        run: shellcheck setup.sh
+
+  test-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Make script executable
+        run: chmod +x setup.sh
+      
+      - name: Validate setup script
+        run: |
+          # Create a modified version of the script for testing
+          cp setup.sh setup-test.sh
+          
+          # Modify the script to avoid actual installations and system changes
+          sed -i 's/sudo apt/echo "Would run apt:"/g' setup-test.sh
+          sed -i 's/sudo pacman/echo "Would run pacman:"/g' setup-test.sh
+          sed -i 's/sudo dnf/echo "Would run dnf:"/g' setup-test.sh
+          sed -i 's/brew install/echo "Would brew install:"/g' setup-test.sh
+          
+          # Run the modified script
+          bash -x setup-test.sh
+          
+          # Check exit code
+          if [ $? -eq 0 ]; then
+            echo "✅ Setup script validation passed"
+          else
+            echo "❌ Setup script validation failed"
+            exit 1
+          fi
+
+  test-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Make script executable
+        run: chmod +x setup.sh
+      
+      - name: Validate setup script
+        run: |
+          # Create a modified version of the script for testing
+          cp setup.sh setup-test.sh
+          
+          # Modify the script to avoid actual installations and system changes
+          sed -i '' 's/sudo apt/echo "Would run apt:"/g' setup-test.sh
+          sed -i '' 's/sudo pacman/echo "Would run pacman:"/g' setup-test.sh
+          sed -i '' 's/sudo dnf/echo "Would run dnf:"/g' setup-test.sh
+          sed -i '' 's/brew install/echo "Would brew install:"/g' setup-test.sh
+          
+          # Run the modified script
+          bash -x setup-test.sh
+          
+          # Check exit code
+          if [ $? -eq 0 ]; then
+            echo "✅ Setup script validation passed"
+          else
+            echo "❌ Setup script validation failed"
+            exit 1
+          fi

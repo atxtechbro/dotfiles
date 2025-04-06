@@ -1,8 +1,8 @@
-name: Test Arch Linux Installation Scripts
+name: Test Arch Linux Post-Installation Setup
 
 on:
   push:
-    branches: [ feature/arch-minimal ]
+    branches: [ feature/arch-minimal, feature/combined-setup ]
     paths:
       - 'arch-install.sh'
       - 'arch-post-install.sh'
