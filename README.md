@@ -4,25 +4,59 @@ A collection of configuration files for a consistent development environment acr
 
 ## Quick Setup
 
-For a fully automated setup, run:
+### Set Up Your Dotfiles
+
+Get started with your personalized environment:
 
 ```bash
-# Option 1: Run directly from GitHub
-curl -fsSL https://raw.githubusercontent.com/atxtechbro/dotfiles/main/setup.sh | bash
-
-# Option 2: Clone first, then run setup
+# Clone the repository and run setup
 git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ./setup.sh
 ```
 
 The setup script will:
-- Install essential packages based on your OS
 - Create all necessary symlinks
 - Set up your secrets file from the template
 - Apply configurations immediately
 
-That's it! Any changes you make to files in this repository will be reflected in your environment.
+The script will NOT install packages for you or make assumptions about your package manager.
+
+> **Note:** The setup script requires `git` and `curl`. Most systems have these installed by default, but if you encounter errors, see the package installation section below.
+
+### Recommended Packages
+
+These packages enhance your development experience but are not required for the dotfiles setup:
+
+<details>
+<summary><b>Ubuntu/Debian</b></summary>
+
+```bash
+sudo apt update
+sudo apt install -y git gh jq tmux curl wget
+```
+</details>
+
+<details>
+<summary><b>Arch Linux</b></summary>
+
+```bash
+sudo pacman -Syu
+sudo pacman -S --needed git github-cli jq tmux curl wget
+```
+</details>
+
+<details>
+<summary><b>macOS</b></summary>
+
+```bash
+# Install Homebrew if not already installed
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install essential packages
+brew install git gh jq tmux curl wget
+```
+</details>
 
 ## Applications
 

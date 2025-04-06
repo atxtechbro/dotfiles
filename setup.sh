@@ -13,7 +13,33 @@ NC='\033[0m' # No Color
 
 echo -e "${GREEN}Starting dotfiles setup...${NC}"
 
-# Determine OS type
+# Check for essential tools
+check_command() {
+    if ! command -v "$1" &> /dev/null; then
+        echo -e "${RED}Required command '$1' not found.${NC}"
+        echo -e "${YELLOW}Please install it using your package manager before running this script.${NC}"
+        echo -e "${BLUE}See the README.md for OS-specific installation instructions.${NC}"
+        return 1
+    fi
+    return 0
+}
+
+# Check for essential commands
+essential_commands=("git" "curl")
+missing_commands=false
+
+for cmd in "${essential_commands[@]}"; do
+    if ! check_command "$cmd"; then
+        missing_commands=true
+    fi
+done
+
+if [[ "$missing_commands" == true ]]; then
+    echo -e "${RED}Please install the missing commands and run this script again.${NC}"
+    exit 1
+fi
+
+# Determine OS type (for informational purposes only)
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     OS_TYPE="Linux"
     if grep -q Microsoft /proc/version 2>/dev/null; then
@@ -26,36 +52,12 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     OS_TYPE="macOS"
     IS_WSL=false
 else
-    echo -e "${RED}Unsupported OS: $OSTYPE${NC}"
-    exit 1
+    echo -e "${YELLOW}Unrecognized OS: $OSTYPE. Proceeding anyway...${NC}"
+    OS_TYPE="Unknown"
+    IS_WSL=false
 fi
 
 echo -e "${YELLOW}Detected OS: $OS_TYPE${NC}"
-
-# Install essential packages based on OS
-if [[ "$OS_TYPE" == "Linux" ]]; then
-    if command -v apt-get &> /dev/null; then
-        echo -e "${YELLOW}Installing essential packages with apt...${NC}"
-        sudo apt update
-        sudo apt install -y git gh jq tmux curl wget
-    elif command -v pacman &> /dev/null; then
-        echo -e "${YELLOW}Installing essential packages with pacman...${NC}"
-        sudo pacman -S --needed --noconfirm git github-cli jq tmux curl wget
-    elif command -v dnf &> /dev/null; then
-        echo -e "${YELLOW}Installing essential packages with dnf...${NC}"
-        sudo dnf install -y git gh jq tmux curl wget
-    else
-        echo -e "${RED}Unsupported package manager. Please install git, gh, jq, tmux, curl, and wget manually.${NC}"
-    fi
-elif [[ "$OS_TYPE" == "macOS" ]]; then
-    if command -v brew &> /dev/null; then
-        echo -e "${YELLOW}Installing essential packages with Homebrew...${NC}"
-        brew install git gh jq tmux curl wget
-    else
-        echo -e "${RED}Homebrew not found. Please install Homebrew first: https://brew.sh${NC}"
-        exit 1
-    fi
-fi
 
 # Handle WSL-specific setup
 if [[ "$IS_WSL" == true ]]; then
@@ -80,9 +82,6 @@ fi
 # Create necessary directories
 echo -e "${YELLOW}Creating config directories...${NC}"
 mkdir -p ~/.config/nvim
-
-# Add a note about Neovim installation
-echo -e "${BLUE}Note: Neovim should be installed from source as per README instructions${NC}"
 
 # Create symlinks
 echo -e "${YELLOW}Creating symlinks for configuration files...${NC}"
