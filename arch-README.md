@@ -123,7 +123,7 @@ station wlan0 connect <your_wifi_name>
 exit
 
 # Download and run the setup script directly
-curl -fsSL https://raw.githubusercontent.com/atxtechbro/dotfiles/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/atxtechbro/dotfiles/feature/combined-setup/setup.sh | bash
 
 # After setup completes, your familiar environment will be ready with all your personal configurations
 ```
