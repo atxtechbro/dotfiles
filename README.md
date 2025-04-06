@@ -1,35 +1,62 @@
 # Dotfiles
 
-## Essential Packages
+A collection of configuration files for a consistent development environment across different machines.
 
-Install the core command-line tools needed for this setup:
+## Quick Setup
+
+### Set Up Your Dotfiles
+
+Get started with your personalized environment:
 
 ```bash
-# Core development tools
+# Clone the repository and run setup
+git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+./setup.sh
+```
+
+The setup script will:
+- Create all necessary symlinks
+- Set up your secrets file from the template
+- Apply configurations immediately
+
+The script will NOT install packages for you or make assumptions about your package manager.
+
+> **Note:** The setup script requires `git` and `curl`. Most systems have these installed by default, but if you encounter errors, see the package installation section below.
+
+### Recommended Packages
+
+These packages enhance your development experience but are not required for the dotfiles setup:
+
+<details>
+<summary><b>Ubuntu/Debian</b></summary>
+
+```bash
 sudo apt update
-sudo apt install -y git gh jq
+sudo apt install -y git gh jq tmux curl wget
 ```
+</details>
 
-## Manual Setup
+<details>
+<summary><b>Arch Linux</b></summary>
 
 ```bash
-# Link dotfiles directory (WSL users)
-ln -sf /mnt/c/dotfiles ~/dotfiles
-
-# Create symlinks for configuration files
-mkdir -p ~/.config/nvim
-ln -sf ~/dotfiles/nvim/init.lua ~/.config/nvim/init.lua
-ln -sf ~/dotfiles/.bashrc ~/.bashrc
-ln -sf ~/dotfiles/.bash_aliases ~/.bash_aliases
-ln -sf ~/dotfiles/.bash_exports ~/.bash_exports
-ln -sf ~/dotfiles/.gitconfig ~/.gitconfig
-ln -sf ~/dotfiles/.tmux.conf ~/.tmux.conf
-
-# Apply changes
-source ~/.bashrc
+sudo pacman -Syu
+sudo pacman -S --needed git github-cli jq tmux curl wget
 ```
+</details>
 
-That's it! Any changes you make to files in this repository will be reflected in your environment.
+<details>
+<summary><b>macOS</b></summary>
+
+```bash
+# Install Homebrew if not already installed
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install essential packages
+brew install git gh jq tmux curl wget
+```
+</details>
 
 ## Applications
 
