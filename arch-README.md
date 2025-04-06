@@ -30,13 +30,11 @@ ping -c 3 archlinux.org
 ```bash
 # Download the installation script using curl
 curl -L https://raw.githubusercontent.com/atxtechbro/dotfiles/feature/arch-minimal/arch-install.sh -o /tmp/arch-install.sh
-chmod +x /tmp/arch-install.sh
 ```
 
 ### 4. Run the Installation Script
 
 ```bash
-cd /tmp
 cd /tmp
 ./arch-install.sh
 ```
@@ -122,7 +120,6 @@ exit
 
 # Download the post-installation script
 curl -L https://raw.githubusercontent.com/atxtechbro/dotfiles/feature/arch-minimal/arch-post-install.sh -o ~/arch-post-install.sh
-chmod +x ~/arch-post-install.sh
 
 # Run the post-installation script
 ./arch-post-install.sh
