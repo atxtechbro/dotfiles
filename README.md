@@ -1,16 +1,40 @@
 # Dotfiles
 
+A collection of configuration files for a consistent development environment across different machines.
+
+## Quick Setup
+
+For a fully automated setup, run:
+
+```bash
+# Option 1: Run directly from GitHub
+curl -fsSL https://raw.githubusercontent.com/atxtechbro/dotfiles/main/setup.sh | bash
+
+# Option 2: Clone first, then run setup
+git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+./setup.sh
+```
+
+The setup script will:
+- Install essential packages based on your OS
+- Create all necessary symlinks
+- Set up your secrets file from the template
+- Apply configurations immediately
+
 ## Essential Packages
 
-Install the core command-line tools needed for this setup:
+Core command-line tools needed for this setup:
 
 ```bash
 # Core development tools
 sudo apt update
-sudo apt install -y git gh jq
+sudo apt install -y git gh jq tmux neovim curl wget
 ```
 
 ## Manual Setup
+
+If you prefer to set things up manually:
 
 ```bash
 # Link dotfiles directory (WSL users)
