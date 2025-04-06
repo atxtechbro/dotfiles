@@ -5,9 +5,7 @@ This guide provides instructions for installing a minimal, terminal-only Arch Li
 ## Prerequisites
 
 This guide assumes you have:
-- Downloaded the Arch Linux ISO image
-- Created a bootable USB drive with the ISO
-- Booted your ThinkPad T400 from the USB drive (press F12 during startup to access the boot menu)
+- Booted your ThinkPad T400 from the USB drive (press F12 during startup to access the boot menu) with Arch Linux ISO image
 - Basic familiarity with Linux command line
 
 ## Installation Process
