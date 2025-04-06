@@ -30,7 +30,7 @@ ping -c 3 google.com
 
 ```bash
 # Download the installation script using curl
-curl -L https://raw.githubusercontent.com/atxtechbro/dotfiles/feature/arch-minimal/arch-install.sh -o /tmp/arch-install.sh
+curl -L https://raw.githubusercontent.com/atxtechbro/dotfiles/feature/combined-setup/arch-install.sh -o /tmp/arch-install.sh
 ```
 
 ### 4. Run the Installation Script
