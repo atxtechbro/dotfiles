@@ -4,7 +4,52 @@ A collection of configuration files for a consistent development environment acr
 
 ## Quick Setup
 
-For a fully automated setup, run:
+### Step 1: Install Essential Packages
+
+First, install the essential packages for your operating system:
+
+<details>
+<summary><b>Ubuntu/Debian</b></summary>
+
+```bash
+sudo apt update
+sudo apt install -y git gh jq tmux curl wget
+```
+</details>
+
+<details>
+<summary><b>Arch Linux</b></summary>
+
+```bash
+sudo pacman -Syu
+sudo pacman -S --needed git github-cli jq tmux curl wget
+```
+</details>
+
+<details>
+<summary><b>Fedora/RHEL</b></summary>
+
+```bash
+sudo dnf update
+sudo dnf install -y git gh jq tmux curl wget
+```
+</details>
+
+<details>
+<summary><b>macOS</b></summary>
+
+```bash
+# Install Homebrew if not already installed
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install essential packages
+brew install git gh jq tmux curl wget
+```
+</details>
+
+### Step 2: Set Up Dotfiles
+
+After installing the essential packages, set up your dotfiles:
 
 ```bash
 # Option 1: Run directly from GitHub
@@ -17,7 +62,6 @@ cd ~/dotfiles
 ```
 
 The setup script will:
-- Install essential packages based on your OS
 - Create all necessary symlinks
 - Set up your secrets file from the template
 - Apply configurations immediately
