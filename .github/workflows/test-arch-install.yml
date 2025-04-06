@@ -52,8 +52,10 @@ jobs:
           # For post-install, we can do a dry run by modifying the script temporarily
           sed -i 's/sudo pacman -S/echo "Would install:"/g' arch-post-install.sh
           sed -i 's/sudo systemctl/echo "Would run systemctl:"/g' arch-post-install.sh
+          sed -i 's/sudo sed/echo "Would modify:"/g' arch-post-install.sh
           sed -i 's/amixer/echo "Would run amixer:"/g' arch-post-install.sh
           sed -i 's/sudo ufw/echo "Would run ufw:"/g' arch-post-install.sh
+          sed -i 's/sudo tee/echo "Would write to:"/g' arch-post-install.sh
           
           # Run the modified script
           ./arch-post-install.sh
