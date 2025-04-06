@@ -49,14 +49,14 @@ log "Starting disk setup..."
 echo -e "${YELLOW}Available disks:${NC}"
 lsblk
 echo ""
-read -p "Enter the disk to install Arch Linux (e.g., /dev/sda): " DISK
+read -r -p "Enter the disk to install Arch Linux (e.g., /dev/sda): " DISK
 if [ ! -b "$DISK" ]; then
     error "Invalid disk: $DISK"
 fi
 
 # Confirm disk selection
 echo -e "${RED}WARNING: This will erase all data on $DISK${NC}"
-read -p "Are you sure you want to continue? (y/N): " CONFIRM
+read -r -p "Are you sure you want to continue? (y/N): " CONFIRM
 if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
     error "Installation aborted by user"
 fi
@@ -140,7 +140,7 @@ locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
 # Network configuration
-read -p "Enter hostname: " HOSTNAME
+read -r -p "Enter hostname: " HOSTNAME
 echo "$HOSTNAME" > /etc/hostname
 cat > /etc/hosts << END
 127.0.0.1   localhost
@@ -153,7 +153,7 @@ echo "Setting root password..."
 passwd
 
 # Create a user
-read -p "Enter username: " USERNAME
+read -r -p "Enter username: " USERNAME
 useradd -m -G wheel "$USERNAME"
 echo "Setting password for $USERNAME..."
 passwd "$USERNAME"
@@ -173,7 +173,7 @@ if [ -d "/sys/firmware/efi" ]; then
 else
     # BIOS boot
     pacman -S --noconfirm grub
-    read -p "Enter disk for GRUB (e.g., /dev/sda): " DISK
+    read -r -p "Enter disk for GRUB (e.g., /dev/sda): " DISK
     grub-install --target=i386-pc "$DISK"
 fi
 grub-mkconfig -o /boot/grub/grub.cfg
