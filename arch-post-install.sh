@@ -10,35 +10,26 @@ YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${GREEN}Starting post-installation setup...${NC}"
+echo -e "${GREEN}Starting Arch Linux post-installation setup...${NC}"
 
-# Install git first to clone dotfiles repository
-echo -e "${YELLOW}Installing git...${NC}"
-sudo pacman -S --needed --noconfirm git
-
-# Clone dotfiles repository if it doesn't exist
-if [ ! -d ~/dotfiles ]; then
-    echo -e "${YELLOW}Cloning dotfiles repository...${NC}"
-    git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
-    echo -e "${GREEN}Dotfiles repository cloned successfully!${NC}"
-else
-    echo -e "${BLUE}Dotfiles repository already exists, updating...${NC}"
-    cd ~/dotfiles
-    git pull
+# Install git first if it's not already installed
+if ! command -v git &> /dev/null; then
+    echo -e "${YELLOW}Installing git...${NC}"
+    sudo pacman -S --needed --noconfirm git
 fi
 
-# Install terminal-focused packages
-echo -e "${YELLOW}Installing terminal utilities...${NC}"
+# First run the universal setup script
+echo -e "${YELLOW}Running universal setup script...${NC}"
+# Make sure we're in the dotfiles directory
+cd "$(dirname "$0")"
+./setup.sh
+
+# Install additional Arch-specific packages
+echo -e "${YELLOW}Installing additional Arch-specific packages...${NC}"
 sudo pacman -S --needed --noconfirm \
-    tmux \
-    neovim \
     bash-completion \
-    wget \
-    curl \
     zip \
     unzip \
-    htop \
-    jq \
     openssh \
     rsync \
     tree \
@@ -47,25 +38,6 @@ sudo pacman -S --needed --noconfirm \
     fd \
     ncdu \
     ranger
-
-# Setup dotfiles
-echo -e "${YELLOW}Setting up dotfiles...${NC}"
-mkdir -p ~/.config/nvim
-
-# Create symlinks
-ln -sf ~/dotfiles/nvim/init.lua ~/.config/nvim/init.lua
-ln -sf ~/dotfiles/.bashrc ~/.bashrc
-ln -sf ~/dotfiles/.bash_aliases ~/.bash_aliases
-ln -sf ~/dotfiles/.bash_exports ~/.bash_exports
-ln -sf ~/dotfiles/.gitconfig ~/.gitconfig
-ln -sf ~/dotfiles/.tmux.conf ~/.tmux.conf
-
-# Create secrets file from template
-if [ -f ~/dotfiles/.bash_secrets.example ] && [ ! -f ~/.bash_secrets ]; then
-    cp ~/dotfiles/.bash_secrets.example ~/.bash_secrets
-    chmod 600 ~/.bash_secrets
-    echo -e "${YELLOW}Created ~/.bash_secrets from template. Edit it to add your secrets.${NC}"
-fi
 
 # ThinkPad T400 specific optimizations
 echo -e "${YELLOW}Applying ThinkPad T400 optimizations...${NC}"
@@ -97,11 +69,5 @@ sudo ufw default allow outgoing
 sudo ufw allow ssh
 sudo ufw enable
 
-# Apply bash configuration immediately
-echo -e "${YELLOW}Applying bash configuration...${NC}"
-# shellcheck disable=SC1090
-source ~/.bashrc
-
-echo -e "${GREEN}Post-installation setup complete!${NC}"
-echo -e "${YELLOW}Your dotfiles have been set up and configured.${NC}"
-echo -e "${BLUE}Enjoy your new Arch Linux environment!${NC}"
+echo -e "${GREEN}Arch Linux post-installation setup complete!${NC}"
+echo -e "${BLUE}Enjoy your optimized ThinkPad T400 environment!${NC}"
