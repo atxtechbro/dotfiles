@@ -20,7 +20,7 @@ The setup script will:
 - Set up your secrets file from the template
 - Apply configurations immediately
 
-That's it! Any changes you make to files in this repository will be reflected in your environment.
+The script will NOT install packages for you or make assumptions about your package manager.
 
 > **Note:** The setup script requires `git` and `curl`. Most systems have these installed by default, but if you encounter errors, see the package installation section below.
 
