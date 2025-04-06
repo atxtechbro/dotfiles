@@ -36,8 +36,7 @@ curl -L https://raw.githubusercontent.com/atxtechbro/dotfiles/feature/combined-s
 ### 4. Run the Installation Script
 
 ```bash
-cd /tmp
-./arch-install.sh
+bash /tmp/arch-install.sh
 ```
 
 The installation script will guide you through the process. Here's what to expect:
