@@ -85,6 +85,14 @@ The installation script will guide you through the process. Here's what to expec
    - You'll be asked to enter this password twice
    - This is the password you'll use for daily logins and when using `sudo` commands
    - This is separate from the root password and should be different for security
+   
+   e. **GRUB Disk Selection**: For BIOS systems (like the ThinkPad T400), you'll be asked to select the disk again
+   ```
+   Enter disk for GRUB (e.g., /dev/sda):
+   ```
+   - Enter the same disk you selected earlier (e.g., `/dev/sda`)
+   - This second prompt is specifically for installing the bootloader to the disk's Master Boot Record (MBR)
+   - This step is only needed for BIOS/Legacy boot systems (not for UEFI systems)
 
 3. **Installation**: The script will install the base system and configure it for your ThinkPad T400
 
