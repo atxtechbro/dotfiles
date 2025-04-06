@@ -188,12 +188,23 @@ sudo systemctl start dhcpcd
 sudo systemctl enable dhcpcd
 ```
 
-### Boot Issues
-If the system fails to boot:
-1. Boot from the installation media
-2. Mount your partitions: `mount /dev/sdaX /mnt`
-3. Chroot into the system: `arch-chroot /mnt`
-4. Reinstall the bootloader or fix configuration issues
+### Git and Dotfiles Issues
+If you encounter permission issues with the dotfiles repository:
+```bash
+# Mark the dotfiles directory as safe
+git config --global --add safe.directory ~/dotfiles
+
+# Reload your bash configuration
+source ~/.bashrc
+```
+
+### Tmux Configuration Issues
+If your tmux configuration doesn't load properly:
+```bash
+# Kill the tmux server and restart
+tmux kill-server
+tmux
+```
 
 ## Resources
 
