@@ -122,12 +122,10 @@ station wlan0 connect <your_wifi_name>
 # Enter your WiFi password when prompted (or press Enter if network is open)
 exit
 
-# Clone dotfiles repository and run setup script
-git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-./setup.sh
+# Download and run the setup script directly
+curl -fsSL https://raw.githubusercontent.com/atxtechbro/dotfiles/main/setup.sh | bash
 
-# Apply ThinkPad T400 specific optimizations
+# After setup completes, your dotfiles will be configured and ready to use
 ```
 
 ## ThinkPad T400 Specific Optimizations
