@@ -119,7 +119,7 @@ station wlan0 connect <your_wifi_name>
 exit
 
 # Clone the dotfiles repository and run setup
-git clone -b feature/combined-setup https://github.com/atxtechbro/dotfiles.git ~/dotfiles
+sudo git clone -b feature/combined-setup https://github.com/atxtechbro/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ./setup.sh
 
