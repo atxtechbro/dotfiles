@@ -113,7 +113,7 @@ Log in with your user credentials (the username and password you created during 
 
 ```bash
 # Connect to WiFi first
-sudo iwctl
+iwctl
 station wlan0 connect <your_wifi_name>
 # Enter your WiFi password when prompted (or press Enter if network is open)
 exit
