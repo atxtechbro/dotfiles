@@ -15,6 +15,7 @@ See [VIBE.md](./VIBE.md) for the Vibe Coding Manifesto that guides this reposito
 - IMPORTANT: When creating PR descriptions, use actual line breaks instead of `\n\n` escape sequences
 - Example: `gh pr create --title "Title" --body "First line.` (press Enter) `Second line."` ✓
 - NOT: `gh pr create --title "Title" --body "First line.\n\nSecond line."` ✗
+- Keep PR descriptions to 34 lines or less when using the GitHub CLI to ensure they display properly in all contexts
 
 ## Branching Strategy
 - When making discrete changes, always branch from main unless specifically asked otherwise
