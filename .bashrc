@@ -161,20 +161,27 @@ DOTFILES_DIR="$HOME/dotfiles"
 # Add your scripts directory to the PATH
 export PATH="$DOTFILES_DIR/bin:$PATH"
 
-# Only change to dotfiles directory when NOT in a tmux session
-if [ -z "$TMUX" ]; then
-    cd "$DOTFILES_DIR"
-fi
+# Skip auto-tmux and directory change for SSH connections
+if [[ -n "$SSH_CONNECTION" ]]; then
+    # When connecting via SSH, don't auto-change directory or start tmux
+    # This prevents recursive loops when connecting to localhost
+    :
+else
+    # Only change to dotfiles directory when NOT in a tmux session
+    if [ -z "$TMUX" ]; then
+        cd "$DOTFILES_DIR"
+    fi
 
-# Source Amazon Q environment if installed
-if [ -f "$HOME/.local/bin/env" ]; then
-    . "$HOME/.local/bin/env"
-fi
+    # Source Amazon Q environment if installed
+    if [ -f "$HOME/.local/bin/env" ]; then
+        . "$HOME/.local/bin/env"
+    fi
 
-# Auto-start tmux if not already in a tmux session and it's an interactive shell
-if [ -z "$TMUX" ] && [[ "$-" == *i* ]] && command -v tmux >/dev/null 2>&1; then
-    # Start a new tmux session or attach to an existing one
-    exec tmux new-session -A -s main
+    # Auto-start tmux if not already in a tmux session and it's an interactive shell
+    if [ -z "$TMUX" ] && [[ "$-" == *i* ]] && command -v tmux >/dev/null 2>&1; then
+        # Start a new tmux session or attach to an existing one
+        exec tmux new-session -A -s main
+    fi
 fi
 
 # Amazon Q post block. Keep at the bottom of this file.
