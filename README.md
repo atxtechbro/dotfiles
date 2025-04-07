@@ -192,3 +192,6 @@ tmux-pr
 ```
 
 This is useful when testing different tmux configurations to see which one you prefer. You can quickly toggle between them like at the optometrist ("which is better, 1 or 2?").
+
+## WSL Tips
+- **Distraction-Free Mode**: Press `Alt+Enter` in Windows Terminal to toggle full-screen and hide the taskbar.
