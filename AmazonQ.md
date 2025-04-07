@@ -17,6 +17,18 @@ See [VIBE.md](./VIBE.md) for the Vibe Coding Manifesto that guides this reposito
 - NOT: `gh pr create --title "Title" --body "First line.\n\nSecond line."` ✗
 - Keep PR descriptions to 34 lines or less when using the GitHub CLI to ensure they display properly in all contexts
 
+## GitHub Issues Formatting
+- Same rule applies for GitHub issues - use actual line breaks, not escape sequences
+- Example: `gh issue create --title "Title" --body "First line.` (press Enter) `Second line."` ✓
+- NOT: `gh issue create --title "Title" --body "First line.\n\nSecond line."` ✗
+- Keep issue descriptions to 21 lines or less (or use Fibonacci numbers: 1, 2, 3, 5, 8, 13, 21)
+- Prefer concise issues with less context over verbose ones
+- Treat GitHub issues as discussion points and suggestions, not strict mandates
+
+## Quick AmazonQ.md Updates
+- For quick updates to this file, use the standardized branch name: `docs/update-amazonq-guidance`
+- Command: `git checkout main && git pull && git checkout -b docs/update-amazonq-guidance`
+
 ## Branching Strategy
 - When making discrete changes, always branch from main unless specifically asked otherwise
 - Use `git checkout main && git pull && git checkout -b type/description` to ensure clean branches
