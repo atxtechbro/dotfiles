@@ -108,8 +108,8 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 
-# Git branch with last updated date
-alias git-recent='git for-each-ref --sort=-committerdate refs/heads/ --format="%(committerdate:short) %(refname:short)" | head -5'
+# Git branch with human-friendly last updated time
+alias git-recent='git for-each-ref --sort=-committerdate refs/heads/ --format="%(refname:short)|%(committerdate:format:%a %I:%M%p, %b %d)" | tr "[:upper:]" "[:lower:]" | column -t -s "|" | head -5'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
