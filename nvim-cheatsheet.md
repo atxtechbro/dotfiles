@@ -16,6 +16,7 @@ A quick reference guide for the Neovim configuration in this dotfiles repository
 |------------|-------------|
 | `gg` | Go to top of file |
 | `G` | Go to bottom of file |
+| `:42` or `42G` | Go to line 42 |
 | `0` | Go to beginning of line |
 | `$` | Go to end of line |
 | `w` | Move forward one word |
