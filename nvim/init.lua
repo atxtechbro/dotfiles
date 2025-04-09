@@ -452,3 +452,10 @@ pcall(function()
 end)
 
 print("Neovim configuration loaded")
+
+-- Add mapping to copy current filename to clipboard
+vim.keymap.set('n', '<leader>cf', function()
+  local filename = vim.fn.expand('%:t')
+  vim.fn.setreg('+', filename)
+  print('Filename copied to clipboard: ' .. filename)
+end, { desc = 'Copy filename to clipboard' })

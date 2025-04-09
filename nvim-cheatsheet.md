@@ -9,6 +9,7 @@ A quick reference guide for the Neovim configuration in this dotfiles repository
 | `<Space>` | Leader key |
 | `jk` | Exit insert mode (alternative to `<Esc>`) |
 | `<leader>da` | Delete all content in current buffer |
+| `<leader>cf` | Copy current filename to clipboard |
 
 ## Navigation
 
