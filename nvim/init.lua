@@ -453,9 +453,17 @@ end)
 
 print("Neovim configuration loaded")
 
--- Add mapping to copy current filename to clipboard
+-- Add mappings to copy filename or full path to clipboard
+-- <leader>cf - Copy just the filename
 vim.keymap.set('n', '<leader>cf', function()
   local filename = vim.fn.expand('%:t')
   vim.fn.setreg('+', filename)
   print('Filename copied to clipboard: ' .. filename)
 end, { desc = 'Copy filename to clipboard' })
+
+-- <leader>cp - Copy full path
+vim.keymap.set('n', '<leader>cp', function()
+  local fullpath = vim.fn.expand('%:p')
+  vim.fn.setreg('+', fullpath)
+  print('Full path copied to clipboard: ' .. fullpath)
+end, { desc = 'Copy full path to clipboard' })
