@@ -13,7 +13,7 @@ alias prv='gh pr view --json number,title,state,url,author,createdAt,updatedAt,m
 # PR stats with detailed information including additions, deletions, and files
 alias pr-stats='gh pr view --json additions,deletions,changedFiles,files,title,state,url'
 alias pr-stats-full='gh pr view --json additions,deletions,changedFiles,files,title,author,state,createdAt,updatedAt,url,assignees,body,closed,closedAt,comments,commits,headRefName,headRefOid,isDraft,labels,mergeStateStatus,mergeable,mergedAt,mergedBy,reviewDecision,reviews'
-alias pr-commits='gh pr view --json commits,title,url,number --template "{{.title}} (#{{.number}})\n{{.url}}\n\nCommits:\n{{range .commits}}• {{.messageHeadline}}\n{{end}}"'
+alias pr-commits='gh pr view --json commits,title,url,number --template "{{bold \"PR: \"}}{{.title}} ({{cyan \"#\"}}{{.number}})\n{{cyan .url}}\n\n{{bold \"Commits:\"}}{{range .commits}}\n  • {{.messageHeadline}}{{end}}\n"'
 
 # Tmux config comparison aliases - toggle between branches like at the optometrist
 alias tmux-main="git checkout main && tmux source-file ~/.tmux.conf && echo 'Switched to main branch config'"
