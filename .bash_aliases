@@ -8,7 +8,7 @@ alias gha-fails='get-latest-failed-gha-logs.sh'
 alias src='source ~/.bashrc'
 
 # GitHub PR metadata quick view
-alias prv='gh pr view --json number,title,state,url,author,createdAt,updatedAt,mergeable,reviewDecision --jq '"'"'.{number,title,state,url,author:.author.login,created:.createdAt,updated:.updatedAt,mergeable,reviewDecision}'"'"''
+alias prv='gh pr view --json number,title,state,url,author,createdAt,updatedAt,mergeable,reviewDecision'
 
 # Tmux config comparison aliases - toggle between branches like at the optometrist
 alias tmux-main="git checkout main && tmux source-file ~/.tmux.conf && echo 'Switched to main branch config'"
