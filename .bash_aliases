@@ -4,6 +4,9 @@ alias clip='xclip -selection clipboard'
 alias git-tree="git ls-tree -r HEAD --name-only | tree --fromfile"
 alias gha-fails='get-latest-failed-gha-logs.sh'
 
+# Source bashrc quickly with a short alias
+alias src='source ~/.bashrc'
+
 # Tmux config comparison aliases - toggle between branches like at the optometrist
 alias tmux-main="git checkout main && tmux source-file ~/.tmux.conf && echo 'Switched to main branch config'"
 alias tmux-pr="git checkout - && tmux source-file ~/.tmux.conf && echo 'Switched to branch: $(git branch --show-current)'"
