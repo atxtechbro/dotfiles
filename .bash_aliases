@@ -21,3 +21,6 @@ alias tmux-pr="git checkout - && tmux source-file ~/.tmux.conf && echo 'Switched
 # Tmux cheatsheet quick access
 alias tmux-help="less ~/dotfiles/tmux-cheatsheet.md"
 
+# Python virtual environment shortcuts
+alias venv='source .venv/bin/activate'
+
