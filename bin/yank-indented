@@ -1,0 +1,53 @@
+#!/bin/bash
+# yank-indented: Copy all lines at the same indentation level to clipboard
+# Works in both tmux and regular terminal sessions
+
+# Check if we're in tmux
+if [ -n "$TMUX" ]; then
+  # We're in tmux, use tmux commands
+  tmux copy-mode
+  # Prompt for indent level
+  tmux command-prompt -p "Indent level:" "send-keys \"0v/^\\s\\{%1\\}/e-1\" C-m"
+  echo "Indented block yanked to clipboard (tmux)"
+else
+  # We're not in tmux, use terminal-based approach with temporary file
+  TEMP_FILE=$(mktemp)
+  
+  # Save current cursor position
+  tput sc
+  
+  # Get current line and its indentation
+  current_line=$(tput cup)
+  current_indent=$(awk 'NR=='$current_line' {match($0, /^[ \t]*/); print RLENGTH}' "$(tty)")
+  
+  # Find all lines with the same indentation
+  awk 'BEGIN {in_block=0} 
+       NR>='$current_line' {
+         indent_len=length($0) - length(gensub(/^[ \t]*/, "", 1, $0));
+         if (indent_len == '$current_indent' && !in_block) {
+           in_block=1;
+           print;
+         } else if (in_block && indent_len == '$current_indent') {
+           print;
+         } else if (in_block && indent_len != '$current_indent') {
+           exit;
+         }
+       }' "$(tty)" > "$TEMP_FILE"
+  
+  # Copy to clipboard using available clipboard tool
+  if command -v xclip &> /dev/null; then
+    cat "$TEMP_FILE" | xclip -selection clipboard
+  elif command -v pbcopy &> /dev/null; then
+    cat "$TEMP_FILE" | pbcopy
+  elif command -v clip.exe &> /dev/null; then
+    cat "$TEMP_FILE" | clip.exe
+  fi
+  
+  # Clean up
+  rm "$TEMP_FILE"
+  
+  # Restore cursor position
+  tput rc
+  
+  echo "Indented block yanked to clipboard"
+fi

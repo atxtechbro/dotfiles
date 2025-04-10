@@ -1,0 +1,65 @@
+#!/bin/bash
+# yank-structure: Copy code structure (function/class) to clipboard
+# Works in both tmux and regular terminal sessions
+
+# Check if we're in tmux
+if [ -n "$TMUX" ]; then
+  # We're in tmux, use tmux commands
+  tmux copy-mode
+  tmux send-keys "0v/^}/e" C-m
+  echo "Structure yanked to clipboard (tmux)"
+else
+  # We're not in tmux, use terminal-based approach with temporary file
+  TEMP_FILE=$(mktemp)
+  
+  # Save current cursor position
+  tput sc
+  
+  # Find the structure boundaries
+  current_line=$(tput cup)
+  
+  # Try to detect language based on file extension or content
+  file_type=$(file -b "$(tty)" | grep -o -E '(Python|C|Java|JavaScript|Shell|Ruby)')
+  
+  # Default pattern for structure end (works for C-style languages)
+  end_pattern="^}"
+  
+  # Adjust pattern based on detected language
+  case "$file_type" in
+    Python)
+      # For Python, look for next line with same or less indentation
+      indent=$(awk 'NR=='$current_line' {print length($0) - length(ltrim($0))}' "$(tty)")
+      end_pattern="^[[:space:]]{0,$indent}[^ ]"
+      ;;
+    Shell|Ruby)
+      # For Shell/Ruby, look for end, fi, done, etc.
+      end_pattern="^(end|fi|done|esac)"
+      ;;
+  esac
+  
+  # Find end of structure
+  end_line=$(awk 'NR>'$current_line' && /'$end_pattern'/ {print NR; exit}' "$(tty)")
+  if [ -z "$end_line" ]; then
+    end_line=$(wc -l < "$(tty)")
+  fi
+  
+  # Extract the structure
+  sed -n "${current_line},${end_line}p" "$(tty)" > "$TEMP_FILE"
+  
+  # Copy to clipboard using available clipboard tool
+  if command -v xclip &> /dev/null; then
+    cat "$TEMP_FILE" | xclip -selection clipboard
+  elif command -v pbcopy &> /dev/null; then
+    cat "$TEMP_FILE" | pbcopy
+  elif command -v clip.exe &> /dev/null; then
+    cat "$TEMP_FILE" | clip.exe
+  fi
+  
+  # Clean up
+  rm "$TEMP_FILE"
+  
+  # Restore cursor position
+  tput rc
+  
+  echo "Structure yanked to clipboard"
+fi
