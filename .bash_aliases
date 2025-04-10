@@ -11,7 +11,7 @@ alias src='source ~/.bashrc'
 alias prv='gh pr view --json number,title,state,url,author,createdAt,updatedAt,mergeable,reviewDecision'
 
 # PR stats with detailed information including additions, deletions, and files
-alias pr-stats='gh pr view --json additions,deletions,changedFiles,files,title,author,state,createdAt,updatedAt,url'
+alias pr-stats='gh pr view --json additions,deletions,changedFiles,files,title,state,url'
 alias pr-stats-full='gh pr view --json additions,deletions,changedFiles,files,title,author,state,createdAt,updatedAt,url,assignees,body,closed,closedAt,comments,commits,headRefName,headRefOid,isDraft,labels,mergeStateStatus,mergeable,mergedAt,mergedBy,reviewDecision,reviews'
 
 # Tmux config comparison aliases - toggle between branches like at the optometrist
