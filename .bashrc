@@ -177,10 +177,11 @@ else
         . "$HOME/.local/bin/env"
     fi
 
-    # Auto-start tmux if not already in a tmux session and it's an interactive shell
+    # Auto-start tmux with a unique session name based on timestamp
     if [ -z "$TMUX" ] && [[ "$-" == *i* ]] && command -v tmux >/dev/null 2>&1; then
-        # Start a new tmux session or attach to an existing one
-        exec tmux new-session -A -s main
+        # Create a new session with a unique name (terminal-TIMESTAMP)
+        SESSION_NAME="terminal-$(date +%s)"
+        exec tmux new-session -s "$SESSION_NAME"
     fi
 fi
 
