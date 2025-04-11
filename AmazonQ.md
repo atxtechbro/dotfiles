@@ -11,6 +11,12 @@ See [VIBE.md](./VIBE.md) for the Vibe Coding Manifesto that guides this reposito
 - Don't thank yourself when closing your own PRs
 - Always add an empty line at the end of new files or when appending to existing files
 
+## Commit and Push Guidelines
+- Commit early and often to save your work
+- DO NOT PUSH under any circumstances
+- Let the human user handle all git push operations
+- Always create branches and make commits, but never push to remote repositories
+
 ## PR Description Formatting
 - IMPORTANT: When creating PR descriptions, use actual line breaks instead of `\n\n` escape sequences
 - Example: `gh pr create --title "Title" --body "First line.` (press Enter) `Second line."` ✓
