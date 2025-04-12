@@ -108,3 +108,4 @@ source ~/.bashrc 2>/dev/null || true
 echo -e "${GREEN}Dotfiles setup complete!${NC}"
 echo -e "${YELLOW}Your development environment is now configured and ready to use.${NC}"
 echo -e "${BLUE}Enjoy your personalized setup!${NC}"
+
