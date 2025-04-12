@@ -191,3 +191,59 @@ This is useful when testing different tmux configurations to see which one you p
 
 ## WSL Tips
 - **Distraction-Free Mode**: Press `Alt+Enter` in Windows Terminal to toggle full-screen and hide the taskbar.
+
+## Verified Git Commits
+
+Setting up verified commits ensures that your contributions are authenticated and trusted on GitHub. When commits are verified, they display a "Verified" badge in the GitHub UI.
+
+### SSH Key Signing (Recommended)
+
+SSH key signing is simpler if you already use SSH keys for GitHub authentication:
+
+```bash
+# 1. Ensure you have an SSH key (create one if needed)
+# Check if SSH key exists:
+ls ~/.ssh/id_ed25519 || ssh-keygen -t ed25519 -C "your_email@example.com"
+
+# 2. Configure Git to use SSH for signing
+git config --global gpg.format ssh
+git config --global user.signingkey ~/.ssh/id_ed25519
+
+# 3. Enable commit signing by default
+git config --global commit.gpgsign true
+```
+
+Then add your SSH key to GitHub:
+1. Go to GitHub → Settings → SSH and GPG keys → New SSH key
+2. Set "Key type" to "Signing Key"
+3. Paste the output of: `cat ~/.ssh/id_ed25519.pub`
+
+### GPG Signing (Alternative)
+
+For GPG signing:
+
+```bash
+# 1. Install GPG if not already installed
+# Ubuntu/Debian:
+sudo apt install -y gnupg
+
+# 2. Generate a GPG key
+gpg --full-generate-key
+# Choose RSA and RSA, size 4096, no expiration
+
+# 3. Get your key ID
+gpg --list-secret-keys --keyid-format=long
+# Look for sec rsa4096/YOUR_KEY_ID
+
+# 4. Configure Git
+git config --global user.signingkey YOUR_KEY_ID
+git config --global commit.gpgsign true
+
+# 5. Export your public key
+gpg --armor --export YOUR_KEY_ID
+# Copy the output
+```
+
+Then add your GPG key to GitHub:
+1. Go to GitHub → Settings → SSH and GPG keys → New GPG key
+2. Paste your exported public key
