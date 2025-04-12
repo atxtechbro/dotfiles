@@ -224,58 +224,53 @@ Setting up verified commits ensures that your contributions are authenticated an
 SSH key signing is simpler if you already use SSH keys for GitHub authentication:
 
 ```bash
-# 1. Ensure you have an SSH key (create one if needed)
-# Check if SSH key exists:
-ls ~/.ssh/id_ed25519 || ssh-keygen -t ed25519
-```
+# 1. Generate a dedicated signing key (no passphrase for convenience)
+git gen-key
 
-To enable commit signing, include the provided configuration file in your `.gitconfig`:
-
-```bash
-# Add this to your ~/.gitconfig
+# 2. Include the signing configuration in your .gitconfig
 [include]
     path = ~/dotfiles/.gitconfig.signing
-```
 
-Then enable signing by editing `.gitconfig.signing` and setting `gpgsign = true`.
+# 3. Enable signing for all commits (optional)
+git signing-on
+```
 
 Add your SSH key to GitHub:
 1. Go to GitHub → Settings → SSH and GPG keys → New SSH key
 2. Set "Key type" to "Signing Key"
-3. Paste the output of: `cat ~/.ssh/id_ed25519.pub`
+3. Paste the output of: `git show-key`
 
-### Convenient Aliases
+### Convenient Git Aliases
 
-This repository includes helpful aliases for managing signing:
+The `.gitconfig.signing` file includes helpful aliases for managing signing:
 
 ```bash
-# Source the signing aliases
-echo "source ~/dotfiles/.bash_aliases.signing" >> ~/.bashrc
-
-# Available commands:
-fix-ssh-agent      # Restart SSH agent and add key with 8-hour timeout
-gen-signing-key    # Generate a new SSH key optimized for signing (faster algorithm)
-show-signing-key   # Show your signing key fingerprint
-test-git-signing   # Quick test to verify signing is working
-
-# Git aliases (available after including .gitconfig.signing):
+# Available commands after including .gitconfig.signing:
 git fix-agent      # Restart SSH agent and add key
 git sc             # Make a signed commit
 git verify-signing # Check if signing is working
 git signing-on     # Enable signing for current repository
 git signing-off    # Disable signing for current repository
+git gen-key        # Generate a new signing key
+git show-key       # Show your signing key fingerprint
+git test-signing   # Test if signing is working
 ```
 
 ### Performance Optimization
 
-The signing configuration intentionally uses faster algorithms to minimize workflow disruption. This is a deliberate trade-off that prioritizes developer experience over maximum security, which is reasonable for code signing.
+The signing configuration intentionally uses:
+- A faster elliptic curve algorithm (ECDSA-256) instead of slower alternatives
+- A dedicated key without a passphrase to eliminate password prompts
+- A short, convenient path for the key file
+
+This approach prioritizes developer experience over maximum security, which is a reasonable trade-off for code signing. The security model assumes you control access to your development machine, but still provides the verification benefits on GitHub.
 
 ### Practical Considerations
 
 Before enabling commit signing, consider these practical challenges:
 
 - **Performance impact**: Signing adds a delay to each commit
-- **Agent issues**: SSH agents may require occasional restarts (use `fix-ssh-agent`)
+- **Agent issues**: SSH agents may require occasional restarts (use `git fix-agent`)
 - **Workflow disruption**: Password prompts can interrupt coding flow
 
 ### GPG Signing (Alternative)

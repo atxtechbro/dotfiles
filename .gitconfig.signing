@@ -6,8 +6,8 @@
 	format = ssh
 
 [user]
-	# Update this path if your SSH key is in a different location
-	signingkey = ~/.ssh/id_ed25519
+	# Using a dedicated signing key with short name for convenience
+	signingkey = ~/.ssh/sign
 
 [commit]
 	# Set to true to enable signing for all commits
@@ -17,7 +17,7 @@
 # Aliases for managing SSH agent and signing
 [alias]
 	# Restart SSH agent and add key
-	fix-agent = "!eval \"$(ssh-agent -s)\" && ssh-add ~/.ssh/id_ed25519"
+	fix-agent = "!eval \"$(ssh-agent -s)\" && ssh-add ~/.ssh/sign"
 	
 	# Make a signed commit
 	sc = "commit -S"
@@ -28,3 +28,12 @@
 	# Toggle signing on/off for current repository
 	signing-on = "config commit.gpgsign true"
 	signing-off = "config commit.gpgsign false"
+	
+	# Generate a new signing key (no passphrase for convenience)
+	gen-key = "!ssh-keygen -t ecdsa -b 256 -f ~/.ssh/sign -C \"git-signing-$(hostname)\" -N \"\""
+	
+	# Show your signing key fingerprint
+	show-key = "!ssh-keygen -l -f ~/.ssh/sign"
+	
+	# Test signing with an empty commit (won't be pushed)
+	test-signing = "!git commit --allow-empty -S -m \"Test signing\" && git log --show-signature -1"
