@@ -191,3 +191,23 @@ This is useful when testing different tmux configurations to see which one you p
 
 ## WSL Tips
 - **Distraction-Free Mode**: Press `Alt+Enter` in Windows Terminal to toggle full-screen and hide the taskbar.
+<<<<<<< HEAD
+=======
+
+## Modular Git Configuration
+
+This dotfiles repository uses a modular approach to Git configuration, allowing you to enable specific features as needed without cluttering your main configuration.
+
+### Available Git Configuration Modules
+
+- `.gitconfig.signing` - Commit signing configuration with SSH keys
+- (Add more modules as they are created)
+
+To include a module in your Git configuration:
+
+```bash
+# Add this to your ~/.gitconfig
+[include]
+    path = ~/dotfiles/.gitconfig.signing
+```
+
