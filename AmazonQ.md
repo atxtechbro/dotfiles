@@ -35,10 +35,33 @@ See [VIBE.md](./VIBE.md) for the Vibe Coding Manifesto that guides this reposito
 - For changes to documentation or configuration files like AmazonQ.md, especially prefer branching from main
 - This prevents unintended changes from feature branches being included in your PR
 - NEVER merge into main or push directly to main branch
-- Commit early and often on your feature branch with descriptive one-line commit messages
+- Commit early and often on your feature branch with descriptive commit messages
 - For any changes to AmazonQ.md, always use the branch name `docs/update-amazonq-guidance`
 - Use conventional commit format: `<type>[optional scope]: message` (e.g., `feat(tmux): add new shortcut for session switching`)
 - Good scope choices add context about what component is being modified (e.g., bash, nvim, tmux, git)
+
+## Commit Message Structure
+- First line: Write a concise summary following conventional commits format
+- Body: Expand on the change with more details if needed
+- Reference PRINCIPLES.md: When a change aligns with Working Procedures from PRINCIPLES.md, cite it in the footer
+- Example commit structure:
+  ```
+  feat(bash): add new alias for directory navigation
+  
+  Add shortcut 'gp' to navigate to projects directory and list contents
+  This improves workflow efficiency for frequent project switching
+  
+  Working-Procedure: Standardization
+  ```
+- Common Working Procedures to reference:
+  - Systems Thinking
+  - Subtraction Creates Value
+  - Standardization
+  - Living Documentation
+  - Focus And Clarity
+  - 95 Percent Rule
+- Use the exact name of the Working Procedure as it appears in PRINCIPLES.md
+- Multiple procedures can be referenced with multiple trailer lines
 
 Feel free to add your discoveries and insights below as you learn:
 
