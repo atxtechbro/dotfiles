@@ -109,6 +109,51 @@ echo -e "${GREEN}Dotfiles setup complete!${NC}"
 echo -e "${YELLOW}Your development environment is now configured and ready to use.${NC}"
 echo -e "${BLUE}Enjoy your personalized setup!${NC}"
 
+# Amazon Q setup and management
+if command -v q >/dev/null 2>&1; then
+  echo -e "${YELLOW}Amazon Q is installed. Checking for updates...${NC}"
+  
+  # Check if update is available
+  UPDATE_CHECK=$(q update 2>&1 | grep "A new version of q is available:" || echo "")
+  
+  if [ -n "$UPDATE_CHECK" ]; then
+    echo -e "${YELLOW}Amazon Q update available. Installing...${NC}"
+    
+    # Determine architecture
+    ARCH=$(uname -m)
+    if [ "$ARCH" = "x86_64" ]; then
+      echo -e "${BLUE}Detected x86-64 architecture${NC}"
+      curl --proto '=https' --tlsv1.2 -sSf "https://desktop-release.codewhisperer.us-east-1.amazonaws.com/latest/q-x86_64-linux.zip" -o "q.zip"
+    elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
+      echo -e "${BLUE}Detected ARM architecture${NC}"
+      curl --proto '=https' --tlsv1.2 -sSf "https://desktop-release.codewhisperer.us-east-1.amazonaws.com/latest/q-aarch64-linux.zip" -o "q.zip"
+    else
+      echo -e "${RED}Unsupported architecture: $ARCH${NC}"
+      echo -e "${RED}Cannot update Amazon Q automatically${NC}"
+    fi
+    
+    # Install if zip was downloaded
+    if [ -f "q.zip" ]; then
+      unzip -o q.zip
+      ./q/install.sh
+      rm -rf q.zip q/
+      echo -e "${GREEN}Amazon Q updated successfully${NC}"
+    fi
+  else
+    echo -e "${GREEN}Amazon Q is up to date${NC}"
+  fi
+  
+  # Disable telemetry if not already disabled
+  TELEMETRY_STATUS=$(q telemetry status 2>/dev/null | grep -i "disabled" || echo "")
+  if [ -z "$TELEMETRY_STATUS" ]; then
+    echo -e "${YELLOW}Disabling Amazon Q telemetry...${NC}"
+    q telemetry disable
+    echo -e "${GREEN}Amazon Q telemetry disabled${NC}"
+  else
+    echo -e "${BLUE}Amazon Q telemetry already disabled${NC}"
+  fi
+fi
+
 
 if ! command -v uv >/dev/null 2>&1; then
   echo "📦 Installing uv..."
