@@ -191,8 +191,6 @@ This is useful when testing different tmux configurations to see which one you p
 
 ## WSL Tips
 - **Distraction-Free Mode**: Press `Alt+Enter` in Windows Terminal to toggle full-screen and hide the taskbar.
-<<<<<<< HEAD
-=======
 
 ## Modular Git Configuration
 

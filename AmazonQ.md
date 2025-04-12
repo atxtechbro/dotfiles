@@ -2,7 +2,6 @@
 
 This file contains guidance for Amazon Q when interacting with this repository.
 
-See [VIBE.md](./VIBE.md) for the Vibe Coding Manifesto that guides this repository.
 
 ## Common Errors to Avoid
 - Use branch naming pattern: `type/description` (e.g., `feature/add-tool`, `fix/typo`)
