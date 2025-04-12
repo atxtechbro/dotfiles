@@ -34,6 +34,11 @@ See [VIBE.md](./VIBE.md) for the Vibe Coding Manifesto that guides this reposito
 - Use `git checkout main && git pull && git checkout -b type/description` to ensure clean branches
 - For changes to documentation or configuration files like AmazonQ.md, especially prefer branching from main
 - This prevents unintended changes from feature branches being included in your PR
+- NEVER merge into main or push directly to main branch
+- Commit early and often on your feature branch with descriptive one-line commit messages
+- For any changes to AmazonQ.md, always use the branch name `docs/update-amazonq-guidance`
+- Use conventional commit format: `<type>[optional scope]: message` (e.g., `feat(tmux): add new shortcut for session switching`)
+- Good scope choices add context about what component is being modified (e.g., bash, nvim, tmux, git)
 
 Feel free to add your discoveries and insights below as you learn:
 
