@@ -203,7 +203,7 @@ SSH key signing is simpler if you already use SSH keys for GitHub authentication
 ```bash
 # 1. Ensure you have an SSH key (create one if needed)
 # Check if SSH key exists:
-ls ~/.ssh/id_ed25519 || ssh-keygen -t ed25519 -C "your_email@example.com"
+ls ~/.ssh/id_ed25519 || ssh-keygen -t ed25519
 
 # 2. Configure Git to use SSH for signing
 git config --global gpg.format ssh
