@@ -38,5 +38,4 @@ See [VIBE.md](./VIBE.md) for the Vibe Coding Manifesto that guides this reposito
 Feel free to add your discoveries and insights below as you learn:
 
 - Always use `uv` instead of `pip` for Python package management (e.g., `uv pip install package-name` not `pip install package-name`)
-- For Datadog CLI setup: `uv pip install datadog-cli` and store API keys in `~/.bash_secrets`
-- 
+
