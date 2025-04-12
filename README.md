@@ -191,3 +191,119 @@ This is useful when testing different tmux configurations to see which one you p
 
 ## WSL Tips
 - **Distraction-Free Mode**: Press `Alt+Enter` in Windows Terminal to toggle full-screen and hide the taskbar.
+
+## Modular Git Configuration
+
+This dotfiles repository uses a modular approach to Git configuration, allowing you to enable specific features as needed without cluttering your main configuration.
+
+### Available Git Configuration Modules
+
+- `.gitconfig.signing` - Commit signing configuration with SSH keys
+- (Add more modules as they are created)
+
+To include a module in your Git configuration:
+
+```bash
+# Add this to your ~/.gitconfig
+[include]
+    path = ~/dotfiles/.gitconfig.signing
+```
+
+This modular approach lets you:
+- Keep your main configuration clean
+- Enable/disable features independently
+- Share specific configurations across machines
+- Test new configurations before fully adopting them
+
+## Verified Git Commits
+
+Setting up verified commits ensures that your contributions are authenticated and trusted on GitHub. When commits are verified, they display a "Verified" badge in the GitHub UI.
+
+### SSH Key Signing (Recommended)
+
+SSH key signing is simpler if you already use SSH keys for GitHub authentication:
+
+```bash
+# 1. Ensure you have an SSH key (create one if needed)
+# Check if SSH key exists:
+ls ~/.ssh/id_ed25519 || ssh-keygen -t ed25519
+```
+
+To enable commit signing, include the provided configuration file in your `.gitconfig`:
+
+```bash
+# Add this to your ~/.gitconfig
+[include]
+    path = ~/dotfiles/.gitconfig.signing
+```
+
+Then enable signing by editing `.gitconfig.signing` and setting `gpgsign = true`.
+
+Add your SSH key to GitHub:
+1. Go to GitHub → Settings → SSH and GPG keys → New SSH key
+2. Set "Key type" to "Signing Key"
+3. Paste the output of: `cat ~/.ssh/id_ed25519.pub`
+
+### Convenient Aliases
+
+This repository includes helpful aliases for managing signing:
+
+```bash
+# Source the signing aliases
+echo "source ~/dotfiles/.bash_aliases.signing" >> ~/.bashrc
+
+# Available commands:
+fix-ssh-agent      # Restart SSH agent and add key with 8-hour timeout
+gen-signing-key    # Generate a new SSH key optimized for signing (faster algorithm)
+show-signing-key   # Show your signing key fingerprint
+test-git-signing   # Quick test to verify signing is working
+
+# Git aliases (available after including .gitconfig.signing):
+git fix-agent      # Restart SSH agent and add key
+git sc             # Make a signed commit
+git verify-signing # Check if signing is working
+git signing-on     # Enable signing for current repository
+git signing-off    # Disable signing for current repository
+```
+
+### Performance Optimization
+
+The signing configuration intentionally uses faster algorithms to minimize workflow disruption. This is a deliberate trade-off that prioritizes developer experience over maximum security, which is reasonable for code signing.
+
+### Practical Considerations
+
+Before enabling commit signing, consider these practical challenges:
+
+- **Performance impact**: Signing adds a delay to each commit
+- **Agent issues**: SSH agents may require occasional restarts (use `fix-ssh-agent`)
+- **Workflow disruption**: Password prompts can interrupt coding flow
+
+### GPG Signing (Alternative)
+
+For GPG signing:
+
+```bash
+# 1. Install GPG if not already installed
+# Ubuntu/Debian:
+sudo apt install -y gnupg
+
+# 2. Generate a GPG key
+gpg --full-generate-key
+# Choose RSA and RSA, size 4096, no expiration
+
+# 3. Get your key ID
+gpg --list-secret-keys --keyid-format=long
+# Look for sec rsa4096/YOUR_KEY_ID
+
+# 4. Configure Git
+git config --global user.signingkey YOUR_KEY_ID
+git config --global commit.gpgsign true
+
+# 5. Export your public key
+gpg --armor --export YOUR_KEY_ID
+# Copy the output
+```
+
+Then add your GPG key to GitHub:
+1. Go to GitHub → Settings → SSH and GPG keys → New GPG key
+2. Paste your exported public key

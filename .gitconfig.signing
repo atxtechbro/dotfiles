@@ -1,0 +1,30 @@
+# Git configuration for commit signing
+# Optimized for developer experience over maximum security
+# Uses faster algorithms to minimize workflow disruption
+
+[gpg]
+	format = ssh
+
+[user]
+	# Update this path if your SSH key is in a different location
+	signingkey = ~/.ssh/id_ed25519
+
+[commit]
+	# Set to true to enable signing for all commits
+	# Set to false to disable signing (but still allow manual signing with -S)
+	gpgsign = false
+
+# Aliases for managing SSH agent and signing
+[alias]
+	# Restart SSH agent and add key
+	fix-agent = "!eval \"$(ssh-agent -s)\" && ssh-add ~/.ssh/id_ed25519"
+	
+	# Make a signed commit
+	sc = "commit -S"
+	
+	# Check if signing is working
+	verify-signing = "log --show-signature -1"
+	
+	# Toggle signing on/off for current repository
+	signing-on = "config commit.gpgsign true"
+	signing-off = "config commit.gpgsign false"
