@@ -24,3 +24,8 @@ alias tmux-help="less ~/dotfiles/tmux-cheatsheet.md"
 # Python virtual environment shortcuts
 alias venv='source .venv/bin/activate'
 
+
+# Quick AmazonQ.md update workflow - merge, push, and return to main
+alias aq-merge='git checkout main && git pull && git merge --squash docs/update-amazonq-guidance && git commit -m "docs(amazonq): update guidance" && git push origin main && echo "✅ AmazonQ.md changes merged and pushed to main"'
+# AmazonQ.md update workflow - preserves commit messages from feature branch
+alias aq-merge='git checkout main && git pull && git merge docs/update-amazonq-guidance --no-ff && git push origin main && echo "✅ AmazonQ.md changes merged with preserved history and pushed to main"'
