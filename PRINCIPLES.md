@@ -58,5 +58,3 @@ BIFF: [Brief][Informative][Friendly][Firm] - A structured communication framewor
 Do things well, but not perfectly. Aim for 95% completion over chasing perfection unless foundational.
 
 ---
-
-*Note: This document is intentionally incomplete and will evolve over time as principles are refined and new insights emerge.*
