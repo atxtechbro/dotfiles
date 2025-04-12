@@ -164,20 +164,16 @@ claude
 ```
 
 ### Amazon Q CLI
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://desktop-release.q.us-east-1.amazonaws.com/latest/amazon-q.deb -o amazon-q.deb
-sudo apt install -y ./amazon-q.deb
-q
-rm amazon-q.deb
-```
+*Note:* Amazon Q installation and updates are automatically handled by the setup script.
 
-*Note:* You'll need to provide your start URL during first-time setup (requires Pro license and SSO configuration).
-The URL typically follows this format:
+During first-time setup, you'll need to authenticate with either:
+- AWS Builder ID (personal use)
+- SSO configuration (for Pro license with organization access)
+
+For SSO, the URL typically follows this format:
 ```bash
 https://d-XXXXXXXXXX.awsapps.com/start/#/console?account_id=XXXXXXXXXXXX&role_name=YOUR_ROLE_NAME
 ```
-
-Next step: run `q telemetry disable` - 'nuff said.
 
 ### Tmux Config Comparison
 
