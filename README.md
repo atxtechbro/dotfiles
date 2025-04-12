@@ -192,6 +192,29 @@ This is useful when testing different tmux configurations to see which one you p
 ## WSL Tips
 - **Distraction-Free Mode**: Press `Alt+Enter` in Windows Terminal to toggle full-screen and hide the taskbar.
 
+## Modular Git Configuration
+
+This dotfiles repository uses a modular approach to Git configuration, allowing you to enable specific features as needed without cluttering your main configuration.
+
+### Available Git Configuration Modules
+
+- `.gitconfig.signing` - Commit signing configuration with SSH keys
+- (Add more modules as they are created)
+
+To include a module in your Git configuration:
+
+```bash
+# Add this to your ~/.gitconfig
+[include]
+    path = ~/dotfiles/.gitconfig.signing
+```
+
+This modular approach lets you:
+- Keep your main configuration clean
+- Enable/disable features independently
+- Share specific configurations across machines
+- Test new configurations before fully adopting them
+
 ## Verified Git Commits
 
 Setting up verified commits ensures that your contributions are authenticated and trusted on GitHub. When commits are verified, they display a "Verified" badge in the GitHub UI.
