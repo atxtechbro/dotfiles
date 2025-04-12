@@ -112,7 +112,7 @@ echo -e "${BLUE}Enjoy your personalized setup!${NC}"
 
 if ! command -v uv >/dev/null 2>&1; then
   echo "📦 Installing uv..."
-  curl -Ls https://astral.sh/uv/install.sh | sh -s -- --bin-dir "$HOME/.local/bin"
-  echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"  # or .zshrc
+  curl -Ls https://astral.sh/uv/install.sh | sh
+  echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
 fi
 
