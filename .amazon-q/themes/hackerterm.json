@@ -1,0 +1,30 @@
+{
+  "name": "HackerTerm",
+  "version": "1.0.0",
+  "author": {
+    "name": "Coffee Shop Hacker",
+    "github": "coffeeshophacker"
+  },
+  "colors": {
+    "black": "#0a0a0a", 
+    "red": "#ff5555",
+    "green": "#50fa7b",
+    "yellow": "#f1fa8c",
+    "blue": "#6272a4",
+    "magenta": "#ff79c6",
+    "cyan": "#8be9fd",
+    "white": "#f8f8f2",
+    "brightBlack": "#44475a",
+    "brightRed": "#ff6e6e",
+    "brightGreen": "#69ff94",
+    "brightYellow": "#ffffa5",
+    "brightBlue": "#6272a4",
+    "brightMagenta": "#ff92df",
+    "brightCyan": "#a4ffff",
+    "brightWhite": "#ffffff"
+  },
+  "background": "#282a36",
+  "foreground": "#f8f8f2",
+  "selectionBackground": "#44475a",
+  "cursorColor": "#50fa7b"
+}
