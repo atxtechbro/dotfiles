@@ -108,3 +108,11 @@ source ~/.bashrc 2>/dev/null || true
 echo -e "${GREEN}Dotfiles setup complete!${NC}"
 echo -e "${YELLOW}Your development environment is now configured and ready to use.${NC}"
 echo -e "${BLUE}Enjoy your personalized setup!${NC}"
+
+
+if ! command -v uv >/dev/null 2>&1; then
+  echo "📦 Installing uv..."
+  curl -Ls https://astral.sh/uv/install.sh | sh -s -- --bin-dir "$HOME/.local/bin"
+  echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"  # or .zshrc
+fi
+
