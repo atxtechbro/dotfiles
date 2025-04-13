@@ -83,7 +83,7 @@ wget -O ~/Downloads/raspberry-pi/raspios-lite.img.xz https://downloads.raspberry
 ```
 
 > **Note:** We're using Raspberry Pi OS Lite since this is for a headless setup. This version:
-> - Is much smaller (~1.2GB vs ~4GB for standard)
+> - Is smaller than the desktop version (~2.8GB vs ~4GB for standard as of November 2024)
 > - Uses fewer system resources
 > - Perfect for server applications
 > - Has no desktop environment (command-line only)
@@ -118,6 +118,8 @@ sudo dd if=~/Downloads/raspberry-pi/raspios-lite.img of=/dev/sda bs=4M conv=fsyn
 ```
 
 ⚠️ **WARNING**: Double-check your device name! Using the wrong device can result in data loss. The device should be the one that appeared in your diff output (like `/dev/sda` in the example).
+
+> **Note on write time**: The November 2024 Lite version is approximately 2.8GB in size. Depending on your SD card speed, writing may take 5-15 minutes. The `status=progress` flag will show you the current progress.
 
 ### 5. Configure the Raspberry Pi OS (Headless Setup)
 
