@@ -22,6 +22,23 @@ The Raspberry Pi Imager is the official tool for installing Raspberry Pi OS on y
 
 Make sure any important data on the card has been backed up, as this process will erase everything on the card.
 
+#### For users with USB microSD card adapters:
+- Insert your microSD card into the USB adapter (gold contacts facing the correct direction)
+- Plug the adapter into an available USB port on your computer
+- Wait a moment for your computer to recognize the device
+
+#### For users with built-in SD card slots:
+- If your microSD card came with an SD adapter, insert the microSD card into this adapter
+- Insert the adapter (with label side up) into your computer's SD card slot
+- The card should slide in smoothly - never force it
+
+#### Verifying the card is recognized:
+- **Linux**: Open terminal and type `lsblk` to see connected devices
+- **Windows**: Check File Explorer for a new drive letter
+- **Mac**: Look for the card to appear on your desktop or in Finder
+
+If your card contains NOOBS or was pre-formatted, it may appear smaller than its actual capacity. This is normal and will be fixed during the imaging process.
+
 ### 3. Open Raspberry Pi Imager
 
 Launch the application you installed in step 1.
