@@ -1,123 +1,34 @@
-# Raspberry Pi 5 Headless Setup
+# Raspberry Pi Setup Guide
 
-This directory contains configurations and scripts for headless setup of a Raspberry Pi 5 (8GB) with a 128GB Samsung microSD card.
+This guide will help you set up your Raspberry Pi with optimized configurations for various use cases.
 
-## Quick Setup
+## Step-by-Step Setup
 
-### 1. Flash Raspberry Pi OS to MicroSD Card
+Follow these guides in order:
 
-First, identify your 128GB Samsung microSD card:
+1. [Prepare the microSD Card](01-prepare-sd-card.md)
+2. [Hardware Setup](02-hardware-setup.md) (to be implemented)
+3. [First Boot and Initial Setup](03-first-boot.md) (to be implemented)
+4. [Choose Your Use Case](04-choose-use-case.md) (to be implemented)
 
-```bash
-# Show all storage devices
-lsblk -p -o NAME,SIZE,MODEL,VENDOR
-```
+## Use Cases
 
-Look for the 128GB Samsung device in the output. Then flash the OS:
+Once your Raspberry Pi is set up, you can configure it for specific purposes:
 
-```bash
-# Flash with WiFi and custom hostname
-./raspberry-pi/flash-sd.sh --device /dev/sdX --wifi YourNetwork:YourPassword --hostname pi5
-```
+### Home Use
+- Home Assistant (to be implemented)
+- Media Server (to be implemented)
 
-The script will:
-- Download the latest 64-bit Raspberry Pi OS image
-- Flash it to your 128GB Samsung microSD card
-- Configure WiFi and SSH for headless setup
-- Set your preferred hostname
+### Development Use
+- CI Runner (to be implemented)
 
-### 2. Connect to Your Pi 5
+### Networking Use
+- Network Monitor (to be implemented)
 
-After flashing:
+## Supported Models
 
-1. Insert the card into your Pi 5 and power it on
-2. Wait about 60 seconds for the Pi to boot
-3. Connect via SSH:
-   ```bash
-   # Using hostname
-   ssh pi@pi5.local
-   
-   # Or using IP address (if hostname resolution fails)
-   ssh pi@192.168.1.xxx
-   ```
+- Raspberry Pi 3 Model B and B+
+- Raspberry Pi 4 Model B (all RAM configurations)
+- Raspberry Pi 5 (all RAM configurations)
 
-Default credentials: username `pi`, password `raspberry`
-
-### 3. Install Dotfiles
-
-Once connected:
-
-```bash
-git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-./setup.sh
-```
-
-The setup script will detect the Raspberry Pi 5 and optimize configurations for the 8GB model.
-
-## Raspberry Pi 5 Optimizations
-
-The setup automatically applies these Pi 5 specific optimizations:
-
-- Memory allocation optimized for 8GB RAM model
-- Storage partitioning optimized for 128GB Samsung microSD
-- CPU governor settings for optimal performance/temperature balance
-- GPU memory allocation for headless operation
-- USB port power management for connected peripherals
-
-## Useful Commands
-
-After setup, you'll have these commands available:
-
-- `temp` - Show CPU temperature
-- `freq` - Show CPU frequency
-- `mem` - Show memory usage
-- `pitemp` - Show formatted CPU temperature
-- `gpio` - Simplified GPIO control
-- `pisystem` - Show system information
-- `headless-setup` - Interactive script for configuring static IP, SSH hardening, and automatic updates
-
-## Project Structure
-
-The setup creates this directory structure:
-
-```
-~/projects/raspberry-pi/
-├── bin/         # Scripts and executables
-├── config/      # Configuration files
-├── data/        # Data files
-├── logs/        # Log files
-├── scripts/     # Project scripts
-├── src/         # Source code
-├── web/         # Web interface files
-├── venv/        # Python virtual environment
-└── .env         # Environment variables
-```
-
-## Python Package Management
-
-This setup uses `uv` for Python package management:
-
-```bash
-# Install a package
-uv pip install package-name
-
-# Install from requirements.txt
-uv pip install -r requirements.txt
-```
-
-## Security Features
-
-The setup includes security features for headless operation:
-
-- SSH hardening options
-- Firewall configuration with UFW
-- Automatic security updates
-- MQTT broker configured for local connections only by default
-
-## Services
-
-The IoT setup configures these services:
-
-- MQTT broker (mosquitto) on port 1883 (localhost only by default)
-- Node-RED on port 1880
+Older models may work but are not officially supported or tested.
