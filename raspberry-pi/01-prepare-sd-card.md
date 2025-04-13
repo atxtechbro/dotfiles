@@ -91,10 +91,22 @@ unxz ~/Downloads/raspberry-pi/raspios.img.xz
 ### 4. Write the image to the SD card
 
 ```bash
-# IMPORTANT: Replace sdX with your actual device (e.g., sdb, NOT sdb1)
-# WARNING: Using the wrong device can result in data loss!
+# IMPORTANT: First identify your SD card device using the before/after comparison
+lsblk -p > before.txt
+# Now insert your SD card if you haven't already
+lsblk -p > after.txt
+diff before.txt after.txt
+# Example output:
+# > /dev/sda                      8:0    1 119.4G  0 disk
+# > ├─/dev/sda1                   8:1    1   512M  0 part  /media/mstack/bootfs
+# > └─/dev/sda2                   8:2    1     5G  0 part  /media/mstack/rootfs
+
+# From the output above, we can see the device is /dev/sda (NOT sda1 or sda2)
+# Now write the image (replace sdX with your actual device, e.g., sda from above)
 sudo dd if=~/Downloads/raspberry-pi/raspios.img of=/dev/sdX bs=4M conv=fsync status=progress
 ```
+
+⚠️ **WARNING**: Double-check your device name! Using the wrong device can result in data loss. The device should be the one that appeared in your diff output (like `/dev/sda` in the example).
 
 ### 5. Configure the Raspberry Pi OS (Headless Setup)
 
