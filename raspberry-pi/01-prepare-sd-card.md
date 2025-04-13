@@ -8,6 +8,33 @@ Before you can set up your Raspberry Pi with our optimized configurations, you'l
 - A computer with a microSD card reader
 - Internet connection to download the necessary software
 
+## Security Considerations
+
+If you're concerned about connecting unknown USB devices directly to your system, consider these isolation methods:
+
+```bash
+# 1. Use USB port power management to disable until needed
+# List USB devices
+lsusb
+
+# Find the bus and device ID of your card reader (e.g., Bus 001 Device 004)
+# Disable the USB port before connecting the device
+echo 0 | sudo tee /sys/bus/usb/devices/usb1/authorized
+
+# Connect your card reader, then re-enable only after inspection
+echo 1 | sudo tee /sys/bus/usb/devices/usb1/authorized
+
+# 2. Use a virtual machine with USB passthrough
+# This isolates the device from your host system
+# In VirtualBox: Devices > USB > Select your card reader
+# In VMware: VM > Removable Devices > Select your card reader
+
+# 3. Use a dedicated Raspberry Pi as an "air-gapped" SD writer
+# Flash SD cards from a dedicated Pi that's not connected to your main system
+```
+
+For maximum security, consider using a dedicated system or live Linux USB boot specifically for SD card operations.
+
 ## Command Line Approach
 
 ### 1. Insert your microSD card into your computer
