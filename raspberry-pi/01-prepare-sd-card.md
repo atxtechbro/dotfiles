@@ -175,10 +175,19 @@ shred -u ~/wpa_supplicant.conf
 ```bash
 # Create or edit the hostname file
 # Use your actual boot partition mount point (from the lsblk command above)
-echo "raspberrypi" | sudo tee /media/user/bootfs/hostname
+# Choose a meaningful hostname based on the Pi's purpose:
 
-# If you mounted manually, use:
-# echo "raspberrypi" | sudo tee /mnt/boot/hostname
+# For a home automation hub:
+echo "home-hub" | sudo tee /media/user/bootfs/hostname
+
+# For a media server:
+# echo "media-pi" | sudo tee /media/user/bootfs/hostname
+
+# For a network monitoring device:
+# echo "net-monitor" | sudo tee /media/user/bootfs/hostname
+
+# For a specific Pi model (useful when you have multiple):
+# echo "pi5-dev" | sudo tee /media/user/bootfs/hostname
 ```
 
 ### 6. Safely eject the SD card
