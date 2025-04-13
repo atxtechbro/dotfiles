@@ -14,15 +14,28 @@ If you're concerned about connecting unknown USB devices directly to your system
 
 ```bash
 # 1. Use USB port power management to disable until needed
-# List USB devices
-lsusb
+# First, take a snapshot of current USB devices
+lsusb > before.txt
 
-# Find the bus and device ID of your card reader (e.g., Bus 001 Device 004)
-# Disable the USB port before connecting the device
-echo 0 | sudo tee /sys/bus/usb/devices/usb1/authorized
+# Connect your card reader
+# Then identify the new device by comparing before and after
+lsusb > after.txt
+diff before.txt after.txt
+# Example output:
+# > Bus 001 Device 008: ID 0bda:0316 Realtek Semiconductor Corp. Card Reader
+
+# Alternatively, watch kernel messages as you connect the device
+# In terminal 1:
+sudo dmesg -w
+# In terminal 2 (after connecting):
+# You'll see messages about the new USB device with its bus and device ID
+
+# Once identified, you can remove and disable that specific USB port
+# Replace X:Y with your bus:device numbers (e.g., 1:8)
+echo 0 | sudo tee /sys/bus/usb/devices/X-Y/authorized
 
 # Connect your card reader, then re-enable only after inspection
-echo 1 | sudo tee /sys/bus/usb/devices/usb1/authorized
+echo 1 | sudo tee /sys/bus/usb/devices/X-Y/authorized
 
 # 2. Use a virtual machine with USB passthrough
 # This isolates the device from your host system
