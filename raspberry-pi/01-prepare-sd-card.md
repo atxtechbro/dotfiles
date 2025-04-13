@@ -23,7 +23,10 @@ ls /sys/bus/usb/devices/usb*
 sudo sh -c 'echo 0 > /sys/bus/usb/devices/usbX/authorized_default'
 
 # Now connect your device to that port - it won't be activated yet
-# You can check dmesg to see it was detected but not authorized
+# Check the kernel messages to see device details without activating it:
+sudo dmesg | tail -20
+# This shows recent kernel messages, including USB device information
+# Look for entries like "new USB device found" with vendor/product IDs
 
 # When you're ready to use it (after verifying it's safe):
 sudo sh -c 'echo 1 > /sys/bus/usb/devices/usbX/authorized_default'
