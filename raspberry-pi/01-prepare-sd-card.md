@@ -98,8 +98,8 @@ lsblk -p > after.txt
 diff before.txt after.txt
 # Example output:
 # > /dev/sda                      8:0    1 119.4G  0 disk
-# > ├─/dev/sda1                   8:1    1   512M  0 part  /media/mstack/bootfs
-# > └─/dev/sda2                   8:2    1     5G  0 part  /media/mstack/rootfs
+# > ├─/dev/sda1                   8:1    1   512M  0 part  /media/user/bootfs
+# > └─/dev/sda2                   8:2    1     5G  0 part  /media/user/rootfs
 
 # From the output above, we can see the device is /dev/sda (NOT sda1 or sda2)
 # Now write the image (replace sdX with your actual device, e.g., sda from above)
