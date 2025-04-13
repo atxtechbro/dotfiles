@@ -22,20 +22,14 @@ lsusb > before.txt
 lsusb > after.txt
 diff before.txt after.txt
 # Example output:
-# > Bus 001 Device 008: ID 0bda:0316 Realtek Semiconductor Corp. Card Reader
+# > Bus 005 Device 002: ID 046d:c52f Logitech, Inc. Unifying Receiver
 
-# Alternatively, watch kernel messages as you connect the device
-# In terminal 1:
-sudo dmesg -w
-# In terminal 2 (after connecting):
-# You'll see messages about the new USB device with its bus and device ID
+# Once identified, you can disable that specific USB port
+# The format is "bus-device" (e.g., 5-2 for Bus 005 Device 002)
+sudo sh -c 'echo 0 > /sys/bus/usb/devices/5-2/authorized'
 
-# Once identified, you can remove and disable that specific USB port
-# Replace X:Y with your bus:device numbers (e.g., 1:8)
-echo 0 | sudo tee /sys/bus/usb/devices/X-Y/authorized
-
-# Connect your card reader, then re-enable only after inspection
-echo 1 | sudo tee /sys/bus/usb/devices/X-Y/authorized
+# To re-enable the device when you're ready:
+sudo sh -c 'echo 1 > /sys/bus/usb/devices/5-2/authorized'
 
 # 2. Use a virtual machine with USB passthrough
 # This isolates the device from your host system
