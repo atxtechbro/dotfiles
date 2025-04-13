@@ -156,24 +156,19 @@ sudo touch /media/user/bootfs/ssh
 #### Configure WiFi (if needed):
 
 ```bash
-# Create wpa_supplicant.conf file
+# Edit the template file with your WiFi credentials
+cp ~/dotfiles/raspberry-pi/templates/wpa_supplicant.conf ~/wpa_supplicant.conf
+nano ~/wpa_supplicant.conf  # Edit with your actual SSID and password
+
+# Copy the edited file to the boot partition
 # Use your actual boot partition mount point (from the lsblk command above)
-cat << EOF | sudo tee /media/user/bootfs/wpa_supplicant.conf
-country=US
-ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-update_config=1
+sudo cp ~/wpa_supplicant.conf /media/user/bootfs/wpa_supplicant.conf
 
-network={
-    ssid="YOUR_WIFI_SSID"
-    psk="YOUR_WIFI_PASSWORD"
-    key_mgmt=WPA-PSK
-}
-EOF
-
-# If you mounted manually, use:
-# cat << EOF | sudo tee /mnt/boot/wpa_supplicant.conf
-# ...
+# Clean up the temporary file with credentials
+shred -u ~/wpa_supplicant.conf
 ```
+
+> **Note:** The template file is located at `~/dotfiles/raspberry-pi/templates/wpa_supplicant.conf`
 
 #### Set hostname (optional):
 
