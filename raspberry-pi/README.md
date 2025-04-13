@@ -1,8 +1,8 @@
 # Raspberry Pi Configuration
 
-This directory contains Raspberry Pi specific configurations and scripts that integrate with your dotfiles.
+This directory contains Raspberry Pi specific configurations and scripts for headless setup (without keyboard or monitor, using SSH only).
 
-## Headless Setup Process
+## Setup Process
 
 ### 1. Flash Raspberry Pi OS to MicroSD Card
 
@@ -17,7 +17,7 @@ lsblk
 ```
 
 The script will:
-- Download the latest Raspberry Pi OS image (or use a specified one)
+- Download the latest Raspberry Pi OS image
 - Flash it to your MicroSD card
 - Configure WiFi and SSH for headless setup
 - Set your preferred hostname
