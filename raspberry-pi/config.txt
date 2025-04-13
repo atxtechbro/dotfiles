@@ -1,0 +1,24 @@
+# Raspberry Pi config.txt additions
+# Copy these settings to /boot/config.txt
+
+# Performance settings (conservative)
+over_voltage=2
+arm_freq=1750
+
+# GPU memory split
+gpu_mem=128
+
+# Enable hardware-accelerated graphics
+dtoverlay=vc4-kms-v3d
+
+# Enable I2C
+dtparam=i2c_arm=on
+
+# Enable SPI
+dtparam=spi=on
+
+# Enable audio
+dtparam=audio=on
+
+# Enable 1-wire interface
+dtoverlay=w1-gpio
