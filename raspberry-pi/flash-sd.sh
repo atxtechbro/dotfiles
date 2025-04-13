@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script to flash Raspberry Pi OS to MicroSD card from command line
+# Script to flash Raspberry Pi OS to MicroSD card for headless setup
 # Part of dotfiles/raspberry-pi
 
 set -e  # Exit on error

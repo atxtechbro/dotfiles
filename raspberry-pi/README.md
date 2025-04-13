@@ -58,7 +58,7 @@ The setup script will detect that it's running on a Raspberry Pi and automatical
 ## Configuration Files
 
 - `config.txt` - Settings to add to `/boot/config.txt`
-- `headless-setup/` - Files for enabling SSH and WiFi during first boot
+- `templates/` - Template files used by the flash script
 
 ## Useful Commands
 
