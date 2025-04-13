@@ -28,6 +28,14 @@ sudo dmesg | tail -20
 # This shows recent kernel messages, including USB device information
 # Look for entries like "new USB device found" with vendor/product IDs
 
+# Example output from a CanaKit USB microSD card reader:
+# [35076.589179] usb 5-2: New USB device found, idVendor=14cd, idProduct=1212, bcdDevice= 1.00
+# [35076.589185] usb 5-2: New USB device strings: Mfr=1, Product=3, SerialNumber=2
+# [35076.589188] usb 5-2: Product: Mass Storage Device
+# [35076.589190] usb 5-2: Manufacturer: Generic
+# [35076.589193] usb 5-2: SerialNumber: 121220160204
+# Note: Many kit-provided card readers show generic identifiers like this
+
 # When you're ready to use it (after verifying it's safe):
 sudo sh -c 'echo 1 > /sys/bus/usb/devices/usbX/authorized_default'
 
