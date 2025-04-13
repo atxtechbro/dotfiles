@@ -68,28 +68,35 @@ lsblk -p
 # └─/dev/sdb1   8:17   1   32G  0 part
 ```
 
-### 2. Download Raspberry Pi OS image
+### 2. Download Raspberry Pi OS Lite image
 
 ```bash
 # Create a directory for the image
 mkdir -p ~/Downloads/raspberry-pi
 
-# Download the latest Raspberry Pi OS (64-bit) image
-wget -O ~/Downloads/raspberry-pi/raspios.img.xz https://downloads.raspberrypi.org/raspios_arm64/images/raspios_arm64-2023-05-03/2023-05-03-raspios-bullseye-arm64.img.xz
+# Download the latest Raspberry Pi OS Lite (64-bit) image
+# This is a minimal version perfect for headless setups (no desktop environment)
+wget -O ~/Downloads/raspberry-pi/raspios-lite.img.xz https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2023-05-03/2023-05-03-raspios-bullseye-lite-arm64.img.xz
 
 # For 32-bit version (for older Pi models), use:
-# wget -O ~/Downloads/raspberry-pi/raspios.img.xz https://downloads.raspberrypi.org/raspios_armhf/images/raspios_armhf-2023-05-03/2023-05-03-raspios-bullseye-armhf.img.xz
+# wget -O ~/Downloads/raspberry-pi/raspios-lite.img.xz https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2023-05-03/2023-05-03-raspios-bullseye-lite-armhf.img.xz
 ```
+
+> **Note:** We're using Raspberry Pi OS Lite since this is for a headless setup. This version:
+> - Is much smaller (~1.2GB vs ~4GB for standard)
+> - Uses fewer system resources
+> - Perfect for server applications
+> - Has no desktop environment (command-line only)
 
 ### 3. Extract the image
 
 ```bash
 # Option 1: Standard extraction (no progress bar)
-unxz ~/Downloads/raspberry-pi/raspios.img.xz
+unxz ~/Downloads/raspberry-pi/raspios-lite.img.xz
 
 # Option 2: Extract with progress bar using pv (pipe viewer)
 # First install pv if you don't have it: sudo apt install pv
-pv ~/Downloads/raspberry-pi/raspios.img.xz | xz -dc > ~/Downloads/raspberry-pi/raspios.img
+pv ~/Downloads/raspberry-pi/raspios-lite.img.xz | xz -dc > ~/Downloads/raspberry-pi/raspios-lite.img
 ```
 
 ### 4. Write the image to the SD card
@@ -107,7 +114,7 @@ diff before.txt after.txt
 
 # From the output above, we can see the device is /dev/sda (NOT sda1 or sda2)
 # Now write the image using the device name from your diff output:
-sudo dd if=~/Downloads/raspberry-pi/raspios.img of=/dev/sda bs=4M conv=fsync status=progress
+sudo dd if=~/Downloads/raspberry-pi/raspios-lite.img of=/dev/sda bs=4M conv=fsync status=progress
 ```
 
 ⚠️ **WARNING**: Double-check your device name! Using the wrong device can result in data loss. The device should be the one that appeared in your diff output (like `/dev/sda` in the example).
