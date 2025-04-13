@@ -8,72 +8,130 @@ Before you can set up your Raspberry Pi with our optimized configurations, you'l
 - A computer with a microSD card reader
 - Internet connection to download the necessary software
 
-## Instructions
+## Command Line Approach
 
-### 1. Download and Install Raspberry Pi Imager
+### 1. Insert your microSD card into your computer
 
-The Raspberry Pi Imager is the official tool for installing Raspberry Pi OS on your microSD card.
+```bash
+# After inserting the card, identify it with:
+lsblk -p
 
-- **Windows/Mac/Linux**: Download from [raspberrypi.com/software](https://www.raspberrypi.com/software/)
-- **Ubuntu/Debian**: `sudo apt install rpi-imager`
-- **Arch Linux**: `sudo pacman -S rpi-imager`
+# Look for your SD card device (typically /dev/sdX or /dev/mmcblk0)
+# Example output:
+# NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+# /dev/sda      8:0    0  512G  0 disk 
+# └─/dev/sda1   8:1    0  512G  0 part /
+# /dev/sdb      8:16   1   32G  0 disk        # <-- This is likely your SD card
+# └─/dev/sdb1   8:17   1   32G  0 part
+```
 
-### 2. Insert your microSD card into your computer
+### 2. Download Raspberry Pi OS image
 
-Make sure any important data on the card has been backed up, as this process will erase everything on the card.
+```bash
+# Create a directory for the image
+mkdir -p ~/Downloads/raspberry-pi
 
-#### For users with USB microSD card adapters:
-- Insert your microSD card into the USB adapter (gold contacts facing the correct direction)
-- Plug the adapter into an available USB port on your computer
-- Wait a moment for your computer to recognize the device
+# Download the latest Raspberry Pi OS (64-bit) image
+wget -O ~/Downloads/raspberry-pi/raspios.img.xz https://downloads.raspberrypi.org/raspios_arm64/images/raspios_arm64-2023-05-03/2023-05-03-raspios-bullseye-arm64.img.xz
 
-#### For users with built-in SD card slots:
-- If your microSD card came with an SD adapter, insert the microSD card into this adapter
-- Insert the adapter (with label side up) into your computer's SD card slot
-- The card should slide in smoothly - never force it
+# For 32-bit version (for older Pi models), use:
+# wget -O ~/Downloads/raspberry-pi/raspios.img.xz https://downloads.raspberrypi.org/raspios_armhf/images/raspios_armhf-2023-05-03/2023-05-03-raspios-bullseye-armhf.img.xz
+```
 
-#### Verifying the card is recognized:
-- **Linux**: Open terminal and type `lsblk` to see connected devices
-- **Windows**: Check File Explorer for a new drive letter
-- **Mac**: Look for the card to appear on your desktop or in Finder
+### 3. Extract the image
 
-If your card contains NOOBS or was pre-formatted, it may appear smaller than its actual capacity. This is normal and will be fixed during the imaging process.
+```bash
+# Extract the downloaded image
+unxz ~/Downloads/raspberry-pi/raspios.img.xz
+```
 
-### 3. Open Raspberry Pi Imager
+### 4. Write the image to the SD card
 
-Launch the application you installed in step 1.
+```bash
+# IMPORTANT: Replace sdX with your actual device (e.g., sdb, NOT sdb1)
+# WARNING: Using the wrong device can result in data loss!
+sudo dd if=~/Downloads/raspberry-pi/raspios.img of=/dev/sdX bs=4M conv=fsync status=progress
+```
 
-### 4. Choose OS
+### 5. Configure the Raspberry Pi OS (Headless Setup)
 
-Click on "CHOOSE OS" and select:
-- Recommended: "Raspberry Pi OS (64-bit)" for Pi 3, 4, or 5
-- For older models: "Raspberry Pi OS (32-bit)"
+After the image is written, the boot partition will be mounted automatically. If not:
 
-### 5. Choose Storage
+```bash
+# Find the mount point
+lsblk -p
 
-Click on "CHOOSE STORAGE" and select your microSD card from the list.
+# Mount if needed (replace X with your device letter)
+sudo mkdir -p /mnt/boot
+sudo mount /dev/sdX1 /mnt/boot
+```
 
-### 6. Configure Advanced Options
+#### Enable SSH:
 
-Click the gear icon (⚙️) in the bottom right to access advanced options:
+```bash
+# Create an empty ssh file to enable SSH
+sudo touch /mnt/boot/ssh
+```
 
-- **Set hostname**: This will be your Pi's network name (e.g., `raspberrypi.local`)
-- **Enable SSH**: Check this option and set a password for secure remote access
-- **Configure WiFi**: If you plan to use WiFi instead of ethernet, enter your network details
-- **Set locale settings**: Configure timezone, keyboard layout, etc.
+#### Configure WiFi (if needed):
 
-### 7. Write the Image
+```bash
+# Create wpa_supplicant.conf file
+cat << EOF | sudo tee /mnt/boot/wpa_supplicant.conf
+country=US
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
 
-Click "WRITE" to begin the process. This will:
-- Format the microSD card
-- Write the Raspberry Pi OS to the card
-- Verify the written data
+network={
+    ssid="YOUR_WIFI_SSID"
+    psk="YOUR_WIFI_PASSWORD"
+    key_mgmt=WPA-PSK
+}
+EOF
+```
 
-This process may take several minutes depending on your computer and microSD card speed.
+#### Set hostname (optional):
 
-### 8. Safely Eject
+```bash
+# Create or edit the hostname file
+echo "raspberrypi" | sudo tee /mnt/boot/hostname
+```
 
-When the process is complete, safely eject the microSD card from your computer.
+### 6. Safely eject the SD card
+
+```bash
+# Sync to ensure all writes are complete
+sync
+
+# Unmount all partitions of the SD card
+sudo umount /dev/sdX1
+sudo umount /dev/sdX2 2>/dev/null || true
+
+# Optional: Use eject command if available
+sudo eject /dev/sdX
+```
+
+## GUI Alternative (Raspberry Pi Imager)
+
+If you prefer a graphical interface:
+
+```bash
+# Install Raspberry Pi Imager
+# Ubuntu/Debian:
+sudo apt install rpi-imager
+
+# Arch Linux:
+sudo pacman -S rpi-imager
+
+# Launch the application
+rpi-imager
+```
+
+Then follow the on-screen instructions to:
+1. Choose OS (Raspberry Pi OS 64-bit recommended for Pi 3/4/5)
+2. Choose Storage (select your SD card)
+3. Configure advanced options (⚙️) for hostname, SSH, WiFi, etc.
+4. Write the image
 
 ## Next Steps
 
@@ -81,6 +139,17 @@ Your microSD card is now ready! Proceed to [Step 2: Hardware Setup](02-hardware-
 
 ## Troubleshooting
 
-- **Write Failed**: Try a different microSD card or card reader
+```bash
+# Check if your SD card is recognized
+lsblk -p
+
+# Verify the SD card is properly formatted
+sudo fdisk -l /dev/sdX
+
+# Check for bad blocks on the SD card
+sudo badblocks -s -v /dev/sdX
+```
+
+- **Write Failed**: Check for write protection switch on the SD adapter
 - **Verification Failed**: The card may be counterfeit or damaged
-- **Can't Find SD Card**: Make sure it's properly inserted and recognized by your computer
+- **Can't Find SD Card**: Run `dmesg | tail` after inserting to see detection messages
