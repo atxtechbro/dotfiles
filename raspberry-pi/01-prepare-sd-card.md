@@ -114,15 +114,21 @@ sudo dd if=~/Downloads/raspberry-pi/raspios.img of=/dev/sda bs=4M conv=fsync sta
 
 ### 5. Configure the Raspberry Pi OS (Headless Setup)
 
-After the image is written, the boot partition will be mounted automatically. If not:
+After writing the image, check if the boot partition was mounted automatically:
 
 ```bash
-# Find the mount point
-lsblk -p
+# Check if the boot partition is mounted
+lsblk -p | grep sda1
 
-# Mount if needed (replace X with your device letter)
+# Example output if mounted:
+# /dev/sda1   8:1    1  512M  0 part  /media/user/bootfs
+
+# If you don't see a mount point like /media/user/bootfs, mount it manually:
 sudo mkdir -p /mnt/boot
-sudo mount /dev/sdX1 /mnt/boot
+sudo mount /dev/sda1 /mnt/boot
+
+# Note: Use the actual device name from your system (e.g., sda1)
+# The mount point will be /mnt/boot if you mount manually
 ```
 
 #### Enable SSH:
