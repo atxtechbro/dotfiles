@@ -208,20 +208,3 @@ sudo eject /dev/sda
 ## Next Steps
 
 Your microSD card is now ready! Proceed to [Step 2: Hardware Setup](02-hardware-setup.md) to continue setting up your Raspberry Pi.
-
-## Troubleshooting
-
-```bash
-# Check if your SD card is recognized
-lsblk -p
-
-# Verify the SD card is properly formatted
-sudo fdisk -l /dev/sdX
-
-# Check for bad blocks on the SD card
-sudo badblocks -s -v /dev/sdX
-```
-
-- **Write Failed**: Check for write protection switch on the SD adapter
-- **Verification Failed**: The card may be counterfeit or damaged
-- **Can't Find SD Card**: Run `dmesg | tail` after inserting to see detection messages
