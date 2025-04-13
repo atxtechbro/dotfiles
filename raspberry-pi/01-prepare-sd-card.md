@@ -76,10 +76,10 @@ mkdir -p ~/Downloads/raspberry-pi
 
 # Download the latest Raspberry Pi OS Lite (64-bit) image
 # This is a minimal version perfect for headless setups (no desktop environment)
-wget -O ~/Downloads/raspberry-pi/raspios-lite.img.xz https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2023-05-03/2023-05-03-raspios-bullseye-lite-arm64.img.xz
+wget -O ~/Downloads/raspberry-pi/raspios-lite.img.xz https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2024-11-19/2024-11-19-raspios-bookworm-arm64-lite.img.xz
 
 # For 32-bit version (for older Pi models), use:
-# wget -O ~/Downloads/raspberry-pi/raspios-lite.img.xz https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2023-05-03/2023-05-03-raspios-bullseye-lite-armhf.img.xz
+# wget -O ~/Downloads/raspberry-pi/raspios-lite.img.xz https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2024-11-19/2024-11-19-raspios-bookworm-armhf-lite.img.xz
 ```
 
 > **Note:** We're using Raspberry Pi OS Lite since this is for a headless setup. This version:
