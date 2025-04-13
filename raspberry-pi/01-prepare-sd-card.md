@@ -131,27 +131,34 @@ lsblk -p | grep sda1
 
 # Example output if mounted:
 # /dev/sda1   8:1    1  512M  0 part  /media/user/bootfs
+```
 
-# If you don't see a mount point like /media/user/bootfs, mount it manually:
+Use the actual mount point from your output (like `/media/user/bootfs`) for the following steps. If you don't see a mount point, mount it manually:
+
+```bash
+# Only if not already mounted:
 sudo mkdir -p /mnt/boot
 sudo mount /dev/sda1 /mnt/boot
-
-# Note: Use the actual device name from your system (e.g., sda1)
-# The mount point will be /mnt/boot if you mount manually
+# Then use /mnt/boot as your mount point in the following steps
 ```
 
 #### Enable SSH:
 
 ```bash
 # Create an empty ssh file to enable SSH
-sudo touch /mnt/boot/ssh
+# Use your actual boot partition mount point (from the lsblk command above)
+sudo touch /media/user/bootfs/ssh
+
+# If you mounted manually, use:
+# sudo touch /mnt/boot/ssh
 ```
 
 #### Configure WiFi (if needed):
 
 ```bash
 # Create wpa_supplicant.conf file
-cat << EOF | sudo tee /mnt/boot/wpa_supplicant.conf
+# Use your actual boot partition mount point (from the lsblk command above)
+cat << EOF | sudo tee /media/user/bootfs/wpa_supplicant.conf
 country=US
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
@@ -162,13 +169,21 @@ network={
     key_mgmt=WPA-PSK
 }
 EOF
+
+# If you mounted manually, use:
+# cat << EOF | sudo tee /mnt/boot/wpa_supplicant.conf
+# ...
 ```
 
 #### Set hostname (optional):
 
 ```bash
 # Create or edit the hostname file
-echo "raspberrypi" | sudo tee /mnt/boot/hostname
+# Use your actual boot partition mount point (from the lsblk command above)
+echo "raspberrypi" | sudo tee /media/user/bootfs/hostname
+
+# If you mounted manually, use:
+# echo "raspberrypi" | sudo tee /mnt/boot/hostname
 ```
 
 ### 6. Safely eject the SD card
@@ -178,11 +193,12 @@ echo "raspberrypi" | sudo tee /mnt/boot/hostname
 sync
 
 # Unmount all partitions of the SD card
-sudo umount /dev/sdX1
-sudo umount /dev/sdX2 2>/dev/null || true
+# Use the actual device name from your system (e.g., sda1, sda2)
+sudo umount /dev/sda1
+sudo umount /dev/sda2 2>/dev/null || true
 
 # Optional: Use eject command if available
-sudo eject /dev/sdX
+sudo eject /dev/sda
 ```
 
 ## GUI Alternative (Raspberry Pi Imager)
