@@ -1,41 +1,47 @@
-# Raspberry Pi Headless Setup
+# Raspberry Pi 5 Headless Setup
 
-This directory contains Raspberry Pi specific configurations and scripts for headless setup (without keyboard or monitor, using SSH only).
+This directory contains configurations and scripts for headless setup of a Raspberry Pi 5 (8GB) with a 128GB Samsung microSD card.
 
 ## Quick Setup
 
 ### 1. Flash Raspberry Pi OS to MicroSD Card
 
-Use the included command-line script to flash Raspberry Pi OS:
+First, identify your 128GB Samsung microSD card:
 
 ```bash
-# Show available devices
-lsblk
+# Show all storage devices
+lsblk -p -o NAME,SIZE,MODEL,VENDOR
+```
 
+Look for the 128GB Samsung device in the output. Then flash the OS:
+
+```bash
 # Flash with WiFi and custom hostname
-./raspberry-pi/flash-sd.sh --device /dev/sdX --wifi YourNetwork:YourPassword --hostname mypi
+./raspberry-pi/flash-sd.sh --device /dev/sdX --wifi YourNetwork:YourPassword --hostname pi5
 ```
 
 The script will:
-- Download the latest Raspberry Pi OS image
-- Flash it to your MicroSD card
+- Download the latest 64-bit Raspberry Pi OS image
+- Flash it to your 128GB Samsung microSD card
 - Configure WiFi and SSH for headless setup
 - Set your preferred hostname
 
-### 2. Connect to Your Pi
+### 2. Connect to Your Pi 5
 
 After flashing:
 
-1. Insert the card into your Pi and power it on
-2. Wait about 90 seconds for the Pi to boot
+1. Insert the card into your Pi 5 and power it on
+2. Wait about 60 seconds for the Pi to boot
 3. Connect via SSH:
    ```bash
-   # Using hostname (if your router supports mDNS)
-   ssh pi@mypi.local
+   # Using hostname
+   ssh pi@pi5.local
    
-   # Or using IP address (find it from your router)
+   # Or using IP address (if hostname resolution fails)
    ssh pi@192.168.1.xxx
    ```
+
+Default credentials: username `pi`, password `raspberry`
 
 ### 3. Install Dotfiles
 
@@ -47,21 +53,17 @@ cd ~/dotfiles
 ./setup.sh
 ```
 
-The setup script will detect that it's running on a Raspberry Pi and automatically run the Raspberry Pi specific setup script.
+The setup script will detect the Raspberry Pi 5 and optimize configurations for the 8GB model.
 
-## Headless Setup Options
+## Raspberry Pi 5 Optimizations
 
-The Raspberry Pi setup script offers several installation options:
+The setup automatically applies these Pi 5 specific optimizations:
 
-1. **Minimal setup** - Basic tools for headless servers
-2. **Development environment** - Python, GPIO libraries, and development tools
-3. **IoT environment** - MQTT broker, Node-RED, and IoT tools
-4. **All components** - Complete installation with all features
-
-## Configuration Files
-
-- `config.txt` - Settings to add to `/boot/config.txt`
-- `templates/` - Template files used by the flash script
+- Memory allocation optimized for 8GB RAM model
+- Storage partitioning optimized for 128GB Samsung microSD
+- CPU governor settings for optimal performance/temperature balance
+- GPU memory allocation for headless operation
+- USB port power management for connected peripherals
 
 ## Useful Commands
 
@@ -94,14 +96,11 @@ The setup creates this directory structure:
 
 ## Python Package Management
 
-This setup uses `uv` instead of `pip` for Python package management, following project standards. `uv` is faster and more reliable than traditional pip.
+This setup uses `uv` for Python package management:
 
 ```bash
 # Install a package
 uv pip install package-name
-
-# Install multiple packages
-uv pip install package1 package2
 
 # Install from requirements.txt
 uv pip install -r requirements.txt
@@ -109,7 +108,7 @@ uv pip install -r requirements.txt
 
 ## Security Features
 
-The setup includes several security features for headless operation:
+The setup includes security features for headless operation:
 
 - SSH hardening options
 - Firewall configuration with UFW
