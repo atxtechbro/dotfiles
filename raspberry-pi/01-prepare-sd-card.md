@@ -17,10 +17,10 @@ If you're concerned about connecting unknown USB devices directly to your system
 # This lets you examine a device before allowing it full system access
 
 # First, identify your USB ports (before connecting the device)
-ls /sys/bus/usb/devices/usb*
+ls /sys/bus/usb/devices/
 
-# Disable a specific USB port (replace X with port number, e.g., 5)
-sudo sh -c 'echo 0 > /sys/bus/usb/devices/usbX/authorized_default'
+# Disable a specific USB port (replace X-Y with bus-port format, e.g., 5-2)
+sudo sh -c 'echo 0 > /sys/bus/usb/devices/5-2/authorized'
 
 # Now connect your device to that port - it won't be activated yet
 # Check the kernel messages to see device details without activating it:
@@ -37,7 +37,7 @@ sudo dmesg | tail -20
 # Note: Many kit-provided card readers show generic identifiers like this
 
 # When you're ready to use it (after verifying it's safe):
-sudo sh -c 'echo 1 > /sys/bus/usb/devices/usbX/authorized_default'
+sudo sh -c 'echo 1 > /sys/bus/usb/devices/5-2/authorized'
 ```
 
 ## Command Line Approach
