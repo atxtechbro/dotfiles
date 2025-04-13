@@ -84,8 +84,14 @@ wget -O ~/Downloads/raspberry-pi/raspios.img.xz https://downloads.raspberrypi.or
 ### 3. Extract the image
 
 ```bash
-# Extract the downloaded image
+# For .xz compressed images
 unxz ~/Downloads/raspberry-pi/raspios.img.xz
+
+# For .zip compressed images
+unzip ~/Downloads/raspberry-pi/raspios.img.zip
+
+# For .gz compressed images
+gunzip ~/Downloads/raspberry-pi/raspios.img.gz
 ```
 
 ### 4. Write the image to the SD card
