@@ -105,6 +105,19 @@ echo -e "${YELLOW}Applying bash configuration...${NC}"
 # shellcheck disable=SC1090
 source ~/.bashrc 2>/dev/null || true
 
+# Check if this is running on Arch Linux and offer Arch-specific setup
+if command -v pacman &>/dev/null; then
+    echo -e "${YELLOW}Detected Arch Linux!${NC}"
+    
+    # Check if Arch Linux setup script exists
+    if [[ -f ~/dotfiles/arch-linux/setup.sh ]]; then
+        echo -e "${YELLOW}Running Arch Linux specific setup...${NC}"
+        bash ~/dotfiles/arch-linux/setup.sh
+    else
+        echo -e "${YELLOW}No Arch Linux setup script found. Skipping Arch-specific setup.${NC}"
+    fi
+fi
+
 echo -e "${GREEN}Dotfiles setup complete!${NC}"
 echo -e "${YELLOW}Your development environment is now configured and ready to use.${NC}"
 echo -e "${BLUE}Enjoy your personalized setup!${NC}"
