@@ -102,8 +102,8 @@ diff before.txt after.txt
 # > └─/dev/sda2                   8:2    1     5G  0 part  /media/user/rootfs
 
 # From the output above, we can see the device is /dev/sda (NOT sda1 or sda2)
-# Now write the image (replace sdX with your actual device, e.g., sda from above)
-sudo dd if=~/Downloads/raspberry-pi/raspios.img of=/dev/sdX bs=4M conv=fsync status=progress
+# Now write the image using the device name from your diff output:
+sudo dd if=~/Downloads/raspberry-pi/raspios.img of=/dev/sda bs=4M conv=fsync status=progress
 ```
 
 ⚠️ **WARNING**: Double-check your device name! Using the wrong device can result in data loss. The device should be the one that appeared in your diff output (like `/dev/sda` in the example).
