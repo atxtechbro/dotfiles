@@ -2,9 +2,32 @@
 
 This directory contains Raspberry Pi specific configurations and scripts that integrate with your dotfiles.
 
-## Setup
+## Setup Process
 
-The `setup.sh` script in this directory will:
+### 1. Flash Raspberry Pi OS to MicroSD Card
+
+Use the included command-line script to flash Raspberry Pi OS:
+
+```bash
+# Show available devices
+lsblk
+
+# Flash to MicroSD card with default settings
+./flash-sd.sh --device /dev/sdX
+
+# Flash with WiFi and custom hostname
+./flash-sd.sh --device /dev/sdX --wifi YourNetwork:YourPassword --hostname mypi
+```
+
+The script will:
+- Download the latest Raspberry Pi OS image (or use a specified one)
+- Flash it to your MicroSD card
+- Configure WiFi and SSH for headless setup
+- Set your preferred hostname
+
+### 2. Boot and Configure
+
+After flashing, the `setup.sh` script will:
 
 1. Install Raspberry Pi specific packages
 2. Set up a Python virtual environment
