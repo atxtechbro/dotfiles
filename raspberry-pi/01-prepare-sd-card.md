@@ -10,10 +10,10 @@ Before you can set up your Raspberry Pi with our optimized configurations, you'l
 
 ## Security Considerations
 
-If you're concerned about connecting unknown USB devices directly to your system, consider these isolation methods:
+If you're concerned about connecting unknown USB devices directly to your system, consider using USB port power management for controlled access:
 
 ```bash
-# Option 1: Use USB port power management for controlled access
+# Use USB port power management for controlled access
 # This lets you examine a device before allowing it full system access
 
 # First, identify your USB ports (before connecting the device)
@@ -38,21 +38,7 @@ sudo dmesg | tail -20
 
 # When you're ready to use it (after verifying it's safe):
 sudo sh -c 'echo 1 > /sys/bus/usb/devices/usbX/authorized_default'
-
-# Option 2: Use a virtual machine with USB passthrough
-# This isolates the device from your host system
-# In VirtualBox: Devices > USB > Select your card reader
-# In VMware: VM > Removable Devices > Select your card reader
-
-# Option 3: Use a dedicated Raspberry Pi as an "air-gapped" SD writer
-# Flash SD cards from a dedicated Pi that's not connected to your main system
-
-# Option 4: Use a live Linux USB boot environment
-# Boot from a trusted USB drive to create a temporary environment
-# specifically for SD card operations
 ```
-
-For maximum security, consider using a dedicated system or live Linux USB boot specifically for SD card operations.
 
 ## Command Line Approach
 
