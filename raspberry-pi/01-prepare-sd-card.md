@@ -205,28 +205,6 @@ sudo umount /dev/sda2 2>/dev/null || true
 sudo eject /dev/sda
 ```
 
-## GUI Alternative (Raspberry Pi Imager)
-
-If you prefer a graphical interface:
-
-```bash
-# Install Raspberry Pi Imager
-# Ubuntu/Debian:
-sudo apt install rpi-imager
-
-# Arch Linux:
-sudo pacman -S rpi-imager
-
-# Launch the application
-rpi-imager
-```
-
-Then follow the on-screen instructions to:
-1. Choose OS (Raspberry Pi OS 64-bit recommended for Pi 3/4/5)
-2. Choose Storage (select your SD card)
-3. Configure advanced options (⚙️) for hostname, SSH, WiFi, etc.
-4. Write the image
-
 ## Next Steps
 
 Your microSD card is now ready! Proceed to [Step 2: Hardware Setup](02-hardware-setup.md) to continue setting up your Raspberry Pi.
