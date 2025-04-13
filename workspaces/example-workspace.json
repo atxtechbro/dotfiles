@@ -1,32 +1,32 @@
 {
-  "name": "Example Development Workspace",
-  "description": "A sample workspace for web development projects",
+  "name": "Learning Environment",
+  "description": "A way to learn about things you added to your dotfiles",
   "repos": [
     {
-      "path": "~/projects/frontend-app",
-      "name": "Frontend App",
-      "branch": "develop"
+      "path": "~/tech-skills-gym",
+      "name": "Tech Skills Gym",
+      "branch": "main"
     },
     {
-      "path": "~/projects/backend-api",
-      "name": "Backend API",
+      "path": "~/dotfiles",
+      "name": "Dotfiles",
       "branch": "main"
     }
   ],
   "tmux": {
     "layout": "main-vertical",
     "commands": [
-      "cd ~/projects/frontend-app && npm start",
-      "cd ~/projects/backend-api && ./run-dev.sh"
+      "cd ~/tech-skills-gym && ls -la",
+      "cd ~/dotfiles && git status"
     ]
   },
   "environment": {
-    "NODE_ENV": "development",
-    "API_URL": "http://localhost:3000"
+    "LEARNING_MODE": "active",
+    "DOTFILES_EDITOR": "nvim"
   },
   "tools": [
-    "node",
-    "python",
-    "docker"
+    "git",
+    "nvim",
+    "tmux"
   ]
 }
