@@ -105,7 +105,6 @@ echo -e "${YELLOW}Applying bash configuration...${NC}"
 # shellcheck disable=SC1090
 source ~/.bashrc 2>/dev/null || true
 
-<<<<<<< HEAD
 # Check if this is running on Arch Linux and offer Arch-specific setup
 if command -v pacman &>/dev/null; then
     echo -e "${YELLOW}Detected Arch Linux!${NC}"
