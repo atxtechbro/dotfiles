@@ -2,6 +2,52 @@
 
 A collection of configuration files for a consistent development environment across different machines.
 
+## Repository Design Patterns
+
+This repository follows specific organizational patterns to maintain consistency and clarity:
+
+### Platform-Based Organization (Top Level)
+
+At the root level, configurations are organized by platform or environment:
+
+- `arch-linux/` - Configurations specific to Arch Linux systems
+- `raspberry-pi/` - Configurations for Raspberry Pi devices
+- `nvim/` - Neovim-specific configurations
+- etc.
+
+This structural organization makes it clear which files apply to which environments.
+
+### Hybrid Organization (Within Platforms)
+
+Within each platform directory, we use a hybrid approach combining categories and specific use cases:
+
+```
+raspberry-pi/
+├── home/                  # Home use cases
+│   ├── home-assistant/    # Smart home hub
+│   └── media-server/      # Media streaming
+├── development/           # Development use cases
+│   └── ci-runner/         # Self-hosted CI/CD
+└── networking/            # Networking use cases
+    └── network-monitor/   # Traffic analysis
+```
+
+This approach:
+- Organizes by general categories for maintainability
+- Provides concrete examples for clarity
+- Allows users to find configurations based on their intended use case
+
+### Feature-Based Implementation
+
+The actual implementation of features follows these principles:
+
+1. **Detection over Assumption**: Scripts detect hardware capabilities rather than assuming specific use cases
+2. **Composability**: Features can be mixed and matched based on user needs
+3. **Automatic Optimization**: Hardware-specific optimizations are applied automatically
+4. **Clear Documentation**: Each feature documents its purpose and requirements
+
+This multi-level organizational approach allows us to maintain a clean repository structure while providing flexibility for different use cases.
+
 ## Quick Setup
 
 ### Set Up Your Dotfiles
