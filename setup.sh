@@ -105,6 +105,20 @@ echo -e "${YELLOW}Applying bash configuration...${NC}"
 # shellcheck disable=SC1090
 source ~/.bashrc 2>/dev/null || true
 
+<<<<<<< HEAD
+# Check if this is running on Arch Linux and offer Arch-specific setup
+if command -v pacman &>/dev/null; then
+    echo -e "${YELLOW}Detected Arch Linux!${NC}"
+    
+    # Check if Arch Linux setup script exists
+    if [[ -f ~/dotfiles/arch-linux/setup.sh ]]; then
+        echo -e "${YELLOW}Running Arch Linux specific setup...${NC}"
+        bash ~/dotfiles/arch-linux/setup.sh
+    else
+        echo -e "${YELLOW}No Arch Linux setup script found. Skipping Arch-specific setup.${NC}"
+    fi
+fi
+
 # Check if this is a Raspberry Pi and run Pi-specific setup if needed
 if grep -q "Raspberry Pi" /proc/cpuinfo 2>/dev/null; then
     echo -e "${YELLOW}Detected Raspberry Pi hardware!${NC}"
@@ -115,6 +129,8 @@ if grep -q "Raspberry Pi" /proc/cpuinfo 2>/dev/null; then
         bash ~/dotfiles/raspberry-pi/setup.sh
     else
         echo -e "${YELLOW}No Raspberry Pi setup script found. Skipping Pi-specific setup.${NC}"
+    fi
+fi
     fi
 fi
 

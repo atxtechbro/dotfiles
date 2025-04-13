@@ -1,6 +1,6 @@
 #!/bin/bash
 # Arch Linux Minimal Installation Script for ThinkPad T400
-# Created for dotfiles repository
+# Part of dotfiles/arch-linux
 
 set -e  # Exit on error
 
