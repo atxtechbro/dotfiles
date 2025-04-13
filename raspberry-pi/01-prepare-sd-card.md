@@ -36,8 +36,19 @@ sudo dmesg | tail -20
 # [35076.589193] usb 5-2: SerialNumber: 121220160204
 # Note: Many kit-provided card readers show generic identifiers like this
 
+# Take a snapshot of current block devices before authorizing
+lsblk -p > before.txt
+
 # When you're ready to use it (after verifying it's safe):
 sudo sh -c 'echo 1 > /sys/bus/usb/devices/5-2/authorized'
+
+# See exactly what block devices were added by the USB device
+lsblk -p > after.txt
+diff before.txt after.txt
+# Example output:
+# > /dev/sda                      8:0    1 119.4G  0 disk
+# > ├─/dev/sda1                   8:1    1   512M  0 part  /media/mstack/bootfs
+# > └─/dev/sda2                   8:2    1     5G  0 part  /media/mstack/rootfs
 ```
 
 ## Command Line Approach
