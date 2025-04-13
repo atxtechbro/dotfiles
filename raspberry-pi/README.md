@@ -2,7 +2,7 @@
 
 This directory contains Raspberry Pi specific configurations and scripts that integrate with your dotfiles.
 
-## Setup Process
+## Headless Setup Process
 
 ### 1. Flash Raspberry Pi OS to MicroSD Card
 
@@ -11,9 +11,6 @@ Use the included command-line script to flash Raspberry Pi OS:
 ```bash
 # Show available devices
 lsblk
-
-# Flash to MicroSD card with default settings
-./flash-sd.sh --device /dev/sdX
 
 # Flash with WiFi and custom hostname
 ./flash-sd.sh --device /dev/sdX --wifi YourNetwork:YourPassword --hostname mypi
@@ -25,9 +22,32 @@ The script will:
 - Configure WiFi and SSH for headless setup
 - Set your preferred hostname
 
-### 2. Boot and Configure
+### 2. Connect to Your Pi
 
-After flashing, the `setup.sh` script will:
+After flashing:
+
+1. Insert the card into your Pi and power it on
+2. Wait about 90 seconds for the Pi to boot
+3. Connect via SSH:
+   ```bash
+   # Using hostname (if your router supports mDNS)
+   ssh pi@mypi.local
+   
+   # Or using IP address (find it from your router)
+   ssh pi@192.168.1.xxx
+   ```
+
+### 3. Install Dotfiles
+
+Once connected:
+
+```bash
+git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+./setup.sh
+```
+
+The setup script will detect that it's running on a Raspberry Pi and automatically:
 
 1. Install Raspberry Pi specific packages
 2. Set up a Python virtual environment
@@ -35,52 +55,10 @@ After flashing, the `setup.sh` script will:
 4. Create useful aliases and functions
 5. Set up project directories
 
-## Usage
-
-### Initial Setup
-
-When setting up a new Raspberry Pi:
-
-1. First install your dotfiles:
-   ```bash
-   git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
-   cd ~/dotfiles
-   ./setup.sh
-   ```
-
-2. Then run the Raspberry Pi specific setup:
-   ```bash
-   cd ~/dotfiles/raspberry-pi
-   ./setup.sh
-   ```
-
-### Headless Setup
-
-For headless setup (without monitor/keyboard):
-
-1. Flash Raspberry Pi OS to your MicroSD card
-2. Before ejecting, create these files on the boot partition:
-   - Empty file named `ssh` to enable SSH
-   - `wpa_supplicant.conf` with your WiFi credentials:
-     ```
-     country=US
-     ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-     update_config=1
-     
-     network={
-         ssid="YOUR_WIFI_NAME"
-         psk="YOUR_WIFI_PASSWORD"
-         key_mgmt=WPA-PSK
-     }
-     ```
-
-3. Insert the card, power on the Pi, and SSH in
-4. Clone your dotfiles and run the setup scripts
-
 ## Configuration Files
 
 - `config.txt` - Settings to add to `/boot/config.txt`
-- `bashrc` - Raspberry Pi specific bash configuration
+- `headless-setup/` - Files for enabling SSH and WiFi during first boot
 
 ## Useful Commands
 

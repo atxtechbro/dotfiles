@@ -16,14 +16,18 @@ These files are used to set up a Raspberry Pi in headless mode (without keyboard
    
    The script will automatically configure WiFi and SSH for headless setup.
 
-2. Alternatively, if flashing manually, copy these files to the boot partition:
-   - `ssh` (empty file to enable SSH)
-   - `wpa_supplicant.conf` (edit with your WiFi credentials)
+2. Insert the card into your Pi and power it on
 
-3. Insert the card into your Pi and power it on
-4. Find your Pi's IP address from your router or use hostname: `ping mypi.local`
-5. SSH into your Pi: `ssh pi@mypi.local` or `ssh pi@your-pi-ip-address`
-6. Clone your dotfiles repository and run the setup script:
+3. Connect to your Pi via SSH:
+   ```bash
+   # Using hostname (if your router supports mDNS)
+   ssh pi@mypi.local
+   
+   # Or using IP address (find it from your router)
+   ssh pi@192.168.1.xxx
+   ```
+
+4. Clone your dotfiles repository and run the setup script:
    ```bash
    git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
    cd ~/dotfiles
