@@ -105,6 +105,19 @@ echo -e "${YELLOW}Applying bash configuration...${NC}"
 # shellcheck disable=SC1090
 source ~/.bashrc 2>/dev/null || true
 
+# Check if this is a Raspberry Pi and run Pi-specific setup if needed
+if grep -q "Raspberry Pi" /proc/cpuinfo 2>/dev/null; then
+    echo -e "${YELLOW}Detected Raspberry Pi hardware!${NC}"
+    
+    # Check if Raspberry Pi setup script exists
+    if [[ -f ~/dotfiles/raspberry-pi/setup.sh ]]; then
+        echo -e "${YELLOW}Running Raspberry Pi specific setup...${NC}"
+        bash ~/dotfiles/raspberry-pi/setup.sh
+    else
+        echo -e "${YELLOW}No Raspberry Pi setup script found. Skipping Pi-specific setup.${NC}"
+    fi
+fi
+
 echo -e "${GREEN}Dotfiles setup complete!${NC}"
 echo -e "${YELLOW}Your development environment is now configured and ready to use.${NC}"
 echo -e "${BLUE}Enjoy your personalized setup!${NC}"
