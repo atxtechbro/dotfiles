@@ -13,15 +13,30 @@ Before you can set up your Raspberry Pi with our optimized configurations, you'l
 If you're concerned about connecting unknown USB devices directly to your system, consider these isolation methods:
 
 ```bash
-# Option 1: Use a virtual machine with USB passthrough
+# Option 1: Use USB port power management for controlled access
+# This lets you examine a device before allowing it full system access
+
+# First, identify your USB ports (before connecting the device)
+ls /sys/bus/usb/devices/usb*
+
+# Disable a specific USB port (replace X with port number, e.g., 5)
+sudo sh -c 'echo 0 > /sys/bus/usb/devices/usbX/authorized_default'
+
+# Now connect your device to that port - it won't be activated yet
+# You can check dmesg to see it was detected but not authorized
+
+# When you're ready to use it (after verifying it's safe):
+sudo sh -c 'echo 1 > /sys/bus/usb/devices/usbX/authorized_default'
+
+# Option 2: Use a virtual machine with USB passthrough
 # This isolates the device from your host system
 # In VirtualBox: Devices > USB > Select your card reader
 # In VMware: VM > Removable Devices > Select your card reader
 
-# Option 2: Use a dedicated Raspberry Pi as an "air-gapped" SD writer
+# Option 3: Use a dedicated Raspberry Pi as an "air-gapped" SD writer
 # Flash SD cards from a dedicated Pi that's not connected to your main system
 
-# Option 3: Use a live Linux USB boot environment
+# Option 4: Use a live Linux USB boot environment
 # Boot from a trusted USB drive to create a temporary environment
 # specifically for SD card operations
 ```
