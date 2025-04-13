@@ -65,4 +65,5 @@ This file contains guidance for Amazon Q when interacting with this repository.
 Feel free to add your discoveries and insights below as you learn:
 
 - Always use `uv` instead of `pip` for Python package management (e.g., `uv pip install package-name` not `pip install package-name`)
+- Use the `workspace` command to manage development environments (e.g., `workspace load project-name`)
 

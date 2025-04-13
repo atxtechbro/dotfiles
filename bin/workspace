@@ -1,0 +1,247 @@
+#!/usr/bin/env bash
+#
+# Workspace management script for dotfiles
+# Allows managing multiple repositories and development environments
+
+set -e
+
+WORKSPACE_DIR="$HOME/dotfiles/workspaces"
+COMMAND=$1
+WORKSPACE_NAME=$2
+
+# Create workspace directory if it doesn't exist
+mkdir -p "$WORKSPACE_DIR"
+
+usage() {
+  echo "Usage: workspace [command] [workspace-name]"
+  echo ""
+  echo "Commands:"
+  echo "  create [name]    Create a new workspace"
+  echo "  load [name]      Load an existing workspace"
+  echo "  list             List available workspaces"
+  echo "  edit [name]      Edit a workspace configuration"
+  echo "  help             Show this help message"
+  echo ""
+  echo "Examples:"
+  echo "  workspace create my-project"
+  echo "  workspace load my-project"
+  exit 1
+}
+
+list_workspaces() {
+  echo "Available workspaces:"
+  echo ""
+  for workspace in "$WORKSPACE_DIR"/*.json; do
+    if [ -f "$workspace" ]; then
+      name=$(basename "$workspace" .json)
+      description=$(jq -r '.description // "No description"' "$workspace")
+      echo "- $name: $description"
+    fi
+  done
+}
+
+create_workspace() {
+  if [ -z "$WORKSPACE_NAME" ]; then
+    echo "Error: Workspace name is required"
+    usage
+  fi
+  
+  workspace_file="$WORKSPACE_DIR/$WORKSPACE_NAME.json"
+  
+  if [ -f "$workspace_file" ]; then
+    echo "Error: Workspace '$WORKSPACE_NAME' already exists"
+    echo "Use 'workspace edit $WORKSPACE_NAME' to modify it"
+    exit 1
+  fi
+  
+  # Create a template workspace file
+  cat > "$workspace_file" << EOF
+{
+  "name": "$WORKSPACE_NAME",
+  "description": "Description of $WORKSPACE_NAME workspace",
+  "repos": [
+    {
+      "path": "~/projects/example-repo",
+      "name": "Example Repository",
+      "branch": "main"
+    }
+  ],
+  "tmux": {
+    "layout": "main-vertical",
+    "commands": [
+      "cd ~/projects/example-repo && echo 'Ready to work'"
+    ]
+  },
+  "environment": {
+    "EXAMPLE_VAR": "example-value"
+  },
+  "tools": [
+    "example-tool"
+  ]
+}
+EOF
+
+  echo "Created workspace: $workspace_file"
+  echo "Edit this file to configure your workspace"
+  
+  # Open the file in the default editor
+  if [ -n "$EDITOR" ]; then
+    $EDITOR "$workspace_file"
+  else
+    echo "Set the EDITOR environment variable to automatically open the file"
+  fi
+}
+
+edit_workspace() {
+  if [ -z "$WORKSPACE_NAME" ]; then
+    echo "Error: Workspace name is required"
+    usage
+  fi
+  
+  workspace_file="$WORKSPACE_DIR/$WORKSPACE_NAME.json"
+  
+  if [ ! -f "$workspace_file" ]; then
+    echo "Error: Workspace '$WORKSPACE_NAME' does not exist"
+    echo "Available workspaces:"
+    list_workspaces
+    exit 1
+  fi
+  
+  # Open the file in the default editor
+  if [ -n "$EDITOR" ]; then
+    $EDITOR "$workspace_file"
+  else
+    echo "Set the EDITOR environment variable to edit the file"
+    echo "Workspace file: $workspace_file"
+  fi
+}
+
+load_workspace() {
+  if [ -z "$WORKSPACE_NAME" ]; then
+    echo "Error: Workspace name is required"
+    usage
+  fi
+  
+  workspace_file="$WORKSPACE_DIR/$WORKSPACE_NAME.json"
+  
+  if [ ! -f "$workspace_file" ]; then
+    echo "Error: Workspace '$WORKSPACE_NAME' does not exist"
+    echo "Available workspaces:"
+    list_workspaces
+    exit 1
+  fi
+  
+  echo "Loading workspace: $WORKSPACE_NAME"
+  
+  # Extract workspace information
+  workspace_json=$(cat "$workspace_file")
+  workspace_name=$(echo "$workspace_json" | jq -r '.name')
+  
+  echo "Workspace: $workspace_name"
+  
+  # Set environment variables
+  echo "Setting environment variables..."
+  eval "$(echo "$workspace_json" | jq -r '.environment | to_entries[] | "export \(.key)=\(.value)"')"
+  
+  # Check repositories
+  echo "Checking repositories..."
+  repos=$(echo "$workspace_json" | jq -c '.repos[]')
+  
+  for repo in $repos; do
+    repo_path=$(echo "$repo" | jq -r '.path')
+    repo_name=$(echo "$repo" | jq -r '.name')
+    repo_branch=$(echo "$repo" | jq -r '.branch')
+    
+    # Expand tilde in path
+    repo_path="${repo_path/#\~/$HOME}"
+    
+    echo "Repository: $repo_name ($repo_path)"
+    
+    if [ ! -d "$repo_path" ]; then
+      echo "  Warning: Repository directory does not exist: $repo_path"
+      read -p "  Create directory? (y/n) " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]]; then
+        mkdir -p "$repo_path"
+        echo "  Created directory: $repo_path"
+      fi
+    else
+      if [ -d "$repo_path/.git" ]; then
+        echo "  Git repository found"
+        
+        # Check if the branch exists and switch to it
+        if [ -n "$repo_branch" ]; then
+          echo "  Checking out branch: $repo_branch"
+          (cd "$repo_path" && git fetch && git checkout "$repo_branch")
+        fi
+      fi
+    fi
+  done
+  
+  # Launch tmux session if configured
+  if echo "$workspace_json" | jq -e '.tmux' > /dev/null; then
+    tmux_layout=$(echo "$workspace_json" | jq -r '.tmux.layout')
+    tmux_commands=$(echo "$workspace_json" | jq -c '.tmux.commands[]')
+    
+    # Create a new tmux session named after the workspace
+    session_name=$(echo "$WORKSPACE_NAME" | tr '.' '_')
+    
+    # Check if session already exists
+    if tmux has-session -t "$session_name" 2>/dev/null; then
+      echo "Attaching to existing tmux session: $session_name"
+      tmux attach-session -t "$session_name"
+    else
+      echo "Creating new tmux session: $session_name"
+      tmux new-session -d -s "$session_name"
+      
+      # Create windows and run commands
+      window_index=0
+      for cmd in $tmux_commands; do
+        cmd=$(echo "$cmd" | jq -r '.')
+        
+        if [ "$window_index" -eq 0 ]; then
+          tmux send-keys -t "$session_name:$window_index" "$cmd" C-m
+        else
+          tmux new-window -t "$session_name:$window_index"
+          tmux send-keys -t "$session_name:$window_index" "$cmd" C-m
+        fi
+        
+        window_index=$((window_index + 1))
+      done
+      
+      # Set the layout if specified
+      if [ -n "$tmux_layout" ] && [ "$tmux_layout" != "null" ]; then
+        tmux select-layout -t "$session_name:0" "$tmux_layout"
+      fi
+      
+      # Attach to the session
+      tmux select-window -t "$session_name:0"
+      tmux attach-session -t "$session_name"
+    fi
+  fi
+  
+  echo "Workspace loaded successfully"
+}
+
+# Main command processing
+case "$COMMAND" in
+  create)
+    create_workspace
+    ;;
+  load)
+    load_workspace
+    ;;
+  list)
+    list_workspaces
+    ;;
+  edit)
+    edit_workspace
+    ;;
+  help|--help|-h)
+    usage
+    ;;
+  *)
+    echo "Error: Unknown command '$COMMAND'"
+    usage
+    ;;
+esac

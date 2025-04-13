@@ -1,0 +1,32 @@
+{
+  "name": "Example Development Workspace",
+  "description": "A sample workspace for web development projects",
+  "repos": [
+    {
+      "path": "~/projects/frontend-app",
+      "name": "Frontend App",
+      "branch": "develop"
+    },
+    {
+      "path": "~/projects/backend-api",
+      "name": "Backend API",
+      "branch": "main"
+    }
+  ],
+  "tmux": {
+    "layout": "main-vertical",
+    "commands": [
+      "cd ~/projects/frontend-app && npm start",
+      "cd ~/projects/backend-api && ./run-dev.sh"
+    ]
+  },
+  "environment": {
+    "NODE_ENV": "development",
+    "API_URL": "http://localhost:3000"
+  },
+  "tools": [
+    "node",
+    "python",
+    "docker"
+  ]
+}
