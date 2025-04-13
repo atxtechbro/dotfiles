@@ -13,31 +13,17 @@ Before you can set up your Raspberry Pi with our optimized configurations, you'l
 If you're concerned about connecting unknown USB devices directly to your system, consider these isolation methods:
 
 ```bash
-# 1. Use USB port power management to disable until needed
-# First, take a snapshot of current USB devices
-lsusb > before.txt
-
-# Connect your card reader
-# Then identify the new device by comparing before and after
-lsusb > after.txt
-diff before.txt after.txt
-# Example output:
-# > Bus 005 Device 002: ID 046d:c52f Logitech, Inc. Unifying Receiver
-
-# Once identified, you can disable that specific USB port
-# The format is "bus-device" (e.g., 5-2 for Bus 005 Device 002)
-sudo sh -c 'echo 0 > /sys/bus/usb/devices/5-2/authorized'
-
-# To re-enable the device when you're ready:
-sudo sh -c 'echo 1 > /sys/bus/usb/devices/5-2/authorized'
-
-# 2. Use a virtual machine with USB passthrough
+# Option 1: Use a virtual machine with USB passthrough
 # This isolates the device from your host system
 # In VirtualBox: Devices > USB > Select your card reader
 # In VMware: VM > Removable Devices > Select your card reader
 
-# 3. Use a dedicated Raspberry Pi as an "air-gapped" SD writer
+# Option 2: Use a dedicated Raspberry Pi as an "air-gapped" SD writer
 # Flash SD cards from a dedicated Pi that's not connected to your main system
+
+# Option 3: Use a live Linux USB boot environment
+# Boot from a trusted USB drive to create a temporary environment
+# specifically for SD card operations
 ```
 
 For maximum security, consider using a dedicated system or live Linux USB boot specifically for SD card operations.
