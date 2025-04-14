@@ -2,6 +2,38 @@
 
 A collection of configuration files for a consistent development environment across different machines.
 
+## P.P.V System: Pillars, Pipelines, and Vaults
+
+This repository is part of the P.P.V system, a holistic approach to organizing knowledge work and digital assets:
+
+### The P.P.V System
+
+- **Pillars**: Core repositories and foundational configurations (like this dotfiles repo)
+- **Pipelines**: Automation scripts, workflows, and processes that connect tools and services
+- **Vaults**: Secure storage for credentials, tokens, and sensitive information
+
+This organizational system provides a clear mental model for where different types of work should live:
+
+```
+~/
+├── Pillars/                # Foundational repositories and configurations
+│   ├── dotfiles/           # This repository - core configuration files
+│   ├── knowledge-base/     # Documentation and reference materials
+│   └── templates/          # Project templates and boilerplates
+│
+├── Pipelines/              # Automation and workflow repositories
+│   ├── ci-workflows/       # CI/CD pipeline configurations
+│   ├── data-pipelines/     # Data processing workflows
+│   └── release-automation/ # Release management scripts
+│
+└── Vaults/                 # Secure storage (not tracked in git)
+    ├── credentials/        # API keys and access tokens
+    ├── certificates/       # SSL certificates and signing keys
+    └── configs/            # Environment-specific configurations
+```
+
+The P.P.V system helps maintain separation of concerns while providing a consistent structure across all projects and environments.
+
 ## Repository Design Patterns
 
 This repository follows specific organizational patterns to maintain consistency and clarity:
@@ -56,8 +88,8 @@ Get started with your personalized environment:
 
 ```bash
 # Clone the repository and run setup
-git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
-cd ~/dotfiles
+git clone https://github.com/atxtechbro/dotfiles.git ~/Pillars/dotfiles
+cd ~/Pillars/dotfiles
 ./setup.sh
 ```
 
@@ -130,7 +162,7 @@ Sensitive information like API tokens are stored in `~/.bash_secrets` (not track
 
 ```bash
 # Create your personal secrets file from the example template
-cp ~/dotfiles/.bash_secrets.example ~/.bash_secrets
+cp ~/Pillars/dotfiles/.bash_secrets.example ~/.bash_secrets
 
 # Set proper permissions to protect your secrets
 chmod 600 ~/.bash_secrets
@@ -141,7 +173,7 @@ nano ~/.bash_secrets
 
 The `.bash_secrets` file is automatically loaded by `.bashrc`. It provides a framework for managing your secrets and environment variables, with examples of common patterns. You should customize it based on your needs.
 
-For company-specific secrets, consider maintaining a separate private repository with additional templates and documentation.
+For company-specific secrets, consider maintaining a separate private repository in your Vaults directory.
 
 ## CLI Tools
 
@@ -154,7 +186,7 @@ tmux is a terminal multiplexer that allows you to split your terminal into multi
 sudo apt install -y tmux
 
 # Create symlink for tmux configuration
-ln -sf ~/dotfiles/.tmux.conf ~/.tmux.conf
+ln -sf ~/Pillars/dotfiles/.tmux.conf ~/.tmux.conf
 ```
 
 Basic usage:
@@ -252,6 +284,5 @@ To include a module in your Git configuration:
 ```bash
 # Add this to your ~/.gitconfig
 [include]
-    path = ~/dotfiles/.gitconfig.signing
+    path = ~/Pillars/dotfiles/.gitconfig.signing
 ```
-
