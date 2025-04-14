@@ -12,7 +12,7 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 # Define dotfiles path - CHANGE THIS ONE VARIABLE to update all paths
-DOTFILES_PATH="$HOME/Pillars/dotfiles"
+DOT_DEN="$HOME/Pillars/dotfiles"
 
 echo -e "${GREEN}Starting dotfiles setup...${NC}"
 
@@ -67,19 +67,19 @@ if [[ "$IS_WSL" == true ]]; then
     echo -e "${YELLOW}Setting up WSL-specific configuration...${NC}"
     if [[ -d "/mnt/c/dotfiles" ]]; then
         echo -e "${BLUE}Found dotfiles in Windows filesystem, creating symlink...${NC}"
-        ln -sf /mnt/c/dotfiles "$DOTFILES_PATH"
+        ln -sf /mnt/c/dotfiles "$DOT_DEN"
     fi
 fi
 
 # Clone dotfiles repository if it doesn't exist and we're not in WSL
-if [[ ! -d "$DOTFILES_PATH" && "$IS_WSL" == false ]]; then
+if [[ ! -d "$DOT_DEN" && "$IS_WSL" == false ]]; then
     echo -e "${YELLOW}Cloning dotfiles repository...${NC}"
-    mkdir -p "$(dirname "$DOTFILES_PATH")"
-    git clone https://github.com/atxtechbro/dotfiles.git "$DOTFILES_PATH"
+    mkdir -p "$(dirname "$DOT_DEN")"
+    git clone https://github.com/atxtechbro/dotfiles.git "$DOT_DEN"
     echo -e "${GREEN}Dotfiles repository cloned successfully!${NC}"
-elif [[ -d "$DOTFILES_PATH" ]]; then
+elif [[ -d "$DOT_DEN" ]]; then
     echo -e "${BLUE}Dotfiles repository already exists, updating...${NC}"
-    cd "$DOTFILES_PATH"
+    cd "$DOT_DEN"
     git pull
 fi
 
@@ -89,17 +89,17 @@ mkdir -p ~/.config/nvim
 
 # Create symlinks
 echo -e "${YELLOW}Creating symlinks for configuration files...${NC}"
-ln -sf "$DOTFILES_PATH/nvim/init.lua" ~/.config/nvim/init.lua
-ln -sf "$DOTFILES_PATH/.bashrc" ~/.bashrc
-ln -sf "$DOTFILES_PATH/.bash_aliases" ~/.bash_aliases
-ln -sf "$DOTFILES_PATH/.bash_exports" ~/.bash_exports
-ln -sf "$DOTFILES_PATH/.gitconfig" ~/.gitconfig
-ln -sf "$DOTFILES_PATH/.tmux.conf" ~/.tmux.conf
+ln -sf "$DOT_DEN/nvim/init.lua" ~/.config/nvim/init.lua
+ln -sf "$DOT_DEN/.bashrc" ~/.bashrc
+ln -sf "$DOT_DEN/.bash_aliases" ~/.bash_aliases
+ln -sf "$DOT_DEN/.bash_exports" ~/.bash_exports
+ln -sf "$DOT_DEN/.gitconfig" ~/.gitconfig
+ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 
 # Create secrets file from template
-if [[ -f "$DOTFILES_PATH/.bash_secrets.example" && ! -f ~/.bash_secrets ]]; then
+if [[ -f "$DOT_DEN/.bash_secrets.example" && ! -f ~/.bash_secrets ]]; then
     echo -e "${YELLOW}Creating secrets file from template...${NC}"
-    cp "$DOTFILES_PATH/.bash_secrets.example" ~/.bash_secrets
+    cp "$DOT_DEN/.bash_secrets.example" ~/.bash_secrets
     chmod 600 ~/.bash_secrets
     echo -e "${BLUE}Created ~/.bash_secrets from template. Edit it to add your secrets.${NC}"
 fi
@@ -114,9 +114,9 @@ if command -v pacman &>/dev/null; then
     echo -e "${YELLOW}Detected Arch Linux!${NC}"
     
     # Check if Arch Linux setup script exists
-    if [[ -f "$DOTFILES_PATH/arch-linux/setup.sh" ]]; then
+    if [[ -f "$DOT_DEN/arch-linux/setup.sh" ]]; then
         echo -e "${YELLOW}Running Arch Linux specific setup...${NC}"
-        bash "$DOTFILES_PATH/arch-linux/setup.sh"
+        bash "$DOT_DEN/arch-linux/setup.sh"
     else
         echo -e "${YELLOW}No Arch Linux setup script found. Skipping Arch-specific setup.${NC}"
     fi
@@ -127,9 +127,9 @@ if grep -q "Raspberry Pi" /proc/cpuinfo 2>/dev/null; then
     echo -e "${YELLOW}Detected Raspberry Pi hardware!${NC}"
     
     # Check if Raspberry Pi setup script exists
-    if [[ -f "$DOTFILES_PATH/raspberry-pi/setup.sh" ]]; then
+    if [[ -f "$DOT_DEN/raspberry-pi/setup.sh" ]]; then
         echo -e "${YELLOW}Running Raspberry Pi specific setup...${NC}"
-        bash "$DOTFILES_PATH/raspberry-pi/setup.sh"
+        bash "$DOT_DEN/raspberry-pi/setup.sh"
     else
         echo -e "${YELLOW}No Raspberry Pi setup script found. Skipping Pi-specific setup.${NC}"
     fi
