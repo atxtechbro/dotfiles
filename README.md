@@ -2,6 +2,53 @@
 
 A collection of configuration files for a consistent development environment across different machines.
 
+## P.P.V System: Pillars, Pipelines, and Vaults
+
+This repository is part of the P.P.V system, a holistic approach to organizing knowledge work and digital assets:
+
+### The P.P.V System
+
+- **Pillars**: Core repositories, foundational configurations, and knowledge bases
+- **Pipelines**: Automation scripts, workflows, and processes that connect tools and services
+- **Vaults**: Secure storage for credentials, tokens, and tribal knowledge documentation
+
+This organizational system provides a clear mental model for where different types of work should live:
+
+```
+~/
+├── Pillars/                # Foundational repositories and configurations
+│   ├── dotfiles/           # 📍 YOU ARE HERE - core configuration files
+│   ├── PRINCIPLES.md       # Core principles and philosophies
+│   ├── tools.md            # Comprehensive list of all tools with links to docs
+│   ├── Flywire/            # Company-specific repositories and projects
+│   │   ├── repo-1/         # Individual project repositories
+│   │   └── repo-2/
+│   ├── Sertifi/            # Another company's repositories
+│   │   ├── test-automation/
+│   │   └── actions-repository/
+│   └── ACME/               # Example company repositories
+│       ├── widget-service/
+│       └── customer-portal/
+│
+├── Pipelines/              # Automation and workflow repositories
+│   └── ... (to be defined as needs arise)
+│
+└── Vaults/                 # Secure storage and tribal knowledge
+    ├── credentials/        # API keys and access tokens (not in git)
+    ├── certificates/       # SSL certificates and signing keys (not in git)
+    ├── tribal-knowledge/   # Documentation for less-documented tools
+    │   ├── internal-api.md # Notes on using internal APIs
+    │   └── workflows.md    # Documented workflows for specific tasks
+    └── configs/            # Environment-specific configurations
+```
+
+The P.P.V system helps maintain separation of concerns while providing a consistent structure across all projects and environments. It reflects systems thinking and the interconnectedness of different components in your workflow.
+
+Key aspects:
+- **Interconnected references**: Tools in `tools.md` can link to tribal knowledge in Vaults using URI schemes
+- **Company separation**: Each company gets its own folder under Pillars for clear separation
+- **Principles first**: Core principles document guides all other decisions
+
 ## Repository Design Patterns
 
 This repository follows specific organizational patterns to maintain consistency and clarity:
@@ -56,8 +103,8 @@ Get started with your personalized environment:
 
 ```bash
 # Clone the repository and run setup
-git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
-cd ~/dotfiles
+git clone https://github.com/atxtechbro/dotfiles.git ~/Pillars/dotfiles
+cd ~/Pillars/dotfiles
 ./setup.sh
 ```
 
@@ -130,7 +177,7 @@ Sensitive information like API tokens are stored in `~/.bash_secrets` (not track
 
 ```bash
 # Create your personal secrets file from the example template
-cp ~/dotfiles/.bash_secrets.example ~/.bash_secrets
+cp ~/Pillars/dotfiles/.bash_secrets.example ~/.bash_secrets
 
 # Set proper permissions to protect your secrets
 chmod 600 ~/.bash_secrets
@@ -141,7 +188,7 @@ nano ~/.bash_secrets
 
 The `.bash_secrets` file is automatically loaded by `.bashrc`. It provides a framework for managing your secrets and environment variables, with examples of common patterns. You should customize it based on your needs.
 
-For company-specific secrets, consider maintaining a separate private repository with additional templates and documentation.
+For company-specific secrets, consider maintaining a separate private repository in your Vaults directory.
 
 ## CLI Tools
 
@@ -154,7 +201,7 @@ tmux is a terminal multiplexer that allows you to split your terminal into multi
 sudo apt install -y tmux
 
 # Create symlink for tmux configuration
-ln -sf ~/dotfiles/.tmux.conf ~/.tmux.conf
+ln -sf ~/Pillars/dotfiles/.tmux.conf ~/.tmux.conf
 ```
 
 Basic usage:
@@ -252,6 +299,5 @@ To include a module in your Git configuration:
 ```bash
 # Add this to your ~/.gitconfig
 [include]
-    path = ~/dotfiles/.gitconfig.signing
+    path = ~/Pillars/dotfiles/.gitconfig.signing
 ```
-
