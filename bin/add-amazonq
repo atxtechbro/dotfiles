@@ -1,0 +1,30 @@
+#!/bin/bash
+# add-amazonq - Add AmazonQ.md file with guidance to any directory
+# Working-Procedure: Standardization
+#
+# PURPOSE: This script creates an AmazonQ.md file with standardized guidance that
+# I ALWAYS WANT included in my AmazonQ.md files (like conventional commit syntax).
+# It provides a quick shortcut for creating these files with consistent content.
+#
+# Usage: add-amazonq [directory]
+#   - Without arguments: Creates AmazonQ.md in current directory
+#   - With directory argument: Creates AmazonQ.md in specified directory
+
+TARGET_DIR="${1:-.}"
+TEMPLATE_PATH="$HOME/dotfiles/templates/AmazonQ.md.template"
+
+[ -d "$TARGET_DIR" ] || { echo "Error: Directory '$TARGET_DIR' not found"; exit 1; }
+[ -f "$TEMPLATE_PATH" ] || { echo "Error: Template not found at $TEMPLATE_PATH"; exit 1; }
+
+AMAZONQ_FILE="${TARGET_DIR}/AmazonQ.md"
+
+if [ -f "$AMAZONQ_FILE" ]; then
+  echo "AmazonQ.md already exists in $TARGET_DIR"
+else
+  echo "# AI Assistant Guide - Amazon Q" > "$AMAZONQ_FILE"
+  echo "" >> "$AMAZONQ_FILE"
+  echo "## Conventional Commits" >> "$AMAZONQ_FILE"
+  cat "$TEMPLATE_PATH" >> "$AMAZONQ_FILE"
+  echo "" >> "$AMAZONQ_FILE"
+  echo "Created AmazonQ.md in $TARGET_DIR"
+fi
