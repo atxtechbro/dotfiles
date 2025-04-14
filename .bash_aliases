@@ -31,4 +31,4 @@ alias aq-merge='git checkout main && git pull && git merge --squash docs/update-
 alias aq-merge='git checkout main && git pull && git merge docs/update-amazonq-guidance --no-ff && git push origin main && echo "✅ AmazonQ.md changes merged with preserved history and pushed to main"'
 
 # Quick add AmazonQ.md with guidance template - creates a file with standardized guidance I ALWAYS WANT included
-alias aq-add='add-amazonq'
+alias aq-add='sudo add-amazonq'
