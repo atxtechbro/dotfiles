@@ -11,7 +11,6 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-# Define dotfiles path - CHANGE THIS ONE VARIABLE to update all paths
 DOT_DEN="$HOME/Pillars/dotfiles"
 
 echo -e "${GREEN}Starting dotfiles setup...${NC}"
