@@ -8,31 +8,46 @@ This repository is part of the P.P.V system, a holistic approach to organizing k
 
 ### The P.P.V System
 
-- **Pillars**: Core repositories and foundational configurations (like this dotfiles repo)
+- **Pillars**: Core repositories, foundational configurations, and knowledge bases
 - **Pipelines**: Automation scripts, workflows, and processes that connect tools and services
-- **Vaults**: Secure storage for credentials, tokens, and sensitive information
+- **Vaults**: Secure storage for credentials, tokens, and tribal knowledge documentation
 
 This organizational system provides a clear mental model for where different types of work should live:
 
 ```
 ~/
 ├── Pillars/                # Foundational repositories and configurations
-│   ├── dotfiles/           # This repository - core configuration files
-│   ├── knowledge-base/     # Documentation and reference materials
-│   └── templates/          # Project templates and boilerplates
+│   ├── dotfiles/           # 📍 YOU ARE HERE - core configuration files
+│   ├── PRINCIPLES.md       # Core principles and philosophies
+│   ├── tools.md            # Comprehensive list of all tools with links to docs
+│   ├── Flywire/            # Company-specific repositories and projects
+│   │   ├── repo-1/         # Individual project repositories
+│   │   └── repo-2/
+│   ├── Sertifi/            # Another company's repositories
+│   │   ├── test-automation/
+│   │   └── actions-repository/
+│   └── ACME/               # Example company repositories
+│       ├── widget-service/
+│       └── customer-portal/
 │
 ├── Pipelines/              # Automation and workflow repositories
-│   ├── ci-workflows/       # CI/CD pipeline configurations
-│   ├── data-pipelines/     # Data processing workflows
-│   └── release-automation/ # Release management scripts
+│   └── ... (to be defined as needs arise)
 │
-└── Vaults/                 # Secure storage (not tracked in git)
-    ├── credentials/        # API keys and access tokens
-    ├── certificates/       # SSL certificates and signing keys
+└── Vaults/                 # Secure storage and tribal knowledge
+    ├── credentials/        # API keys and access tokens (not in git)
+    ├── certificates/       # SSL certificates and signing keys (not in git)
+    ├── tribal-knowledge/   # Documentation for less-documented tools
+    │   ├── internal-api.md # Notes on using internal APIs
+    │   └── workflows.md    # Documented workflows for specific tasks
     └── configs/            # Environment-specific configurations
 ```
 
-The P.P.V system helps maintain separation of concerns while providing a consistent structure across all projects and environments.
+The P.P.V system helps maintain separation of concerns while providing a consistent structure across all projects and environments. It reflects systems thinking and the interconnectedness of different components in your workflow.
+
+Key aspects:
+- **Interconnected references**: Tools in `tools.md` can link to tribal knowledge in Vaults using URI schemes
+- **Company separation**: Each company gets its own folder under Pillars for clear separation
+- **Principles first**: Core principles document guides all other decisions
 
 ## Repository Design Patterns
 
