@@ -29,3 +29,6 @@ alias venv='source .venv/bin/activate'
 alias aq-merge='git checkout main && git pull && git merge --squash docs/update-amazonq-guidance && git commit -m "docs(amazonq): update guidance" && git push origin main && echo "✅ AmazonQ.md changes merged and pushed to main"'
 # AmazonQ.md update workflow - preserves commit messages from feature branch
 alias aq-merge='git checkout main && git pull && git merge docs/update-amazonq-guidance --no-ff && git push origin main && echo "✅ AmazonQ.md changes merged with preserved history and pushed to main"'
+
+# Quick add AmazonQ.md with guidance template - creates a file with standardized guidance I ALWAYS WANT included
+alias aq-add='add-amazonq'
