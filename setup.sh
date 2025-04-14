@@ -11,6 +11,8 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
+DOT_DEN="$HOME/Pillars/dotfiles"
+
 echo -e "${GREEN}Starting dotfiles setup...${NC}"
 
 # Check for essential tools
@@ -64,18 +66,19 @@ if [[ "$IS_WSL" == true ]]; then
     echo -e "${YELLOW}Setting up WSL-specific configuration...${NC}"
     if [[ -d "/mnt/c/dotfiles" ]]; then
         echo -e "${BLUE}Found dotfiles in Windows filesystem, creating symlink...${NC}"
-        ln -sf /mnt/c/dotfiles ~/dotfiles
+        ln -sf /mnt/c/dotfiles "$DOT_DEN"
     fi
 fi
 
 # Clone dotfiles repository if it doesn't exist and we're not in WSL
-if [[ ! -d ~/dotfiles && "$IS_WSL" == false ]]; then
+if [[ ! -d "$DOT_DEN" && "$IS_WSL" == false ]]; then
     echo -e "${YELLOW}Cloning dotfiles repository...${NC}"
-    git clone https://github.com/atxtechbro/dotfiles.git ~/dotfiles
+    mkdir -p "$(dirname "$DOT_DEN")"
+    git clone https://github.com/atxtechbro/dotfiles.git "$DOT_DEN"
     echo -e "${GREEN}Dotfiles repository cloned successfully!${NC}"
-elif [[ -d ~/dotfiles ]]; then
+elif [[ -d "$DOT_DEN" ]]; then
     echo -e "${BLUE}Dotfiles repository already exists, updating...${NC}"
-    cd ~/dotfiles
+    cd "$DOT_DEN"
     git pull
 fi
 
@@ -85,17 +88,17 @@ mkdir -p ~/.config/nvim
 
 # Create symlinks
 echo -e "${YELLOW}Creating symlinks for configuration files...${NC}"
-ln -sf ~/dotfiles/nvim/init.lua ~/.config/nvim/init.lua
-ln -sf ~/dotfiles/.bashrc ~/.bashrc
-ln -sf ~/dotfiles/.bash_aliases ~/.bash_aliases
-ln -sf ~/dotfiles/.bash_exports ~/.bash_exports
-ln -sf ~/dotfiles/.gitconfig ~/.gitconfig
-ln -sf ~/dotfiles/.tmux.conf ~/.tmux.conf
+ln -sf "$DOT_DEN/nvim/init.lua" ~/.config/nvim/init.lua
+ln -sf "$DOT_DEN/.bashrc" ~/.bashrc
+ln -sf "$DOT_DEN/.bash_aliases" ~/.bash_aliases
+ln -sf "$DOT_DEN/.bash_exports" ~/.bash_exports
+ln -sf "$DOT_DEN/.gitconfig" ~/.gitconfig
+ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 
 # Create secrets file from template
-if [[ -f ~/dotfiles/.bash_secrets.example && ! -f ~/.bash_secrets ]]; then
+if [[ -f "$DOT_DEN/.bash_secrets.example" && ! -f ~/.bash_secrets ]]; then
     echo -e "${YELLOW}Creating secrets file from template...${NC}"
-    cp ~/dotfiles/.bash_secrets.example ~/.bash_secrets
+    cp "$DOT_DEN/.bash_secrets.example" ~/.bash_secrets
     chmod 600 ~/.bash_secrets
     echo -e "${BLUE}Created ~/.bash_secrets from template. Edit it to add your secrets.${NC}"
 fi
@@ -110,9 +113,9 @@ if command -v pacman &>/dev/null; then
     echo -e "${YELLOW}Detected Arch Linux!${NC}"
     
     # Check if Arch Linux setup script exists
-    if [[ -f ~/dotfiles/arch-linux/setup.sh ]]; then
+    if [[ -f "$DOT_DEN/arch-linux/setup.sh" ]]; then
         echo -e "${YELLOW}Running Arch Linux specific setup...${NC}"
-        bash ~/dotfiles/arch-linux/setup.sh
+        bash "$DOT_DEN/arch-linux/setup.sh"
     else
         echo -e "${YELLOW}No Arch Linux setup script found. Skipping Arch-specific setup.${NC}"
     fi
@@ -123,13 +126,11 @@ if grep -q "Raspberry Pi" /proc/cpuinfo 2>/dev/null; then
     echo -e "${YELLOW}Detected Raspberry Pi hardware!${NC}"
     
     # Check if Raspberry Pi setup script exists
-    if [[ -f ~/dotfiles/raspberry-pi/setup.sh ]]; then
+    if [[ -f "$DOT_DEN/raspberry-pi/setup.sh" ]]; then
         echo -e "${YELLOW}Running Raspberry Pi specific setup...${NC}"
-        bash ~/dotfiles/raspberry-pi/setup.sh
+        bash "$DOT_DEN/raspberry-pi/setup.sh"
     else
         echo -e "${YELLOW}No Raspberry Pi setup script found. Skipping Pi-specific setup.${NC}"
-    fi
-fi
     fi
 fi
 
@@ -188,4 +189,3 @@ if ! command -v uv >/dev/null 2>&1; then
   curl -Ls https://astral.sh/uv/install.sh | sh
   echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
 fi
-
