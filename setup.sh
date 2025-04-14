@@ -130,8 +130,6 @@ if grep -q "Raspberry Pi" /proc/cpuinfo 2>/dev/null; then
         echo -e "${YELLOW}No Raspberry Pi setup script found. Skipping Pi-specific setup.${NC}"
     fi
 fi
-    fi
-fi
 
 echo -e "${GREEN}Dotfiles setup complete!${NC}"
 echo -e "${YELLOW}Your development environment is now configured and ready to use.${NC}"
