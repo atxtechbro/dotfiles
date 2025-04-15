@@ -156,7 +156,7 @@ if [ -f ~/.bash_secrets ]; then
     . ~/.bash_secrets
 fi
 
-DOTFILES_DIR="$HOME/dotfiles"
+DOTFILES_DIR="$HOME/Pillars/dotfiles"
 
 # Add your scripts directory to the PATH
 export PATH="$DOTFILES_DIR/bin:$PATH"
