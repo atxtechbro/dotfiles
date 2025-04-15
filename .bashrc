@@ -156,10 +156,10 @@ if [ -f ~/.bash_secrets ]; then
     . ~/.bash_secrets
 fi
 
-DOTFILES_DIR="$HOME/Pillars/dotfiles"
+DOT_DEN="$HOME/Pillars/dotfiles"
 
 # Add your scripts directory to the PATH
-export PATH="$DOTFILES_DIR/bin:$PATH"
+export PATH="$DOT_DEN/bin:$PATH"
 
 # Skip auto-tmux and directory change for SSH connections
 if [[ -n "$SSH_CONNECTION" ]]; then
@@ -169,7 +169,7 @@ if [[ -n "$SSH_CONNECTION" ]]; then
 else
     # Only change to dotfiles directory when NOT in a tmux session
     if [ -z "$TMUX" ]; then
-        cd "$DOTFILES_DIR"
+        cd "$DOT_DEN"
     fi
 
     # Source Amazon Q environment if installed
