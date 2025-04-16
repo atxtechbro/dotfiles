@@ -18,17 +18,15 @@ This organizational system provides a clear mental model for where different typ
 ~/
 ├── Pillars/                # Foundational repositories and configurations
 │   ├── dotfiles/           # 📍 YOU ARE HERE - core configuration files
-│   ├── PRINCIPLES.md       # Core principles and philosophies
-│   ├── tools.md            # Comprehensive list of all tools with links to docs
-│   ├── Flywire/            # Company-specific repositories and projects
-│   │   ├── repo-1/         # Individual project repositories
-│   │   └── repo-2/
-│   ├── Sertifi/            # Another company's repositories
-│   │   ├── test-automation/
-│   │   └── actions-repository/
-│   └── ACME/               # Example company repositories
-│       ├── widget-service/
-│       └── customer-portal/
+│   └── private-ppv/        # Private personal values and pillars (private git repo)
+│       ├── pillars/        # Core pillars documentation
+│       │   ├── core-pillars.md  # Define your own core pillars here
+│       │   ├── principles/      # Your guiding principles
+│       │   ├── strategic-objective.md # Your personal mission
+│       │   └── faith-health-service/  # Example pillar with resources
+│       │       └── fitness-data/      # Specific resources (e.g., gym equipment inventory, fitness goals)
+│       ├── pipelines/      # Your personal automation workflows
+│       └── vaults/         # Your private knowledge repositories
 │
 ├── Pipelines/              # Automation and workflow repositories
 │   └── ... (to be defined as needs arise)
