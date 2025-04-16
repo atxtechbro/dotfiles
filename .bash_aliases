@@ -35,3 +35,7 @@ alias aq-add='add-amazonq'
 
 # Quick navigation to private P.P.V. repository - personal pillars, pipelines, and vaults
 alias ppv='cd ~/Pillars/private-ppv'
+
+# mdbook build and serve with automatic port cleanup
+# Kills any process using port 3000 before starting mdbook serve
+alias mdserve='fuser -k 3000/tcp 2>/dev/null; mdbook build && mdbook serve'
