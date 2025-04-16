@@ -1,1 +1,0 @@
-../../../../private-ppv/pillars/principles/95-percent-rule.md

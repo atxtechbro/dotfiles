@@ -1,38 +1,34 @@
-# Principles: Guiding Values Within Pillars
+# Principles
 
-## Overview
-
-Principles are the guiding values and practices that flow from your core pillars. They represent actionable guidelines that help implement your pillars in daily life and decision-making.
-
-## Inspiration
-
-This approach to principles is inspired by Sam Carpenter's systems thinking methodology, which emphasizes:
-
-- Documenting the guiding rules that govern effective systems
-- Creating clear guidelines for decision-making
-- Establishing consistent practices that align with core values
-
-## Structure
-
-In this organizational system:
-
-1. **Strategic Objective**: The overarching purpose that guides all pillars and principles
-2. **Core Pillars**: 1-2 fundamental areas of focus at the root level
-3. **Principles**: Specific guidelines and practices that support those pillars (in this directory)
+Principles are specific guidelines and practices that implement the core pillars in practical ways. They provide actionable guidance for daily decisions and create consistency in actions and outcomes.
 
 ## Implementation
 
-The principles directory is structured to:
+This directory contains:
 
-- Keep the framework public and reusable
-- Allow personal strategic objectives and pillars to remain private through symlinks
-- Provide a collection of principles that can be referenced and applied
+- `my-principles.md`: A symlink to your private principles collection
 
-## Usage
+## Creating Your Own Principles
 
-Each principle in this directory:
-- Relates to one or more pillars
-- Provides specific guidance for implementation
-- Serves as a reference when making decisions
+To create your own principles:
 
-The symlink approach for `my-pillars.md` allows you to maintain privacy for your personal pillars while still connecting them to these principles.
+1. Create a file in your private repository to contain your principles collection
+2. Create a symlink from this directory to your private principles file
+3. Organize your principles in a way that makes sense for your system
+
+## Relationship to Pillars
+
+Each principle should flow from and support your core pillars. When creating principles, consider:
+
+- How does this principle implement my core pillars?
+- Does this principle provide clear, actionable guidance?
+- Is this principle memorable and practical?
+
+## Examples of Principles
+
+Principles might include guidelines like:
+
+- "Always document decisions and their context"
+- "Measure twice, cut once"
+- "Seek feedback early and often"
+- "Focus on systems, not goals"

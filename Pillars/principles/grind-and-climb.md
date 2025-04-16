@@ -1,1 +1,0 @@
-../../../../private-ppv/pillars/principles/grind-and-climb.md

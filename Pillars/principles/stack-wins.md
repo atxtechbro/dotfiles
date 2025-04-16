@@ -1,1 +1,0 @@
-../../../../private-ppv/pillars/principles/stack-wins.md
