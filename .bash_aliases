@@ -32,3 +32,6 @@ alias aq-merge='git checkout main && git pull && git merge docs/update-amazonq-g
 
 # Quick add AmazonQ.md with guidance template - creates a file with standardized guidance I ALWAYS WANT included
 alias aq-add='add-amazonq'
+
+# Quick navigation to private P.P.V. repository - personal pillars, pipelines, and vaults
+alias ppv='cd ~/Pillars/private-ppv'
