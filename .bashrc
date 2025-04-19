@@ -199,3 +199,4 @@ tmux source-file ~/.tmux.conf >/dev/null 2>&1 || true
 
 # Amazon Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash"
+export PATH="$HOME/.local/bin:$PATH"

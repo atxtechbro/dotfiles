@@ -24,6 +24,9 @@ alias tmux-help="less ~/dotfiles/tmux-cheatsheet.md"
 # Python virtual environment shortcuts
 alias venv='[ -d .venv ] || uv venv .venv && source .venv/bin/activate'
 
+# Set library path for llama.cpp
+alias set-llama-env='export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/ppv/pipelines/llama.cpp/build/bin'
+
 
 # Quick AmazonQ.md update workflow - merge, push, and return to main
 alias aq-merge='git checkout main && git pull && git merge --squash docs/update-amazonq-guidance && git commit -m "docs(amazonq): update guidance" && git push origin main && echo "✅ AmazonQ.md changes merged and pushed to main"'
@@ -41,8 +44,8 @@ alias ppv='cd ~/ppv'
 alias mdserve='fuser -k 3000/tcp 2>/dev/null; mdbook build && mdbook serve'
 
 # Llama.cpp local CLI aliases
-alias llama='~/llama.cpp/build/bin/llama-cli -m ~/models/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf'
+alias llama='LD_LIBRARY_PATH=~/ppv/pipelines/llama.cpp/build/bin:$LD_LIBRARY_PATH ~/ppv/pipelines/llama.cpp/build/bin/llama-cli -m ~/ppv/pipelines/models/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf'
 alias lchat='llama'
 alias lsys="llama --no-cnv --no-interactive"  # raw prompt mode
-alias lpipe='llama --no-cnv --no-interactive -p "$(cat -)"'  # pipe from stdin
+alias lpipe='LD_LIBRARY_PATH=~/ppv/pipelines/llama.cpp/build/bin:$LD_LIBRARY_PATH ~/ppv/pipelines/llama.cpp/build/bin/llama-cli --no-cnv --no-interactive -p "$(cat -)"'  # pipe from stdin
 
