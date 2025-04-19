@@ -1,5 +1,11 @@
 # Step 4: Choose Your Use Case
 
-*To be implemented later*
+## LLM Inference (Offline Chatbot)
 
-This guide will help you select and configure your Raspberry Pi for specific use cases like home automation, development, or networking.
+This configuration sets up your Pi as a local inference server for small large-language models using [llama.cpp](https://github.com/ggerganov/llama.cpp). Perfect for offline agents, experimentation, or privacy-focused usage.
+
+### Requirements
+- Raspberry Pi 5 (8GB recommended)
+- Raspberry Pi OS Lite (64-bit)
+- Internet access for setup
+
