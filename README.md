@@ -101,8 +101,8 @@ Get started with your personalized environment:
 
 ```bash
 # Clone the repository and run setup
-git clone https://github.com/atxtechbro/dotfiles.git ~/Pillars/dotfiles
-cd ~/Pillars/dotfiles
+git clone https://github.com/atxtechbro/dotfiles.git ~/ppv/pillars/dotfiles
+cd ~/ppv/pillars/dotfiles
 ./setup.sh
 ```
 
@@ -175,7 +175,7 @@ Sensitive information like API tokens are stored in `~/.bash_secrets` (not track
 
 ```bash
 # Create your personal secrets file from the example template
-cp ~/Pillars/dotfiles/.bash_secrets.example ~/.bash_secrets
+cp ~/ppv/pillars/dotfiles/.bash_secrets.example ~/.bash_secrets
 
 # Set proper permissions to protect your secrets
 chmod 600 ~/.bash_secrets
@@ -199,7 +199,7 @@ tmux is a terminal multiplexer that allows you to split your terminal into multi
 sudo apt install -y tmux
 
 # Create symlink for tmux configuration
-ln -sf ~/Pillars/dotfiles/.tmux.conf ~/.tmux.conf
+ln -sf ~/ppv/pillars/dotfiles/.tmux.conf ~/.tmux.conf
 ```
 
 Basic usage:
@@ -297,5 +297,5 @@ To include a module in your Git configuration:
 ```bash
 # Add this to your ~/.gitconfig
 [include]
-    path = ~/Pillars/dotfiles/.gitconfig.signing
+    path = ~/ppv/pillars/dotfiles/.gitconfig.signing
 ```

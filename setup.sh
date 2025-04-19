@@ -11,7 +11,7 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-DOT_DEN="$HOME/Pillars/dotfiles"
+DOT_DEN="$HOME/ppv/pillars/dotfiles"
 
 echo -e "${GREEN}Starting dotfiles setup...${NC}"
 
