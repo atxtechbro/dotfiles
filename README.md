@@ -27,7 +27,7 @@ The P.P.V system helps maintain separation of concerns while providing a consist
 
 Key aspects:
 - **Interconnected references**: Tools in `tools.md` can link to tribal knowledge in Vaults using URI schemes
-- **Company separation**: Each company gets its own folder under Pillars for clear separation
+- **Company separation**: Each company gets its own folder under pillars for clear separation
 - **Principles first**: Core principles document guides all other decisions
 
 ## Repository Design Patterns

@@ -156,7 +156,7 @@ if [ -f ~/.bash_secrets ]; then
     . ~/.bash_secrets
 fi
 
-DOT_DEN="$HOME/Pillars/dotfiles"
+DOT_DEN="$HOME/ppv/pillars/dotfiles"
 
 # Add your scripts directory to the PATH
 export PATH="$DOT_DEN/bin:$PATH"
