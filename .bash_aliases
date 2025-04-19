@@ -44,8 +44,6 @@ alias ppv='cd ~/ppv'
 alias mdserve='fuser -k 3000/tcp 2>/dev/null; mdbook build && mdbook serve'
 
 # Llama.cpp local CLI aliases
-alias llama='LD_LIBRARY_PATH=~/ppv/pipelines/llama.cpp/build/bin:$LD_LIBRARY_PATH ~/ppv/pipelines/llama.cpp/build/bin/llama-cli -m ~/ppv/pipelines/models/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf'
-alias lchat='llama'
-alias lsys='function _lsys() { llama -no-cnv --simple-io -p "$*"; }; _lsys'
-alias lpipe='LD_LIBRARY_PATH=~/ppv/pipelines/llama.cpp/build/bin:$LD_LIBRARY_PATH ~/ppv/pipelines/llama.cpp/build/bin/llama-cli -no-cnv --simple-io -p "$(cat -)"'  # pipe from stdin
+alias llama='llama-run'
+alias lpipe='llama-run -p "$(cat -)"'
 
