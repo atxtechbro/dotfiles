@@ -15,29 +15,12 @@ This repository is part of the P.P.V system, a holistic approach to organizing k
 This organizational system provides a clear mental model for where different types of work should live:
 
 ```
-~/
-├── Pillars/                # Foundational repositories and configurations
-│   ├── dotfiles/           # 📍 YOU ARE HERE - core configuration files
-│   └── private-ppv/        # Private personal values and pillars (private git repo)
-│       ├── pillars/        # Core pillars documentation
-│       │   ├── core-pillars.md  # Define your own core pillars here
-│       │   ├── principles/      # Your guiding principles
-│       │   ├── strategic-objective.md # Your personal mission
-│       │   └── faith-health-service/  # Example pillar with resources
-│       │       └── fitness-data/      # Specific resources (e.g., gym equipment inventory, fitness goals)
-│       ├── pipelines/      # Your personal automation workflows
-│       └── vaults/         # Your private knowledge repositories
-│
-├── Pipelines/              # Automation and workflow repositories
-│   └── ... (to be defined as needs arise)
-│
-└── Vaults/                 # Secure storage and tribal knowledge
-    ├── credentials/        # API keys and access tokens (not in git)
-    ├── certificates/       # SSL certificates and signing keys (not in git)
-    ├── tribal-knowledge/   # Documentation for less-documented tools
-    │   ├── internal-api.md # Notes on using internal APIs
-    │   └── workflows.md    # Documented workflows for specific tasks
-    └── configs/            # Environment-specific configurations
+/home/user/
+└── ppv/                    # Root directory for P.P.V system
+    ├── pillars/            # Foundational repositories and configurations
+    │   └── dotfiles/       # 📍 YOU ARE HERE - core configuration files
+    ├── pipelines/          # Automation and workflow repositories
+    └── vaults/             # Secure storage and tribal knowledge
 ```
 
 The P.P.V system helps maintain separation of concerns while providing a consistent structure across all projects and environments. It reflects systems thinking and the interconnectedness of different components in your workflow.
@@ -101,8 +84,8 @@ Get started with your personalized environment:
 
 ```bash
 # Clone the repository and run setup
-git clone https://github.com/atxtechbro/dotfiles.git ~/Pillars/dotfiles
-cd ~/Pillars/dotfiles
+git clone https://github.com/atxtechbro/dotfiles.git ~/ppv/pillars/dotfiles
+cd ~/ppv/pillars/dotfiles
 ./setup.sh
 ```
 
@@ -175,7 +158,7 @@ Sensitive information like API tokens are stored in `~/.bash_secrets` (not track
 
 ```bash
 # Create your personal secrets file from the example template
-cp ~/Pillars/dotfiles/.bash_secrets.example ~/.bash_secrets
+cp ~/ppv/pillars/dotfiles/.bash_secrets.example ~/.bash_secrets
 
 # Set proper permissions to protect your secrets
 chmod 600 ~/.bash_secrets
@@ -199,7 +182,7 @@ tmux is a terminal multiplexer that allows you to split your terminal into multi
 sudo apt install -y tmux
 
 # Create symlink for tmux configuration
-ln -sf ~/Pillars/dotfiles/.tmux.conf ~/.tmux.conf
+ln -sf ~/ppv/pillars/dotfiles/.tmux.conf ~/.tmux.conf
 ```
 
 Basic usage:
@@ -297,5 +280,5 @@ To include a module in your Git configuration:
 ```bash
 # Add this to your ~/.gitconfig
 [include]
-    path = ~/Pillars/dotfiles/.gitconfig.signing
+    path = ~/ppv/pillars/dotfiles/.gitconfig.signing
 ```

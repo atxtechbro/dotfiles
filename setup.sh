@@ -11,7 +11,7 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-DOT_DEN="$HOME/Pillars/dotfiles"
+DOT_DEN="$HOME/ppv/pillars/dotfiles"
 
 echo -e "${GREEN}Starting dotfiles setup...${NC}"
 
@@ -187,5 +187,5 @@ fi
 if ! command -v uv >/dev/null 2>&1; then
   echo "📦 Installing uv..."
   curl -Ls https://astral.sh/uv/install.sh | sh
-  echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
+  echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$HOME/.bashrc"
 fi
