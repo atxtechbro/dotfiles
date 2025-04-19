@@ -185,5 +185,9 @@ else
     fi
 fi
 
+# Reload tmux configuration whenever bashrc is sourced
+# This ensures tmux always has the latest config when started
+tmux source-file ~/.tmux.conf >/dev/null 2>&1 || true
+
 # Amazon Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash"
