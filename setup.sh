@@ -187,5 +187,5 @@ fi
 if ! command -v uv >/dev/null 2>&1; then
   echo "📦 Installing uv..."
   curl -Ls https://astral.sh/uv/install.sh | sh
-  echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
+  echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$HOME/.bashrc"
 fi
