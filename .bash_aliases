@@ -39,3 +39,10 @@ alias ppv='cd ~/ppv'
 # mdbook build and serve with automatic port cleanup
 # Kills any process using port 3000 before starting mdbook serve
 alias mdserve='fuser -k 3000/tcp 2>/dev/null; mdbook build && mdbook serve'
+
+# Llama.cpp local CLI aliases
+alias llama='~/llama.cpp/build/bin/llama-cli -m ~/models/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf'
+alias lchat='llama'
+alias lsys="llama --no-cnv --no-interactive"  # raw prompt mode
+alias lpipe='llama --no-cnv --no-interactive -p "$(cat -)"'  # pipe from stdin
+
