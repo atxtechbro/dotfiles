@@ -184,8 +184,27 @@ if command -v q >/dev/null 2>&1; then
 fi
 
 
+# Check and install npm for Claude Code if needed
+if ! command -v npm >/dev/null 2>&1; then
+  echo -e "${YELLOW}📦 npm not found. Installing nodejs and npm...${NC}"
+  if command -v apt >/dev/null 2>&1; then
+    # Debian/Ubuntu
+    sudo apt update && sudo apt install -y nodejs npm
+  elif command -v pacman >/dev/null 2>&1; then
+    # Arch Linux
+    sudo pacman -S --needed nodejs npm
+  elif command -v brew >/dev/null 2>&1; then
+    # macOS
+    brew install node
+  else
+    echo -e "${RED}Unable to install npm automatically. Please install nodejs and npm manually.${NC}"
+    echo -e "${BLUE}See https://nodejs.org/en/download/ for installation instructions.${NC}"
+  fi
+fi
+
+# Install uv for Python package management
 if ! command -v uv >/dev/null 2>&1; then
-  echo "📦 Installing uv..."
+  echo -e "${YELLOW}📦 Installing uv...${NC}"
   curl -Ls https://astral.sh/uv/install.sh | sh
   echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$HOME/.bashrc"
 fi
