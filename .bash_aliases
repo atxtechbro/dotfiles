@@ -22,7 +22,7 @@ alias tmux-pr="git checkout - && tmux source-file ~/.tmux.conf && echo 'Switched
 alias tmux-help="less ~/dotfiles/tmux-cheatsheet.md"
 
 # Python virtual environment shortcuts
-alias venv='source .venv/bin/activate'
+alias venv='[ -d .venv ] || uv venv .venv && source .venv/bin/activate'
 
 
 # Quick AmazonQ.md update workflow - merge, push, and return to main
