@@ -1,1 +1,0 @@
-../../../private-ppv/pillars/strategic-objective.md
