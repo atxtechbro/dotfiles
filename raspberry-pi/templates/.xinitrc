@@ -11,7 +11,11 @@
 DASHBOARD_URL="https://github.com/ozjd/pi-dashboard"
 
 # Browser options
-BROWSER_OPTS="--kiosk --disable-restore-session-state --noerrdialogs --start-fullscreen --autoplay-policy=no-user-gesture-required --check-for-update-interval=604800 --disable-pinch --overscroll-history-navigation=0 --disable-features=TranslateUI"
+BROWSER_OPTS="--kiosk --disable-restore-session-state --noerrdialogs --start-fullscreen --autoplay-policy=no-user-gesture-required --check-for-update-interval=604800 --disable-pinch --overscroll-history-navigation=0 --disable-features=TranslateUI --disable-infobars --disable-notifications --no-first-run"
+
+# Remote management options
+ENABLE_REMOTE_RESTART=true     # Allow browser restart via SSH
+REMOTE_RESTART_KEY="F5"        # Key to restart browser if using keyboard
 
 # Display settings
 DISABLE_SCREENSAVER=true
