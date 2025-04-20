@@ -1,4 +1,4 @@
-#\!/bin/bash
+#!/bin/bash
 # Kiosk management script for headless operation
 # To be installed in /usr/local/bin/kiosk-manager
 
@@ -20,7 +20,8 @@ function update_url() {
     exit 1
   fi
   
-  sed -i "s < /dev/null | DASHBOARD_URL=\".*\"|DASHBOARD_URL=\"$1\"|" ~/.xinitrc
+  # Store URL in separate file for persistence across template updates
+  echo "$1" > ~/.dashboard_url
   echo "Dashboard URL updated to: $1"
   
   read -p "Restart kiosk now? (y/n): " choice
@@ -40,16 +41,36 @@ case "$1" in
   status)
     if pgrep chromium >/dev/null; then
       echo "Kiosk is running"
-      current_url=$(grep "DASHBOARD_URL" ~/.xinitrc | cut -d'"' -f2)
-      echo "Current URL: $current_url"
+      if [ -f ~/.dashboard_url ]; then
+        echo "Current URL: $(cat ~/.dashboard_url)"
+      else
+        current_url=$(grep "DASHBOARD_URL=" ~/.xinitrc | head -1 | cut -d'"' -f2)
+        echo "Current URL: $current_url"
+      fi
     else
       echo "Kiosk is not running"
     fi
     ;;
+  set-location)
+    if [ -z "$2" ]; then
+      echo "Error: Location required"
+      echo "Usage: $(basename $0) set-location <city>"
+      exit 1
+    fi
+    # Special handler for weather dashboard
+    echo "https://wttr.in/$2" > ~/.dashboard_url
+    echo "Weather location updated to: $2"
+    read -p "Restart kiosk now? (y/n): " choice
+    case "$choice" in
+      y|Y ) restart_kiosk ;;
+      * ) echo "Restart manually with: $(basename $0) restart" ;;
+    esac
+    ;;
   *)
-    echo "Usage: $(basename $0) [restart|update-url URL|status]"
-    echo "  restart     - Restart the kiosk browser"
-    echo "  update-url  - Change the dashboard URL"
-    echo "  status      - Check if kiosk is running"
+    echo "Usage: $(basename $0) [restart|update-url URL|set-location CITY|status]"
+    echo "  restart       - Restart the kiosk browser"
+    echo "  update-url    - Change the dashboard URL"
+    echo "  set-location  - Set weather location (for wttr.in)"
+    echo "  status        - Check if kiosk is running"
     ;;
 esac

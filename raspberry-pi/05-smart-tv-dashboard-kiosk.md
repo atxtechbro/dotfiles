@@ -58,12 +58,32 @@ sudo raspi-config nonint do_boot_behaviour B2
 
 ## Configuration
 
-All dashboard configuration is managed through the `.xinitrc` file. You can customize:
+The dashboard is highly configurable without editing configuration files:
 
-- Dashboard URL (default is a minimalist dashboard)
-- Refresh rate
+### Default Weather Dashboard
+
+The default configuration uses `wttr.in/austin` to display a weather dashboard. You can change the location using:
+
+```bash
+kiosk-manager set-location london
+```
+
+### Choosing a Different Dashboard
+
+You can set any URL for your dashboard:
+
+```bash
+kiosk-manager update-url https://example.com/dashboard
+```
+
+### Persistent Configuration
+
+Your dashboard URL is stored in `~/.dashboard_url` and persists across system updates. The basic configuration is in the `.xinitrc` file where you can customize:
+
+- Browser options
 - Screen timeout settings
-- Key bindings for control
+- Cursor behavior
+- Key bindings
 
 Edit the configuration in the original template file to apply changes to all linked systems.
 
@@ -96,17 +116,22 @@ kiosk-manager restart
 kiosk-manager update-url https://your-new-url.com
 ```
 
-3. To check kiosk status:
+3. To change weather location (for wttr.in):
+```bash
+kiosk-manager set-location paris
+```
+
+4. To check kiosk status:
 ```bash
 kiosk-manager status
 ```
 
-4. To reboot the system:
+5. To reboot the system:
 ```bash
 sudo reboot
 ```
 
-The management script handles all the complexities of running X applications over SSH and ensures a clean restart process.
+The management script handles all the complexities of running X applications over SSH and ensures a clean restart process. You never need to manually edit configuration files.
 
 ## Resources
 

@@ -8,7 +8,13 @@
 #-------------------------------------------------------------------------------
 
 # Dashboard URL - change this to your preferred dashboard
-DASHBOARD_URL="https://github.com/ozjd/pi-dashboard"
+# You can override this by creating a ~/.dashboard_url file
+DASHBOARD_URL="https://wttr.in/austin"
+
+# Load custom URL if file exists
+if [ -f "$HOME/.dashboard_url" ]; then
+    DASHBOARD_URL=$(cat "$HOME/.dashboard_url")
+fi
 
 # Browser options
 BROWSER_OPTS="--kiosk --disable-restore-session-state --noerrdialogs --start-fullscreen --autoplay-policy=no-user-gesture-required --check-for-update-interval=604800 --disable-pinch --overscroll-history-navigation=0 --disable-features=TranslateUI --disable-infobars --disable-notifications --no-first-run"
