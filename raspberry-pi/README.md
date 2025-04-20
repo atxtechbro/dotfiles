@@ -10,6 +10,7 @@ Follow these guides in order:
 2. [Hardware Setup](02-hardware-setup.md) (to be implemented)
 3. [First Boot and Initial Setup](03-first-boot.md) (to be implemented)
 4. [Choose Your Use Case](04-choose-use-case.md) (to be implemented)
+5. [Smart TV Dashboard / Kiosk Mode](05-smart-tv-dashboard-kiosk.md) ✓
 
 ## Use Cases
 
@@ -24,6 +25,7 @@ Once your Raspberry Pi is set up, you can configure it for specific purposes:
 
 ### Networking Use
 - Network Monitor (to be implemented)
+- Smart TV Dashboard / Kiosk Mode — lean Xinit + ~/.xinitrc approach (no full desktop required) [📖](05-smart-tv-dashboard-kiosk.md) ✓
 
 ## Supported Models
 
