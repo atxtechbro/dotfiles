@@ -55,7 +55,7 @@ sleep 2
 #-------------------------------------------------------------------------------
 
 # Launch Chromium in kiosk mode
-chromium-browser $BROWSER_OPTS "$DASHBOARD_URL" &
+chromium-browser $BROWSER_OPTS "$DASHBOARD_URL" > /tmp/kiosk.log 2>&1 &
 
 # Keep the session alive
 while true; do
