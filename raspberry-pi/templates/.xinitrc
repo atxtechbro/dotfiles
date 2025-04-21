@@ -17,7 +17,7 @@ if [ -f "$HOME/.dashboard_url" ]; then
 fi
 
 # Browser options
-BROWSER_OPTS="--force-device-scale-factor=1.5 --no-sandbox --kiosk --disable-restore-session-state --noerrdialogs --start-fullscreen --autoplay-policy=no-user-gesture-required --check-for-update-interval=604800 --disable-pinch --overscroll-history-navigation=0 --disable-features=TranslateUI --disable-infobars --disable-notifications --no-first-run"
+BROWSER_OPTS="--force-device-scale-factor=3 --no-sandbox --kiosk --disable-restore-session-state --noerrdialogs --start-fullscreen --autoplay-policy=no-user-gesture-required --check-for-update-interval=604800 --disable-pinch --overscroll-history-navigation=0 --disable-features=TranslateUI --disable-infobars --disable-notifications --no-first-run"
 
 # Remote management options
 ENABLE_REMOTE_RESTART=true     # Allow browser restart via SSH
