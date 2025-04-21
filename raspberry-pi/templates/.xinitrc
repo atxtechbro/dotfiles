@@ -54,6 +54,9 @@ sleep 2
 # LAUNCH DASHBOARD
 #-------------------------------------------------------------------------------
 
+echo "Chromium launching with URL: $DASHBOARD_URL" >> /tmp/kiosk.log
+echo "Browser flags: $BROWSER_OPTS" >> /tmp/kiosk.log
+
 # Launch Chromium in kiosk mode
 chromium-browser $BROWSER_OPTS "$DASHBOARD_URL" > /tmp/kiosk.log 2>&1 &
 
