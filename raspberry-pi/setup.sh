@@ -28,7 +28,9 @@ echo "Root partition size: $ROOT_PARTITION_SIZE"
 
 echo
 echo "This setup script will guide you through configuring your Raspberry Pi."
-echo "Currently, only the first step (SD card preparation) is fully implemented."
+echo "The following steps are fully implemented:"
+echo "- SD card preparation"
+echo "- Smart TV Dashboard / Kiosk Mode"
 echo
 echo "Please follow the step-by-step guides in the README.md file."
 echo
@@ -36,5 +38,6 @@ echo "Next steps:"
 echo "1. Review the hardware setup guide: 02-hardware-setup.md"
 echo "2. Complete the first boot process: 03-first-boot.md"
 echo "3. Choose your specific use case: 04-choose-use-case.md"
+echo "4. For kiosk mode setup: 05-smart-tv-dashboard-kiosk.md"
 echo
 echo "For more information, see the README.md file."
