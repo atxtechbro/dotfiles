@@ -1,3 +1,5 @@
+As of c08c9d6, the Pi boots headlessly to fullscreen wttr.in/austin via Chromium in kiosk mode using .xinitrc
+
 # Smart TV Dashboard / Kiosk Mode
 
 This guide will help you set up your Raspberry Pi as a minimalist, bloat-free kiosk dashboard for a smart TV experience. The setup uses a lightweight approach with Xinit rather than a full desktop environment.
