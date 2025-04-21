@@ -40,6 +40,11 @@ sudo apt install -y xorg xinit x11-xserver-utils unclutter chromium-browser
 ```bash
 ln -sf /home/pi/ppv/pillars/dotfiles/raspberry-pi/templates/.xinitrc ~/.xinitrc
 ```
+5. Symlink the live ~/.xinitrc to the tracked template with
+```
+ln -sf ~/ppv/pillars/dotfiles/raspberry-pi/templates/.xinitrc ~/.xinitrc
+```
+for source-controlled kiosk behavior.
 
 6. Install the kiosk management script:
 ```bash
