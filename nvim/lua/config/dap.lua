@@ -93,8 +93,10 @@ vim.api.nvim_set_keymap('n', '<F5>', "<cmd>lua require('dap').continue()<CR>", o
 vim.api.nvim_set_keymap('n', '<F10>', "<cmd>lua require('dap').step_over()<CR>", opts)
 vim.api.nvim_set_keymap('n', '<F11>', "<cmd>lua require('dap').step_into()<CR>", opts)
 vim.api.nvim_set_keymap('n', '<F12>', "<cmd>lua require('dap').step_out()<CR>", opts)
-vim.api.nvim_set_keymap('n', '<leader>b', "<cmd>lua require('dap').toggle_breakpoint()<CR>", opts)
-vim.api.nvim_set_keymap('n', '<leader>B', "<cmd>lua require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>", opts)
+vim.api.nvim_set_keymap('n', '<leader>b', 
+  "<cmd>lua require('dap').toggle_breakpoint(); vim.notify('Breakpoint toggled at ' .. vim.fn.expand('%:t') .. ':' .. vim.fn.line('.'), vim.log.levels.INFO)<CR>", opts)
+vim.api.nvim_set_keymap('n', '<leader>B', 
+  "<cmd>lua require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: ')); vim.notify('Conditional breakpoint set at ' .. vim.fn.expand('%:t') .. ':' .. vim.fn.line('.'), vim.log.levels.INFO)<CR>", opts)
 vim.api.nvim_set_keymap('n', '<leader>lp', "<cmd>lua require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<CR>", opts)
 vim.api.nvim_set_keymap('n', '<leader>dr', "<cmd>lua require('dap').repl.open()<CR>", opts)
 vim.api.nvim_set_keymap('n', '<leader>du', "<cmd>lua require('dapui').toggle()<CR>", opts)
