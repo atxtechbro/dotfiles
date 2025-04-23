@@ -1,0 +1,81 @@
+local dap = require('dap')
+local dapui = require('dapui')
+
+-- Virtual text for variable values, etc.
+require('nvim-dap-virtual-text').setup()
+
+-- DAP UI setup
+dapui.setup()
+
+-- Automatically open and close DAP UI
+dap.listeners.after.event_initialized['dapui_config'] = function()
+  dapui.open()
+end
+dap.listeners.before.event_terminated['dapui_config'] = function()
+  dapui.close()
+end
+dap.listeners.before.event_exited['dapui_config'] = function()
+  dapui.close()
+end
+
+-- Python adapter configuration
+dap.adapters.python = {
+  type = 'executable',
+  command = 'python',
+  args = {'-m', 'debugpy.adapter'},
+}
+dap.configurations.python = {
+  {
+    type = 'python',
+    request = 'launch',
+    name = 'Launch file',
+    program = '${file}',
+    pythonPath = function()
+      local venv_path = vim.fn.getcwd() .. '/venv/bin/python'
+      if vim.fn.executable(venv_path) == 1 then
+        return venv_path
+      end
+      return 'python'
+    end,
+  },
+}
+
+-- C/C++ adapter (lldb)
+dap.adapters.lldb = {
+  type = 'executable',
+  command = 'lldb-vscode',
+  name = 'lldb',
+}
+dap.configurations.cpp = {
+  {
+    name = 'Launch',
+    type = 'lldb',
+    request = 'launch',
+    program = function()
+      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/build/', 'file')
+    end,
+    cwd = '${workspaceFolder}',
+    stopOnEntry = false,
+    args = {},
+  },
+}
+dap.configurations.c = dap.configurations.cpp
+
+-- Telescope DAP integration
+require('telescope').load_extension('dap')
+
+-- DAP key mappings
+local opts = { noremap = true, silent = true }
+vim.api.nvim_set_keymap('n', '<F5>', "<cmd>lua require('dap').continue()<CR>", opts)
+vim.api.nvim_set_keymap('n', '<F10>', "<cmd>lua require('dap').step_over()<CR>", opts)
+vim.api.nvim_set_keymap('n', '<F11>', "<cmd>lua require('dap').step_into()<CR>", opts)
+vim.api.nvim_set_keymap('n', '<F12>', "<cmd>lua require('dap').step_out()<CR>", opts)
+vim.api.nvim_set_keymap('n', '<leader>b', "<cmd>lua require('dap').toggle_breakpoint()<CR>", opts)
+vim.api.nvim_set_keymap('n', '<leader>B', "<cmd>lua require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>", opts)
+vim.api.nvim_set_keymap('n', '<leader>lp', "<cmd>lua require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<CR>", opts)
+vim.api.nvim_set_keymap('n', '<leader>dr', "<cmd>lua require('dap').repl.open()<CR>", opts)
+vim.api.nvim_set_keymap('n', '<leader>du', "<cmd>lua require('dapui').toggle()<CR>", opts)
+vim.api.nvim_set_keymap('n', '<leader>dc', "<cmd>lua require('telescope').extensions.dap.commands{}<CR>", opts)
+vim.api.nvim_set_keymap('n', '<leader>db', "<cmd>lua require('telescope').extensions.dap.list_breakpoints{}<CR>", opts)
+vim.api.nvim_set_keymap('n', '<leader>dv', "<cmd>lua require('telescope').extensions.dap.variables{}<CR>", opts)
+vim.api.nvim_set_keymap('n', '<leader>df', "<cmd>lua require('telescope').extensions.dap.frames{}<CR>", opts)
