@@ -1,3 +1,26 @@
+--[[
+  DAP Configuration: Lua + optional VS Code–style JSONC loader
+
+  Assumptions:
+    • Projects can supply a JSONC launch.json (VS Code schema) at:
+         - .vscode/launch.json
+         - <project-root>/launch.json
+    • nvim-dap's `dap.ext.vscode` loader will register these on startup.
+    • If no JSONC is found, fall back to the explicit Lua definitions below.
+]]
+-- Attempt to load VS Code launch.json configurations
+do
+  local ok, vscode = pcall(require, 'dap.ext.vscode')
+  if ok then
+    -- try standard .vscode/launch.json
+    pcall(vscode.load_launchjs)
+    -- fallback to root-level launch.json
+    local fallback = vim.fn.getcwd() .. '/launch.json'
+    if vim.fn.filereadable(fallback) == 1 then
+      pcall(vscode.load_launchjs, fallback)
+    end
+  end
+end
 local dap = require('dap')
 local dapui = require('dapui')
 

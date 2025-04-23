@@ -1,0 +1,25 @@
+// launch.json.example
+// VS Code–style debug configuration template (JSONC)
+// Copy to ".vscode/launch.json" or to "<project-root>/launch.json"
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Python debug configuration
+      "type": "python",
+      "request": "launch",
+      "name": "Launch Current File",
+      "program": "${file}",
+      "console": "integratedTerminal"
+    },
+    {
+      // C/C++ (lldb) debug configuration
+      "name": "Launch C/C++ Program",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/<executable>",
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
