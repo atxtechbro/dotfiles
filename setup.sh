@@ -82,13 +82,14 @@ elif [[ -d "$DOT_DEN" ]]; then
     git pull
 fi
 
-# Create necessary directories
-echo -e "${YELLOW}Creating config directories...${NC}"
-mkdir -p ~/.config/nvim
+### Link Neovim configuration
+echo -e "${YELLOW}Linking Neovim configuration...${NC}"
+# Remove any existing Neovim config and point to dotfiles/nvim
+rm -rf ~/.config/nvim
+ln -s "$DOT_DEN/nvim" ~/.config/nvim
 
-# Create symlinks
-echo -e "${YELLOW}Creating symlinks for configuration files...${NC}"
-ln -sf "$DOT_DEN/nvim/init.lua" ~/.config/nvim/init.lua
+# Create symlinks for other configuration files
+echo -e "${YELLOW}Creating symlinks for other config files...${NC}"
 ln -sf "$DOT_DEN/.bashrc" ~/.bashrc
 ln -sf "$DOT_DEN/.bash_aliases" ~/.bash_aliases
 ln -sf "$DOT_DEN/.bash_exports" ~/.bash_exports
