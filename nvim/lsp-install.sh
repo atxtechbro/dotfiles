@@ -18,24 +18,18 @@ if ! command -v nvim &> /dev/null; then
     exit 1
 fi
 
-# Install Python dependencies
-echo -e "${YELLOW}Installing Python dependencies...${NC}"
-if command -v uv &> /dev/null; then
-    echo -e "${BLUE}Using uv for Python package management...${NC}"
-    uv pip install --user pynvim pyright
-else
-    echo -e "${BLUE}Using pip for Python package management...${NC}"
-    pip install --user pynvim pyright
-fi
+# Skip automatic Python dependencies installation
+echo -e "${YELLOW}Skipping automatic Python package installation for Neovim Python host...${NC}"
+echo -e "${BLUE}If you need Python host support, install 'pynvim' manually (e.g., pip install --user pynvim, pipx install neovim, or via your OS package manager).${NC}"
 
 # Install Node.js dependencies if Node.js is available
 if command -v npm &> /dev/null; then
     echo -e "${YELLOW}Installing Node.js dependencies...${NC}"
-    npm install -g neovim bash-language-server vscode-langservers-extracted typescript typescript-language-server
+    npm install -g neovim bash-language-server vscode-langservers-extracted typescript typescript-language-server pyright
 else
     echo -e "${YELLOW}Node.js not found. Skipping Node.js dependencies.${NC}"
     echo -e "${BLUE}To install Node.js LSP servers, install Node.js and run:${NC}"
-    echo -e "npm install -g neovim bash-language-server vscode-langservers-extracted typescript typescript-language-server"
+    echo -e "npm install -g neovim bash-language-server vscode-langservers-extracted typescript typescript-language-server pyright"
 fi
 
 # Install Lua LSP if available
