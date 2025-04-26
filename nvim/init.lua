@@ -100,7 +100,7 @@ local treesitter_config = function()
     -- A list of parser names, or "all" (parsers with maintainers)
     ensure_installed = {
       "lua", "vim", "vimdoc", "python",
-      "html", "css", "json", "bash", "markdown"
+      "html", "css", "json", "xml", "bash", "markdown"
     },
     modules = {},
     ignore_install = {},
@@ -168,6 +168,7 @@ local mason_setup = function()
       'jsonls',      -- JSON
       'bashls',      -- Bash
       'marksman',    -- Markdown
+      'lemminx',     -- XML
     }
   })
 end
@@ -391,6 +392,10 @@ local setup_language_servers = function()
   lspconfig.marksman.setup({
     capabilities = capabilities
   })
+  -- XML LSP (Lemminx)
+  lspconfig.lemminx.setup({
+    capabilities = capabilities
+  })
   
   -- Set diagnostic signs
   local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
@@ -467,3 +472,24 @@ vim.keymap.set('n', '<leader>cp', function()
   vim.fn.setreg('+', fullpath)
   print('Full path copied to clipboard: ' .. fullpath)
 end, { desc = 'Copy full path to clipboard' })
+-- TODO: XML editing settings (remove when comfortable)
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'xml',
+  callback = function()
+    -- Basic XML editing preferences
+    local opt = vim.opt_local
+    opt.expandtab = true         -- Use spaces instead of tabs
+    opt.shiftwidth = 2           -- Indent by 2 spaces
+    opt.tabstop = 2                  -- Number of spaces per Tab character
+    opt.softtabstop = 2              -- Number of spaces a Tab counts for while editing
+    opt.autoindent = true            -- Copy indent from current line on new lines
+    opt.cindent = false              -- Disable C-style automatic indentation
+    -- Folding using Treesitter
+    opt.foldmethod = 'expr'           -- Use expression-based folding
+    opt.foldexpr = 'nvim_treesitter#foldexpr()'  -- Use Treesitter for folding expressions
+    opt.foldenable = false            -- Keep folds closed by default
+    opt.foldlevel = 99                -- Open most folds by default (up to level 99)
+    -- Pretty-print XML via xmllint (<leader>f)
+    vim.keymap.set('n', '<leader>f', ':%!xmllint --format -<CR>', { buffer = true, silent = true, desc = 'Pretty print XML' })
+  end
+})

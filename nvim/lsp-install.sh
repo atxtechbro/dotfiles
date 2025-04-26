@@ -47,6 +47,12 @@ else
     echo -e "${BLUE}To install Lua LSP, install LuaRocks and run:${NC}"
     echo -e "luarocks install --local luacheck"
 fi
+    
+# Check for xmllint (XML formatting tool)
+echo -e "${YELLOW}Checking for xmllint (XML formatting)...${NC}"
+if ! command -v xmllint &> /dev/null; then
+    echo -e "${RED}xmllint not found. Install libxml2-utils (Debian/Ubuntu) or libxml2 (macOS) to enable XML formatting.${NC}"
+fi
 
 # Run Neovim with PackerSync to install plugins
 echo -e "${YELLOW}Installing Neovim plugins...${NC}"
@@ -54,7 +60,7 @@ nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 
 # Run Neovim with Mason to install LSP servers
 echo -e "${YELLOW}Installing LSP servers via Mason...${NC}"
-nvim --headless -c "MasonInstall pyright lua-language-server bash-language-server html-lsp css-lsp json-lsp marksman" -c "quitall"
+nvim --headless -c "MasonInstall pyright lua-language-server bash-language-server html-lsp css-lsp json-lsp marksman lemminx" -c "quitall"
 
 echo -e "${GREEN}LSP servers installation complete!${NC}"
 echo -e "${BLUE}You may need to restart Neovim for all changes to take effect.${NC}"
