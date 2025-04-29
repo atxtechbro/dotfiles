@@ -77,9 +77,8 @@ if [[ ! -d "$DOT_DEN" && "$IS_WSL" == false ]]; then
     git clone https://github.com/atxtechbro/dotfiles.git "$DOT_DEN"
     echo -e "${GREEN}Dotfiles repository cloned successfully!${NC}"
 elif [[ -d "$DOT_DEN" ]]; then
-    echo -e "${BLUE}Dotfiles repository already exists, updating...${NC}"
+    echo -e "${BLUE}Dotfiles repository already exists at $DOT_DEN${NC}"
     cd "$DOT_DEN"
-    git pull
 fi
 
 ### Link Neovim configuration
