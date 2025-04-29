@@ -47,3 +47,6 @@ alias mdserve='fuser -k 3000/tcp 2>/dev/null; mdbook build && mdbook serve'
 alias llama='llama-run'
 alias lpipe='llama-run -p "$(cat -)"'
 
+# Philips Hue control system alias
+alias hue="$HOME/ppv/pipelines/hue_minimal/hue.sh"
+

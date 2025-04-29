@@ -156,14 +156,6 @@ if [ -f ~/.bash_secrets ]; then
     . ~/.bash_secrets
 fi
 
-# Load Philips Hue smart home lighting automation system
-# Only load in interactive shells and suppress the loading message when sourcing from .bashrc
-if [[ -f "$HOME/ppv/pipelines/hue_minimal/hue_control.sh" && $- == *i* ]]; then
-    export HUE_QUIET_LOAD=true
-    source "$HOME/ppv/pipelines/hue_minimal/hue_control.sh"
-    unset HUE_QUIET_LOAD
-fi
-
 DOT_DEN="$HOME/ppv/pillars/dotfiles"
 
 # Add your scripts directory to the PATH
