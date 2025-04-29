@@ -81,11 +81,57 @@ elif [[ -d "$DOT_DEN" ]]; then
     cd "$DOT_DEN"
 fi
 
-### Link Neovim configuration
+### Set up Neovim
+echo -e "${YELLOW}Setting up Neovim...${NC}"
+
+# Check if Neovim is installed
+if ! command -v nvim &> /dev/null; then
+    echo -e "${YELLOW}Neovim not found. Installing...${NC}"
+    
+    # Download latest Neovim release
+    NVIM_TMP_DIR=$(mktemp -d)
+    NVIM_RELEASE="https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
+    
+    echo -e "${BLUE}Downloading Neovim from: ${NVIM_RELEASE}${NC}"
+    curl -L -o "${NVIM_TMP_DIR}/nvim.tar.gz" "${NVIM_RELEASE}"
+    
+    # Install Neovim
+    echo -e "${BLUE}Installing Neovim to /opt...${NC}"
+    sudo rm -rf /opt/nvim
+    sudo tar -C /opt -xzf "${NVIM_TMP_DIR}/nvim.tar.gz"
+    
+    # Clean up
+    rm -rf "${NVIM_TMP_DIR}"
+    
+    # Add to PATH if not already there
+    if ! grep -q '/opt/nvim-linux-x86_64/bin' ~/.bashrc; then
+        echo -e "${BLUE}Adding Neovim to PATH in ~/.bashrc...${NC}"
+        echo 'export PATH="$PATH:/opt/nvim-linux-x86_64/bin"' >> ~/.bashrc
+        export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+    fi
+    
+    echo -e "${GREEN}Neovim installed successfully!${NC}"
+fi
+
+# Link Neovim configuration
 echo -e "${YELLOW}Linking Neovim configuration...${NC}"
-# Remove any existing Neovim config and point to dotfiles/nvim
 rm -rf ~/.config/nvim
 ln -sfn "$DOT_DEN/nvim" ~/.config/nvim
+
+# Install Neovim dependencies
+echo -e "${YELLOW}Installing Neovim dependencies...${NC}"
+
+# Run LSP install script
+if [ -f "$DOT_DEN/nvim/lsp-install.sh" ]; then
+    echo -e "${BLUE}Running LSP installation script...${NC}"
+    "$DOT_DEN/nvim/lsp-install.sh"
+fi
+
+# Run Python debug install script
+if [ -f "$DOT_DEN/nvim/python-debug-install.sh" ]; then
+    echo -e "${BLUE}Running Python debugging tools installation script...${NC}"
+    "$DOT_DEN/nvim/python-debug-install.sh"
+fi
 
 # Create symlinks for other configuration files
 echo -e "${YELLOW}Creating symlinks for other config files...${NC}"
