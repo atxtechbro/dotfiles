@@ -86,7 +86,7 @@ fi
 echo -e "${YELLOW}Linking Neovim configuration...${NC}"
 # Remove any existing Neovim config and point to dotfiles/nvim
 rm -rf ~/.config/nvim
-ln -s "$DOT_DEN/nvim" ~/.config/nvim
+ln -sfn "$DOT_DEN/nvim" ~/.config/nvim
 
 # Create symlinks for other configuration files
 echo -e "${YELLOW}Creating symlinks for other config files...${NC}"
