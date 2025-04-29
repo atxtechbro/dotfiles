@@ -104,6 +104,11 @@ vim.api.nvim_set_keymap('n', '<F10>', "<cmd>lua require('dap').step_over()<CR>",
 vim.api.nvim_set_keymap('n', '<F11>', "<cmd>lua require('dap').step_into()<CR>", opts)
 vim.api.nvim_set_keymap('n', '<F12>', "<cmd>lua require('dap').step_out()<CR>", opts)
 vim.api.nvim_set_keymap('n', '<F9>', "<cmd>lua require('dap').toggle_breakpoint()<CR>", opts)  -- VS Code style
+
+-- Add a command as an alternative to F9
+vim.api.nvim_create_user_command('BreakpointToggle', function()
+    require('dap').toggle_breakpoint()
+end, { desc = 'Toggle breakpoint at current line' })
 vim.api.nvim_set_keymap('n', '<leader>B', "<cmd>lua require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>", opts)
 vim.api.nvim_set_keymap('n', '<leader>lp', "<cmd>lua require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<CR>", opts)
 vim.api.nvim_set_keymap('n', '<leader>dr', "<cmd>lua require('dap').repl.open()<CR>", opts)
