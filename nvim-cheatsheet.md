@@ -46,6 +46,23 @@ A quick reference guide for the Neovim configuration in this dotfiles repository
 | `u` | Undo |
 | `Ctrl+r` | Redo |
 
+## Debugging
+
+| Keybinding | Description |
+|------------|-------------|
+| `<leader>b` | Toggle breakpoint |
+| `<leader>B` | Set conditional breakpoint |
+| `<leader>lp` | Set log point |
+| `<F5>` | Start/continue debugging |
+| `<F10>` | Step over |
+| `<F11>` | Step into |
+| `<F12>` | Step out |
+| `<leader>dr` | Open debug REPL |
+| `<leader>du` | Toggle DAP UI |
+| `<leader>db` | List breakpoints |
+| `<leader>dv` | View variables |
+| `<leader>df` | View stack frames |
+
 ## LSP Features
 
 | Keybinding | Description |
@@ -119,6 +136,7 @@ A quick reference guide for the Neovim configuration in this dotfiles repository
 | `:MasonInstall <package>` | Install a language server |
 | `:LspInfo` | Show LSP client information |
 | `:checkhealth` | Run Neovim health check |
+| `:checkhealth dap` | Check DAP configuration health |
 | `:TSInstall <language>` | Install TreeSitter parser |
 | `:TSUpdate` | Update TreeSitter parsers |
 
@@ -136,6 +154,17 @@ This will install:
 - Node.js dependencies (bash-language-server, html/css/json language servers)
 - Lua dependencies
 - Required Neovim plugins
+
+For Python debugging support:
+
+```bash
+# Run the Python debugging installation script
+~/dotfiles/nvim/python-debug-install.sh
+```
+
+This installs:
+- debugpy: Python debugger used by nvim-dap
+- DAP plugins: Debug Adapter Protocol support in Neovim
 
 ## Customization
 
