@@ -50,7 +50,7 @@ A quick reference guide for the Neovim configuration in this dotfiles repository
 
 | Keybinding | Description |
 |------------|-------------|
-| `<leader>b` | Toggle breakpoint |
+| `<F9>` | Toggle breakpoint (VS Code style) |
 | `<leader>B` | Set conditional breakpoint |
 | `<leader>lp` | Set log point |
 | `<F5>` | Start/continue debugging |
