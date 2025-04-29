@@ -20,7 +20,15 @@ fi
 
 # Install debugpy for Python debugging
 echo -e "${YELLOW}Installing Python debugpy...${NC}"
-uv pip install debugpy
+if command -v apt &> /dev/null; then
+    echo -e "${BLUE}Using apt to install debugpy globally...${NC}"
+    sudo apt install -y python3-debugpy
+else
+    echo -e "${RED}Could not install debugpy. Please install it manually:${NC}"
+    echo -e "${YELLOW}sudo apt install python3-debugpy${NC} (Debian/Ubuntu)"
+    echo -e "${YELLOW}sudo pacman -S python-debugpy${NC} (Arch Linux)"
+    echo -e "${YELLOW}brew install python-debugpy${NC} (macOS)"
+fi
 
 # Install DAP plugins for Neovim
 echo -e "${YELLOW}Installing DAP plugins with Packer...${NC}"
