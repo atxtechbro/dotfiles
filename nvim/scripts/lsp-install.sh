@@ -20,9 +20,20 @@ fi
 
 # Install Python dependencies
 echo -e "${YELLOW}Installing Python dependencies...${NC}"
+
+# Use `--target` with uv to install Python tools (e.g., pyright, pynvim)
+# This avoids system Python pollution and doesn't require a venv.
+# Tools go in ~/.local/uv-tools — ensure it's in PATH.
 if command -v uv &> /dev/null; then
     echo -e "${BLUE}Using uv for Python package management...${NC}"
-    uv pip install --user pynvim pyright
+    UV_TOOLS_PATH="$HOME/.local/uv-tools"
+    uv pip install --target "$UV_TOOLS_PATH" pynvim pyright
+    
+    # Add to PATH if not already there
+    if ! grep -q "$UV_TOOLS_PATH/bin" ~/.bashrc; then
+        echo -e "${BLUE}Adding $UV_TOOLS_PATH/bin to PATH in ~/.bashrc...${NC}"
+        echo "export PATH=\"\$PATH:$UV_TOOLS_PATH/bin\"" >> ~/.bashrc
+    fi
 else
     echo -e "${BLUE}Using pip for Python package management...${NC}"
     pip install --user pynvim pyright
@@ -52,9 +63,10 @@ fi
 echo -e "${YELLOW}Installing Neovim plugins...${NC}"
 nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 
-# Run Neovim with Mason to install LSP servers
-echo -e "${YELLOW}Installing LSP servers via Mason...${NC}"
-nvim --headless -c "MasonInstall pyright lua-language-server bash-language-server html-lsp css-lsp json-lsp marksman" -c "quitall"
+# Let Mason handle LSP server installation through ensure_installed in init.lua
+echo -e "${YELLOW}Starting Neovim to allow Mason to install LSP servers...${NC}"
+echo -e "${BLUE}(This uses automatic_installation and ensure_installed in init.lua)${NC}"
+nvim --headless -c "lua require('mason')" -c "quitall"
 
 echo -e "${GREEN}LSP servers installation complete!${NC}"
 echo -e "${BLUE}You may need to restart Neovim for all changes to take effect.${NC}"

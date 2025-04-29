@@ -29,6 +29,11 @@ local dapui = require('dapui')
 --   • DapBreakpointCondition: red dot for conditional breakpoints
 --   • DapLogPoint: red dot for logpoints
 --   • DapStopped: arrow for current execution line
+vim.api.nvim_set_hl(0, 'DapBreakpoint', { fg = '#F44747' })
+vim.api.nvim_set_hl(0, 'DapBreakpointCondition', { fg = '#F44747' })
+vim.api.nvim_set_hl(0, 'DapLogPoint', { fg = '#F44747' })
+vim.api.nvim_set_hl(0, 'DapStopped', { fg = '#FFD866' })
+
 vim.fn.sign_define('DapBreakpoint', {text='●', texthl='DapBreakpoint', linehl='', numhl=''})
 vim.fn.sign_define('DapBreakpointCondition', {text='●', texthl='DapBreakpointCondition', linehl='', numhl=''})
 vim.fn.sign_define('DapLogPoint', {text='●', texthl='DapLogPoint', linehl='', numhl=''})
@@ -106,7 +111,17 @@ vim.api.nvim_set_keymap('n', '<F12>', "<cmd>lua require('dap').step_out()<CR>", 
 vim.api.nvim_set_keymap('n', '<F9>', "<cmd>lua require('dap').toggle_breakpoint()<CR>", opts)  -- VS Code style
 
 -- Add alternatives to F9 for breakpoint toggles
+-- Command variants for flexibility
 vim.api.nvim_create_user_command('BreakpointToggle', function()
+    require('dap').toggle_breakpoint()
+end, { desc = 'Toggle breakpoint at current line' })
+
+vim.api.nvim_create_user_command('ToggleBreakpoint', function()
+    require('dap').toggle_breakpoint()
+end, { desc = 'Toggle breakpoint at current line' })
+
+-- Even shorter command for efficiency
+vim.api.nvim_create_user_command('TB', function()
     require('dap').toggle_breakpoint()
 end, { desc = 'Toggle breakpoint at current line' })
 

@@ -53,6 +53,8 @@ A quick reference guide for the Neovim configuration in this dotfiles repository
 | `<F9>` | Toggle breakpoint (VS Code style) |
 | `<leader>bp` | Toggle breakpoint (alternative to F9) |
 | `:BreakpointToggle` | Command to toggle breakpoint |
+| `:ToggleBreakpoint` | Alternative command to toggle breakpoint |
+| `:TB` | Short command to toggle breakpoint |
 | `<leader>B` | Set conditional breakpoint |
 | `<leader>lp` | Set log point |
 | `<F5>` | Start/continue debugging |
@@ -148,7 +150,7 @@ To set up the LSP servers and dependencies:
 
 ```bash
 # Run the LSP installation script
-~/dotfiles/nvim/lsp-install.sh
+~/dotfiles/nvim/scripts/lsp-install.sh
 ```
 
 This will install:
@@ -161,7 +163,7 @@ For Python debugging support:
 
 ```bash
 # Run the Python debugging installation script
-~/dotfiles/nvim/python-debug-install.sh
+~/dotfiles/nvim/scripts/python-debug-install.sh
 ```
 
 This installs:

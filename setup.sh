@@ -122,13 +122,19 @@ ln -sfn "$DOT_DEN/nvim" ~/.config/nvim
 echo -e "${YELLOW}Installing Neovim dependencies...${NC}"
 
 # Run LSP install script
-if [ -f "$DOT_DEN/nvim/lsp-install.sh" ]; then
+if [ -f "$DOT_DEN/nvim/scripts/lsp-install.sh" ]; then
+    echo -e "${BLUE}Running LSP installation script...${NC}"
+    "$DOT_DEN/nvim/scripts/lsp-install.sh"
+elif [ -f "$DOT_DEN/nvim/lsp-install.sh" ]; then
     echo -e "${BLUE}Running LSP installation script...${NC}"
     "$DOT_DEN/nvim/lsp-install.sh"
 fi
 
 # Run Python debug install script
-if [ -f "$DOT_DEN/nvim/python-debug-install.sh" ]; then
+if [ -f "$DOT_DEN/nvim/scripts/python-debug-install.sh" ]; then
+    echo -e "${BLUE}Running Python debugging tools installation script...${NC}"
+    "$DOT_DEN/nvim/scripts/python-debug-install.sh"
+elif [ -f "$DOT_DEN/nvim/python-debug-install.sh" ]; then
     echo -e "${BLUE}Running Python debugging tools installation script...${NC}"
     "$DOT_DEN/nvim/python-debug-install.sh"
 fi

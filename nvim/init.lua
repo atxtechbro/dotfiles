@@ -460,6 +460,18 @@ pcall(function()
   }
 end)
 
+-- Load Debug Adapter Protocol (DAP) configuration
+pcall(function()
+  require('config.dap')
+  print("Debug Adapter Protocol (DAP) configuration loaded from 'config.dap'")
+end)
+
+-- Load ToggleTerm terminal integration configuration
+pcall(function()
+  require('config.terminal')
+  print("ToggleTerm terminal integration loaded from 'config.terminal'")
+end)
+
 print("Neovim configuration loaded")
 
 -- Add mappings to copy filename or full path to clipboard
