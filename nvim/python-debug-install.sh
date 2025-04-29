@@ -20,13 +20,7 @@ fi
 
 # Install debugpy for Python debugging
 echo -e "${YELLOW}Installing Python debugpy...${NC}"
-if command -v uv &> /dev/null; then
-    echo -e "${BLUE}Using uv for Python package management...${NC}"
-    uv pip install --user debugpy
-else
-    echo -e "${BLUE}Using pip for Python package management...${NC}"
-    pip install --user debugpy
-fi
+uv pip install debugpy
 
 # Install DAP plugins for Neovim
 echo -e "${YELLOW}Installing DAP plugins with Packer...${NC}"
