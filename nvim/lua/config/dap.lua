@@ -1,5 +1,5 @@
 --[[
-  DAP Configuration: Minimal Debugger Setup
+  DAP Configuration: Full Debugger Setup with UI
 
   Assumptions:
     • Projects can supply a JSONC launch.json (VS Code schema) at:
@@ -22,15 +22,39 @@ do
   end
 end
 local dap = require('dap')
+local dapui = require('dapui')
 
 -- Setup signs in the gutter (sign column):
 --   • DapBreakpoint: red dot for breakpoints
+--   • DapBreakpointCondition: red dot for conditional breakpoints
+--   • DapLogPoint: red dot for logpoints
 --   • DapStopped: arrow for current execution line
 vim.api.nvim_set_hl(0, 'DapBreakpoint', { fg = '#F44747' })
+vim.api.nvim_set_hl(0, 'DapBreakpointCondition', { fg = '#F44747' })
+vim.api.nvim_set_hl(0, 'DapLogPoint', { fg = '#F44747' })
 vim.api.nvim_set_hl(0, 'DapStopped', { fg = '#FFD866' })
 
 vim.fn.sign_define('DapBreakpoint', {text='●', texthl='DapBreakpoint', linehl='', numhl=''})
+vim.fn.sign_define('DapBreakpointCondition', {text='●', texthl='DapBreakpointCondition', linehl='', numhl=''})
+vim.fn.sign_define('DapLogPoint', {text='●', texthl='DapLogPoint', linehl='', numhl=''})
 vim.fn.sign_define('DapStopped', {text='→', texthl='DapStopped', linehl='DapStoppedLine', numhl=''})
+
+-- Virtual text for variable values, etc.
+require('nvim-dap-virtual-text').setup()
+
+-- DAP UI setup
+dapui.setup()
+
+-- Automatically open and close DAP UI
+dap.listeners.after.event_initialized['dapui_config'] = function()
+  dapui.open()
+end
+dap.listeners.before.event_terminated['dapui_config'] = function()
+  dapui.close()
+end
+dap.listeners.before.event_exited['dapui_config'] = function()
+  dapui.close()
+end
 
 -- Python adapter configuration
 dap.adapters.python = {
@@ -75,6 +99,11 @@ dap.configurations.cpp = {
 }
 dap.configurations.c = dap.configurations.cpp
 
+-- Telescope DAP integration
+pcall(function()
+  require('telescope').load_extension('dap')
+end)
+
 -- DAP essential key mappings (F5, F9-F12)
 local opts = { noremap = true, silent = true }
 vim.api.nvim_set_keymap('n', '<F5>', "<cmd>lua require('dap').continue()<CR>", opts)
@@ -86,16 +115,6 @@ vim.api.nvim_set_keymap('n', '<F9>', "<cmd>lua require('dap').toggle_breakpoint(
 -- Add alternative to F9 for breakpoint toggle
 vim.api.nvim_set_keymap('n', '<leader>bp', "<cmd>lua require('dap').toggle_breakpoint()<CR>", opts)
 
--- Command variants for flexibility
-vim.api.nvim_create_user_command('BreakpointToggle', function()
-    require('dap').toggle_breakpoint()
-end, { desc = 'Toggle breakpoint at current line' })
-
-vim.api.nvim_create_user_command('ToggleBreakpoint', function()
-    require('dap').toggle_breakpoint()
-end, { desc = 'Toggle breakpoint at current line' })
-
--- Even shorter command for efficiency
-vim.api.nvim_create_user_command('TB', function()
-    require('dap').toggle_breakpoint()
-end, { desc = 'Toggle breakpoint at current line' })
+-- Additional UI-related keymaps
+vim.api.nvim_set_keymap('n', '<leader>du', "<cmd>lua require('dapui').toggle()<CR>", opts) -- Toggle UI
+vim.api.nvim_set_keymap('n', '<leader>dr', "<cmd>lua require('dap').repl.open()<CR>", opts) -- Open REPL
