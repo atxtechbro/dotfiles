@@ -28,10 +28,9 @@ echo -e "${BLUE}Using uv for Python package management...${NC}"
 UV_TOOLS_PATH="$HOME/.local/uv-tools"
 uv pip install --target "$UV_TOOLS_PATH" debugpy
 
-# Add to PATH if not already there
-if ! grep -q "$UV_TOOLS_PATH/bin" ~/.bashrc; then
-    echo -e "${BLUE}Adding $UV_TOOLS_PATH/bin to PATH in ~/.bashrc...${NC}"
-    echo "export PATH=\"\$PATH:$UV_TOOLS_PATH/bin\"" >> ~/.bashrc
+if ! grep -q "$HOME/.local/uv-tools/bin" ~/.bashrc; then
+    echo -e "${BLUE}Adding ~/.local/uv-tools/bin to PATH in ~/.bashrc...${NC}"
+    echo 'export PATH="$HOME/.local/uv-tools/bin:$PATH"' >> ~/.bashrc
 fi
 
 # Install minimal DAP plugin for Neovim
