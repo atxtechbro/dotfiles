@@ -269,6 +269,8 @@ if ! command -v uv >/dev/null 2>&1; then
   if ! grep -q "export PATH=\"\\\$HOME/.local/bin:\\\$PATH\"" "$HOME/.bashrc"; then
     echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$HOME/.bashrc"
   fi
+  # Make uv available in the current shell
+  export PATH="$HOME/.local/bin:$PATH"
   echo -e "${GREEN}✓ uv package manager installed${NC}"
 fi
 
