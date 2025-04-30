@@ -57,7 +57,6 @@ A quick reference guide for the Neovim configuration in this dotfiles repository
 | `<F11>` | Step into |
 | `<F12>` | Step out |
 | `<leader>du` | Toggle DAP UI (variables, stack, watches) |
-| `<leader>dr` | Toggle REPL (debug console) |
 
 ## LSP Features
 

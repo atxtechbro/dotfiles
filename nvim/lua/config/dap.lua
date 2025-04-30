@@ -115,19 +115,5 @@ vim.api.nvim_set_keymap('n', '<F9>', "<cmd>lua require('dap').toggle_breakpoint(
 -- Add alternative to F9 for breakpoint toggle
 vim.api.nvim_set_keymap('n', '<leader>bp', "<cmd>lua require('dap').toggle_breakpoint()<CR>", opts)
 
--- Create a REPL toggle function
-local repl_open = false
-local function toggle_repl()
-  local repl = require('dap').repl
-  if repl_open then
-    repl.close()
-    repl_open = false
-  else
-    repl.open()
-    repl_open = true
-  end
-end
-
 -- Additional UI-related keymaps
 vim.api.nvim_set_keymap('n', '<leader>du', "<cmd>lua require('dapui').toggle()<CR>", opts) -- Toggle UI
-vim.api.nvim_set_keymap('n', '<leader>dr', "<cmd>lua toggle_repl()<CR>", opts) -- Toggle REPL
