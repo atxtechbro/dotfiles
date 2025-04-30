@@ -194,3 +194,4 @@ tmux source-file ~/.tmux.conf >/dev/null 2>&1 || true
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.local/uv-tools/bin:$PATH"
 
+export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
