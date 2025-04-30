@@ -117,4 +117,4 @@ vim.api.nvim_set_keymap('n', '<leader>bp', "<cmd>lua require('dap').toggle_break
 
 -- Additional UI-related keymaps
 vim.api.nvim_set_keymap('n', '<leader>du', "<cmd>lua require('dapui').toggle()<CR>", opts) -- Toggle UI
-vim.api.nvim_set_keymap('n', '<leader>dr', "<cmd>lua require('dap').repl.open()<CR>", opts) -- Open REPL
+vim.api.nvim_set_keymap('n', '<leader>dr', "<cmd>lua local repl = require('dap').repl; if repl.visible() then repl.close() else repl.open() end<CR>", opts) -- Toggle REPL
