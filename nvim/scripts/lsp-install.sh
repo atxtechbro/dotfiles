@@ -59,6 +59,12 @@ else
     echo -e "luarocks install --local luacheck"
 fi
 
+# Check for xmllint (XML formatting tool)
+echo -e "${YELLOW}Checking for xmllint (XML formatting)...${NC}"
+if ! command -v xmllint &> /dev/null; then
+    echo -e "${RED}xmllint not found. Install libxml2-utils (Debian/Ubuntu) or libxml2 (macOS) to enable XML formatting.${NC}"
+fi
+
 # Run Neovim with PackerSync to install plugins
 echo -e "${YELLOW}Installing Neovim plugins...${NC}"
 nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
