@@ -88,54 +88,71 @@ fi
 echo -e "${DIVIDER}"
 echo "Setting up Neovim..."
 
-# Check if Neovim is installed
+# NOTE: Neovim auto-installation is temporarily disabled
+# as we refine the installation process
+# 
+# # Check if Neovim is installed
+# if ! command -v nvim &> /dev/null; then
+#     echo "Neovim not found. Installing..."
+#     
+#     # Download latest Neovim release
+#     NVIM_TMP_DIR=$(mktemp -d)
+#     NVIM_RELEASE="https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
+#     
+#     echo "Downloading and installing Neovim..."
+#     curl -L -o "${NVIM_TMP_DIR}/nvim.tar.gz" "${NVIM_RELEASE}" 2>/dev/null
+#     sudo rm -rf /opt/nvim 2>/dev/null
+#     sudo tar -C /opt -xzf "${NVIM_TMP_DIR}/nvim.tar.gz" 2>/dev/null
+#     
+#     # Ensure proper permissions on Neovim binary
+#     sudo chmod 755 /opt/nvim-linux-x86_64/bin/nvim
+#     # Fix ownership to ensure it's executable by all users
+#     sudo chown root:root /opt/nvim-linux-x86_64/bin/nvim
+#     
+#     rm -rf "${NVIM_TMP_DIR}" 2>/dev/null
+#     
+#     # Add to PATH if not already there
+#     if ! grep -q '/opt/nvim-linux-x86_64/bin' ~/.bashrc; then
+#         echo "Adding Neovim to PATH..."
+#         echo "export PATH=\"\$PATH:/opt/nvim-linux-x86_64/bin\"" >> ~/.bashrc
+#     fi
+#     
+#     # Make nvim available in the current shell
+#     export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+#     
+#     echo -e "${GREEN}✓ Neovim installed${NC}"
+# fi
+
+# Check if Neovim is installed before proceeding with further setup
 if ! command -v nvim &> /dev/null; then
-    echo "Neovim not found. Installing..."
-    
-    # Download latest Neovim release
-    NVIM_TMP_DIR=$(mktemp -d)
-    NVIM_RELEASE="https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
-    
-    echo "Downloading and installing Neovim..."
-    curl -L -o "${NVIM_TMP_DIR}/nvim.tar.gz" "${NVIM_RELEASE}" 2>/dev/null
-    sudo rm -rf /opt/nvim 2>/dev/null
-    sudo tar -C /opt -xzf "${NVIM_TMP_DIR}/nvim.tar.gz" 2>/dev/null
-    rm -rf "${NVIM_TMP_DIR}" 2>/dev/null
-    
-    # Add to PATH if not already there
-    if ! grep -q '/opt/nvim-linux-x86_64/bin' ~/.bashrc; then
-        echo "Adding Neovim to PATH..."
-        echo "export PATH=\"\$PATH:/opt/nvim-linux-x86_64/bin\"" >> ~/.bashrc
-        export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+    echo -e "${YELLOW}Neovim not found. Skipping Neovim configuration.${NC}"
+    echo "Please install Neovim manually to use the Neovim configuration."
+else
+    # Link Neovim configuration
+    echo "Setting up Neovim configuration..."
+    rm -rf ~/.config/nvim 2>/dev/null
+    ln -sfn "$DOT_DEN/nvim" ~/.config/nvim
+
+    # Run LSP install script  
+    if [ -f "$DOT_DEN/nvim/scripts/lsp-install.sh" ]; then
+        echo "Installing LSP servers..."
+        bash "$DOT_DEN/nvim/scripts/lsp-install.sh" 2>/dev/null
+    elif [ -f "$DOT_DEN/nvim/lsp-install.sh" ]; then
+        echo "Installing LSP servers..."
+        bash "$DOT_DEN/nvim/lsp-install.sh" 2>/dev/null
     fi
-    
-    echo -e "${GREEN}✓ Neovim installed${NC}"
+
+    # Run Python debug install script
+    if [ -f "$DOT_DEN/nvim/scripts/python-debug-install.sh" ]; then
+        echo "Installing Python debugging tools..."
+        bash "$DOT_DEN/nvim/scripts/python-debug-install.sh" 2>/dev/null
+    elif [ -f "$DOT_DEN/nvim/python-debug-install.sh" ]; then
+        echo "Installing Python debugging tools..."
+        bash "$DOT_DEN/nvim/python-debug-install.sh" 2>/dev/null
+    fi
+
+    echo -e "${GREEN}✓ Neovim setup complete${NC}"
 fi
-
-# Link Neovim configuration
-echo "Setting up Neovim configuration..."
-rm -rf ~/.config/nvim 2>/dev/null
-ln -sfn "$DOT_DEN/nvim" ~/.config/nvim
-
-# Run LSP install script
-if [ -f "$DOT_DEN/nvim/scripts/lsp-install.sh" ]; then
-    echo "Installing LSP servers..."
-    bash "$DOT_DEN/nvim/scripts/lsp-install.sh" 2>/dev/null
-elif [ -f "$DOT_DEN/nvim/lsp-install.sh" ]; then
-    echo "Installing LSP servers..."
-    bash "$DOT_DEN/nvim/lsp-install.sh" 2>/dev/null
-fi
-
-# Run Python debug install script
-if [ -f "$DOT_DEN/nvim/scripts/python-debug-install.sh" ]; then
-    echo "Installing Python debugging tools..."
-    bash "$DOT_DEN/nvim/scripts/python-debug-install.sh" 2>/dev/null
-elif [ -f "$DOT_DEN/nvim/python-debug-install.sh" ]; then
-    echo "Installing Python debugging tools..."
-    bash "$DOT_DEN/nvim/python-debug-install.sh" 2>/dev/null
-fi
-
-echo -e "${GREEN}✓ Neovim setup complete${NC}"
 
 echo -e "${DIVIDER}"
 echo "Setting up configuration files..."
