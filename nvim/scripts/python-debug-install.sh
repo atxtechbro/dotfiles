@@ -6,14 +6,16 @@ set -e  # Exit on error
 # Colors for output - use sparingly
 GREEN='\033[0;32m'
 RED='\033[0;31m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Check if we're running from the main setup script
 if [[ "${SETUP_SCRIPT_RUNNING}" == "true" ]]; then
     # When running from setup.sh, be quieter
-    QUIET=true
+    # Skip the welcome message when running from main setup
+    :
 else
-    QUIET=false
     echo -e "${GREEN}Installing Python debugging tools for Neovim...${NC}"
 fi
 
@@ -33,9 +35,9 @@ echo -e "${BLUE}Using uv for Python package management...${NC}"
 UV_TOOLS_PATH="$HOME/.local/uv-tools"
 uv pip install --target "$UV_TOOLS_PATH" debugpy
 
-if ! grep -q "$HOME/.local/uv-tools/bin" ~/.bashrc; then
+if ! grep -q "export PATH=\"\$HOME/.local/uv-tools/bin:\$PATH\"" ~/.bashrc; then
     echo -e "${BLUE}Adding ~/.local/uv-tools/bin to PATH in ~/.bashrc...${NC}"
-    echo 'export PATH="$HOME/.local/uv-tools/bin:$PATH"' >> ~/.bashrc
+    echo "export PATH=\"\$HOME/.local/uv-tools/bin:\$PATH\"" >> ~/.bashrc
 fi
 
 # Install minimal DAP plugin for Neovim
