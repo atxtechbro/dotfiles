@@ -65,18 +65,6 @@ if ! command -v xmllint &> /dev/null; then
     echo -e "${RED}xmllint not found. Install libxml2-utils (Debian/Ubuntu) or libxml2 (macOS) to enable XML formatting.${NC}"
 fi
 
-# Check for xmllint (XML formatting tool)
-echo -e "${YELLOW}Checking for xmllint (XML formatting)...${NC}"
-if ! command -v xmllint &> /dev/null; then
-    echo -e "${RED}xmllint not found. Install libxml2-utils (Debian/Ubuntu) or libxml2 (macOS) to enable XML formatting.${NC}"
-fi
-
-# Check for xmllint (XML formatting tool)
-echo -e "${YELLOW}Checking for xmllint (XML formatting)...${NC}"
-if ! command -v xmllint &> /dev/null; then
-    echo -e "${RED}xmllint not found. Install libxml2-utils (Debian/Ubuntu) or libxml2 (macOS) to enable XML formatting.${NC}"
-fi
-
 # Run Neovim with PackerSync to install plugins
 echo -e "${YELLOW}Installing Neovim plugins...${NC}"
 nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
@@ -86,6 +74,5 @@ echo -e "${YELLOW}Starting Neovim to allow Mason to install LSP servers...${NC}"
 echo -e "${BLUE}(This uses automatic_installation and ensure_installed in init.lua)${NC}"
 nvim --headless -c "lua require('mason')" -c "quitall"
 
-echo -e "${GREEN}LSP servers installation complete!${NC}"
-echo -e "${BLUE}You may need to restart Neovim for all changes to take effect.${NC}"
+echo -e "${GREEN}✓ LSP servers installed successfully${NC}"
 

@@ -9,11 +9,15 @@ GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
 RED='\033[0;31m'
+CYAN='\033[0;36m'
 NC='\033[0m' # No Color
+DIVIDER="${CYAN}----------------------------------------${NC}"
 
 DOT_DEN="$HOME/ppv/pillars/dotfiles"
 
-echo -e "${GREEN}Starting dotfiles setup...${NC}"
+echo -e "${DIVIDER}"
+echo -e "${GREEN}▶ Starting dotfiles setup...${NC}"
+echo -e "${DIVIDER}"
 
 # Check for essential tools
 check_command() {
@@ -41,7 +45,7 @@ if [[ "$missing_commands" == true ]]; then
     exit 1
 fi
 
-# Determine OS type (for informational purposes only)
+# Determine OS type
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     OS_TYPE="Linux"
     if grep -q Microsoft /proc/version 2>/dev/null; then
@@ -74,15 +78,16 @@ fi
 if [[ ! -d "$DOT_DEN" && "$IS_WSL" == false ]]; then
     echo -e "${YELLOW}Cloning dotfiles repository...${NC}"
     mkdir -p "$(dirname "$DOT_DEN")"
-    git clone https://github.com/atxtechbro/dotfiles.git "$DOT_DEN"
+    git clone https://github.com/atxtechbro/dotfiles.git "$DOT_DEN" 2>/dev/null
     echo -e "${GREEN}Dotfiles repository cloned successfully!${NC}"
 elif [[ -d "$DOT_DEN" ]]; then
     echo -e "${BLUE}Dotfiles repository already exists at $DOT_DEN${NC}"
-    cd "$DOT_DEN"
+    cd "$DOT_DEN" 2>/dev/null
 fi
 
-### Set up Neovim
-echo -e "${YELLOW}Setting up Neovim...${NC}"
+echo -e "${DIVIDER}"
+echo -e "${GREEN}▶ Setting up Neovim...${NC}"
+echo -e "${DIVIDER}"
 
 # Check if Neovim is installed
 if ! command -v nvim &> /dev/null; then
@@ -92,20 +97,20 @@ if ! command -v nvim &> /dev/null; then
     NVIM_TMP_DIR=$(mktemp -d)
     NVIM_RELEASE="https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
     
-    echo -e "${BLUE}Downloading Neovim from: ${NVIM_RELEASE}${NC}"
-    curl -L -o "${NVIM_TMP_DIR}/nvim.tar.gz" "${NVIM_RELEASE}"
+    echo -e "${BLUE}Downloading Neovim...${NC}"
+    curl -L -o "${NVIM_TMP_DIR}/nvim.tar.gz" "${NVIM_RELEASE}" 2>/dev/null
     
     # Install Neovim
     echo -e "${BLUE}Installing Neovim to /opt...${NC}"
-    sudo rm -rf /opt/nvim
-    sudo tar -C /opt -xzf "${NVIM_TMP_DIR}/nvim.tar.gz"
+    sudo rm -rf /opt/nvim 2>/dev/null
+    sudo tar -C /opt -xzf "${NVIM_TMP_DIR}/nvim.tar.gz" 2>/dev/null
     
     # Clean up
-    rm -rf "${NVIM_TMP_DIR}"
+    rm -rf "${NVIM_TMP_DIR}" 2>/dev/null
     
     # Add to PATH if not already there
     if ! grep -q '/opt/nvim-linux-x86_64/bin' ~/.bashrc; then
-        echo -e "${BLUE}Adding Neovim to PATH in ~/.bashrc...${NC}"
+        echo -e "${BLUE}Adding Neovim to PATH...${NC}"
         echo 'export PATH="$PATH:/opt/nvim-linux-x86_64/bin"' >> ~/.bashrc
         export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
     fi
@@ -114,33 +119,39 @@ if ! command -v nvim &> /dev/null; then
 fi
 
 # Link Neovim configuration
-echo -e "${YELLOW}Linking Neovim configuration...${NC}"
-rm -rf ~/.config/nvim
+echo -e "${BLUE}Linking Neovim configuration...${NC}"
+rm -rf ~/.config/nvim 2>/dev/null
 ln -sfn "$DOT_DEN/nvim" ~/.config/nvim
 
 # Install Neovim dependencies
-echo -e "${YELLOW}Installing Neovim dependencies...${NC}"
+echo -e "${BLUE}Installing Neovim dependencies...${NC}"
 
 # Run LSP install script
 if [ -f "$DOT_DEN/nvim/scripts/lsp-install.sh" ]; then
-    echo -e "${BLUE}Running LSP installation script...${NC}"
-    "$DOT_DEN/nvim/scripts/lsp-install.sh"
+    echo -e "${YELLOW}Installing LSP servers...${NC}"
+    bash "$DOT_DEN/nvim/scripts/lsp-install.sh"
 elif [ -f "$DOT_DEN/nvim/lsp-install.sh" ]; then
-    echo -e "${BLUE}Running LSP installation script...${NC}"
-    "$DOT_DEN/nvim/lsp-install.sh"
+    echo -e "${YELLOW}Installing LSP servers...${NC}"
+    bash "$DOT_DEN/nvim/lsp-install.sh"
 fi
 
 # Run Python debug install script
 if [ -f "$DOT_DEN/nvim/scripts/python-debug-install.sh" ]; then
-    echo -e "${BLUE}Running Python debugging tools installation script...${NC}"
-    "$DOT_DEN/nvim/scripts/python-debug-install.sh"
+    echo -e "${YELLOW}Installing Python debugging tools...${NC}"
+    bash "$DOT_DEN/nvim/scripts/python-debug-install.sh"
 elif [ -f "$DOT_DEN/nvim/python-debug-install.sh" ]; then
-    echo -e "${BLUE}Running Python debugging tools installation script...${NC}"
-    "$DOT_DEN/nvim/python-debug-install.sh"
+    echo -e "${YELLOW}Installing Python debugging tools...${NC}"
+    bash "$DOT_DEN/nvim/python-debug-install.sh"
 fi
 
+echo -e "${GREEN}✓ Neovim setup complete${NC}"
+
+echo -e "${DIVIDER}"
+echo -e "${GREEN}▶ Setting up configuration files...${NC}"
+echo -e "${DIVIDER}"
+
 # Create symlinks for other configuration files
-echo -e "${YELLOW}Creating symlinks for other config files...${NC}"
+echo -e "${BLUE}Creating symlinks for config files...${NC}"
 ln -sf "$DOT_DEN/.bashrc" ~/.bashrc
 ln -sf "$DOT_DEN/.bash_aliases" ~/.bash_aliases
 ln -sf "$DOT_DEN/.bash_exports" ~/.bash_exports
@@ -152,13 +163,20 @@ if [[ -f "$DOT_DEN/.bash_secrets.example" && ! -f ~/.bash_secrets ]]; then
     echo -e "${YELLOW}Creating secrets file from template...${NC}"
     cp "$DOT_DEN/.bash_secrets.example" ~/.bash_secrets
     chmod 600 ~/.bash_secrets
-    echo -e "${BLUE}Created ~/.bash_secrets from template. Edit it to add your secrets.${NC}"
+    echo -e "${BLUE}Created ~/.bash_secrets from template. Please edit to add your secrets.${NC}"
 fi
 
 # Apply bash configuration
-echo -e "${YELLOW}Applying bash configuration...${NC}"
+echo -e "${BLUE}Applying bash configuration...${NC}"
 # shellcheck disable=SC1090
 source ~/.bashrc 2>/dev/null || true
+
+echo -e "${GREEN}✓ Configuration files setup complete${NC}"
+
+# Platform-specific setup
+echo -e "${DIVIDER}"
+echo -e "${GREEN}▶ Platform-specific setup...${NC}"
+echo -e "${DIVIDER}"
 
 # Check if this is running on Arch Linux and offer Arch-specific setup
 if command -v pacman &>/dev/null; then
@@ -169,7 +187,7 @@ if command -v pacman &>/dev/null; then
         echo -e "${YELLOW}Running Arch Linux specific setup...${NC}"
         bash "$DOT_DEN/arch-linux/setup.sh"
     else
-        echo -e "${YELLOW}No Arch Linux setup script found. Skipping Arch-specific setup.${NC}"
+        echo -e "${BLUE}No Arch Linux setup script found. Skipping Arch-specific setup.${NC}"
     fi
 fi
 
@@ -182,17 +200,18 @@ if grep -q "Raspberry Pi" /proc/cpuinfo 2>/dev/null; then
         echo -e "${YELLOW}Running Raspberry Pi specific setup...${NC}"
         bash "$DOT_DEN/raspberry-pi/setup.sh"
     else
-        echo -e "${YELLOW}No Raspberry Pi setup script found. Skipping Pi-specific setup.${NC}"
+        echo -e "${BLUE}No Raspberry Pi setup script found. Skipping Pi-specific setup.${NC}"
     fi
 fi
 
-echo -e "${GREEN}Dotfiles setup complete!${NC}"
-echo -e "${YELLOW}Your development environment is now configured and ready to use.${NC}"
-echo -e "${BLUE}Enjoy your personalized setup!${NC}"
+# Tools setup
+echo -e "${DIVIDER}"
+echo -e "${GREEN}▶ Setting up development tools...${NC}"
+echo -e "${DIVIDER}"
 
 # Amazon Q setup and management
 if command -v q >/dev/null 2>&1; then
-  echo -e "${YELLOW}Amazon Q is installed. Checking for updates...${NC}"
+  echo -e "${YELLOW}Amazon Q: Checking for updates...${NC}"
   
   # Check if update is available
   UPDATE_CHECK=$(q update 2>&1 | grep "A new version of q is available:" || echo "")
@@ -203,60 +222,66 @@ if command -v q >/dev/null 2>&1; then
     # Determine architecture
     ARCH=$(uname -m)
     if [ "$ARCH" = "x86_64" ]; then
-      echo -e "${BLUE}Detected x86-64 architecture${NC}"
-      curl --proto '=https' --tlsv1.2 -sSf "https://desktop-release.codewhisperer.us-east-1.amazonaws.com/latest/q-x86_64-linux.zip" -o "q.zip"
+      curl --proto '=https' --tlsv1.2 -sSf "https://desktop-release.codewhisperer.us-east-1.amazonaws.com/latest/q-x86_64-linux.zip" -o "q.zip" 2>/dev/null
     elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
-      echo -e "${BLUE}Detected ARM architecture${NC}"
-      curl --proto '=https' --tlsv1.2 -sSf "https://desktop-release.codewhisperer.us-east-1.amazonaws.com/latest/q-aarch64-linux.zip" -o "q.zip"
+      curl --proto '=https' --tlsv1.2 -sSf "https://desktop-release.codewhisperer.us-east-1.amazonaws.com/latest/q-aarch64-linux.zip" -o "q.zip" 2>/dev/null
     else
-      echo -e "${RED}Unsupported architecture: $ARCH${NC}"
-      echo -e "${RED}Cannot update Amazon Q automatically${NC}"
+      echo -e "${RED}Unsupported architecture: $ARCH. Cannot update Amazon Q automatically${NC}"
     fi
     
     # Install if zip was downloaded
     if [ -f "q.zip" ]; then
-      unzip -o q.zip
-      ./q/install.sh
-      rm -rf q.zip q/
-      echo -e "${GREEN}Amazon Q updated successfully${NC}"
+      unzip -o q.zip >/dev/null 2>&1
+      ./q/install.sh >/dev/null 2>&1
+      rm -rf q.zip q/ >/dev/null 2>&1
+      echo -e "${GREEN}✓ Amazon Q updated successfully${NC}"
     fi
   else
-    echo -e "${GREEN}Amazon Q is up to date${NC}"
+    echo -e "${GREEN}✓ Amazon Q is up to date${NC}"
   fi
   
   # Disable telemetry if not already disabled
   TELEMETRY_STATUS=$(q telemetry status 2>/dev/null | grep -i "disabled" || echo "")
   if [ -z "$TELEMETRY_STATUS" ]; then
     echo -e "${YELLOW}Disabling Amazon Q telemetry...${NC}"
-    q telemetry disable
-    echo -e "${GREEN}Amazon Q telemetry disabled${NC}"
+    q telemetry disable >/dev/null 2>&1
+    echo -e "${GREEN}✓ Amazon Q telemetry disabled${NC}"
   else
     echo -e "${BLUE}Amazon Q telemetry already disabled${NC}"
   fi
 fi
 
-
 # Check and install npm for Claude Code if needed
 if ! command -v npm >/dev/null 2>&1; then
-  echo -e "${YELLOW}📦 npm not found. Installing nodejs and npm...${NC}"
+  echo -e "${YELLOW}NodeJS: npm not found. Installing nodejs and npm...${NC}"
   if command -v apt >/dev/null 2>&1; then
     # Debian/Ubuntu
-    sudo apt update && sudo apt install -y nodejs npm
+    sudo apt update >/dev/null 2>&1
+    sudo apt install -y nodejs npm >/dev/null 2>&1
+    echo -e "${GREEN}✓ NodeJS and npm installed${NC}"
   elif command -v pacman >/dev/null 2>&1; then
     # Arch Linux
-    sudo pacman -S --needed nodejs npm
+    sudo pacman -S --needed nodejs npm >/dev/null 2>&1
+    echo -e "${GREEN}✓ NodeJS and npm installed${NC}"
   elif command -v brew >/dev/null 2>&1; then
     # macOS
-    brew install node
+    brew install node >/dev/null 2>&1
+    echo -e "${GREEN}✓ NodeJS and npm installed${NC}"
   else
-    echo -e "${RED}Unable to install npm automatically. Please install nodejs and npm manually.${NC}"
+    echo -e "${RED}Unable to install npm automatically. Please install manually:${NC}"
     echo -e "${BLUE}See https://nodejs.org/en/download/ for installation instructions.${NC}"
   fi
 fi
 
 # Install uv for Python package management
 if ! command -v uv >/dev/null 2>&1; then
-  echo -e "${YELLOW}📦 Installing uv...${NC}"
-  curl -Ls https://astral.sh/uv/install.sh | sh
+  echo -e "${YELLOW}Python: Installing uv package manager...${NC}"
+  curl -Ls https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
   echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$HOME/.bashrc"
+  echo -e "${GREEN}✓ uv package manager installed${NC}"
 fi
+
+echo -e "${DIVIDER}"
+echo -e "${GREEN}✅ Dotfiles setup complete!${NC}"
+echo -e "${BLUE}Your development environment is now configured and ready to use.${NC}"
+echo -e "${DIVIDER}"

@@ -38,10 +38,4 @@ echo -e "${YELLOW}Installing minimal DAP plugin with Packer...${NC}"
 # Make nvim install the nvim-dap plugin, run PackerCompile, and ensure config.dap is loaded
 nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' -c 'PackerCompile' -c 'lua pcall(require, "config.dap")'
 
-echo -e "${GREEN}Python debugging tools installation complete!${NC}"
-echo -e "${YELLOW}Usage:${NC}"
-echo -e "1. Open a Python file in Neovim"
-echo -e "2. Press F9 to set breakpoints"
-echo -e "3. Press F5 to start debugging"
-echo -e "4. Alternative for setting breakpoints:"
-echo -e "   - Keybinding: <leader>bp (usually space+bp)"
+echo -e "${GREEN}✓ Python debugger installed successfully${NC}"
