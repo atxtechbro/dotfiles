@@ -3,14 +3,19 @@
 
 set -e  # Exit on error
 
-# Colors for output
+# Colors for output - use sparingly
 GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-echo -e "${GREEN}Installing LSP servers for Neovim...${NC}"
+# Check if we're running from the main setup script
+if [[ "${SETUP_SCRIPT_RUNNING}" == "true" ]]; then
+    # When running from setup.sh, be quieter
+    QUIET=true
+else
+    QUIET=false
+    echo -e "${GREEN}Installing LSP servers for Neovim...${NC}"
+fi
 
 # Check for Neovim
 if ! command -v nvim &> /dev/null; then
