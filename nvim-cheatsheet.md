@@ -46,7 +46,7 @@ A quick reference guide for the Neovim configuration in this dotfiles repository
 | `u` | Undo |
 | `Ctrl+r` | Redo |
 
-## Debugging
+## Debugging (Minimal Setup)
 
 | Keybinding / Command | Description |
 |------------|-------------|
@@ -55,17 +55,10 @@ A quick reference guide for the Neovim configuration in this dotfiles repository
 | `:BreakpointToggle` | Command to toggle breakpoint |
 | `:ToggleBreakpoint` | Alternative command to toggle breakpoint |
 | `:TB` | Short command to toggle breakpoint |
-| `<leader>B` | Set conditional breakpoint |
-| `<leader>lp` | Set log point |
 | `<F5>` | Start/continue debugging |
 | `<F10>` | Step over |
 | `<F11>` | Step into |
 | `<F12>` | Step out |
-| `<leader>dr` | Open debug REPL |
-| `<leader>du` | Toggle DAP UI |
-| `<leader>db` | List breakpoints |
-| `<leader>dv` | View variables |
-| `<leader>df` | View stack frames |
 
 ## LSP Features
 
@@ -168,7 +161,7 @@ For Python debugging support:
 
 This installs:
 - debugpy: Python debugger used by nvim-dap
-- DAP plugins: Debug Adapter Protocol support in Neovim
+- DAP plugin: Minimal Debug Adapter Protocol support in Neovim
 
 ## Customization
 

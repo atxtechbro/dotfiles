@@ -34,9 +34,9 @@ if ! grep -q "$UV_TOOLS_PATH/bin" ~/.bashrc; then
     echo "export PATH=\"\$PATH:$UV_TOOLS_PATH/bin\"" >> ~/.bashrc
 fi
 
-# Install DAP plugins for Neovim
-echo -e "${YELLOW}Installing DAP plugins with Packer...${NC}"
-# Make nvim install all plugins, run PackerCompile, and ensure config.dap is loaded
+# Install minimal DAP plugin for Neovim
+echo -e "${YELLOW}Installing minimal DAP plugin with Packer...${NC}"
+# Make nvim install the nvim-dap plugin, run PackerCompile, and ensure config.dap is loaded
 nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' -c 'PackerCompile' -c 'lua pcall(require, "config.dap")'
 
 echo -e "${GREEN}Python debugging tools installation complete!${NC}"
