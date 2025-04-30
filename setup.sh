@@ -105,7 +105,7 @@ if ! command -v nvim &> /dev/null; then
     # Add to PATH if not already there
     if ! grep -q '/opt/nvim-linux-x86_64/bin' ~/.bashrc; then
         echo "Adding Neovim to PATH..."
-        echo 'export PATH="$PATH:/opt/nvim-linux-x86_64/bin"' >> ~/.bashrc
+        echo "export PATH=\"\$PATH:/opt/nvim-linux-x86_64/bin\"" >> ~/.bashrc
         export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
     fi
     
