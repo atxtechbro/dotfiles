@@ -117,3 +117,45 @@ vim.api.nvim_set_keymap('n', '<leader>bp', "<cmd>lua require('dap').toggle_break
 
 -- Additional UI-related keymaps
 vim.api.nvim_set_keymap('n', '<leader>du', "<cmd>lua require('dapui').toggle()<CR>", opts) -- Toggle UI
+
+-- Call stack navigation with automatic frame focus
+vim.api.nvim_set_keymap('n', '<leader>dj', "<cmd>lua require('dap').down()<CR>", opts) -- Move down the stack (older frames)
+vim.api.nvim_set_keymap('n', '<leader>dk', "<cmd>lua require('dap').up()<CR>", opts)   -- Move up the stack (newer frames)
+
+-- Add frame focus handler to highlight current frame and jump to its location
+dap.listeners.after.event_stopped['dapui_focus'] = function()
+  dapui.open()
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-w>l', true, false, true), 'n', false)
+end
+
+-- Frame change handler - jump to current frame on up/down navigation
+dap.listeners.after.scopes['dapui_frame_focus'] = function()
+  -- Jump to the current frame's location automatically
+  local session = dap.session()
+  if session and session.current_frame then
+    dap.runtime_info = dap.runtime_info or {}
+    dap.runtime_info.current_frame = session.current_frame
+    
+    -- Focus frame in UI and jump to location
+    if session.current_frame.source and session.current_frame.line then
+      local source = session.current_frame.source
+      local path = source.path or source.sourceReference
+      
+      if path then
+        -- Open file at location and center screen
+        vim.cmd("edit " .. vim.fn.fnameescape(path))
+        vim.api.nvim_win_set_cursor(0, {session.current_frame.line, 0})
+        vim.cmd("normal! zz")
+        
+        -- Briefly highlight the current line
+        vim.cmd("hi CurrentDebugLine ctermbg=237 guibg=#3a3a3a")
+        vim.cmd("match CurrentDebugLine /\\%" .. session.current_frame.line .. "l/")
+        
+        -- Clear the highlight after a short delay
+        vim.defer_fn(function()
+          vim.cmd("match none")
+        end, 1500)
+      end
+    end
+  end
+end
