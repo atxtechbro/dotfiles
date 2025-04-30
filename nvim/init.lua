@@ -78,12 +78,8 @@ require('packer').startup(function(use)
     requires = {'nvim-lua/plenary.nvim'}
   }
   
-  -- Debugging
+  -- Debugging (minimal setup)
   use 'mfussenegger/nvim-dap'
-  use 'nvim-neotest/nvim-nio'  -- Required dependency for nvim-dap-ui
-  use { 'rcarriga/nvim-dap-ui', requires = {'mfussenegger/nvim-dap', 'nvim-neotest/nvim-nio'} }
-  use 'theHamsta/nvim-dap-virtual-text'
-  use 'nvim-telescope/telescope-dap.nvim'
   
   -- Terminal
   use 'akinsho/toggleterm.nvim'
