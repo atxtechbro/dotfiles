@@ -18,9 +18,26 @@ if ! command -v nvim &> /dev/null; then
     exit 1
 fi
 
-# Skip automatic Python dependencies installation
-echo -e "${YELLOW}Skipping automatic Python package installation for Neovim Python host...${NC}"
-echo -e "${BLUE}If you need Python host support, install 'pynvim' manually (e.g., pip install --user pynvim, pipx install neovim, or via your OS package manager).${NC}"
+# Install Python dependencies
+echo -e "${YELLOW}Installing Python dependencies...${NC}"
+
+# Use `--target` with uv to install Python tools (e.g., pyright, pynvim)
+# This avoids system Python pollution and doesn't require a venv.
+# Tools go in ~/.local/uv-tools — ensure it's in PATH.
+if command -v uv &> /dev/null; then
+    echo -e "${BLUE}Using uv for Python package management...${NC}"
+    UV_TOOLS_PATH="$HOME/.local/uv-tools"
+    uv pip install --target "$UV_TOOLS_PATH" pynvim pyright
+    
+    # Add to PATH if not already there
+    if ! grep -q "$UV_TOOLS_PATH/bin" ~/.bashrc; then
+        echo -e "${BLUE}Adding $UV_TOOLS_PATH/bin to PATH in ~/.bashrc...${NC}"
+        echo "export PATH=\"\$PATH:$UV_TOOLS_PATH/bin\"" >> ~/.bashrc
+    fi
+else
+    echo -e "${BLUE}Using pip for Python package management...${NC}"
+    pip install --user pynvim pyright
+fi
 
 # Install Node.js dependencies if Node.js is available
 if command -v npm &> /dev/null; then
@@ -48,13 +65,27 @@ if ! command -v xmllint &> /dev/null; then
     echo -e "${RED}xmllint not found. Install libxml2-utils (Debian/Ubuntu) or libxml2 (macOS) to enable XML formatting.${NC}"
 fi
 
+# Check for xmllint (XML formatting tool)
+echo -e "${YELLOW}Checking for xmllint (XML formatting)...${NC}"
+if ! command -v xmllint &> /dev/null; then
+    echo -e "${RED}xmllint not found. Install libxml2-utils (Debian/Ubuntu) or libxml2 (macOS) to enable XML formatting.${NC}"
+fi
+
+# Check for xmllint (XML formatting tool)
+echo -e "${YELLOW}Checking for xmllint (XML formatting)...${NC}"
+if ! command -v xmllint &> /dev/null; then
+    echo -e "${RED}xmllint not found. Install libxml2-utils (Debian/Ubuntu) or libxml2 (macOS) to enable XML formatting.${NC}"
+fi
+
 # Run Neovim with PackerSync to install plugins
 echo -e "${YELLOW}Installing Neovim plugins...${NC}"
 nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 
-# Run Neovim with Mason to install LSP servers
-echo -e "${YELLOW}Installing LSP servers via Mason...${NC}"
-nvim --headless -c "MasonInstall pyright lua-language-server bash-language-server html-lsp css-lsp json-lsp marksman lemminx" -c "quitall"
+# Let Mason handle LSP server installation through ensure_installed in init.lua
+echo -e "${YELLOW}Starting Neovim to allow Mason to install LSP servers...${NC}"
+echo -e "${BLUE}(This uses automatic_installation and ensure_installed in init.lua)${NC}"
+nvim --headless -c "lua require('mason')" -c "quitall"
 
 echo -e "${GREEN}LSP servers installation complete!${NC}"
 echo -e "${BLUE}You may need to restart Neovim for all changes to take effect.${NC}"
+

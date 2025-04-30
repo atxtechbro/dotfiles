@@ -77,6 +77,17 @@ require('packer').startup(function(use)
     'lewis6991/gitsigns.nvim',
     requires = {'nvim-lua/plenary.nvim'}
   }
+  
+  -- Debugging with full UI
+  use 'mfussenegger/nvim-dap'
+  use 'nvim-neotest/nvim-nio'  -- Required dependency for nvim-dap-ui
+  use { 'rcarriga/nvim-dap-ui', requires = {'mfussenegger/nvim-dap', 'nvim-neotest/nvim-nio'} }
+  use 'theHamsta/nvim-dap-virtual-text'
+  use 'nvim-telescope/telescope-dap.nvim'
+  
+  -- Terminal
+  use 'akinsho/toggleterm.nvim'
+  
   -- Automatically set up configuration after cloning packer.nvim
   if packer_bootstrap then
     require('packer').sync()
@@ -90,8 +101,6 @@ vim.keymap.set('n', '<leader>ff', '<cmd>Telescope find_files<cr>', opts)
 vim.keymap.set('n', '<leader>fg', '<cmd>Telescope live_grep<cr>', opts)
 vim.keymap.set('n', '<leader>fb', '<cmd>Telescope buffers<cr>', opts)
 vim.keymap.set('n', '<leader>fh', '<cmd>Telescope help_tags<cr>', opts)
-vim.keymap.set('n', '<leader>t', ':split | terminal<CR>', { silent = true })
-vim.keymap.set('n', '<leader>vt', ':vsplit | terminal<CR>', { silent = true })
 vim.keymap.set('i', 'jk', '<Esc>')
 
 -- TreeSitter Configuration
@@ -454,6 +463,18 @@ pcall(function()
       virt_text_pos = 'eol',
     }
   }
+end)
+
+-- Load Debug Adapter Protocol (DAP) configuration
+pcall(function()
+  require('config.dap')
+  print("Debug Adapter Protocol (DAP) configuration loaded from 'config.dap'")
+end)
+
+-- Load ToggleTerm terminal integration configuration
+pcall(function()
+  require('config.terminal')
+  print("ToggleTerm terminal integration loaded from 'config.terminal'")
 end)
 
 print("Neovim configuration loaded")
