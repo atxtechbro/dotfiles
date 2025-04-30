@@ -266,7 +266,7 @@ if ! command -v uv >/dev/null 2>&1; then
   echo "Installing uv package manager..."
   curl -Ls https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
   # Check if PATH already contains the .local/bin entry before adding
-  if ! grep -q 'export PATH="$HOME/.local/bin:$PATH"' "$HOME/.bashrc"; then
+  if ! grep -q "export PATH=\"\\\$HOME/.local/bin:\\\$PATH\"" "$HOME/.bashrc"; then
     echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$HOME/.bashrc"
   fi
   echo -e "${GREEN}✓ uv package manager installed${NC}"
