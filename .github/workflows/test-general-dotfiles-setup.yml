@@ -49,18 +49,6 @@ jobs:
             echo "❌ Setup script validation failed with exit code $?"
             # Show the environment PATH
             echo "PATH: $PATH"
-            # Check if the nvim binary exists and is executable
-            if [ -f /opt/nvim-linux-x86_64/bin/nvim ]; then
-              ls -la /opt/nvim-linux-x86_64/bin/nvim
-              # Check executable bit
-              if [ -x /opt/nvim-linux-x86_64/bin/nvim ]; then
-                echo "nvim is executable"
-              else
-                echo "nvim is not executable"
-              fi
-            else
-              echo "nvim binary not found"
-            fi
             exit 1
           fi
 
@@ -90,6 +78,6 @@ jobs:
           if [ $? -eq 0 ]; then
             echo "✅ Setup script validation passed"
           else
-            echo "❌ Setup script validation failed"
+            echo "❌ Setup script validation failed with exit code $?"
             exit 1
           fi
