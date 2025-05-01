@@ -1,16 +1,33 @@
 [user]
-	name = Morgan Joyce
-	email = morganj2k@gmail.com
+		name = Morgan Joyce
+		email = morganj2k@gmail.com
 [core]
-	editor = nvim
+		editor = nvim
+		pager = delta
+[interactive]
+		diffFilter = delta --color-only
+[delta]
+		navigate = true    # use n and N to move between diff sections
+		light = false      # dark mode
+		side-by-side = true
+		line-numbers = true
+		syntax-theme = Monokai Extended
+		diff-so-fancy = true
+		max-line-length = 200  # prevent overly wide diffs
+[delta "interactive"]
+		keep-plus-minus-markers = false
+[merge]
+		conflictstyle = diff3
+[diff]
+		colorMoved = default
+		algorithm = patience  # more intelligent diff algorithm
 [init]
-	defaultBranch = main
+		defaultBranch = main
 [push]
-	autoSetupRemote = true
+		autoSetupRemote = true
 [includeIf "gitdir:~/Sertifi/"]
-	path=~/Sertifi/.gitconfig-work
+		path=~/Sertifi/.gitconfig-work
 [credential "https://github.com"]
-	helper = !/usr/bin/gh auth git-credential
+		helper = !/usr/bin/gh auth git-credential
 [credential "https://gist.github.com"]
         helper = !/usr/bin/gh auth git-credential
-
