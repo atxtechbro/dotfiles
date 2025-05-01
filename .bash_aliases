@@ -50,6 +50,6 @@ alias lpipe='llama-run -p "$(cat -)"'
 alias hue="$HOME/ppv/pipelines/hue_minimal/hue.sh"
 
 # Claude model switch aliases
-alias haiku='export ANTHROPIC_MODEL=claude-3-haiku-20241022'
+alias haiku='export ANTHROPIC_MODEL=claude-3-5-haiku-latest'
 alias sonnet='export ANTHROPIC_MODEL=claude-3-7-sonnet-latest'
-alias opus='export ANTHROPIC_MODEL=claude-3-opus-20240229'
+alias opus='export ANTHROPIC_MODEL=claude-3-opus-latest'
