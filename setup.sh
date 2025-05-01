@@ -85,57 +85,21 @@ elif [[ -d "$DOT_DEN" ]]; then
     cd "$DOT_DEN" 2>/dev/null
 fi
 
-echo "Setting up Neovim..."
-
-# Check if Neovim is installed before proceeding with further setup
-if ! command -v nvim &> /dev/null; then
-    echo -e "${YELLOW}Neovim not found. Skipping Neovim configuration.${NC}"
-    echo "Please install Neovim manually to use the Neovim configuration."
-else
-    # Link Neovim configuration
-    echo "Setting up Neovim configuration..."
-    rm -rf ~/.config/nvim 2>/dev/null
-    ln -sfn "$DOT_DEN/nvim" ~/.config/nvim
-
-    # Run LSP install script  
-    if [ -f "$DOT_DEN/nvim/scripts/lsp-install.sh" ]; then
-        echo "Installing LSP servers..."
-        bash "$DOT_DEN/nvim/scripts/lsp-install.sh" 2>/dev/null
-    elif [ -f "$DOT_DEN/nvim/lsp-install.sh" ]; then
-        echo "Installing LSP servers..."
-        bash "$DOT_DEN/nvim/lsp-install.sh" 2>/dev/null
-    fi
-
-    # Run Python debug install script
-    if [ -f "$DOT_DEN/nvim/scripts/python-debug-install.sh" ]; then
-        echo "Installing Python debugging tools..."
-        bash "$DOT_DEN/nvim/scripts/python-debug-install.sh" 2>/dev/null
-    elif [ -f "$DOT_DEN/nvim/python-debug-install.sh" ]; then
-        echo "Installing Python debugging tools..."
-        bash "$DOT_DEN/nvim/python-debug-install.sh" 2>/dev/null
-    fi
-
-    echo -e "${GREEN}✓ Neovim setup complete${NC}"
-fi
-
-echo -e "${DIVIDER}"
-echo "Setting up configuration files..."
-    echo -e "${YELLOW}Neovim not found.${NC}"
-    echo -e "${BLUE}Please install Neovim manually before running this script.${NC}"
-    echo -e "${BLUE}See README.md for installation instructions.${NC}"
-fi
-
-# Link Neovim configuration only if Neovim is available
+# Neovim configuration setup
 if command -v nvim &> /dev/null; then
     echo -e "${YELLOW}Linking Neovim configuration...${NC}"
     mkdir -p ~/.config
     rm -rf ~/.config/nvim
     ln -sfn "$DOT_DEN/nvim" ~/.config/nvim
     
-    echo -e "${BLUE}Neovim configuration linked. LSP and debugging tools must be installed manually.${NC}"
+    echo -e "${BLUE}Neovim configuration linked.${NC}"
+    echo -e "${BLUE}Note: LSP and debugging tools must be installed manually.${NC}"
     echo -e "${BLUE}See $DOT_DEN/nvim/scripts/README.md for more information.${NC}"
 else
-    echo -e "${YELLOW}Skipping Neovim configuration as Neovim is not installed.${NC}"
+    echo -e "${YELLOW}Neovim not installed. Skipping Neovim configuration.${NC}"
+    echo -e "${BLUE}To use Neovim configuration:${NC}"
+    echo -e "${BLUE}1. Install Neovim${NC}"
+    echo -e "${BLUE}2. Run: ln -sfn $DOT_DEN/nvim ~/.config/nvim${NC}"
 fi
 
 # Create symlinks for other configuration files
