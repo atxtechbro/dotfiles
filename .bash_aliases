@@ -51,5 +51,5 @@ alias hue="$HOME/ppv/pipelines/hue_minimal/hue.sh"
 
 # Claude model switch aliases
 alias haiku='export ANTHROPIC_MODEL=claude-3-haiku-20241022'
-alias sonnet='export ANTHROPIC_MODEL=claude-3-sonnet-20240229'
+alias sonnet='export ANTHROPIC_MODEL=claude-3-7-sonnet-latest'
 alias opus='export ANTHROPIC_MODEL=claude-3-opus-20240229'
