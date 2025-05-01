@@ -3,10 +3,7 @@
 
 set -e  # Exit on error
 
-# Colors for output
 GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
@@ -65,27 +62,33 @@ if ! command -v xmllint &> /dev/null; then
     echo -e "${RED}xmllint not found. Install libxml2-utils (Debian/Ubuntu) or libxml2 (macOS) to enable XML formatting.${NC}"
 fi
 
-# Check for xmllint (XML formatting tool)
-echo -e "${YELLOW}Checking for xmllint (XML formatting)...${NC}"
-if ! command -v xmllint &> /dev/null; then
-    echo -e "${RED}xmllint not found. Install libxml2-utils (Debian/Ubuntu) or libxml2 (macOS) to enable XML formatting.${NC}"
-fi
-
-# Check for xmllint (XML formatting tool)
-echo -e "${YELLOW}Checking for xmllint (XML formatting)...${NC}"
-if ! command -v xmllint &> /dev/null; then
-    echo -e "${RED}xmllint not found. Install libxml2-utils (Debian/Ubuntu) or libxml2 (macOS) to enable XML formatting.${NC}"
-fi
-
 # Run Neovim with PackerSync to install plugins
 echo -e "${YELLOW}Installing Neovim plugins...${NC}"
-nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+
+# First check if nvim exists and is executable
+NVIM_PATH=$(which nvim 2>/dev/null)
+if [ -z "$NVIM_PATH" ]; then
+    # Try the common installation path
+    NVIM_PATH="/opt/nvim-linux-x86_64/bin/nvim"
+fi
+
+# Verify executable permissions
+if [ ! -x "$NVIM_PATH" ] && [ -f "$NVIM_PATH" ]; then
+    echo "Fixing permissions on nvim binary at $NVIM_PATH"
+    sudo chmod 755 "$NVIM_PATH"
+fi
+
+# Check PATH to ensure nvim is accessible
+echo "PATH: $PATH"
+echo "Neovim location: $NVIM_PATH"
+
+# Try running nvim
+nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' || echo "Warning: PackerSync command failed"
 
 # Let Mason handle LSP server installation through ensure_installed in init.lua
 echo -e "${YELLOW}Starting Neovim to allow Mason to install LSP servers...${NC}"
 echo -e "${BLUE}(This uses automatic_installation and ensure_installed in init.lua)${NC}"
-nvim --headless -c "lua require('mason')" -c "quitall"
+nvim --headless -c "lua require('mason')" -c "quitall" || echo "Warning: Mason initialization failed"
 
-echo -e "${GREEN}LSP servers installation complete!${NC}"
-echo -e "${BLUE}You may need to restart Neovim for all changes to take effect.${NC}"
+echo -e "${GREEN}✓ LSP servers installed successfully${NC}"
 

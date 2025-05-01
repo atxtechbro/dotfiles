@@ -4,7 +4,8 @@ on:
   pull_request:
     branches: [ main ]
     paths:
-      - 'setup.sh'
+      - '**/*.sh'
+      - '.github/workflows/*.yml'
   workflow_dispatch:
 
 jobs:
@@ -45,7 +46,9 @@ jobs:
           if [ $? -eq 0 ]; then
             echo "✅ Setup script validation passed"
           else
-            echo "❌ Setup script validation failed"
+            echo "❌ Setup script validation failed with exit code $?"
+            # Show the environment PATH
+            echo "PATH: $PATH"
             exit 1
           fi
 
@@ -75,6 +78,6 @@ jobs:
           if [ $? -eq 0 ]; then
             echo "✅ Setup script validation passed"
           else
-            echo "❌ Setup script validation failed"
+            echo "❌ Setup script validation failed with exit code $?"
             exit 1
           fi

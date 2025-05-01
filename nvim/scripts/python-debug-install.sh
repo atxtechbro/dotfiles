@@ -3,11 +3,10 @@
 
 set -e  # Exit on error
 
-# Colors for output
 GREEN='\033[0;32m'
+RED='\033[0;31m'
 YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
-RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 echo -e "${GREEN}Installing Python debugging tools for Neovim...${NC}"
@@ -28,9 +27,9 @@ echo -e "${BLUE}Using uv for Python package management...${NC}"
 UV_TOOLS_PATH="$HOME/.local/uv-tools"
 uv pip install --target "$UV_TOOLS_PATH" debugpy
 
-if ! grep -q "$HOME/.local/uv-tools/bin" ~/.bashrc; then
+if ! grep -q "export PATH=\"\$HOME/.local/uv-tools/bin:\$PATH\"" ~/.bashrc; then
     echo -e "${BLUE}Adding ~/.local/uv-tools/bin to PATH in ~/.bashrc...${NC}"
-    echo 'export PATH="$HOME/.local/uv-tools/bin:$PATH"' >> ~/.bashrc
+    echo "export PATH=\"\$HOME/.local/uv-tools/bin:\$PATH\"" >> ~/.bashrc
 fi
 
 # Install minimal DAP plugin for Neovim
@@ -38,10 +37,4 @@ echo -e "${YELLOW}Installing minimal DAP plugin with Packer...${NC}"
 # Make nvim install the nvim-dap plugin, run PackerCompile, and ensure config.dap is loaded
 nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' -c 'PackerCompile' -c 'lua pcall(require, "config.dap")'
 
-echo -e "${GREEN}Python debugging tools installation complete!${NC}"
-echo -e "${YELLOW}Usage:${NC}"
-echo -e "1. Open a Python file in Neovim"
-echo -e "2. Press F9 to set breakpoints"
-echo -e "3. Press F5 to start debugging"
-echo -e "4. Alternative for setting breakpoints:"
-echo -e "   - Keybinding: <leader>bp (usually space+bp)"
+echo -e "${GREEN}✓ Python debugger installed successfully${NC}"
