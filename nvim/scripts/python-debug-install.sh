@@ -9,14 +9,7 @@ YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Check if we're running from the main setup script
-if [[ "${SETUP_SCRIPT_RUNNING}" == "true" ]]; then
-    # When running from setup.sh, be quieter
-    # Skip the welcome message when running from main setup
-    :
-else
-    echo -e "${GREEN}Installing Python debugging tools for Neovim...${NC}"
-fi
+echo -e "${GREEN}Installing Python debugging tools for Neovim...${NC}"
 
 # Check for Neovim
 if ! command -v nvim &> /dev/null; then

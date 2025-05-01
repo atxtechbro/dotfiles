@@ -7,14 +7,7 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-# Check if we're running from the main setup script
-if [[ "${SETUP_SCRIPT_RUNNING}" == "true" ]]; then
-    # When running from setup.sh, be quieter
-    QUIET=true
-else
-    QUIET=false
-    echo -e "${GREEN}Installing LSP servers for Neovim...${NC}"
-fi
+echo -e "${GREEN}Installing LSP servers for Neovim...${NC}"
 
 # Check for Neovim
 if ! command -v nvim &> /dev/null; then
