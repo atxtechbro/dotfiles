@@ -27,7 +27,6 @@ alias venv='[ -d .venv ] || uv venv .venv && source .venv/bin/activate'
 # Set library path for llama.cpp
 alias set-llama-env='export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/ppv/pipelines/llama.cpp/build/bin'
 
-
 # Quick AmazonQ.md update workflow - merge, push, and return to main
 alias aq-merge='git checkout main && git pull && git merge --squash docs/update-amazonq-guidance && git commit -m "docs(amazonq): update guidance" && git push origin main && echo "✅ AmazonQ.md changes merged and pushed to main"'
 # AmazonQ.md update workflow - preserves commit messages from feature branch
@@ -50,3 +49,7 @@ alias lpipe='llama-run -p "$(cat -)"'
 # Philips Hue control system alias
 alias hue="$HOME/ppv/pipelines/hue_minimal/hue.sh"
 
+# Claude model switch aliases
+alias haiku='export ANTHROPIC_MODEL=claude-3-haiku-20241022'
+alias sonnet='export ANTHROPIC_MODEL=claude-3-sonnet-20240229'
+alias opus='export ANTHROPIC_MODEL=claude-3-opus-20240229'
