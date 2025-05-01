@@ -85,43 +85,7 @@ elif [[ -d "$DOT_DEN" ]]; then
     cd "$DOT_DEN" 2>/dev/null
 fi
 
-echo -e "${DIVIDER}"
 echo "Setting up Neovim..."
-
-# NOTE: Neovim auto-installation is temporarily disabled
-# as we refine the installation process
-# 
-# # Check if Neovim is installed
-# if ! command -v nvim &> /dev/null; then
-#     echo "Neovim not found. Installing..."
-#     
-#     # Download latest Neovim release
-#     NVIM_TMP_DIR=$(mktemp -d)
-#     NVIM_RELEASE="https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
-#     
-#     echo "Downloading and installing Neovim..."
-#     curl -L -o "${NVIM_TMP_DIR}/nvim.tar.gz" "${NVIM_RELEASE}" 2>/dev/null
-#     sudo rm -rf /opt/nvim 2>/dev/null
-#     sudo tar -C /opt -xzf "${NVIM_TMP_DIR}/nvim.tar.gz" 2>/dev/null
-#     
-#     # Ensure proper permissions on Neovim binary
-#     sudo chmod 755 /opt/nvim-linux-x86_64/bin/nvim
-#     # Fix ownership to ensure it's executable by all users
-#     sudo chown root:root /opt/nvim-linux-x86_64/bin/nvim
-#     
-#     rm -rf "${NVIM_TMP_DIR}" 2>/dev/null
-#     
-#     # Add to PATH if not already there
-#     if ! grep -q '/opt/nvim-linux-x86_64/bin' ~/.bashrc; then
-#         echo "Adding Neovim to PATH..."
-#         echo "export PATH=\"\$PATH:/opt/nvim-linux-x86_64/bin\"" >> ~/.bashrc
-#     fi
-#     
-#     # Make nvim available in the current shell
-#     export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
-#     
-#     echo -e "${GREEN}✓ Neovim installed${NC}"
-# fi
 
 # Check if Neovim is installed before proceeding with further setup
 if ! command -v nvim &> /dev/null; then
@@ -156,6 +120,23 @@ fi
 
 echo -e "${DIVIDER}"
 echo "Setting up configuration files..."
+    echo -e "${YELLOW}Neovim not found.${NC}"
+    echo -e "${BLUE}Please install Neovim manually before running this script.${NC}"
+    echo -e "${BLUE}See README.md for installation instructions.${NC}"
+fi
+
+# Link Neovim configuration only if Neovim is available
+if command -v nvim &> /dev/null; then
+    echo -e "${YELLOW}Linking Neovim configuration...${NC}"
+    mkdir -p ~/.config
+    rm -rf ~/.config/nvim
+    ln -sfn "$DOT_DEN/nvim" ~/.config/nvim
+    
+    echo -e "${BLUE}Neovim configuration linked. LSP and debugging tools must be installed manually.${NC}"
+    echo -e "${BLUE}See $DOT_DEN/nvim/scripts/README.md for more information.${NC}"
+else
+    echo -e "${YELLOW}Skipping Neovim configuration as Neovim is not installed.${NC}"
+fi
 
 # Create symlinks for other configuration files
 echo "Creating symlinks for config files..."
@@ -295,3 +276,4 @@ echo -e "${DIVIDER}"
 echo -e "${GREEN}✅ Dotfiles setup complete!${NC}"
 echo "Your development environment is now configured and ready to use."
 echo -e "${DIVIDER}"
+
