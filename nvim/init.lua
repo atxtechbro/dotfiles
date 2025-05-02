@@ -481,7 +481,7 @@ end)
 vim.cmd([[
   augroup CursorLineHighlight
     autocmd!
-    autocmd VimEnter,ColorScheme * highlight CursorLine guibg=#FF00FF blend=0
+    autocmd VimEnter,ColorScheme * highlight CursorLine guibg=#87FFD7 blend=0
   augroup END
 ]])
 
