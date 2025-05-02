@@ -477,6 +477,14 @@ pcall(function()
   print("ToggleTerm terminal integration loaded from 'config.terminal'")
 end)
 
+-- Ensure cursor line is enabled
+vim.cmd([[
+  augroup CursorLineHighlight
+    autocmd!
+    autocmd VimEnter,ColorScheme * highlight CursorLine guibg=#1A7A5A blend=40
+  augroup END
+]])
+
 print("Neovim configuration loaded")
 
 -- Add mappings to copy filename or full path to clipboard
