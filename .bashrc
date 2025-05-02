@@ -136,9 +136,6 @@ parse_git_branch() {
   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
 
-# Set prompt to show current directory and git branch
-PS1='\W\[\033[32m\]$(parse_git_branch)\[\033[00m\] \$ '
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
@@ -193,4 +190,7 @@ tmux source-file ~/.tmux.conf >/dev/null 2>&1 || true
 [[ -f "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.local/uv-tools/bin:$PATH"
+
+# Set prompt to show current directory and git branch (placed at the end to ensure it's not overridden)
+PS1='\W\[\033[32m\]$(parse_git_branch)\[\033[00m\] \$ '
 
