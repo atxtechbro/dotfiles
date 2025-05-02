@@ -33,6 +33,7 @@
 [diff "markdown"]
 		wordRegex = [^[:space:]]
 		xfuncname = "^#+.*$"
+		command = git diff --word-diff
 [diff "json"]
 		wordRegex = [^[:space:],]
 [init]
