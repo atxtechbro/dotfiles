@@ -9,7 +9,6 @@ vim.opt.timeoutlen = 500      -- By default timeoutlen is 1000 ms
 vim.opt.clipboard = "unnamedplus" -- Use system clipboard
 vim.opt.mouse = "a"           -- Enable mouse support
 vim.opt.cursorline = true     -- Highlight the current line
-vim.api.nvim_set_hl(0, 'CursorLine', { bg = '#2C323C', blend = 20 }) -- Subtle VS Code-like highlight
 vim.opt.signcolumn = "yes"    -- Always show the signcolumn
 
 -- Set leader key to space
@@ -477,6 +476,14 @@ pcall(function()
   require('config.terminal')
   print("ToggleTerm terminal integration loaded from 'config.terminal'")
 end)
+
+-- Ensure cursor line is enabled
+vim.cmd([[
+  augroup CursorLineHighlight
+    autocmd!
+    autocmd VimEnter,ColorScheme * highlight CursorLine guibg=#FF00FF blend=0
+  augroup END
+]])
 
 print("Neovim configuration loaded")
 
