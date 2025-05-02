@@ -112,9 +112,11 @@ ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 echo "Setting up Git configuration..."
 gitconfig_path="$HOME/.gitconfig"
 dotfiles_gitconfig="$DOT_DEN/.gitconfig"
+dotfiles_gitattributes="$DOT_DEN/.gitattributes"
 
+# Create or update ~/.gitconfig to include dotfiles config
 if [[ ! -f "$gitconfig_path" ]]; then
-  echo "Creating new ~/.gitconfig with dotfiles include..."
+  echo "Creating new ~/.gitconfig shim..."
   echo -e "[include]\n\tpath = $dotfiles_gitconfig" > "$gitconfig_path"
   echo -e "${GREEN}✓ Git configuration created${NC}"
 elif ! grep -q "$dotfiles_gitconfig" "$gitconfig_path" 2>/dev/null; then
@@ -124,6 +126,10 @@ elif ! grep -q "$dotfiles_gitconfig" "$gitconfig_path" 2>/dev/null; then
 else
   echo -e "${GREEN}✓ Git configuration already includes dotfiles .gitconfig${NC}"
 fi
+
+# Set core.attributesfile to point to dotfiles .gitattributes
+git config --global core.attributesfile "$dotfiles_gitattributes"
+echo -e "${GREEN}✓ Global gitattributes configured${NC}"
 
 # Create secrets file from template
 if [[ -f "$DOT_DEN/.bash_secrets.example" && ! -f ~/.bash_secrets ]]; then
