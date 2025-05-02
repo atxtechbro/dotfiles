@@ -111,7 +111,7 @@ ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 # Set up Git configuration
 echo "Setting up Git configuration..."
 gitconfig_path="$HOME/.gitconfig"
-dotfiles_gitconfig="$HOME/ppv/pillars/dotfiles/.gitconfig"
+dotfiles_gitconfig="$DOT_DEN/.gitconfig"
 
 if [[ ! -f "$gitconfig_path" ]]; then
   echo "Creating new ~/.gitconfig with dotfiles include..."
