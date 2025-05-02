@@ -9,6 +9,7 @@ vim.opt.timeoutlen = 500      -- By default timeoutlen is 1000 ms
 vim.opt.clipboard = "unnamedplus" -- Use system clipboard
 vim.opt.mouse = "a"           -- Enable mouse support
 vim.opt.cursorline = true     -- Highlight the current line
+vim.api.nvim_set_hl(0, 'CursorLine', { bg = '#2C323C', blend = 20 }) -- Subtle VS Code-like highlight
 vim.opt.signcolumn = "yes"    -- Always show the signcolumn
 
 -- Set leader key to space
@@ -41,6 +42,9 @@ vim.cmd([[
 require('packer').startup(function(use)
   -- Packer can manage itself
   use 'wbthomason/packer.nvim'
+
+  -- Themes
+  use 'marko-cerovac/material.nvim'
 
   -- LSP and completion
   use 'neovim/nvim-lspconfig'           -- LSP configuration
@@ -444,6 +448,47 @@ local setup_language_servers = function()
 end
 
 pcall(setup_language_servers)
+
+-- Material Theme Configuration
+vim.g.material_style = "deep ocean"  -- Options: "darker", "lighter", "oceanic", "deep ocean", "palenight"
+require('material').setup({
+  contrast = {
+    terminal = false,        -- Enable contrast for the built-in terminal
+    sidebars = false,        -- Enable contrast for sidebar-like windows
+    floating_windows = true, -- Enable contrast for floating windows
+    cursor_line = true,      -- Enable darker background for the cursor line
+    non_current_windows = false, -- Enable darker background for non-current windows
+    filetypes = {},          -- Specify filetypes to enable contrast for
+  },
+  styles = {
+    comments = { italic = true },
+    keywords = { italic = true },
+    functions = { bold = true },
+    strings = {},
+    variables = {},
+  },
+  plugins = {
+    -- Enable plugin integrations
+    "dap",
+    "dashboard",
+    "gitsigns",
+    "hop",
+    "indent-blankline",
+    "lspsaga",
+    "mini",
+    "neogit",
+    "neorg",
+    "nvim-cmp",
+    "nvim-navic",
+    "nvim-tree",
+    "telescope",
+    "trouble",
+    "which-key",
+  },
+})
+
+-- Set the colorscheme
+vim.cmd 'colorscheme material'
 
 -- Quick clear file content keybinding
 vim.keymap.set('n', '<leader>da', ':%d<CR>', { noremap = true, silent = true, desc = "Delete all content" })
