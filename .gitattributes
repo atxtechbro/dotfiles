@@ -1,0 +1,25 @@
+# Global .gitattributes file
+# This file defines attributes for different file types
+
+# Default behavior for all text files
+*.txt diff=text
+
+# Markdown files
+*.md diff=markdown
+*.mdx diff=markdown
+*.markdown diff=markdown
+
+# JSON files
+*.json diff=json
+
+# Plain text files that should be treated as prose
+*.txt diff=astextplain
+README diff=astextplain
+LICENSE diff=astextplain
+CHANGELOG diff=astextplain
+CONTRIBUTING diff=astextplain
+
+# Configuration files that might contain prose
+*.yaml diff=astextplain
+*.yml diff=astextplain
+*.toml diff=astextplain

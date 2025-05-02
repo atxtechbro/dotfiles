@@ -4,6 +4,7 @@
 [core]
 		editor = nvim
 		pager = delta
+		attributesfile = ~/ppv/pillars/dotfiles/.gitattributes
 [interactive]
 		diffFilter = delta --color-only
 [delta]
@@ -14,6 +15,9 @@
 		syntax-theme = Monokai Extended
 		diff-so-fancy = true
 		max-line-length = 200  # prevent overly wide diffs
+		# Better handling of prose files
+		word-diff-regex = "\\w+|[^[:space:]]"
+		features = decorations
 [delta "interactive"]
 		keep-plus-minus-markers = false
 [merge]
@@ -21,6 +25,17 @@
 [diff]
 		colorMoved = default
 		algorithm = patience  # more intelligent diff algorithm
+		wordRegex = [^[:space:]]
+		submodule = log
+[diff "astextplain"]
+		textconv = cat
+		wordRegex = .
+[diff "markdown"]
+		wordRegex = [^[:space:]]
+		xfuncname = "^#+.*$"
+		command = git diff --word-diff --no-index -- \"$LOCAL\" \"$REMOTE\"
+[diff "json"]
+		wordRegex = [^[:space:],]
 [init]
 		defaultBranch = main
 [push]
@@ -31,3 +46,4 @@
 		helper = !/usr/bin/gh auth git-credential
 [credential "https://gist.github.com"]
         helper = !/usr/bin/gh auth git-credential
+# Removed circular include
