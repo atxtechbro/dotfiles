@@ -106,8 +106,24 @@ echo "Creating symlinks for config files..."
 ln -sf "$DOT_DEN/.bashrc" ~/.bashrc
 ln -sf "$DOT_DEN/.bash_aliases" ~/.bash_aliases
 ln -sf "$DOT_DEN/.bash_exports" ~/.bash_exports
-ln -sf "$DOT_DEN/.gitconfig" ~/.gitconfig
 ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
+
+# Set up Git configuration
+echo "Setting up Git configuration..."
+gitconfig_path="$HOME/.gitconfig"
+dotfiles_gitconfig="$HOME/ppv/pillars/dotfiles/.gitconfig"
+
+if [[ ! -f "$gitconfig_path" ]]; then
+  echo "Creating new ~/.gitconfig with dotfiles include..."
+  echo -e "[include]\n\tpath = $dotfiles_gitconfig" > "$gitconfig_path"
+  echo -e "${GREEN}✓ Git configuration created${NC}"
+elif ! grep -q "$dotfiles_gitconfig" "$gitconfig_path" 2>/dev/null; then
+  echo "Adding dotfiles include to existing ~/.gitconfig..."
+  echo -e "\n[include]\n\tpath = $dotfiles_gitconfig" >> "$gitconfig_path"
+  echo -e "${GREEN}✓ Git configuration updated${NC}"
+else
+  echo -e "${GREEN}✓ Git configuration already includes dotfiles .gitconfig${NC}"
+fi
 
 # Create secrets file from template
 if [[ -f "$DOT_DEN/.bash_secrets.example" && ! -f ~/.bash_secrets ]]; then
