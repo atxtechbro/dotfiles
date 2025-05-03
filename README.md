@@ -249,6 +249,23 @@ For SSO, the URL typically follows this format:
 https://d-XXXXXXXXXX.awsapps.com/start/#/console?account_id=XXXXXXXXXXXX&role_name=YOUR_ROLE_NAME
 ```
 
+#### Development Version
+
+For development work with Amazon Q CLI:
+
+```bash
+# Source the development aliases
+source ~/ppv/pillars/dotfiles/.bash_aliases.q-cli
+
+# Run directly from source code
+q-run
+
+# Use compiled release version
+q-dev chat
+```
+
+See `.bash_aliases.q-cli` for more details on working with the source code version.
+
 ### Tmux Config Comparison
 
 To compare different tmux configurations (like at an optometrist):

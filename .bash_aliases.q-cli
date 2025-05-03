@@ -1,0 +1,8 @@
+# Amazon Q CLI - Development aliases
+# Include this file in your .bashrc or .bash_aliases
+
+# Run Amazon Q chat directly from source code
+alias q-run="cd $HOME/ppv/pillars/q-cli && cargo run --bin q_cli -- chat"
+
+# Use the compiled release version
+alias q-dev="$HOME/ppv/pillars/q-cli/target/release/q"
