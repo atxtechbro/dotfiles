@@ -53,3 +53,6 @@ alias hue="$HOME/ppv/pipelines/hue_minimal/hue.sh"
 alias haiku='export ANTHROPIC_MODEL=claude-3-5-haiku-latest'
 alias sonnet='export ANTHROPIC_MODEL=claude-3-7-sonnet-latest'
 alias opus='export ANTHROPIC_MODEL=claude-3-opus-latest'
+
+# Quick navigation to dotfiles directory
+alias dotfiles='cd ~/ppv/pillars/dotfiles'
