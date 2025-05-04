@@ -1,6 +1,8 @@
 #!/bin/bash
 # Dotfiles Automated Setup Script
 # Universal configuration for all environments
+#
+# USAGE: source setup.sh
 
 set -e  # Exit on error
 
@@ -8,6 +10,13 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 DIVIDER="----------------------------------------"
+
+# Check if the script is being sourced
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    echo -e "${RED}Error: This script must be sourced, not executed.${NC}"
+    echo -e "Please run: ${GREEN}source setup.sh${NC}"
+    exit 1
+fi
 
 DOT_DEN="$HOME/ppv/pillars/dotfiles"
 
@@ -41,7 +50,7 @@ done
 
 if [[ "$missing_commands" == true ]]; then
     echo -e "${RED}Please install the missing commands and run this script again.${NC}"
-    exit 1
+    return 1
 fi
 
 # Determine OS type
@@ -147,7 +156,7 @@ if command -v pacman &>/dev/null; then
     # Check if Arch Linux setup script exists
     if [[ -f "$DOT_DEN/arch-linux/setup.sh" ]]; then
         echo "Running Arch Linux specific setup..."
-        bash "$DOT_DEN/arch-linux/setup.sh"
+        source "$DOT_DEN/arch-linux/setup.sh"
     else
         echo "No Arch Linux setup script found. Skipping Arch-specific setup."
     fi
@@ -160,7 +169,7 @@ if grep -q "Raspberry Pi" /proc/cpuinfo 2>/dev/null; then
     # Check if Raspberry Pi setup script exists
     if [[ -f "$DOT_DEN/raspberry-pi/setup.sh" ]]; then
         echo "Running Raspberry Pi specific setup..."
-        bash "$DOT_DEN/raspberry-pi/setup.sh"
+        source "$DOT_DEN/raspberry-pi/setup.sh"
     else
         echo "No Raspberry Pi setup script found. Skipping Pi-specific setup."
     fi
@@ -250,6 +259,4 @@ fi
 echo -e "${DIVIDER}"
 echo -e "${GREEN}✅ Dotfiles setup complete!${NC}"
 echo "Your development environment is now configured and ready to use."
-echo -e "${YELLOW}NOTE: Run 'src' or 'source ~/.bashrc' to load the new configuration in your current shell.${NC}"
 echo -e "${DIVIDER}"
-

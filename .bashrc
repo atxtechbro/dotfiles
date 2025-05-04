@@ -4,10 +4,6 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
-# Source bashrc quickly with a short alias
-# Defined directly in .bashrc to ensure it's always available
-alias src="source ~/.bashrc"
-
 # # .bashrc or .zshrc
 # alias linusfiles='function _linusfiles() {
 #     echo "Listing files tracked by git and copying contents to clipboard, approved by Linus Torvalds himself!";
