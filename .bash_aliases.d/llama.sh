@@ -8,4 +8,4 @@ alias llama-env="export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/ppv/pipelines/llama.c
 alias llama-run="llama-run"
 
 # Pipe content to llama.cpp
-alias llama-pipe="llama-run -p \"$(cat -)\""
+alias llama-pipe='llama-run -p "$(cat -)"'
