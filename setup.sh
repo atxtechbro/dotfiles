@@ -3,14 +3,11 @@
 # Universal configuration for all environments
 #
 # USAGE: source setup.sh
-# NOTE: This script must be sourced, not executed, to affect your current shell
 
 set -e  # Exit on error
 
 GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
 RED='\033[0;31m'
-BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 DIVIDER="----------------------------------------"
 
@@ -103,14 +100,14 @@ if command -v nvim &> /dev/null; then
     rm -rf ~/.config/nvim
     ln -sfn "$DOT_DEN/nvim" ~/.config/nvim
     
-    echo -e "${BLUE}Neovim configuration linked.${NC}"
-    echo -e "${BLUE}Note: LSP and debugging tools must be installed manually.${NC}"
-    echo -e "${BLUE}See $DOT_DEN/nvim/scripts/README.md for more information.${NC}"
+    echo -e "${GREEN}Neovim configuration linked.${NC}"
+    echo -e "Note: LSP and debugging tools must be installed manually."
+    echo -e "See $DOT_DEN/nvim/scripts/README.md for more information."
 else
-    echo -e "${YELLOW}Neovim not installed. Skipping Neovim configuration.${NC}"
-    echo -e "${BLUE}To use Neovim configuration:${NC}"
-    echo -e "${BLUE}1. Install Neovim${NC}"
-    echo -e "${BLUE}2. Run: ln -sfn $DOT_DEN/nvim ~/.config/nvim${NC}"
+    echo -e "Neovim not installed. Skipping Neovim configuration."
+    echo -e "To use Neovim configuration:"
+    echo -e "1. Install Neovim"
+    echo -e "2. Run: ln -sfn $DOT_DEN/nvim ~/.config/nvim"
 fi
 
 # Create symlinks for other configuration files
