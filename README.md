@@ -267,31 +267,11 @@ For SSO, the URL typically follows this format:
 https://d-XXXXXXXXXX.awsapps.com/start/#/console?account_id=XXXXXXXXXXXX&role_name=YOUR_ROLE_NAME
 ```
 
-### Modular Shell Configuration
-
-This repository uses a modular approach to shell configuration, organizing aliases and functions into specialized, self-contained files:
-
-```bash
-# Source modular alias files
-for alias_file in ~/ppv/pillars/dotfiles/.bash_aliases.*; do
-  [ -f "$alias_file" ] && source "$alias_file"
-done
-```
-
 #### Amazon Q CLI Development
 
 For Amazon Q CLI development, source the specialized module:
 
 ```bash
-source ~/ppv/pillars/dotfiles/.bash_aliases.q-cli
-```
-
-See the module file directly for detailed documentation of available aliases.
-
-For development work with Amazon Q CLI:
-
-```bash
-# Source the development aliases
 source ~/ppv/pillars/dotfiles/.bash_aliases.q-cli
 ```
 
