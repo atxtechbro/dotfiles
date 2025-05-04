@@ -4,12 +4,6 @@
 # Source bashrc quickly with a short alias
 alias src="source ~/.bashrc"
 
-# Quick navigation to dotfiles directory
-alias dotfiles="cd ~/ppv/pillars/dotfiles"
-
-# Quick navigation to private P.P.V. repository
-alias ppv="cd ~/ppv"
-
 # mdbook build and serve with automatic port cleanup
 alias mdbook-serve="fuser -k 3000/tcp 2>/dev/null; mdbook build && mdbook serve"
 
