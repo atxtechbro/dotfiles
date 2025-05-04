@@ -133,9 +133,8 @@ if [[ -f "$DOT_DEN/.bash_secrets.example" && ! -f ~/.bash_secrets ]]; then
     echo "Created ~/.bash_secrets from template. Please edit to add your secrets."
 fi
 
-# Note about reloading configuration
+# Configuration files setup complete
 echo -e "${GREEN}✓ Configuration files setup complete${NC}"
-echo -e "${YELLOW}NOTE: Run 'src' or 'source ~/.bashrc' to load the new configuration in your current shell.${NC}"
 
 # Platform-specific setup
 echo -e "${DIVIDER}"
@@ -251,5 +250,6 @@ fi
 echo -e "${DIVIDER}"
 echo -e "${GREEN}✅ Dotfiles setup complete!${NC}"
 echo "Your development environment is now configured and ready to use."
+echo -e "${YELLOW}NOTE: Run 'src' or 'source ~/.bashrc' to load the new configuration in your current shell.${NC}"
 echo -e "${DIVIDER}"
 
