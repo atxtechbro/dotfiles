@@ -9,3 +9,4 @@ alias llama-run="llama-run"
 
 # Pipe content to llama.cpp
 alias llama-pipe='llama-run -p "$(cat -)"'
+

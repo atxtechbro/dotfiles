@@ -10,3 +10,4 @@ if [ -d "$HOME/.bash_aliases.d" ]; then
     fi
   done
 fi
+

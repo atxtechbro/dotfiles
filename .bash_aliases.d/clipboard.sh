@@ -6,3 +6,4 @@ alias clip-cmd='PREV_CMD=$(fc -ln -2 -2 | sed "s/^ *//"); (echo "Command: $PREV_
 
 # Quick clipboard access
 alias clip="xclip -selection clipboard"
+

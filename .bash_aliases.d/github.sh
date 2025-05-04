@@ -9,3 +9,4 @@ alias gh-pr-stats="gh pr view --json additions,deletions,changedFiles,files,titl
 
 # PR stats with full detailed information
 alias gh-pr-stats-full="gh pr view --json additions,deletions,changedFiles,files,title,author,state,createdAt,updatedAt,url,assignees,body,closed,closedAt,comments,commits,headRefName,headRefOid,isDraft,labels,mergeStateStatus,mergeable,mergedAt,mergedBy,reviewDecision,reviews"
+

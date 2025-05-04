@@ -9,3 +9,4 @@ alias claude-sonnet="export ANTHROPIC_MODEL=claude-3-7-sonnet-latest"
 
 # Switch to Claude 3 Opus model
 alias claude-opus="export ANTHROPIC_MODEL=claude-3-opus-latest"
+

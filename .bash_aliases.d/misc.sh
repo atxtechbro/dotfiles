@@ -6,3 +6,4 @@ alias mdbook-serve="fuser -k 3000/tcp 2>/dev/null; mdbook build && mdbook serve"
 
 # Philips Hue control system
 alias hue="$HOME/ppv/pipelines/hue_minimal/hue.sh"
+

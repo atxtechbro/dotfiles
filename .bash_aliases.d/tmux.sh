@@ -9,3 +9,4 @@ alias tmux-branch='git checkout - && tmux source-file ~/.tmux.conf && echo "Swit
 
 # Quick access to tmux cheatsheet
 alias tmux-help="less ~/dotfiles/tmux-cheatsheet.md"
+
