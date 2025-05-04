@@ -194,6 +194,3 @@ export PATH="$HOME/.local/uv-tools/bin:$PATH"
 # Set prompt to show current directory and git branch (placed at the end to ensure it's not overridden)
 PS1='\W\[\033[32m\]$(parse_git_branch)\[\033[00m\] \$ '
 
-# Re-apply Bash config on demand
-# Usage: source ~/.bashrc
-
