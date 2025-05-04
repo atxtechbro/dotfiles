@@ -133,12 +133,9 @@ if [[ -f "$DOT_DEN/.bash_secrets.example" && ! -f ~/.bash_secrets ]]; then
     echo "Created ~/.bash_secrets from template. Please edit to add your secrets."
 fi
 
-# Apply bash configuration
-echo "Applying bash configuration..."
-# shellcheck disable=SC1090
-source ~/.bashrc 2>/dev/null || true
-
+# Note about reloading configuration
 echo -e "${GREEN}✓ Configuration files setup complete${NC}"
+echo -e "${YELLOW}NOTE: Run 'src' or 'source ~/.bashrc' to load the new configuration in your current shell.${NC}"
 
 # Platform-specific setup
 echo -e "${DIVIDER}"
