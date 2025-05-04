@@ -257,10 +257,13 @@ For development work with Amazon Q CLI:
 # Source the development aliases
 source ~/ppv/pillars/dotfiles/.bash_aliases.q-cli
 
-# Run directly from source code
-q-run
+# Build the release version
+q-build
 
-# Use compiled release version
+# Run the compiled release version
+q-run chat
+
+# Quick development testing (build and run in one step)
 q-dev chat
 ```
 
