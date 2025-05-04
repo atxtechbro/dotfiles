@@ -54,6 +54,9 @@ alias haiku='export ANTHROPIC_MODEL=claude-3-5-haiku-latest'
 alias sonnet='export ANTHROPIC_MODEL=claude-3-7-sonnet-latest'
 alias opus='export ANTHROPIC_MODEL=claude-3-opus-latest'
 
+# Quick navigation to dotfiles directory
+alias dotfiles='cd ~/ppv/pillars/dotfiles'
+
 # Source Amazon Q CLI development aliases
 if [ -f "$HOME/ppv/pillars/dotfiles/.bash_aliases.q-cli" ]; then
     source "$HOME/ppv/pillars/dotfiles/.bash_aliases.q-cli"
