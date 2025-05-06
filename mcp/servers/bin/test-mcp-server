@@ -3,6 +3,10 @@
 # This provides a fallback MCP server that always succeeds quickly
 # Implements the JSON-RPC protocol required by MCP
 
+# Disable buffering for stdout
+export PYTHONUNBUFFERED=1
+stdbuf -o0 -e0 cat > /dev/null &
+
 # Log directory for debugging
 LOG_DIR="/tmp/mcp-logs"
 mkdir -p "$LOG_DIR"
@@ -14,33 +18,41 @@ echo "$(date): Running as user: $(whoami)" >> "$LOG_FILE"
 echo "$(date): Current directory: $(pwd)" >> "$LOG_FILE"
 echo "$(date): Script path: $0" >> "$LOG_FILE"
 
+# Function to send a response with proper flushing
+send_response() {
+  echo "$1"
+  echo "$(date): Sent response: $1" >> "$LOG_FILE"
+}
+
 # Read input from stdin (this is how MCP communicates with the server)
 while read -r line; do
   # Log the received message
   echo "$(date): Received: $line" >> "$LOG_FILE"
   
+  # Extract the request ID
+  REQUEST_ID=$(echo "$line" | grep -o '"id":[0-9]*' | cut -d':' -f2)
+  echo "$(date): Extracted request ID: $REQUEST_ID" >> "$LOG_FILE"
+  
   # Parse the JSON-RPC request
   if echo "$line" | grep -q "\"method\":\"initialize\""; then
     # Respond to initialize method with capabilities
-    echo '{"jsonrpc":"2.0","id":0,"result":{"capabilities":{"tools":[{"name":"test_hello","description":"A simple test tool that says hello","parameters":{"type":"object","properties":{"name":{"type":"string","description":"Name to greet"}},"required":["name"]}}]}}}' 
-    # Flush stdout immediately
-    echo "$(date): Sent initialize response" >> "$LOG_FILE"
+    send_response "{\"jsonrpc\":\"2.0\",\"id\":$REQUEST_ID,\"result\":{\"capabilities\":{\"tools\":[{\"name\":\"test_hello\",\"description\":\"A simple test tool that says hello\",\"parameters\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Name to greet\"}},\"required\":[\"name\"]}}]}}}"
   elif echo "$line" | grep -q "\"method\":\"shutdown\""; then
     # Respond to shutdown method
-    echo '{"jsonrpc":"2.0","id":1,"result":null}'
-    echo "$(date): Sent shutdown response" >> "$LOG_FILE"
+    send_response "{\"jsonrpc\":\"2.0\",\"id\":$REQUEST_ID,\"result\":null}"
     break
   elif echo "$line" | grep -q "\"method\":\"test_hello\""; then
+    # Extract the name parameter
+    NAME=$(echo "$line" | grep -o '"name":"[^"]*"' | cut -d':' -f2 | tr -d '"')
+    if [ -z "$NAME" ]; then
+      NAME="World"
+    fi
     # Respond to test_hello method
-    echo '{"jsonrpc":"2.0","id":1,"result":{"message":"Hello from test MCP server!"}}'
-    echo "$(date): Sent test_hello response" >> "$LOG_FILE"
+    send_response "{\"jsonrpc\":\"2.0\",\"id\":$REQUEST_ID,\"result\":{\"message\":\"Hello, $NAME from test MCP server!\"}}"
   else
     # Default response for unknown methods
-    echo '{"jsonrpc":"2.0","id":1,"error":{"code":-32601,"message":"Method not found"}}'
-    echo "$(date): Sent error response for unknown method" >> "$LOG_FILE"
+    send_response "{\"jsonrpc\":\"2.0\",\"id\":$REQUEST_ID,\"error\":{\"code\":-32601,\"message\":\"Method not found\"}}"
   fi
-  # Flush stdout after each response
-  exec 1>&1
 done
 
 # Log completion
