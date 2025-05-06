@@ -17,8 +17,8 @@ jobs:
       - name: Install shellcheck
         run: sudo apt-get install -y shellcheck
       
-      - name: Lint setup script
-        run: shellcheck setup.sh
+      - name: Run shellcheck setup.sh
+        run: shellcheck -x setup.sh
 
   test-ubuntu:
     runs-on: ubuntu-latest
