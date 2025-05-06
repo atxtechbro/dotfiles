@@ -32,10 +32,3 @@
 [credential "https://gist.github.com"]
         helper = !/usr/bin/gh auth git-credential
 
-
-
-
-# Modular Git Configuration
-# Include specific feature modules as needed
-# [include]
-#	path = /home/shellmaestro/ppv/pillars/dotfiles/.gitconfig.signing
