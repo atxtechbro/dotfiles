@@ -39,16 +39,6 @@ Run the setup script to configure MCP for your preferred persona:
 ./mcp/setup.sh --persona company
 ```
 
-Or use the provided aliases:
-
-```bash
-# For personal use
-mcp-setup-personal
-
-# For company/work use
-mcp-setup-company
-```
-
 ## Adding New MCP Servers
 
 To add a new MCP server:
