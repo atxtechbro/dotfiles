@@ -53,10 +53,10 @@ setup_amazonq() {
   log "Setting up MCP for Amazon Q with persona: $persona"
   
   # Create directory if it doesn't exist
-  mkdir -p "$HOME/.amazonq"
+  mkdir -p "$HOME/.aws/amazonq"
   
   # Copy the template configuration
-  cp "$CONFIG_DIR/${persona}-mcp.json" "$HOME/.amazonq/mcp.json"
+  cp "$CONFIG_DIR/${persona}-mcp.json" "$HOME/.aws/amazonq/mcp.json"
   
   log "Amazon Q MCP configuration set up successfully with $persona persona"
 }

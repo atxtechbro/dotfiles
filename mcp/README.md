@@ -48,6 +48,6 @@ This setup uses a persona-based approach to MCP configuration:
 
 This configuration supports multiple AI assistants:
 
-- Amazon Q CLI (`~/.amazonq/mcp.json`)
+- Amazon Q CLI (`~/.aws/amazonq/mcp.json`)
 - Claude CLI (`~/.config/claude/mcp.json`)
 - (Add more as they become available)
