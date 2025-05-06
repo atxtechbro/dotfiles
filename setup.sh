@@ -229,7 +229,6 @@ if command -v q >/dev/null 2>&1; then
   
   echo -e "${GREEN}✓ Amazon Q MCP configuration set up${NC}"
 fi
-fi
 
 # Check and install npm for Claude Code if needed
 if ! command -v npm >/dev/null 2>&1; then
