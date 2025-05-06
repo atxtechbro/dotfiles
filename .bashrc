@@ -175,7 +175,8 @@ else
     fi
 
     # Auto-start tmux with a unique session name based on timestamp
-    if [ -z "$TMUX" ] && [[ "$-" == *i* ]] && command -v tmux >/dev/null 2>&1; then
+    # Skip auto-start if we're running from the setup script
+    if [ -z "$TMUX" ] && [[ "$-" == *i* ]] && command -v tmux >/dev/null 2>&1 && [ -z "$SETUP_SCRIPT_RUNNING" ]; then
         # Create a new session with a unique name (terminal-TIMESTAMP)
         SESSION_NAME="terminal-$(date +%s)"
         exec tmux new-session -s "$SESSION_NAME"
