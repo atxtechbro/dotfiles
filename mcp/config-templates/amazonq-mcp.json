@@ -7,11 +7,11 @@
         "@github/github-mcp-server"
       ]
     },
-    "jira": {
+    "atlassian": {
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-jira",
+        "@sooperset/mcp-atlassian",
         "--baseUrl",
         "https://your-domain.atlassian.net"
       ]
