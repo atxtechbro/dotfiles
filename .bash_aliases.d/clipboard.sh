@@ -1,3 +1,4 @@
+#!/bin/bash
 # Clipboard management aliases
 # Include this file in your .bashrc or .bash_aliases
 

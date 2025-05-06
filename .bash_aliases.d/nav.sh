@@ -1,3 +1,4 @@
+#!/bin/bash
 # Navigation aliases
 # Include this file in your .bashrc or .bash_aliases
 

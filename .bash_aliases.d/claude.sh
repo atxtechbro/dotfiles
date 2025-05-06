@@ -1,3 +1,4 @@
+#!/bin/bash
 # Claude model switch aliases
 # Include this file in your .bashrc or .bash_aliases
 
