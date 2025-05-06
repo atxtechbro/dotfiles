@@ -216,6 +216,9 @@ if command -v q >/dev/null 2>&1; then
   # Set up MCP for Amazon Q
   echo "Setting up MCP for Amazon Q..."
   
+  # Run the MCP installation script with personal configuration
+  bash "$DOT_DEN/mcp/install.sh" >/dev/null 2>&1
+  
   # Create required directories
   mkdir -p ~/.aws/amazonq
   mkdir -p ~/.local/bin
