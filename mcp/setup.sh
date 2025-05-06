@@ -58,8 +58,11 @@ setup_amazonq() {
   # Copy the template configuration
   cp "$CONFIG_DIR/${persona}-mcp.json" "$HOME/.aws/amazonq/mcp.json"
   
-  # Create symlink to the test MCP server in the user's path
+  # Create test MCP server in the user's path
   mkdir -p "$HOME/mcp"
+  # Remove any existing file or symlink first
+  rm -f "$HOME/mcp/test-mcp-server"
+  # Copy the file and make it executable
   cp "$(dirname "$0")/servers/bin/test-mcp-server" "$HOME/mcp/test-mcp-server"
   chmod +x "$HOME/mcp/test-mcp-server"
   
