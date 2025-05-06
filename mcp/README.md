@@ -12,7 +12,7 @@ First, run the installation script to check dependencies and set up the default 
 
 ```bash
 # Install MCP with default personal configuration
-./mcp/install.sh
+bash mcp/install.sh
 ```
 
 ### 2. Configure Persona (Optional)
@@ -21,10 +21,10 @@ After installation, you can switch between different personas:
 
 ```bash
 # For personal use (default)
-./mcp/setup.sh --persona personal
+bash mcp/setup.sh --persona personal
 
 # For company/work use
-./mcp/setup.sh --persona company
+bash mcp/setup.sh --persona company
 ```
 
 ## What is MCP?
@@ -51,18 +51,3 @@ This configuration supports multiple AI assistants:
 - Amazon Q CLI (`~/.amazonq/mcp.json`)
 - Claude CLI (`~/.config/claude/mcp.json`)
 - (Add more as they become available)
-
-## Adding New MCP Servers
-
-To add a new MCP server:
-
-1. Add its configuration to the appropriate persona template file in `config-templates/`
-2. Update the setup script if needed
-3. Add documentation for the server in `servers/`
-
-## Security Considerations
-
-- MCP servers may require sensitive information like API keys or database credentials
-- Consider using environment variables or a secrets manager for sensitive values
-- The setup script can help inject these values from your `~/.bash_secrets` file
-- Company-specific credentials should be prefixed with `COMPANY_` in your secrets file
