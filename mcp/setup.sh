@@ -45,15 +45,7 @@ log() {
   fi
 }
 
-# Function to source secrets file if it exists
-source_secrets() {
-  if [ -f "$SECRETS_FILE" ]; then
-    log "Sourcing secrets from $SECRETS_FILE"
-    source "$SECRETS_FILE"
-  else
-    log "No secrets file found at $SECRETS_FILE"
-  fi
-}
+# Secrets are assumed to be already loaded into the system
 
 # Setup MCP for Amazon Q
 setup_amazonq() {
@@ -84,7 +76,6 @@ setup_claude() {
 }
 
 # Main setup logic
-source_secrets
 
 # Validate persona
 if [ ! -f "$CONFIG_DIR/${PERSONA}-mcp.json" ]; then
