@@ -216,6 +216,25 @@ if command -v q >/dev/null 2>&1; then
   # Set up MCP for Amazon Q
   echo "Setting up MCP for Amazon Q..."
   
+  # Check if Node.js and NPM are installed (required for MCP)
+  if ! command -v node &> /dev/null || ! command -v npm &> /dev/null; then
+    echo -e "${YELLOW}Node.js or NPM not installed. Installing...${NC}"
+    if command -v apt &> /dev/null; then
+      # Debian/Ubuntu
+      sudo apt update >/dev/null 2>&1
+      sudo apt install -y nodejs npm >/dev/null 2>&1
+    elif command -v pacman &> /dev/null; then
+      # Arch Linux
+      sudo pacman -S --needed nodejs npm >/dev/null 2>&1
+    elif command -v brew &> /dev/null; then
+      # macOS
+      brew install node >/dev/null 2>&1
+    else
+      echo -e "${RED}Unable to install Node.js and NPM automatically.${NC}"
+      echo "Please install them manually before continuing."
+    fi
+  fi
+  
   # Create required directories
   mkdir -p ~/.aws/amazonq
   mkdir -p ~/.local/bin
