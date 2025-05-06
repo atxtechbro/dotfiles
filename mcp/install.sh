@@ -5,20 +5,6 @@
 
 set -e
 
-# Check if Node.js is installed
-if ! command -v node &> /dev/null; then
-  echo "Node.js is required but not installed."
-  echo "Please install Node.js before continuing."
-  exit 1
-fi
-
-# Check if NPM is installed
-if ! command -v npm &> /dev/null; then
-  echo "NPM is required but not installed."
-  echo "Please install NPM before continuing."
-  exit 1
-fi
-
 # Run the setup script for personal configuration by default
 echo "Setting up MCP with personal persona..."
 bash "$(dirname "$0")/setup.sh" --persona personal
