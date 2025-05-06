@@ -4,10 +4,23 @@ This directory contains configuration files and setup scripts for Model Context 
 
 ## Usage
 
-Run the setup script to configure MCP for your preferred persona:
+MCP configuration is a two-step process:
+
+### 1. Initial Installation
+
+First, run the installation script to check dependencies and set up the default configuration:
 
 ```bash
-# For personal use
+# Install MCP with default personal configuration
+./mcp/install.sh
+```
+
+### 2. Configure Persona (Optional)
+
+After installation, you can switch between different personas:
+
+```bash
+# For personal use (default)
 ./mcp/setup.sh --persona personal
 
 # For company/work use
