@@ -9,7 +9,8 @@ This file contains guidance for Amazon Q when interacting with this repository.
 - Use branch naming pattern: `type/description` (e.g., `feature/add-tool`, `fix/typo`)
 - For GitHub CLI comments use: `gh pr comment <number> -b "text"` (not `---comment`)
 - Don't thank yourself when closing your own PRs
-- CRITICAL: Never use escape sequences like `\n\n` in any text submitted through interfaces (PR comments, descriptions, issues, etc.) as they will appear literally
+- CRITICAL: Never use escape sequences like `\n\n` in any text submitted through interfaces (PR comments, descriptions, issues, etc.) as they will appear LITERALLY AS THE CHARACTERS "\n\n"
+- ALWAYS use actual line breaks by pressing Enter between lines for ALL text interfaces
 
 ## PR Description Formatting
 - IMPORTANT: When creating PR descriptions, use actual line breaks instead of `\n\n` escape sequences
