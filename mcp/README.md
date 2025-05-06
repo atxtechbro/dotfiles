@@ -2,6 +2,18 @@
 
 This directory contains configuration files and setup scripts for Model Context Protocol (MCP) servers that can be used with various AI assistants like Amazon Q, Claude, and others.
 
+## Usage
+
+Run the setup script to configure MCP for your preferred persona:
+
+```bash
+# For personal use
+./mcp/setup.sh --persona personal
+
+# For company/work use
+./mcp/setup.sh --persona company
+```
+
 ## What is MCP?
 
 The Model Context Protocol (MCP) is an open protocol that standardizes how applications provide context to Large Language Models (LLMs). MCP enables communication between AI assistants and locally running MCP servers that provide additional tools and resources to extend their capabilities.
@@ -26,18 +38,6 @@ This configuration supports multiple AI assistants:
 - Amazon Q CLI (`~/.amazonq/mcp.json`)
 - Claude CLI (`~/.config/claude/mcp.json`)
 - (Add more as they become available)
-
-## Usage
-
-Run the setup script to configure MCP for your preferred persona:
-
-```bash
-# For personal use
-./mcp/setup.sh --persona personal
-
-# For company/work use
-./mcp/setup.sh --persona company
-```
 
 ## Adding New MCP Servers
 
