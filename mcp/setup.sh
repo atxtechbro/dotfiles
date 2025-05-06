@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # MCP Configuration Setup Script
-# This script sets up MCP configurations for different AI assistants
+# This script sets up MCP configurations for different personas
 
 set -e
 
 # Default values
-ASSISTANT="amazonq"
+PERSONA="personal"
 VERBOSE=false
 CONFIG_DIR="$(dirname "$0")/config-templates"
 SECRETS_FILE="$HOME/.bash_secrets"
@@ -14,8 +14,8 @@ SECRETS_FILE="$HOME/.bash_secrets"
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --assistant)
-      ASSISTANT="$2"
+    --persona)
+      PERSONA="$2"
       shift 2
       ;;
     --verbose)
@@ -25,9 +25,10 @@ while [[ $# -gt 0 ]]; do
     --help)
       echo "Usage: $0 [options]"
       echo "Options:"
-      echo "  --assistant ASSISTANT  Configure MCP for the specified assistant (default: amazonq)"
-      echo "  --verbose             Show verbose output"
-      echo "  --help                Show this help message"
+      echo "  --persona PERSONA    Configure MCP for the specified persona (default: personal)"
+      echo "                       Available personas: personal, company"
+      echo "  --verbose            Show verbose output"
+      echo "  --help               Show this help message"
       exit 0
       ;;
     *)
@@ -56,39 +57,44 @@ source_secrets() {
 
 # Setup MCP for Amazon Q
 setup_amazonq() {
-  log "Setting up MCP for Amazon Q"
+  local persona=$1
+  log "Setting up MCP for Amazon Q with persona: $persona"
   
   # Create directory if it doesn't exist
   mkdir -p "$HOME/.amazonq"
   
   # Copy the template configuration
-  cp "$CONFIG_DIR/amazonq-mcp.json" "$HOME/.amazonq/mcp.json"
+  cp "$CONFIG_DIR/${persona}-mcp.json" "$HOME/.amazonq/mcp.json"
   
-  log "Amazon Q MCP configuration set up successfully"
+  log "Amazon Q MCP configuration set up successfully with $persona persona"
 }
 
 # Setup MCP for Claude CLI
 setup_claude() {
-  log "Setting up MCP for Claude CLI"
+  local persona=$1
+  log "Setting up MCP for Claude CLI with persona: $persona"
   
-  # Implementation depends on Claude CLI's configuration approach
-  echo "Claude CLI MCP configuration not yet implemented"
+  # Create directory if it doesn't exist
+  mkdir -p "$HOME/.config/claude"
+  
+  # Copy the template configuration
+  cp "$CONFIG_DIR/${persona}-mcp.json" "$HOME/.config/claude/mcp.json"
+  
+  log "Claude CLI MCP configuration set up successfully with $persona persona"
 }
 
 # Main setup logic
 source_secrets
 
-case "$ASSISTANT" in
-  amazonq)
-    setup_amazonq
-    ;;
-  claude)
-    setup_claude
-    ;;
-  *)
-    echo "Unsupported assistant: $ASSISTANT"
-    exit 1
-    ;;
-esac
+# Validate persona
+if [ ! -f "$CONFIG_DIR/${PERSONA}-mcp.json" ]; then
+  echo "Error: Persona '$PERSONA' not found. Available personas:"
+  ls -1 "$CONFIG_DIR/" | grep -o "^.*-mcp.json" | sed 's/-mcp.json//' | sed 's/^/  - /'
+  exit 1
+fi
 
-echo "MCP configuration for $ASSISTANT set up successfully"
+# Setup for all supported assistants
+setup_amazonq "$PERSONA"
+setup_claude "$PERSONA"
+
+echo "MCP configuration set up successfully with $PERSONA persona"

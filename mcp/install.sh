@@ -28,9 +28,9 @@ fi
 
 ln -sf ~/ppv/pillars/dotfiles/.bash_aliases.mcp ~/.bash_aliases.mcp
 
-# Run the setup script for Amazon Q
-echo "Setting up MCP for Amazon Q..."
-./setup.sh --assistant amazonq
+# Run the setup script for personal configuration by default
+echo "Setting up MCP with personal persona..."
+./setup.sh --persona personal
 
 echo ""
 echo "MCP installation complete!"
@@ -38,6 +38,6 @@ echo ""
 echo "To start using MCP:"
 echo "1. Source your bash profile: source ~/.bashrc"
 echo "2. Check MCP configuration: mcp-check"
-echo "3. Start using Amazon Q with MCP: q chat"
+echo "3. For company configuration, run: mcp-setup-company"
 echo ""
 echo "For more information, see the README.md file in the mcp directory."

@@ -8,42 +8,53 @@ The Model Context Protocol (MCP) is an open protocol that standardizes how appli
 
 ## Directory Structure
 
-- `config-templates/` - Template configuration files for different MCP servers
-- `setup.sh` - Script to set up MCP configurations for different AI assistants
+- `config-templates/` - Template configuration files for different personas
+- `setup.sh` - Script to set up MCP configurations for different personas
 - `servers/` - Documentation and setup scripts for specific MCP servers
+
+## Persona-Based Configuration
+
+This setup uses a persona-based approach to MCP configuration:
+
+- **Personal** - Basic configuration for personal use (GitHub only)
+- **Company** - Enhanced configuration for work use (GitHub + Atlassian)
 
 ## Supported AI Assistants
 
 This configuration supports multiple AI assistants:
 
 - Amazon Q CLI (`~/.amazonq/mcp.json`)
-- Claude CLI (configuration location varies)
+- Claude CLI (`~/.config/claude/mcp.json`)
 - (Add more as they become available)
 
 ## Usage
 
-Run the setup script to configure MCP for your preferred AI assistant:
+Run the setup script to configure MCP for your preferred persona:
 
 ```bash
-./mcp/setup.sh --assistant amazonq
+# For personal use
+./mcp/setup.sh --persona personal
+
+# For company/work use
+./mcp/setup.sh --persona company
 ```
 
-Or manually link the configuration files:
+Or use the provided aliases:
 
 ```bash
-# For Amazon Q
-mkdir -p ~/.amazonq
-ln -sf ~/ppv/pillars/dotfiles/mcp/config-templates/amazonq-mcp.json ~/.amazonq/mcp.json
+# For personal use
+mcp-setup-personal
 
-# For other assistants, follow their specific configuration instructions
+# For company/work use
+mcp-setup-company
 ```
 
 ## Adding New MCP Servers
 
 To add a new MCP server:
 
-1. Add its configuration to the appropriate template file in `config-templates/`
-2. Update the setup script to include the new server
+1. Add its configuration to the appropriate persona template file in `config-templates/`
+2. Update the setup script if needed
 3. Add documentation for the server in `servers/`
 
 ## Security Considerations
@@ -51,3 +62,4 @@ To add a new MCP server:
 - MCP servers may require sensitive information like API keys or database credentials
 - Consider using environment variables or a secrets manager for sensitive values
 - The setup script can help inject these values from your `~/.bash_secrets` file
+- Company-specific credentials should be prefixed with `COMPANY_` in your secrets file
