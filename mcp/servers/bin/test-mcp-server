@@ -22,18 +22,25 @@ while read -r line; do
   # Parse the JSON-RPC request
   if echo "$line" | grep -q "\"method\":\"initialize\""; then
     # Respond to initialize method with capabilities
-    echo '{"jsonrpc":"2.0","id":1,"result":{"capabilities":{"tools":[{"name":"test_hello","description":"A simple test tool that says hello","parameters":{"type":"object","properties":{"name":{"type":"string","description":"Name to greet"}},"required":["name"]}}]}}}'
+    echo '{"jsonrpc":"2.0","id":0,"result":{"capabilities":{"tools":[{"name":"test_hello","description":"A simple test tool that says hello","parameters":{"type":"object","properties":{"name":{"type":"string","description":"Name to greet"}},"required":["name"]}}]}}}' 
+    # Flush stdout immediately
+    echo "$(date): Sent initialize response" >> "$LOG_FILE"
   elif echo "$line" | grep -q "\"method\":\"shutdown\""; then
     # Respond to shutdown method
     echo '{"jsonrpc":"2.0","id":1,"result":null}'
+    echo "$(date): Sent shutdown response" >> "$LOG_FILE"
     break
   elif echo "$line" | grep -q "\"method\":\"test_hello\""; then
     # Respond to test_hello method
     echo '{"jsonrpc":"2.0","id":1,"result":{"message":"Hello from test MCP server!"}}'
+    echo "$(date): Sent test_hello response" >> "$LOG_FILE"
   else
     # Default response for unknown methods
     echo '{"jsonrpc":"2.0","id":1,"error":{"code":-32601,"message":"Method not found"}}'
+    echo "$(date): Sent error response for unknown method" >> "$LOG_FILE"
   fi
+  # Flush stdout after each response
+  exec 1>&1
 done
 
 # Log completion
