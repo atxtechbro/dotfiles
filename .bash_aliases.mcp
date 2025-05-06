@@ -8,7 +8,7 @@ alias mcp-setup-claude="~/ppv/pillars/dotfiles/mcp/setup.sh --assistant claude"
 # List active MCP servers
 mcp-list() {
   echo "Active MCP servers:"
-  ps aux | grep -E 'github-mcp-server|server-postgres|server-jira' | grep -v grep
+  ps aux | grep -E 'github-mcp-server|server-jira' | grep -v grep
 }
 
 # Start a specific MCP server manually
@@ -17,7 +17,7 @@ mcp-start() {
   
   if [ -z "$server" ]; then
     echo "Usage: mcp-start <server-name>"
-    echo "Available servers: github, postgres, jira"
+    echo "Available servers: github, jira"
     return 1
   fi
   
@@ -25,14 +25,6 @@ mcp-start() {
     github)
       npx -y @github/github-mcp-server &
       echo "Started GitHub MCP server"
-      ;;
-    postgres)
-      if [ -z "$POSTGRES_CONNECTION_STRING" ]; then
-        echo "Error: POSTGRES_CONNECTION_STRING environment variable not set"
-        return 1
-      fi
-      npx -y @modelcontextprotocol/server-postgres "$POSTGRES_CONNECTION_STRING" &
-      echo "Started PostgreSQL MCP server"
       ;;
     jira)
       if [ -z "$JIRA_BASE_URL" ]; then
@@ -44,7 +36,7 @@ mcp-start() {
       ;;
     *)
       echo "Unknown server: $server"
-      echo "Available servers: github, postgres, jira"
+      echo "Available servers: github, jira"
       return 1
       ;;
   esac
@@ -52,7 +44,7 @@ mcp-start() {
 
 # Stop all running MCP servers
 mcp-stop-all() {
-  pkill -f 'github-mcp-server|server-postgres|server-jira' || echo "No MCP servers running"
+  pkill -f 'github-mcp-server|server-jira' || echo "No MCP servers running"
 }
 
 # Edit MCP configuration for Amazon Q
@@ -78,7 +70,7 @@ mcp-check() {
   # Check for running MCP servers
   echo ""
   echo "Running MCP servers:"
-  mcp_servers=$(ps aux | grep -E 'github-mcp-server|server-postgres|server-jira' | grep -v grep)
+  mcp_servers=$(ps aux | grep -E 'github-mcp-server|server-jira' | grep -v grep)
   if [ -z "$mcp_servers" ]; then
     echo "   No MCP servers currently running"
   else
