@@ -1,0 +1,87 @@
+#!/bin/bash
+# MCP (Model Context Protocol) related aliases and functions
+
+# Setup MCP configuration for different AI assistants
+alias mcp-setup-amazonq="~/ppv/pillars/dotfiles/mcp/setup.sh --assistant amazonq"
+alias mcp-setup-claude="~/ppv/pillars/dotfiles/mcp/setup.sh --assistant claude"
+
+# List active MCP servers
+mcp-list() {
+  echo "Active MCP servers:"
+  ps aux | grep -E 'github-mcp-server|server-postgres|server-jira' | grep -v grep
+}
+
+# Start a specific MCP server manually
+mcp-start() {
+  local server=$1
+  
+  if [ -z "$server" ]; then
+    echo "Usage: mcp-start <server-name>"
+    echo "Available servers: github, postgres, jira"
+    return 1
+  fi
+  
+  case "$server" in
+    github)
+      npx -y @github/github-mcp-server &
+      echo "Started GitHub MCP server"
+      ;;
+    postgres)
+      if [ -z "$POSTGRES_CONNECTION_STRING" ]; then
+        echo "Error: POSTGRES_CONNECTION_STRING environment variable not set"
+        return 1
+      fi
+      npx -y @modelcontextprotocol/server-postgres "$POSTGRES_CONNECTION_STRING" &
+      echo "Started PostgreSQL MCP server"
+      ;;
+    jira)
+      if [ -z "$JIRA_BASE_URL" ]; then
+        echo "Error: JIRA_BASE_URL environment variable not set"
+        return 1
+      fi
+      npx -y @modelcontextprotocol/server-jira --baseUrl "$JIRA_BASE_URL" &
+      echo "Started Jira MCP server"
+      ;;
+    *)
+      echo "Unknown server: $server"
+      echo "Available servers: github, postgres, jira"
+      return 1
+      ;;
+  esac
+}
+
+# Stop all running MCP servers
+mcp-stop-all() {
+  pkill -f 'github-mcp-server|server-postgres|server-jira' || echo "No MCP servers running"
+}
+
+# Edit MCP configuration for Amazon Q
+alias mcp-edit-amazonq="$EDITOR ~/.amazonq/mcp.json"
+
+# View MCP configuration for Amazon Q
+alias mcp-cat-amazonq="cat ~/.amazonq/mcp.json"
+
+# Check if MCP servers are configured correctly
+mcp-check() {
+  echo "Checking MCP configuration..."
+  
+  # Check Amazon Q configuration
+  if [ -f ~/.amazonq/mcp.json ]; then
+    echo "✅ Amazon Q MCP configuration found"
+    echo "   Configured servers:"
+    grep -o '"[^"]*": {' ~/.amazonq/mcp.json | sed 's/": {//' | sed 's/"//g' | sed 's/^/   - /'
+  else
+    echo "❌ Amazon Q MCP configuration not found"
+    echo "   Run 'mcp-setup-amazonq' to set it up"
+  fi
+  
+  # Check for running MCP servers
+  echo ""
+  echo "Running MCP servers:"
+  mcp_servers=$(ps aux | grep -E 'github-mcp-server|server-postgres|server-jira' | grep -v grep)
+  if [ -z "$mcp_servers" ]; then
+    echo "   No MCP servers currently running"
+  else
+    echo "$mcp_servers" | awk '{print "   - " $NF}'
+  fi
+}
