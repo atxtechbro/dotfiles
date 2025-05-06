@@ -114,6 +114,7 @@ fi
 echo "Creating symlinks for config files..."
 ln -sf "$DOT_DEN/.bashrc" ~/.bashrc
 ln -sf "$DOT_DEN/.bash_aliases" ~/.bash_aliases
+ln -sf "$DOT_DEN/.bash_aliases.d" ~/.bash_aliases.d
 ln -sf "$DOT_DEN/.bash_exports" ~/.bash_exports
 ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 
