@@ -16,8 +16,8 @@ The Model Context Protocol (MCP) is an open protocol that standardizes how appli
 
 This setup uses a persona-based approach to MCP configuration:
 
-- **Personal** - Basic configuration for personal use (GitHub only)
-- **Company** - Enhanced configuration for work use (GitHub + Atlassian)
+- **Personal** - Basic configuration for personal use
+- **Company** - Enhanced configuration for work use
 
 ## Supported AI Assistants
 
