@@ -66,9 +66,32 @@ setup_amazonq() {
   cp "$(dirname "$0")/servers/bin/test-mcp-server" "$HOME/mcp/test-mcp-server"
   chmod +x "$HOME/mcp/test-mcp-server"
   
-  # Install GitHub MCP server
-  log "Installing GitHub MCP server..."
-  npm install -g @github/github-mcp-server
+  # Check if Docker is installed for GitHub MCP server
+  if command -v docker &> /dev/null; then
+    log "Docker is available. GitHub MCP server can be used with Docker."
+    log "To use GitHub MCP server, add the following to your ~/.aws/amazonq/mcp.json:"
+    log '{
+  "mcpServers": {
+    "github": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "<YOUR_TOKEN>"
+      }
+    }
+  }
+}'
+  else
+    log "Docker not found. GitHub MCP server requires Docker or building from source."
+    log "See https://github.com/github/github-mcp-server for installation instructions."
+  fi
   
   # Create debug script for Amazon Q
   cat > "$HOME/debug-amazonq-mcp.sh" << 'EOF'
