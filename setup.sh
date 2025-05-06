@@ -122,17 +122,10 @@ echo "Setting up Git configuration..."
 gitconfig_path="$HOME/.gitconfig"
 dotfiles_gitconfig="$DOT_DEN/.gitconfig"
 
-if [[ ! -f "$gitconfig_path" ]]; then
-  echo "Creating new ~/.gitconfig with dotfiles include..."
-  echo -e "[include]\n\tpath = $dotfiles_gitconfig" > "$gitconfig_path"
-  echo -e "${GREEN}✓ Git configuration created${NC}"
-elif ! grep -q "$dotfiles_gitconfig" "$gitconfig_path" 2>/dev/null; then
-  echo "Adding dotfiles include to existing ~/.gitconfig..."
-  echo -e "\n[include]\n\tpath = $dotfiles_gitconfig" >> "$gitconfig_path"
-  echo -e "${GREEN}✓ Git configuration updated${NC}"
-else
-  echo -e "${GREEN}✓ Git configuration already includes dotfiles .gitconfig${NC}"
-fi
+# Remove existing gitconfig and copy fresh
+rm -f "$gitconfig_path"
+cp "$dotfiles_gitconfig" "$gitconfig_path"
+echo -e "${GREEN}✓ Git configuration created${NC}"
 
 # Create secrets file from template
 if [[ -f "$DOT_DEN/.bash_secrets.example" && ! -f ~/.bash_secrets ]]; then
