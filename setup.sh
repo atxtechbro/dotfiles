@@ -222,6 +222,23 @@ if command -v q >/dev/null 2>&1; then
   
   # Set up MCP for Amazon Q
   echo "Setting up MCP for Amazon Q..."
+  
+  # Create required directories
+  mkdir -p ~/.aws/amazonq
+  mkdir -p ~/.local/bin
+  
+  # Create symlink for test MCP server
+  ln -sf "$DOT_DEN/mcp/servers/bin/test-mcp-server" ~/.local/bin/test-mcp-server
+  chmod +x ~/.local/bin/test-mcp-server
+  
+  # Copy MCP configuration
+  cp "$DOT_DEN/mcp/config-templates/personal-mcp.json" ~/.aws/amazonq/mcp.json
+  
+  echo -e "${GREEN}✓ Amazon Q MCP configuration set up${NC}"
+  fi
+  
+  # Set up MCP for Amazon Q
+  echo "Setting up MCP for Amazon Q..."
   mkdir -p "$HOME/.aws/amazonq"
   mkdir -p "$HOME/.local/bin"
   
