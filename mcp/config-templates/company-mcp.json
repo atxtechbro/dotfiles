@@ -19,6 +19,16 @@
         "ATLASSIAN_USERNAME": "${COMPANY_ATLASSIAN_USERNAME}",
         "ATLASSIAN_API_TOKEN": "${COMPANY_ATLASSIAN_API_TOKEN}"
       }
+    },
+    "slack": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-slack"
+      ],
+      "env": {
+        "SLACK_TOKEN": "${COMPANY_SLACK_TOKEN}"
+      }
     }
   }
 }
