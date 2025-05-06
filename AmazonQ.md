@@ -24,6 +24,13 @@ This file contains guidance for Amazon Q when interacting with this repository.
 - Prefer concise issues with less context over verbose ones
 - Treat GitHub issues as discussion points and suggestions, not strict mandates
 
+## PR Comments Formatting
+- CRITICAL: Never use `\n\n` in PR comments as they will appear literally in the comment
+- For PR comments, always use actual line breaks by pressing Enter between lines
+- Example: `gh pr comment <number> -b "First line.` (press Enter) `Second line."` ✓
+- NOT: `gh pr comment <number> -b "First line.\n\nSecond line."` ✗
+- This prevents embarrassing escape sequences from appearing in comments
+
 ## Quick AmazonQ.md Updates
 - For quick updates to this file, use the standardized branch name: `docs/update-amazonq-guidance`
 - Command: `git checkout main && git pull && git checkout -b docs/update-amazonq-guidance`
