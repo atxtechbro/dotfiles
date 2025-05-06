@@ -219,6 +219,21 @@ if command -v q >/dev/null 2>&1; then
   else
     echo "Amazon Q telemetry already disabled"
   fi
+  
+  # Set up MCP for Amazon Q
+  echo "Setting up MCP for Amazon Q..."
+  mkdir -p "$HOME/.aws/amazonq"
+  mkdir -p "$HOME/.local/bin"
+  
+  # Copy the test MCP server to ~/.local/bin and make it executable
+  cp "$DOT_DEN/mcp/servers/bin/test-mcp-server" "$HOME/.local/bin/"
+  chmod +x "$HOME/.local/bin/test-mcp-server"
+  
+  # Copy the MCP configuration
+  cp "$DOT_DEN/mcp/config-templates/personal-mcp.json" "$HOME/.aws/amazonq/mcp.json"
+  
+  echo -e "${GREEN}✓ Amazon Q MCP configuration set up${NC}"
+  fi
 fi
 
 # Check and install npm for Claude Code if needed
