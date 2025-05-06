@@ -19,10 +19,6 @@ if ! command -v npm &> /dev/null; then
   exit 1
 fi
 
-# Install global dependencies
-echo "Installing global dependencies..."
-npm install -g @github/github-mcp-server @modelcontextprotocol/server-postgres @modelcontextprotocol/server-jira
-
 # Create symlink for bash aliases
 echo "Setting up MCP bash aliases..."
 if [ -f ~/.bash_aliases.mcp ]; then

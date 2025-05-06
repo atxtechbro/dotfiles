@@ -20,7 +20,7 @@ create_symlink() {
   mkdir -p "$(dirname "$target")"
   
   # Backup existing file/directory if it exists and is not a symlink to our dotfiles
-  if [ -e "$target" ] && [ ! -L "$target" -o "$(readlink "$target")" != "$source" ]; then
+  if [ -e "$target" ] && { [ ! -L "$target" ] || [ "$(readlink "$target")" != "$source" ]; }; then
     echo "Backing up $target to $BACKUP_DIR/$(basename "$target")"
     mv "$target" "$BACKUP_DIR/$(basename "$target")"
   fi
