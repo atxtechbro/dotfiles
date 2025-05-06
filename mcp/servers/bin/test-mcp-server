@@ -1,7 +1,7 @@
 #!/bin/bash
 # Enhanced MCP server stub for testing
 # This provides a fallback MCP server that always succeeds quickly
-# Helps prevent the Amazon Q CLI from hanging indefinitely
+# Implements the JSON-RPC protocol required by MCP
 
 # Log directory for debugging
 LOG_DIR="/tmp/mcp-logs"
@@ -14,12 +14,27 @@ echo "$(date): Running as user: $(whoami)" >> "$LOG_FILE"
 echo "$(date): Current directory: $(pwd)" >> "$LOG_FILE"
 echo "$(date): Script path: $0" >> "$LOG_FILE"
 
-# Log environment variables
-echo "$(date): Environment variables:" >> "$LOG_FILE"
-env | sort >> "$LOG_FILE"
-
-# Return a successful response
-echo '{"status":"success","message":"Test MCP server initialized successfully"}'
+# Read input from stdin (this is how MCP communicates with the server)
+while read -r line; do
+  # Log the received message
+  echo "$(date): Received: $line" >> "$LOG_FILE"
+  
+  # Parse the JSON-RPC request
+  if echo "$line" | grep -q "\"method\":\"initialize\""; then
+    # Respond to initialize method with capabilities
+    echo '{"jsonrpc":"2.0","id":1,"result":{"capabilities":{"tools":[{"name":"test_hello","description":"A simple test tool that says hello","parameters":{"type":"object","properties":{"name":{"type":"string","description":"Name to greet"}},"required":["name"]}}]}}}'
+  elif echo "$line" | grep -q "\"method\":\"shutdown\""; then
+    # Respond to shutdown method
+    echo '{"jsonrpc":"2.0","id":1,"result":null}'
+    break
+  elif echo "$line" | grep -q "\"method\":\"test_hello\""; then
+    # Respond to test_hello method
+    echo '{"jsonrpc":"2.0","id":1,"result":{"message":"Hello from test MCP server!"}}'
+  else
+    # Default response for unknown methods
+    echo '{"jsonrpc":"2.0","id":1,"error":{"code":-32601,"message":"Method not found"}}'
+  fi
+done
 
 # Log completion
 echo "$(date): Test MCP server completed successfully" >> "$LOG_FILE"
