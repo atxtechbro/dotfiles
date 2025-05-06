@@ -1,11 +1,17 @@
 {
-  "mcpServers": {
+  "mcp_servers": {
     "github": {
       "command": "npx",
       "args": [
         "-y",
         "@github/github-mcp-server"
-      ]
+      ],
+      "timeout": 10000
+    },
+    "test": {
+      "bin_path": "mcp/test-mcp-server",
+      "args": [],
+      "timeout": 5000
     }
   }
 }

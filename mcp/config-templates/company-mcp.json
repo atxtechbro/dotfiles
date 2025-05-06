@@ -1,11 +1,12 @@
 {
-  "mcpServers": {
+  "mcp_servers": {
     "github": {
       "command": "npx",
       "args": [
         "-y",
         "@github/github-mcp-server"
-      ]
+      ],
+      "timeout": 10000
     },
     "atlassian": {
       "command": "npx",
@@ -18,7 +19,8 @@
       "env": {
         "ATLASSIAN_USERNAME": "${COMPANY_ATLASSIAN_USERNAME}",
         "ATLASSIAN_API_TOKEN": "${COMPANY_ATLASSIAN_API_TOKEN}"
-      }
+      },
+      "timeout": 10000
     },
     "slack": {
       "command": "npx",
@@ -28,7 +30,13 @@
       ],
       "env": {
         "SLACK_TOKEN": "${COMPANY_SLACK_TOKEN}"
-      }
+      },
+      "timeout": 10000
+    },
+    "test": {
+      "bin_path": "mcp/test-mcp-server",
+      "args": [],
+      "timeout": 5000
     }
   }
 }

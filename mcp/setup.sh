@@ -58,6 +58,10 @@ setup_amazonq() {
   # Copy the template configuration
   cp "$CONFIG_DIR/${persona}-mcp.json" "$HOME/.aws/amazonq/mcp.json"
   
+  # Create symlink to the test MCP server in the user's path
+  mkdir -p "$HOME/mcp"
+  ln -sf "$(dirname "$0")/servers/bin/test-mcp-server" "$HOME/mcp/test-mcp-server"
+  
   log "Amazon Q MCP configuration set up successfully with $persona persona"
 }
 

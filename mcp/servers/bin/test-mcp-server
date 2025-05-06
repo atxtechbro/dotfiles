@@ -1,0 +1,6 @@
+#!/bin/bash
+# Simple MCP server stub for testing
+# This prevents the Amazon Q CLI from hanging while trying to initialize MCP servers
+
+echo '{"status":"success","message":"Test MCP server initialized successfully"}'
+exit 0
