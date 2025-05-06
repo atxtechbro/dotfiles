@@ -1,0 +1,72 @@
+#!/bin/bash
+# GitHub MCP server for Amazon Q
+# Provides GitHub integration capabilities
+
+# Log directory for debugging
+LOG_DIR="/tmp/mcp-logs"
+mkdir -p "$LOG_DIR"
+LOG_FILE="$LOG_DIR/github-mcp-server.log"
+
+# Log startup information
+echo "$(date): GitHub MCP server starting..." >> "$LOG_FILE"
+echo "$(date): Running as user: $(whoami)" >> "$LOG_FILE"
+echo "$(date): Current directory: $(pwd)" >> "$LOG_FILE"
+echo "$(date): Script path: $0" >> "$LOG_FILE"
+
+# Function to send a response with proper flushing
+send_response() {
+  echo "$1"
+  echo "$(date): Sent response: $1" >> "$LOG_FILE"
+}
+
+# Read input from stdin (this is how MCP communicates with the server)
+while read -r line; do
+  # Log the received message
+  echo "$(date): Received: $line" >> "$LOG_FILE"
+  
+  # Parse the JSON-RPC request
+  if echo "$line" | grep -q "\"method\":\"initialize\""; then
+    # Extract the request ID
+    REQUEST_ID=$(echo "$line" | grep -o '"id":[0-9]*' | cut -d':' -f2)
+    # Respond to initialize method with capabilities
+    send_response "{\"jsonrpc\":\"2.0\",\"id\":$REQUEST_ID,\"result\":{\"capabilities\":{\"tools\":[{\"name\":\"github_info\",\"description\":\"Get information about a GitHub repository\",\"input_schema\":{\"type\":\"object\",\"properties\":{\"repo\":\"string\",\"description\":\"GitHub repository name (e.g., owner/repo)\"},\"required\":[\"repo\"]}}]}}}"
+  elif echo "$line" | grep -q "\"method\":\"shutdown\""; then
+    # Extract the request ID
+    REQUEST_ID=$(echo "$line" | grep -o '"id":[0-9]*' | cut -d':' -f2)
+    # Respond to shutdown method
+    send_response "{\"jsonrpc\":\"2.0\",\"id\":$REQUEST_ID,\"result\":null}"
+    break
+  elif echo "$line" | grep -q "\"method\":\"tools/list\""; then
+    # Extract the request ID
+    REQUEST_ID=$(echo "$line" | grep -o '"id":[0-9]*' | cut -d':' -f2)
+    # Respond to tools/list method
+    send_response "{\"jsonrpc\":\"2.0\",\"id\":$REQUEST_ID,\"result\":{\"tools\":[{\"name\":\"github_info\",\"description\":\"Get information about a GitHub repository\",\"input_schema\":{\"type\":\"object\",\"properties\":{\"repo\":{\"type\":\"string\",\"description\":\"GitHub repository name (e.g., owner/repo)\"}},\"required\":[\"repo\"]}}]}}"
+  elif echo "$line" | grep -q "\"method\":\"notifications/initialized\""; then
+    # Just log this notification, no response needed
+    echo "$(date): Received initialized notification, no response needed" >> "$LOG_FILE"
+    continue
+  elif echo "$line" | grep -q "\"method\":\"github_info\""; then
+    # Extract the request ID
+    REQUEST_ID=$(echo "$line" | grep -o '"id":[0-9]*' | cut -d':' -f2)
+    # Extract the repo parameter
+    REPO=$(echo "$line" | grep -o '"repo":"[^"]*"' | cut -d':' -f2 | tr -d '"')
+    if [ -z "$REPO" ]; then
+      REPO="atxtechbro/dotfiles"
+    fi
+    # Respond to github_info method
+    send_response "{\"jsonrpc\":\"2.0\",\"id\":$REQUEST_ID,\"result\":{\"message\":\"GitHub repository $REPO information would be displayed here.\"}}"
+  else
+    # Only respond to requests with IDs, not notifications
+    REQUEST_ID=$(echo "$line" | grep -o '"id":[0-9]*' | cut -d':' -f2)
+    if [ -n "$REQUEST_ID" ]; then
+      send_response "{\"jsonrpc\":\"2.0\",\"id\":$REQUEST_ID,\"error\":{\"code\":-32601,\"message\":\"Method not found\"}}"
+    else
+      echo "$(date): Ignoring notification without ID" >> "$LOG_FILE"
+    fi
+  fi
+done
+
+# Log completion
+echo "$(date): GitHub MCP server completed successfully" >> "$LOG_FILE"
+
+exit 0

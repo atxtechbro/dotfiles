@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "test": {
+      "command": "test-mcp-server",
+      "args": [],
+      "timeout": 5000
+    },
+    "github": {
+      "command": "github-mcp-server",
+      "args": [],
+      "timeout": 5000
+    }
+  }
+}

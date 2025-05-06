@@ -1,0 +1,73 @@
+#!/bin/bash
+# Enhanced MCP server stub for testing
+# This provides a fallback MCP server that always succeeds quickly
+# Implements the JSON-RPC protocol required by MCP
+
+# Log directory for debugging
+LOG_DIR="/tmp/mcp-logs"
+mkdir -p "$LOG_DIR"
+LOG_FILE="$LOG_DIR/test-mcp-server.log"
+
+# Log startup information
+echo "$(date): Test MCP server starting..." >> "$LOG_FILE"
+echo "$(date): Running as user: $(whoami)" >> "$LOG_FILE"
+echo "$(date): Current directory: $(pwd)" >> "$LOG_FILE"
+echo "$(date): Script path: $0" >> "$LOG_FILE"
+
+# Function to send a response with proper flushing
+send_response() {
+  echo "$1"
+  echo "$(date): Sent response: $1" >> "$LOG_FILE"
+}
+
+# Read input from stdin (this is how MCP communicates with the server)
+while read -r line; do
+  # Log the received message
+  echo "$(date): Received: $line" >> "$LOG_FILE"
+  
+  # Parse the JSON-RPC request
+  if echo "$line" | grep -q "\"method\":\"initialize\""; then
+    # Extract the request ID
+    REQUEST_ID=$(echo "$line" | grep -o '"id":[0-9]*' | cut -d':' -f2)
+    # Respond to initialize method with capabilities
+    send_response "{\"jsonrpc\":\"2.0\",\"id\":$REQUEST_ID,\"result\":{\"capabilities\":{\"tools\":[{\"name\":\"test_hello\",\"description\":\"A simple test tool that says hello\",\"input_schema\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Name to greet\"}},\"required\":[\"name\"]}}]}}}"
+  elif echo "$line" | grep -q "\"method\":\"shutdown\""; then
+    # Extract the request ID
+    REQUEST_ID=$(echo "$line" | grep -o '"id":[0-9]*' | cut -d':' -f2)
+    # Respond to shutdown method
+    send_response "{\"jsonrpc\":\"2.0\",\"id\":$REQUEST_ID,\"result\":null}"
+    break
+  elif echo "$line" | grep -q "\"method\":\"tools/list\""; then
+    # Extract the request ID
+    REQUEST_ID=$(echo "$line" | grep -o '"id":[0-9]*' | cut -d':' -f2)
+    # Respond to tools/list method
+    send_response "{\"jsonrpc\":\"2.0\",\"id\":$REQUEST_ID,\"result\":{\"tools\":[{\"name\":\"test_hello\",\"description\":\"A simple test tool that says hello\",\"input_schema\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Name to greet\"}},\"required\":[\"name\"]}}]}}"
+  elif echo "$line" | grep -q "\"method\":\"notifications/initialized\""; then
+    # Just log this notification, no response needed
+    echo "$(date): Received initialized notification, no response needed" >> "$LOG_FILE"
+    continue
+  elif echo "$line" | grep -q "\"method\":\"test_hello\""; then
+    # Extract the request ID
+    REQUEST_ID=$(echo "$line" | grep -o '"id":[0-9]*' | cut -d':' -f2)
+    # Extract the name parameter
+    NAME=$(echo "$line" | grep -o '"name":"[^"]*"' | cut -d':' -f2 | tr -d '"')
+    if [ -z "$NAME" ]; then
+      NAME="World"
+    fi
+    # Respond to test_hello method
+    send_response "{\"jsonrpc\":\"2.0\",\"id\":$REQUEST_ID,\"result\":{\"message\":\"Hello, $NAME from test MCP server!\"}}"
+  else
+    # Only respond to requests with IDs, not notifications
+    REQUEST_ID=$(echo "$line" | grep -o '"id":[0-9]*' | cut -d':' -f2)
+    if [ -n "$REQUEST_ID" ]; then
+      send_response "{\"jsonrpc\":\"2.0\",\"id\":$REQUEST_ID,\"error\":{\"code\":-32601,\"message\":\"Method not found\"}}"
+    else
+      echo "$(date): Ignoring notification without ID" >> "$LOG_FILE"
+    fi
+  fi
+done
+
+# Log completion
+echo "$(date): Test MCP server completed successfully" >> "$LOG_FILE"
+
+exit 0
