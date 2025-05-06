@@ -1,6 +1,27 @@
 #!/bin/bash
-# Simple MCP server stub for testing
-# This prevents the Amazon Q CLI from hanging while trying to initialize MCP servers
+# Enhanced MCP server stub for testing
+# This provides a fallback MCP server that always succeeds quickly
+# Helps prevent the Amazon Q CLI from hanging indefinitely
 
+# Log directory for debugging
+LOG_DIR="/tmp/mcp-logs"
+mkdir -p "$LOG_DIR"
+LOG_FILE="$LOG_DIR/test-mcp-server.log"
+
+# Log startup information
+echo "$(date): Test MCP server starting..." >> "$LOG_FILE"
+echo "$(date): Running as user: $(whoami)" >> "$LOG_FILE"
+echo "$(date): Current directory: $(pwd)" >> "$LOG_FILE"
+echo "$(date): Script path: $0" >> "$LOG_FILE"
+
+# Log environment variables
+echo "$(date): Environment variables:" >> "$LOG_FILE"
+env | sort >> "$LOG_FILE"
+
+# Return a successful response
 echo '{"status":"success","message":"Test MCP server initialized successfully"}'
+
+# Log completion
+echo "$(date): Test MCP server completed successfully" >> "$LOG_FILE"
+
 exit 0

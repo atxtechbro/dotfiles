@@ -60,7 +60,38 @@ setup_amazonq() {
   
   # Create symlink to the test MCP server in the user's path
   mkdir -p "$HOME/mcp"
-  ln -sf "$(dirname "$0")/servers/bin/test-mcp-server" "$HOME/mcp/test-mcp-server"
+  cp "$(dirname "$0")/servers/bin/test-mcp-server" "$HOME/mcp/test-mcp-server"
+  chmod +x "$HOME/mcp/test-mcp-server"
+  
+  # Install GitHub MCP server
+  log "Installing GitHub MCP server..."
+  npm install -g @github/github-mcp-server
+  
+  # Create debug script for Amazon Q
+  cat > "$HOME/debug-amazonq-mcp.sh" << 'EOF'
+#!/bin/bash
+# Debug script for Amazon Q MCP issues
+
+# Create log directory
+LOG_DIR="/tmp/amazonq-mcp-logs"
+mkdir -p "$LOG_DIR"
+
+# Set environment variables for debugging
+export Q_LOG_LEVEL=trace
+export TMPDIR="$LOG_DIR"
+
+# Run Amazon Q with debugging enabled
+echo "Starting Amazon Q with debug logging..."
+echo "Logs will be available in $LOG_DIR"
+q chat
+
+# After exit, provide instructions
+echo ""
+echo "To view logs, run: less $LOG_DIR/qlog"
+EOF
+  chmod +x "$HOME/debug-amazonq-mcp.sh"
+  
+  echo "Created debug script at $HOME/debug-amazonq-mcp.sh"
   
   log "Amazon Q MCP configuration set up successfully with $persona persona"
 }
