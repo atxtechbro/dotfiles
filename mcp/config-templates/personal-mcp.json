@@ -9,7 +9,7 @@
       "timeout": 10000
     },
     "test": {
-      "binPath": "mcp/test-mcp-server",
+      "command": "mcp/test-mcp-server",
       "args": [],
       "timeout": 5000
     }
