@@ -1,13 +1,10 @@
-# AI Assistant Guide - Amazon Q
-
+## Commit early and often
 Always use conventional commit syntax: `<type>[scope]: description` (scope optional but encouraged; use separate `-m` for trailers)
 Always include blank line at end of files
 
-This file contains guidance for Amazon Q when interacting with this repository.
-
 ## Common Errors to Avoid
 - Use branch naming pattern: `type/description` (e.g., `feature/add-tool`, `fix/typo`)
-- For GitHub CLI comments use: `gh pr comment <number> -b "text"` (not `---comment`)
+- For GitHub CLI comments use: `gh pr comment <number> -b "text"` (not `---comment`) # TODO: can mcp make this line deletable because it will be smarter?
 - Don't thank yourself when closing your own PRs
 - CRITICAL: Never use escape sequences like `\n\n` in any text submitted through interfaces (PR comments, descriptions, issues, etc.) as they will appear LITERALLY AS THE CHARACTERS "\n\n"
 - ALWAYS use actual line breaks by pressing Enter between lines for ALL text interfaces
@@ -28,19 +25,14 @@ This file contains guidance for Amazon Q when interacting with this repository.
 - Treat GitHub issues as discussion points and suggestions, not strict mandates
 
 ## Quick AmazonQ.md Updates
-- For quick updates to this file, use the standardized branch name: `docs/update-amazonq-guidance`
-- Command: `git checkout main && git pull && git checkout -b docs/update-amazonq-guidance`
-
+- use branch name: `docs/update-amazonq-guidance`
+  
 ## Branching Strategy
+- Pull Request based workflow (GitHub)
+- Tracer bullet vibe coding development style (atomic commits)
 - When making discrete changes, always branch from main unless specifically asked otherwise
 - Use `git checkout main && git pull && git checkout -b type/description` to ensure clean branches
 - For changes to documentation or configuration files like AmazonQ.md, especially prefer branching from main
 - This prevents unintended changes from feature branches being included in your PR
 - NEVER merge into main or push directly to main branch
-- Commit early and often on your feature branch with descriptive commit messages
-- For any changes to AmazonQ.md, always use the branch name `docs/update-amazonq-guidance`
 - Good scope choices add context about what component is being modified (e.g., bash, nvim, tmux, git)
-
-Feel free to add your discoveries and insights below as you learn:
-
-- Always use `uv` instead of `pip` for Python package management (e.g., `uv pip install package-name` not `pip install package-name`)
