@@ -25,8 +25,11 @@ Always include blank line at end of files
 - use branch name: `docs/update-amazonq-guidance`
 
 ## Debugging Amazon Q CLI
-- Log files are stored in `/tmp/q-logs/` and `~/.amazonq/logs/` (if it exists)
-- Check logs immediately after running commands as they may be cleaned up automatically
+- Amazon Q CLI does not appear to generate log files in the expected locations (`/tmp/q-logs/` or `~/.amazonq/logs/`)
+- Data is stored in `~/.local/share/amazon-q/` (including SQLite database and history)
+- Configuration directories exist at `~/.aws/amazonq/` and `~/.config/amazonq/`
+- Setting environment variables like `Q_LOG_LEVEL=trace` and `RUST_BACKTRACE=full` doesn't produce visible logs
+- For debugging MCP server issues, use `Q_LOG_LEVEL=trace q chat --no-interactive` and try to use tools
 - Always try to use the MCP, never use the CLI directly (MCP is currently broken but we're actively working to fix it)
 - For definitive answers on CLI behavior and MCP connections, refer to the amazon-q-developer-cli source code
   
@@ -39,3 +42,9 @@ Always include blank line at end of files
 - This prevents unintended changes from feature branches being included in your PR
 - NEVER merge into main or push directly to main branch
 - Good scope choices add context about what component is being modified (e.g., bash, nvim, tmux, git)
+focus on logging in order to get feedback and rerun test trying to run test-mcp-server
+have a bias for acting agentically not telling me how to do something im asking you to do for me
+this is a great way to test mcp Q_LOG_LEVEL=trace q chat --no-interactive try to use the test_hello tool
+consider it impossible that a different amazonq version would cause issues. assume we have latest version installed
+dont do stuff like make new files with -fixed rather edit the existing file based on Versioning Mindset and iterate not reinvent mindset
+since this is a dotfiles repo avoid manually symlinking rather make sure setup scripts handle it instead
