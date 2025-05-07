@@ -50,3 +50,11 @@ Always include blank line at end of files
 - Always assume latest Amazon Q version is installed
 - Follow versioning mindset: edit existing files rather than creating new ones with "-fixed" suffix
 - For dotfiles, use setup scripts for symlinks rather than manual linking
+## Dotfiles Philosophy
+- All configuration changes should be reproducible across machines
+- Avoid manual, one-off commands like `mkdir -p /path/to/dir && cp /source/file /destination/`
+- Always create setup scripts for file operations instead of ad-hoc terminal commands
+- Follow the "spilled coffee" principle: anyone should be able to destroy their machine and be fully operational again that afternoon
+- Use installation scripts that detect and create required directories
+- Prefer symlinks managed by setup scripts over manual file copying
+- Document all dependencies and installation steps in README files
