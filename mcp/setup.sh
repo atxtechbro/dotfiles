@@ -98,16 +98,14 @@ setup_amazonq() {
   # Install test MCP server
   # Remove any existing file or symlink first
   rm -f "$HOME/mcp/test-mcp-server"
-  # Copy the file and make it executable
-  cp "$(dirname "$0")/servers/bin/test-mcp-server" "$HOME/mcp/test-mcp-server"
-  chmod +x "$HOME/mcp/test-mcp-server"
+  # Create symlink to the file in the repository
+  ln -sf "$(dirname "$0")/servers/test-mcp-server" "$HOME/mcp/test-mcp-server"
   
   # Install GitHub MCP server
   # Remove any existing file or symlink first
   rm -f "$HOME/mcp/github-mcp-server"
-  # Copy the file and make it executable
-  cp "$(dirname "$0")/servers/bin/github-mcp-server" "$HOME/mcp/github-mcp-server"
-  chmod +x "$HOME/mcp/github-mcp-server"
+  # Create symlink to the file in the repository
+  ln -sf "$(dirname "$0")/servers/github-mcp-server" "$HOME/mcp/github-mcp-server"
   
   # Ensure the MCP directory is in the PATH
   if ! echo "$PATH" | grep -q "$HOME/mcp"; then
