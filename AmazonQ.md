@@ -62,6 +62,8 @@ Always include blank line at end of files
 - When working with these tools, cd into their respective directories to make changes and commit them
 - This approach gives us more control and visibility into how these tools function
 - Leverage the ability to modify the source code to improve our understanding and usage of these tools
+- Apply the same "commit early and often" principles when making changes to source code
+- Use conventional commit syntax and atomic commits for source code changes
 ## Dotfiles Philosophy
 - All configuration changes should be reproducible across machines
 - Avoid manual, one-off commands like `mkdir -p /path/to/dir && cp /source/file /destination/`
