@@ -27,6 +27,7 @@ Always include blank line at end of files
 ## Debugging Amazon Q CLI
 - Log files are stored in `/tmp/q-logs/` and `~/.amazonq/logs/` (if it exists)
 - Check logs immediately after running commands as they may be cleaned up automatically
+- Always try to use the MCP, never use the CLI directly (MCP is currently broken but we're actively working to fix it)
   
 ## Branching Strategy
 - Pull Request based workflow (GitHub)
