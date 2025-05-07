@@ -111,6 +111,12 @@ setup_amazonq() {
   # Remove any existing file or symlink first
   rm -f "$HOME/mcp/github-mcp-server"
   
+  # Clean up any potential old references to github-mcp-server
+  log "Cleaning up any old GitHub MCP server references"
+  rm -f "$HOME/.local/bin/github-mcp-server"
+  rm -f "$HOME/.config/amazonq/github-mcp-server"
+  rm -f "$HOME/.aws/amazonq/github-mcp-server"
+  
   # Check if github-mcp-server exists in the root directory
   if [ -d "$HOME/ppv/pillars/dotfiles/github-mcp-server" ]; then
     log "Building GitHub MCP server from source using Go"
@@ -134,11 +140,9 @@ setup_amazonq() {
         ln -sf "$(pwd)/github-mcp-server" "$HOME/mcp/github-mcp-server"
         log "Created symlink to GitHub MCP server"
         
-        # Also update the .local/bin symlink if it exists
-        if [ -L "$HOME/.local/bin/github-mcp-server" ]; then
-          log "Updating existing symlink in ~/.local/bin for github-mcp-server"
-          ln -sf "$(pwd)/github-mcp-server" "$HOME/.local/bin/github-mcp-server"
-        fi
+        # Also create a symlink in .local/bin for consistency
+        ln -sf "$(pwd)/github-mcp-server" "$HOME/.local/bin/github-mcp-server"
+        log "Created symlink in ~/.local/bin for github-mcp-server"
       else
         log "Failed to build GitHub MCP server"
       fi
