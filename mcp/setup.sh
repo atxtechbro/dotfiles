@@ -101,11 +101,23 @@ setup_amazonq() {
   # Create symlink to the file in the repository
   ln -sf "$(dirname "$0")/servers/test-mcp-server" "$HOME/mcp/test-mcp-server"
   
+  # Also update the .local/bin symlink if it exists
+  if [ -L "$HOME/.local/bin/test-mcp-server" ]; then
+    log "Updating existing symlink in ~/.local/bin"
+    ln -sf "$(dirname "$0")/servers/test-mcp-server" "$HOME/.local/bin/test-mcp-server"
+  fi
+  
   # Install GitHub MCP server
   # Remove any existing file or symlink first
   rm -f "$HOME/mcp/github-mcp-server"
   # Create symlink to the file in the repository
   ln -sf "$(dirname "$0")/servers/github-mcp-server" "$HOME/mcp/github-mcp-server"
+  
+  # Also update the .local/bin symlink if it exists
+  if [ -L "$HOME/.local/bin/github-mcp-server" ]; then
+    log "Updating existing symlink in ~/.local/bin for github-mcp-server"
+    ln -sf "$(dirname "$0")/servers/github-mcp-server" "$HOME/.local/bin/github-mcp-server"
+  fi
   
   # Ensure the MCP directory is in the PATH
   if ! echo "$PATH" | grep -q "$HOME/mcp"; then
