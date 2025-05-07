@@ -27,6 +27,7 @@ id_ed25519
 *.tmp
 *.temp
 *~
+tmp.txt
 
 # OS specific files
 .DS_Store

@@ -8,14 +8,15 @@ Always include blank line at end of files
 
 ## GitHub CLI Best Practices
 - Always use text files and pipe them to GitHub CLI commands for multi-line content
-- Example: `echo "Your comment text here" > comment.txt && gh pr comment <number> -F comment.txt` ✓
+- Example: `echo "Your comment text here" > tmp.txt && gh pr comment <number> -F tmp.txt` ✓
+- Use tmp.txt for temporary files (it's already in .gitignore)
 - This approach follows Unix philosophy and avoids escape sequence issues
 - For quick one-liners, you can still use: `gh pr comment <number> -b "Brief comment"`
 - Keep PR descriptions to 34 lines or less to ensure they display properly in all contexts
 
 ## GitHub Issues Best Practices
 - Use the same text file approach for GitHub issues
-- Example: `echo "Issue description" > issue.txt && gh issue create --title "Title" -F issue.txt` ✓
+- Example: `echo "Issue description" > tmp.txt && gh issue create --title "Title" -F tmp.txt` ✓
 - Keep issue descriptions to 18 lines or less when creating new issues to allow room for future discoveries and context
 - Never edit an issue if it would cause the total length to exceed 55 lines - create a new issue instead
 - Prefer concise issues with less context over verbose ones
