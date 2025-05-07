@@ -42,9 +42,11 @@ Always include blank line at end of files
 - This prevents unintended changes from feature branches being included in your PR
 - NEVER merge into main or push directly to main branch
 - Good scope choices add context about what component is being modified (e.g., bash, nvim, tmux, git)
-focus on logging in order to get feedback and rerun test trying to run test-mcp-server
-have a bias for acting agentically not telling me how to do something im asking you to do for me
-this is a great way to test mcp Q_LOG_LEVEL=trace q chat --no-interactive try to use the test_hello tool
-consider it impossible that a different amazonq version would cause issues. assume we have latest version installed
-dont do stuff like make new files with -fixed rather edit the existing file based on Versioning Mindset and iterate not reinvent mindset
-since this is a dotfiles repo avoid manually symlinking rather make sure setup scripts handle it instead
+
+## MCP Testing Best Practices
+- Focus on logging to gather feedback when testing MCP server functionality
+- Preferred test command: `Q_LOG_LEVEL=trace q chat --no-interactive`
+- Test MCP tools directly (e.g., try to use the test_hello tool)
+- Always assume latest Amazon Q version is installed
+- Follow versioning mindset: edit existing files rather than creating new ones with "-fixed" suffix
+- For dotfiles, use setup scripts for symlinks rather than manual linking
