@@ -46,7 +46,7 @@ Always include blank line at end of files
 ## MCP Testing Best Practices
 - Focus on logging to gather feedback when testing MCP server functionality
 - Preferred test command: `Q_LOG_LEVEL=trace q chat --no-interactive`
-- Test MCP tools directly (e.g., try to use the test_hello tool)
+- Test MCP tools directly with: `Q_LOG_LEVEL=trace q chat --no-interactive "try to use the test_hello tool"`
 - Always assume latest Amazon Q version is installed
 - Follow versioning mindset: edit existing files rather than creating new ones with "-fixed" suffix
 - For dotfiles, use setup scripts for symlinks rather than manual linking
