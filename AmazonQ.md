@@ -47,6 +47,7 @@ Always include blank line at end of files
 - Focus on logging to gather feedback when testing MCP server functionality
 - Preferred test command: `Q_LOG_LEVEL=trace q chat --no-interactive`
 - Test MCP tools directly with: `Q_LOG_LEVEL=trace q chat --no-interactive "try to use the test_hello tool"`
+- While test-mcp-server is built and designed ourselves, github-mcp-server needs to be built with Go in github-mcp-server in order to be used
 - Always assume latest Amazon Q version is installed
 - Follow versioning mindset: edit existing files rather than creating new ones with "-fixed" suffix
 - For dotfiles, use setup scripts for symlinks rather than manual linking
