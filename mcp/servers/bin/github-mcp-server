@@ -10,8 +10,8 @@ if [ "$1" != "stdio" ]; then
 fi
 
 # Check for GitHub token
-if [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
-  echo "Error: GITHUB_PERSONAL_ACCESS_TOKEN environment variable is not set."
+if [ -z "$GITHUB_TOKEN" ]; then
+  echo "Error: GITHUB_TOKEN environment variable is not set."
   echo "Please set this variable to your GitHub Personal Access Token."
   exit 1
 fi
@@ -26,7 +26,7 @@ echo "$(date): GitHub MCP server starting..." >> "$LOG_FILE"
 echo "$(date): Running as user: $(whoami)" >> "$LOG_FILE"
 echo "$(date): Current directory: $(pwd)" >> "$LOG_FILE"
 echo "$(date): Script path: $0" >> "$LOG_FILE"
-echo "$(date): GitHub token is set: ${GITHUB_PERSONAL_ACCESS_TOKEN:0:4}..." >> "$LOG_FILE"
+echo "$(date): GitHub token is set: ${GITHUB_TOKEN:0:4}..." >> "$LOG_FILE"
 
 # Function to send a response with proper flushing
 send_response() {
