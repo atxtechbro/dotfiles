@@ -2,7 +2,7 @@
   "mcpServers": {
     "test": {
       "command": "test-mcp-server",
-      "args": [],
+      "args": ["stdio"],
       "timeout": 5000
     },
     "github": {

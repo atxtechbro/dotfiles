@@ -110,13 +110,46 @@ setup_amazonq() {
   # Install GitHub MCP server
   # Remove any existing file or symlink first
   rm -f "$HOME/mcp/github-mcp-server"
-  # Create symlink to the file in the repository
-  ln -sf "$(dirname "$0")/servers/github-mcp-server" "$HOME/mcp/github-mcp-server"
   
-  # Also update the .local/bin symlink if it exists
-  if [ -L "$HOME/.local/bin/github-mcp-server" ]; then
-    log "Updating existing symlink in ~/.local/bin for github-mcp-server"
-    ln -sf "$(dirname "$0")/servers/github-mcp-server" "$HOME/.local/bin/github-mcp-server"
+  # Check if github-mcp-server exists in the root directory
+  if [ -d "$HOME/ppv/pillars/dotfiles/github-mcp-server" ]; then
+    log "Building GitHub MCP server from source using Go"
+    
+    # Navigate to the github-mcp-server directory
+    pushd "$HOME/ppv/pillars/dotfiles/github-mcp-server" > /dev/null
+    
+    # Kill any running instances of github-mcp-server
+    pkill -f github-mcp-server || true
+    
+    # Build the server using Go
+    if command -v go &> /dev/null; then
+      log "Building with Go..."
+      go build -o github-mcp-server ./cmd/github-mcp-server
+      
+      # Check if build was successful
+      if [ -f "./github-mcp-server" ]; then
+        log "GitHub MCP server built successfully"
+        
+        # Create symlink to the built binary
+        ln -sf "$(pwd)/github-mcp-server" "$HOME/mcp/github-mcp-server"
+        log "Created symlink to GitHub MCP server"
+        
+        # Also update the .local/bin symlink if it exists
+        if [ -L "$HOME/.local/bin/github-mcp-server" ]; then
+          log "Updating existing symlink in ~/.local/bin for github-mcp-server"
+          ln -sf "$(pwd)/github-mcp-server" "$HOME/.local/bin/github-mcp-server"
+        fi
+      else
+        log "Failed to build GitHub MCP server"
+      fi
+    else
+      log "Go is not installed. Cannot build GitHub MCP server."
+    fi
+    
+    # Return to original directory
+    popd > /dev/null
+  else
+    log "GitHub MCP server source not found at $HOME/ppv/pillars/dotfiles/github-mcp-server"
   fi
   
   # Ensure the MCP directory is in the PATH
