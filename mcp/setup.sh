@@ -59,12 +59,9 @@ setup_amazonq() {
   local github_token=""
   if [ -f "$SECRETS_FILE" ]; then
     # Try to extract GitHub token from secrets file
-    if grep -q "GITHUB_TOKEN=" "$SECRETS_FILE"; then
-      github_token=$(grep "GITHUB_TOKEN=" "$SECRETS_FILE" | cut -d '=' -f2)
+    if grep -q "GITHUB_PERSONAL_ACCESS_TOKEN=" "$SECRETS_FILE"; then
+      github_token=$(grep "GITHUB_PERSONAL_ACCESS_TOKEN=" "$SECRETS_FILE" | cut -d '=' -f2)
       log "Found GitHub token in secrets file"
-    elif grep -q "COMPANY_GITHUB_TOKEN=" "$SECRETS_FILE" && [ "$persona" = "company" ]; then
-      github_token=$(grep "COMPANY_GITHUB_TOKEN=" "$SECRETS_FILE" | cut -d '=' -f2)
-      log "Found company GitHub token in secrets file"
     fi
   fi
   
@@ -81,11 +78,7 @@ setup_amazonq() {
       
       if [ -n "$github_token" ]; then
         echo "Adding GitHub token to secrets file..."
-        if [ "$persona" = "company" ]; then
-          echo "COMPANY_GITHUB_TOKEN=$github_token" >> "$SECRETS_FILE"
-        else
-          echo "GITHUB_TOKEN=$github_token" >> "$SECRETS_FILE"
-        fi
+        echo "GITHUB_PERSONAL_ACCESS_TOKEN=$github_token" >> "$SECRETS_FILE"
         chmod 600 "$SECRETS_FILE"
       else
         echo "No token provided. GitHub MCP server will not function correctly."
