@@ -7,7 +7,10 @@
     },
     "github": {
       "command": "github-mcp-server",
-      "args": [],
+      "args": ["stdio"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      },
       "timeout": 5000
     }
   }

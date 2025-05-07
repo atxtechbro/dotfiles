@@ -55,6 +55,47 @@ setup_amazonq() {
   # Create directory if it doesn't exist
   mkdir -p "$HOME/.aws/amazonq"
   
+  # Check for GitHub token in secrets file
+  local github_token=""
+  if [ -f "$SECRETS_FILE" ]; then
+    # Try to extract GitHub token from secrets file
+    if grep -q "GITHUB_TOKEN=" "$SECRETS_FILE"; then
+      github_token=$(grep "GITHUB_TOKEN=" "$SECRETS_FILE" | cut -d '=' -f2)
+      log "Found GitHub token in secrets file"
+    elif grep -q "COMPANY_GITHUB_TOKEN=" "$SECRETS_FILE" && [ "$persona" = "company" ]; then
+      github_token=$(grep "COMPANY_GITHUB_TOKEN=" "$SECRETS_FILE" | cut -d '=' -f2)
+      log "Found company GitHub token in secrets file"
+    fi
+  fi
+  
+  # If no token found and not in non-interactive mode, prompt for token
+  if [ -z "$github_token" ]; then
+    echo "No GitHub token found in secrets file."
+    echo "A GitHub Personal Access Token is required for the GitHub MCP server."
+    echo "You can create one at: https://github.com/settings/tokens"
+    echo "The token needs 'repo' scope for repository access."
+    
+    # Only prompt if we're in an interactive shell
+    if [ -t 0 ]; then
+      read -p "Enter your GitHub Personal Access Token (or press Enter to skip): " github_token
+      
+      if [ -n "$github_token" ]; then
+        echo "Adding GitHub token to secrets file..."
+        if [ "$persona" = "company" ]; then
+          echo "COMPANY_GITHUB_TOKEN=$github_token" >> "$SECRETS_FILE"
+        else
+          echo "GITHUB_TOKEN=$github_token" >> "$SECRETS_FILE"
+        fi
+        chmod 600 "$SECRETS_FILE"
+      else
+        echo "No token provided. GitHub MCP server will not function correctly."
+      fi
+    else
+      echo "Running in non-interactive mode. Skipping token prompt."
+      echo "GitHub MCP server will not function correctly without a token."
+    fi
+  fi
+  
   # Copy the template configuration
   cp "$CONFIG_DIR/${persona}-mcp.json" "$HOME/.aws/amazonq/mcp.json"
   

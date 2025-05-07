@@ -2,6 +2,20 @@
 # GitHub MCP server for Amazon Q
 # Provides GitHub integration capabilities
 
+# Check for stdio argument
+if [ "$1" != "stdio" ]; then
+  echo "Error: The 'stdio' argument is required for proper operation."
+  echo "Usage: github-mcp-server stdio"
+  exit 1
+fi
+
+# Check for GitHub token
+if [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
+  echo "Error: GITHUB_PERSONAL_ACCESS_TOKEN environment variable is not set."
+  echo "Please set this variable to your GitHub Personal Access Token."
+  exit 1
+fi
+
 # Log directory for debugging
 LOG_DIR="/tmp/mcp-logs"
 mkdir -p "$LOG_DIR"
@@ -12,6 +26,7 @@ echo "$(date): GitHub MCP server starting..." >> "$LOG_FILE"
 echo "$(date): Running as user: $(whoami)" >> "$LOG_FILE"
 echo "$(date): Current directory: $(pwd)" >> "$LOG_FILE"
 echo "$(date): Script path: $0" >> "$LOG_FILE"
+echo "$(date): GitHub token is set: ${GITHUB_PERSONAL_ACCESS_TOKEN:0:4}..." >> "$LOG_FILE"
 
 # Function to send a response with proper flushing
 send_response() {

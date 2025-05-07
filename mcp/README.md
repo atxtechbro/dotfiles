@@ -72,3 +72,55 @@ This configuration supports multiple AI assistants:
 - Amazon Q CLI (`~/.aws/amazonq/mcp.json`)
 - Claude CLI (`~/.config/claude/mcp.json`)
 - (Add more as they become available)
+
+## MCP Servers
+
+### GitHub MCP Server
+
+The GitHub MCP server provides integration with GitHub repositories. It requires:
+
+1. A GitHub Personal Access Token with 'repo' scope
+2. The 'stdio' argument for proper communication
+
+#### Configuration
+
+The GitHub MCP server is configured in the MCP configuration file:
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "github-mcp-server",
+      "args": ["stdio"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "<YOUR_TOKEN>"
+      },
+      "timeout": 5000
+    }
+  }
+}
+```
+
+#### Token Setup
+
+You can set up your GitHub token in one of two ways:
+
+1. Add it to your `.bash_secrets` file:
+   ```bash
+   # For personal use
+   GITHUB_TOKEN=your_token_here
+   
+   # For company use
+   COMPANY_GITHUB_TOKEN=your_token_here
+   ```
+
+2. Let the setup script prompt you for the token (interactive mode only)
+
+#### Troubleshooting
+
+If you encounter issues with the GitHub MCP server:
+
+1. Check that the token is properly set
+2. Verify that the 'stdio' argument is included
+3. Run the debug script: `bash mcp/debug-mcp.sh`
+4. Check the logs: `cat /tmp/mcp-logs/github-mcp-server.log`
