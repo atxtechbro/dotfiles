@@ -8,7 +8,7 @@
         "stdio"
       ],
       "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${COMPANY_GITHUB_TOKEN}"
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
       },
       "timeout": 10000
     },

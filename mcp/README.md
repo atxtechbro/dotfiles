@@ -93,7 +93,7 @@ The GitHub MCP server is configured in the MCP configuration file:
       "command": "github-mcp-server",
       "args": ["stdio"],
       "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "<YOUR_TOKEN>"
+        "GITHUB_TOKEN": "<YOUR_TOKEN>"
       },
       "timeout": 5000
     }
