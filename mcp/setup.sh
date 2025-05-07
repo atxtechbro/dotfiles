@@ -58,13 +58,30 @@ setup_amazonq() {
   # Copy the template configuration
   cp "$CONFIG_DIR/${persona}-mcp.json" "$HOME/.aws/amazonq/mcp.json"
   
-  # Create test MCP server in the user's path
+  # Create MCP servers directory in the user's path
   mkdir -p "$HOME/mcp"
+  
+  # Install test MCP server
   # Remove any existing file or symlink first
   rm -f "$HOME/mcp/test-mcp-server"
   # Copy the file and make it executable
   cp "$(dirname "$0")/servers/bin/test-mcp-server" "$HOME/mcp/test-mcp-server"
   chmod +x "$HOME/mcp/test-mcp-server"
+  
+  # Install GitHub MCP server
+  # Remove any existing file or symlink first
+  rm -f "$HOME/mcp/github-mcp-server"
+  # Copy the file and make it executable
+  cp "$(dirname "$0")/servers/bin/github-mcp-server" "$HOME/mcp/github-mcp-server"
+  chmod +x "$HOME/mcp/github-mcp-server"
+  
+  # Ensure the MCP directory is in the PATH
+  if ! echo "$PATH" | grep -q "$HOME/mcp"; then
+    echo "Adding $HOME/mcp to PATH in .bashrc"
+    echo 'export PATH="$HOME/mcp:$PATH"' >> "$HOME/.bashrc"
+    # Also add to current session
+    export PATH="$HOME/mcp:$PATH"
+  fi
   
   # Check if Docker is installed for GitHub MCP server
   if command -v docker &> /dev/null; then
