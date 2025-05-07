@@ -23,6 +23,10 @@ Always include blank line at end of files
 
 ## Quick AmazonQ.md Updates
 - use branch name: `docs/update-amazonq-guidance`
+
+## Debugging Amazon Q CLI
+- Log files are stored in `/tmp/q-logs/` and `~/.amazonq/logs/` (if it exists)
+- Check logs immediately after running commands as they may be cleaned up automatically
   
 ## Branching Strategy
 - Pull Request based workflow (GitHub)
