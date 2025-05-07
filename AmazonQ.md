@@ -22,7 +22,8 @@ This file contains guidance for Amazon Q when interacting with this repository.
 - Same rule applies for GitHub issues - use actual line breaks, not escape sequences
 - Example: `gh issue create --title "Title" --body "First line.` (press Enter) `Second line."` ✓
 - NOT: `gh issue create --title "Title" --body "First line.\n\nSecond line."` ✗
-- Keep issue descriptions to 21 lines or less (or use Fibonacci numbers: 1, 2, 3, 5, 8, 13, 21)
+- Keep issue descriptions to 18 lines or less when creating new issues to allow room for future discoveries and context
+- Never edit an issue if it would cause the total length to exceed 55 lines - create a new issue instead
 - Prefer concise issues with less context over verbose ones
 - Treat GitHub issues as discussion points and suggestions, not strict mandates
 
