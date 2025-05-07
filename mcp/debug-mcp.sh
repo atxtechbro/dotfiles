@@ -48,7 +48,7 @@ echo -e "\n=== Testing MCP Servers ==="
 echo "Testing test-mcp-server..."
 echo '{"jsonrpc":"2.0","id":1,"method":"initialize"}' | "$HOME/mcp/test-mcp-server" | head -n 1
 echo "Testing github-mcp-server..."
-echo '{"jsonrpc":"2.0","id":1,"method":"initialize"}' | "$HOME/mcp/github-mcp-server" | head -n 1
+GITHUB_PERSONAL_ACCESS_TOKEN="test_token" echo '{"jsonrpc":"2.0","id":1,"method":"initialize"}' | "$HOME/mcp/github-mcp-server" stdio | head -n 1
 
 # Check for log files
 echo -e "\n=== MCP Log Files ==="
