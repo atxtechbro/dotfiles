@@ -54,6 +54,14 @@ Always include blank line at end of files
 - Always assume latest Amazon Q version is installed
 - Follow versioning mindset: edit existing files rather than creating new ones with "-fixed" suffix
 - For dotfiles, use setup scripts for symlinks rather than manual linking
+
+## Building from Source
+- Source code for both Amazon Q CLI and github-mcp-server is conveniently located and gitignored
+- Always prefer to build and use the source version of these tools whenever possible
+- Building from source allows us to add logging, debug issues, and make contributions
+- When working with these tools, cd into their respective directories to make changes and commit them
+- This approach gives us more control and visibility into how these tools function
+- Leverage the ability to modify the source code to improve our understanding and usage of these tools
 ## Dotfiles Philosophy
 - All configuration changes should be reproducible across machines
 - Avoid manual, one-off commands like `mkdir -p /path/to/dir && cp /source/file /destination/`
