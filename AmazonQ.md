@@ -4,21 +4,18 @@ Always include blank line at end of files
 
 ## Common Errors to Avoid
 - Use branch naming pattern: `type/description` (e.g., `feature/add-tool`, `fix/typo`)
-- For GitHub CLI comments use: `gh pr comment <number> -b "text"` (not `---comment`) # TODO: can mcp make this line deletable because it will be smarter?
 - Don't thank yourself when closing your own PRs
-- CRITICAL: Never use escape sequences like `\n\n` in any text submitted through interfaces (PR comments, descriptions, issues, etc.) as they will appear LITERALLY AS THE CHARACTERS "\n\n"
-- ALWAYS use actual line breaks by pressing Enter between lines for ALL text interfaces
 
-## PR Description Formatting
-- IMPORTANT: When creating PR descriptions, use actual line breaks instead of `\n\n` escape sequences
-- Example: `gh pr create --title "Title" --body "First line.` (press Enter) `Second line."` ✓
-- NOT: `gh pr create --title "Title" --body "First line.\n\nSecond line."` ✗
-- Keep PR descriptions to 34 lines or less when using the GitHub CLI to ensure they display properly in all contexts
+## GitHub CLI Best Practices
+- Always use text files and pipe them to GitHub CLI commands for multi-line content
+- Example: `echo "Your comment text here" > comment.txt && gh pr comment <number> -F comment.txt` ✓
+- This approach follows Unix philosophy and avoids escape sequence issues
+- For quick one-liners, you can still use: `gh pr comment <number> -b "Brief comment"`
+- Keep PR descriptions to 34 lines or less to ensure they display properly in all contexts
 
-## GitHub Issues Formatting
-- Same rule applies for GitHub issues - use actual line breaks, not escape sequences
-- Example: `gh issue create --title "Title" --body "First line.` (press Enter) `Second line."` ✓
-- NOT: `gh issue create --title "Title" --body "First line.\n\nSecond line."` ✗
+## GitHub Issues Best Practices
+- Use the same text file approach for GitHub issues
+- Example: `echo "Issue description" > issue.txt && gh issue create --title "Title" -F issue.txt` ✓
 - Keep issue descriptions to 18 lines or less when creating new issues to allow room for future discoveries and context
 - Never edit an issue if it would cause the total length to exceed 55 lines - create a new issue instead
 - Prefer concise issues with less context over verbose ones
@@ -26,6 +23,10 @@ Always include blank line at end of files
 
 ## Quick AmazonQ.md Updates
 - use branch name: `docs/update-amazonq-guidance`
+
+## Debugging Amazon Q CLI
+- Log files are stored in `/tmp/q-logs/` and `~/.amazonq/logs/` (if it exists)
+- Check logs immediately after running commands as they may be cleaned up automatically
   
 ## Branching Strategy
 - Pull Request based workflow (GitHub)
