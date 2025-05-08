@@ -18,8 +18,7 @@ echo -e "${BLUE}-----------------------------${NC}"
 # Check if the MCP config file exists
 if [ -f "$HOME/.aws/amazonq/mcp.json" ]; then
   echo -e "${GREEN}✓ MCP config file exists:${NC} $HOME/.aws/amazonq/mcp.json"
-  echo -e "${BLUE}Contents:${NC}"
-  cat "$HOME/.aws/amazonq/mcp.json"
+  echo -e "${BLUE}To view contents:${NC} cat $HOME/.aws/amazonq/mcp.json"
 else
   echo -e "${RED}✗ MCP config file not found:${NC} $HOME/.aws/amazonq/mcp.json"
 fi
