@@ -120,8 +120,9 @@ setup_amazonq() {
     echo '{
   "mcpServers": {
     "github": {
-      "command": "docker",
+      "command": "sudo",
       "args": [
+        "docker",
         "run",
         "-i",
         "--rm",
@@ -205,18 +206,11 @@ EOF
     fi
     
     # Pull the Docker image in advance to avoid delays during first use
-    log "Pulling GitHub MCP server Docker image (ghcr.io/github/github-mcp-server)..."
-    if docker pull ghcr.io/github/github-mcp-server >/dev/null 2>&1; then
-      log_success "Docker image pulled successfully (ghcr.io/github/github-mcp-server)"
+    log "Pulling GitHub MCP server Docker image with sudo (ghcr.io/github/github-mcp-server)..."
+    if sudo docker pull ghcr.io/github/github-mcp-server >/dev/null 2>&1; then
+      log_success "Docker image pulled successfully with sudo (ghcr.io/github/github-mcp-server)"
     else
-      log_warning "Failed to pull GitHub MCP server Docker image. First use may be slower."
-      # Try with sudo as a fallback
-      log "Attempting to pull Docker image with sudo..."
-      if sudo docker pull ghcr.io/github/github-mcp-server >/dev/null 2>&1; then
-        log_success "Docker image pulled successfully with sudo"
-      else
-        log_error "Failed to pull Docker image even with sudo. Check Docker permissions."
-      fi
+      log_error "Failed to pull Docker image with sudo. Check Docker installation and permissions."
     fi
   else
     log_error "Docker is not available. Cannot set up GitHub MCP server."
@@ -319,8 +313,9 @@ setup_claude() {
   echo '{
   "mcpServers": {
     "github": {
-      "command": "docker",
+      "command": "sudo",
       "args": [
+        "docker",
         "run",
         "-i",
         "--rm",
