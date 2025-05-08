@@ -154,10 +154,9 @@ setup_mcp() {
     log_warning "Please install Docker to use the GitHub MCP server."
   fi
   
-  # Create a symlink to the debug script
-  log "Creating debug script symlink..."
-  ln -sf "$SCRIPT_DIR/debug-mcp.sh" "$HOME/debug-amazonq-mcp.sh" 2>/dev/null || handle_error "Failed to create debug script symlink"
-  log_success "Created debug script symlink at $HOME/debug-amazonq-mcp.sh"
+  # Ensure debug script is executable
+  chmod +x ~/ppv/pillars/dotfiles/mcp/debug-mcp.sh 2>/dev/null || handle_error "Failed to make debug script executable"
+  log_success "Debug script available at ~/ppv/pillars/dotfiles/mcp/debug-mcp.sh"
   
   log_success "MCP configuration set up successfully"
 }
