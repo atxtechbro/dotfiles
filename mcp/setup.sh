@@ -204,5 +204,39 @@ EOF
   log_success "MCP configuration set up successfully"
 }
 
+# Function to verify MCP server initialization
+verify_mcp_initialization() {
+  log "Verifying MCP server initialization..."
+  
+  # Run Amazon Q with the test command
+  local test_output
+  test_output=$(Q_LOG_LEVEL=trace q chat --no-interactive --trust-all-tools "try to use the github___search_repositories tool to search for 'amazon-q', this is a test" 2>&1 | head -50)
+  
+  # Check if the output contains "0 of" which indicates initialization failure
+  if echo "$test_output" | grep -q "0 of"; then
+    log_error "MCP server initialization failed! Output contains '0 of' indicating no servers initialized"
+    log_error "Test output: $(echo "$test_output" | grep -E '(0 of|mcp servers initialized)' | head -3)"
+    return 1
+  elif echo "$test_output" | grep -q "mcp servers initialized"; then
+    log_success "MCP server initialization successful! At least one server was initialized"
+    log_success "Test output: $(echo "$test_output" | grep -E '(of|mcp servers initialized)' | head -3)"
+    return 0
+  else
+    log_warning "Could not determine MCP server initialization status"
+    log_warning "Test output snippet: $(echo "$test_output" | head -3)"
+    return 2
+  fi
+}
+
 # Main setup
 setup_mcp
+
+# Verify MCP initialization if requested
+if [ "${VERIFY_MCP:-true}" = "true" ]; then
+  log "Running verification test..."
+  if verify_mcp_initialization; then
+    log_success "MCP verification passed! Setup complete."
+  else
+    log_error "MCP verification failed! Please check the logs and debug script."
+  fi
+fi
