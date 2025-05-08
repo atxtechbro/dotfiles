@@ -64,6 +64,8 @@ Always include blank line at end of files
 - Leverage the ability to modify the source code to improve our understanding and usage of these tools
 - Apply the same "commit early and often" principles when making changes to source code
 - Use conventional commit syntax and atomic commits for source code changes
+- NEVER create PRs to forked repositories like amazon-q-developer-cli and github-mcp-server
+- Keep all changes to forked repos local only - they are for our understanding and debugging
 ## Dotfiles Philosophy
 - All configuration changes should be reproducible across machines
 - Avoid manual, one-off commands like `mkdir -p /path/to/dir && cp /source/file /destination/`
