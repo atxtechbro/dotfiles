@@ -22,7 +22,22 @@ Use the test script to verify connectivity:
 ~/ppv/pillars/dotfiles/bin/test-github-mcp
 ```
 
-This script runs tests with and without the `--trust-all-tools` flag to help diagnose issues.
+This script:
+- Runs tests with and without the `--trust-all-tools` flag
+- Consolidates all logs to `~/ppv/pillars/dotfiles/logs/mcp-tests/`
+- Creates timestamped log files for each test run
+- Generates both a master log and individual test logs
+
+### Log Analysis
+
+All test logs are stored in a central location for easy comparison:
+
+```
+~/ppv/pillars/dotfiles/logs/mcp-tests/
+├── mcp_test_20250508_123456_master.log       # Master log with all test results
+├── mcp_test_20250508_123456_With_trust_flag.log  # Individual test log
+└── mcp_test_20250508_123456_Without_trust_flag.log  # Individual test log
+```
 
 ### Development Approach
 
