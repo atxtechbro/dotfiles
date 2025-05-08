@@ -127,13 +127,29 @@ setup_mcp() {
       log_error "Failed to pull Docker image with sudo. Check Docker installation and permissions."
     fi
     
-    # Create the MCP configuration file
-    log "Creating MCP configuration file..."
+    # Create the MCP configuration file with both sudo and non-sudo Docker commands
+    log "Creating MCP configuration file with both sudo and non-sudo Docker options..."
     echo '{
   "mcpServers": {
     "github": {
       "command": "docker",
       "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server",
+        "stdio"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "'${GITHUB_PERSONAL_ACCESS_TOKEN}'"
+      }
+    },
+    "github-sudo": {
+      "command": "sudo",
+      "args": [
+        "docker",
         "run",
         "-i",
         "--rm",
