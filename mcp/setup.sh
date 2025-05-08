@@ -8,7 +8,7 @@
 
 # Default values
 PERSONA="personal"
-VERBOSE=false
+VERBOSE=true
 CONFIG_DIR="$(dirname "$0")/config-templates"
 SECRETS_FILE="$HOME/.bash_secrets"
 
@@ -133,8 +133,54 @@ setup_amazonq() {
   rm -f "$HOME/.config/amazonq/github-mcp-server" 2>/dev/null
   rm -f "$HOME/.aws/amazonq/github-mcp-server" 2>/dev/null
   
-  # Skip building the GitHub MCP server to avoid build errors
-  log "Skipping GitHub MCP server build to avoid errors"
+  # Check if github-mcp-server exists in the root directory
+  if [ -d "$HOME/ppv/pillars/dotfiles/github-mcp-server" ]; then
+    log "Building GitHub MCP server from source using Go"
+    
+    # Navigate to the github-mcp-server directory
+    pushd "$HOME/ppv/pillars/dotfiles/github-mcp-server" > /dev/null
+    
+    # Kill any running instances of github-mcp-server
+    pkill -f github-mcp-server || true
+    
+    # Build the server using Go
+    if command -v go &> /dev/null; then
+      log "Building with Go..."
+      # Pass the token directly to the build environment
+      GITHUB_PERSONAL_ACCESS_TOKEN="$GITHUB_PERSONAL_ACCESS_TOKEN" go build -o github-mcp-server ./cmd/github-mcp-server
+      
+      # Check if build was successful
+      if [ -f "./github-mcp-server" ]; then
+        log "GitHub MCP server built successfully"
+        
+        # Create symlink to the built binary
+        ln -sf "$(pwd)/github-mcp-server" "$HOME/mcp/github-mcp-server"
+        log "Created symlink to GitHub MCP server"
+        
+        # Also create a symlink in .local/bin for consistency
+        mkdir -p "$HOME/.local/bin"
+        ln -sf "$(pwd)/github-mcp-server" "$HOME/.local/bin/github-mcp-server"
+        log "Created symlink in ~/.local/bin for github-mcp-server"
+      else
+        log "Failed to build GitHub MCP server"
+      fi
+    else
+      log "Go is not installed. Cannot build GitHub MCP server."
+    fi
+    
+    # Return to original directory
+    popd > /dev/null
+  else
+    log "GitHub MCP server source not found at $HOME/ppv/pillars/dotfiles/github-mcp-server"
+  fi
+  
+  # Ensure the MCP directory is in the PATH
+  if ! echo "$PATH" | grep -q "$HOME/mcp"; then
+    echo "Adding $HOME/mcp to PATH in .bashrc"
+    echo 'export PATH="$HOME/mcp:$PATH"' >> "$HOME/.bashrc"
+    # Also add to current session
+    export PATH="$HOME/mcp:$PATH"
+  fi
   
   # Create a wrapper script that ensures the token is available
   cat > "$HOME/mcp/github-mcp-wrapper" << 'EOF'
