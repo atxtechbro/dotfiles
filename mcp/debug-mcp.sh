@@ -51,22 +51,6 @@ else
     echo -e "${RED}✗ No .bash_secrets file found${NC}"
   fi
 fi
-
-# Check if Docker is installed
-if command -v docker &> /dev/null; then
-  echo -e "${GREEN}✓ Docker is installed:${NC} $(docker --version)"
-  
-  # Check if user can run Docker without sudo
-  if docker info &>/dev/null; then
-    echo -e "${GREEN}✓ User can run Docker without sudo${NC}"
-  else
-    echo -e "${YELLOW}! User may need sudo to run Docker${NC}"
-  fi
-else
-  echo -e "${RED}✗ Docker is not installed${NC}"
-fi
-
-echo -e "\n${BLUE}Testing GitHub MCP server...${NC}"
 echo -e "${BLUE}--------------------------${NC}"
 
 # Test the GitHub MCP server directly with Docker
@@ -115,3 +99,4 @@ echo -e "3. Check your Docker installation and permissions"
 echo -e "4. Verify the MCP configuration format matches the documentation"
 echo -e "5. Try restarting your terminal or computer"
 echo -e "6. Run 'Q_LOG_LEVEL=trace q chat' for more detailed logs"
+
