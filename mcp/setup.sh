@@ -119,10 +119,6 @@ setup_amazonq() {
     # Create a config that directly uses Docker as per GitHub documentation
     echo '{
   "mcpServers": {
-    "test": {
-      "command": "test-mcp-server",
-      "args": ["stdio"]
-    },
     "github": {
       "command": "docker",
       "args": [
@@ -146,33 +142,19 @@ setup_amazonq() {
   # Create MCP servers directory in the user's path
   mkdir -p "$HOME/mcp" 2>/dev/null || handle_error "Failed to create $HOME/mcp directory"
   
-  # Install test MCP server
-  # Remove any existing file or symlink first
+  # Clean up any test MCP server references
+  log "Removing test MCP server references..."
   rm -f "$HOME/mcp/test-mcp-server" 2>/dev/null
-  
-  # Create symlink to the file in the repository if it exists
-  if [ -f "$SCRIPT_DIR/servers/test-mcp-server" ]; then
-    ln -sf "$SCRIPT_DIR/servers/test-mcp-server" "$HOME/mcp/test-mcp-server" 2>/dev/null || handle_error "Failed to create test-mcp-server symlink"
-    log "Created symlink to test-mcp-server"
-  else
-    handle_error "test-mcp-server not found at $SCRIPT_DIR/servers/test-mcp-server"
-  fi
-  
-  # Also update the .local/bin symlink if it exists
-  if [ -d "$HOME/.local/bin" ]; then
-    ln -sf "$SCRIPT_DIR/servers/test-mcp-server" "$HOME/.local/bin/test-mcp-server" 2>/dev/null || handle_error "Failed to create test-mcp-server symlink in .local/bin"
-    log "Created symlink to test-mcp-server in .local/bin"
-  fi
-  
-  # Install GitHub MCP server
-  # Remove any existing file or symlink first
-  rm -f "$HOME/mcp/github-mcp-server" 2>/dev/null
+  rm -f "$HOME/.local/bin/test-mcp-server" 2>/dev/null
   
   # Clean up any potential old references to github-mcp-server
-  log "Cleaning up any old GitHub MCP server references"
+  log "Cleaning up any old GitHub MCP server references..."
+  rm -f "$HOME/mcp/github-mcp-server" 2>/dev/null
   rm -f "$HOME/.local/bin/github-mcp-server" 2>/dev/null
   rm -f "$HOME/.config/amazonq/github-mcp-server" 2>/dev/null
   rm -f "$HOME/.aws/amazonq/github-mcp-server" 2>/dev/null
+  rm -f "$HOME/mcp/github-mcp-wrapper" 2>/dev/null
+  rm -f "$HOME/.local/bin/github-mcp-wrapper" 2>/dev/null
   
   # Check if Docker is installed
   if command -v docker &> /dev/null; then
@@ -336,10 +318,6 @@ setup_claude() {
   # Create a minimal config for Claude CLI
   echo '{
   "mcpServers": {
-    "test": {
-      "command": "test-mcp-server",
-      "args": ["stdio"]
-    },
     "github": {
       "command": "docker",
       "args": [
