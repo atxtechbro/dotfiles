@@ -125,11 +125,7 @@ setup_mcp() {
     }
   }
 }' > "$MCP_CONFIG_FILE" 2>/dev/null || handle_error "Failed to create MCP config"
-    log_success "Created MCP configuration file at $MCP_CONFIG_FILE"
-  else
-    log_error "Docker is not available. Cannot set up GitHub MCP server."
-    log_warning "Please install Docker to use the GitHub MCP server."
-  fi
+  log_success "Created MCP configuration file at $MCP_CONFIG_FILE"
   
   # Ensure debug script is executable
   chmod +x ~/ppv/pillars/dotfiles/mcp/debug-mcp.sh 2>/dev/null || handle_error "Failed to make debug script executable"
