@@ -2,6 +2,15 @@
 
 # Script to test GitHub MCP server connectivity
 # Uses dependency injection pattern to minimize code duplication
+# Consolidates all logs to a single location
+
+# Create logs directory if it doesn't exist
+LOG_DIR="$HOME/ppv/pillars/dotfiles/logs/mcp-tests"
+mkdir -p "$LOG_DIR"
+
+# Generate timestamp for this test run
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+MASTER_LOG="$LOG_DIR/mcp_test_${TIMESTAMP}_master.log"
 
 # Default parameters
 LOG_LEVEL="trace"
@@ -9,33 +18,61 @@ TRUST_FLAG=""
 QUERY="search for repositories related to amazon-q using github___search_repositories, this is a test"
 INTERACTIVE_FLAG="--no-interactive"
 
+# Log header information
+{
+  echo "====================================================="
+  echo "GitHub MCP Server Test Run - $TIMESTAMP"
+  echo "====================================================="
+  echo "System Information:"
+  echo "- Hostname: $(hostname)"
+  echo "- User: $(whoami)"
+  echo "- Working Directory: $(pwd)"
+  echo "- Amazon Q Version: $(q --version 2>&1 || echo 'Not available')"
+  echo "====================================================="
+  echo ""
+} | tee -a "$MASTER_LOG"
+
 # Function to run test with injected parameters
 run_test() {
   local trust_flag="$1"
   local test_name="$2"
   local description="$3"
   
-  echo "TEST: $test_name"
-  echo "Running: Q_LOG_LEVEL=$LOG_LEVEL q chat $INTERACTIVE_FLAG $trust_flag \"$QUERY\""
-  echo "---------------------------------------------"
-  Q_LOG_LEVEL=$LOG_LEVEL q chat $INTERACTIVE_FLAG $trust_flag "$QUERY"
-  local exit_code=$?
-  echo "---------------------------------------------"
-  echo "Test completed with exit code: $exit_code"
-  echo "Description: $description"
-  echo ""
+  # Create individual test log file
+  local test_log="$LOG_DIR/mcp_test_${TIMESTAMP}_${test_name// /_}.log"
+  
+  {
+    echo "TEST: $test_name"
+    echo "Running: Q_LOG_LEVEL=$LOG_LEVEL q chat $INTERACTIVE_FLAG $trust_flag \"$QUERY\""
+    echo "---------------------------------------------"
+  } | tee -a "$MASTER_LOG" "$test_log"
+  
+  # Run the test and capture output to both logs
+  Q_LOG_LEVEL=$LOG_LEVEL q chat $INTERACTIVE_FLAG $trust_flag "$QUERY" 2>&1 | tee -a "$MASTER_LOG" "$test_log"
+  local exit_code=${PIPESTATUS[0]}
+  
+  {
+    echo "---------------------------------------------"
+    echo "Test completed with exit code: $exit_code"
+    echo "Description: $description"
+    echo ""
+  } | tee -a "$MASTER_LOG" "$test_log"
+  
+  echo "Individual test log saved to: $test_log" | tee -a "$MASTER_LOG"
+  echo "" | tee -a "$MASTER_LOG"
   
   return $exit_code
 }
 
 # Main execution
-echo "Testing GitHub MCP server connectivity..."
-echo "============================================"
+echo "Testing GitHub MCP server connectivity..." | tee -a "$MASTER_LOG"
+echo "============================================" | tee -a "$MASTER_LOG"
 
 # Run test without trust flag
-run_test "" "Without trust-all-tools flag" "Expected to fail with --no-interactive due to tool approval requirement"
+run_test "" "Without_trust_flag" "Expected to fail with --no-interactive due to tool approval requirement"
 
 # Run test with trust flag
-run_test "--trust-all-tools" "With trust-all-tools flag" "Should proceed with tool execution without approval prompt"
+run_test "--trust-all-tools" "With_trust_flag" "Should proceed with tool execution without approval prompt"
 
-echo "Testing complete."
+echo "Testing complete. Master log saved to: $MASTER_LOG" | tee -a "$MASTER_LOG"
+echo "All test logs are in: $LOG_DIR" | tee -a "$MASTER_LOG"
