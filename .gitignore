@@ -22,6 +22,8 @@ id_ed25519
 
 # Logs
 *.log
+logs/mcp-tests/*
+!logs/mcp-tests/.gitkeep
 
 # Temporary files
 *.tmp
