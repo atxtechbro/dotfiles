@@ -210,7 +210,11 @@ log "Running MCP verification test (this may take a few moments)..."
 if verify_mcp_initialization; then
   log_success "MCP verification passed! Setup complete."
 else
-  log_error "MCP verification failed! Please check the logs and debug script."
+  log_error "MCP verification failed! Running diagnostic script..."
+  log "==============================================================="
+  ~/ppv/pillars/dotfiles/mcp/debug-mcp.sh
+  log "==============================================================="
+  log_error "MCP verification failed! Please check the logs and diagnostic output above."
   # Exit with error code to indicate failure
   return 1 2>/dev/null || exit 1
 fi
