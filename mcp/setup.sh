@@ -132,9 +132,8 @@ setup_mcp() {
     echo '{
   "mcpServers": {
     "github": {
-      "command": "sudo",
+      "command": "docker",
       "args": [
-        "docker",
         "run",
         "-i",
         "--rm",
