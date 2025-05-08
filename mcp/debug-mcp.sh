@@ -72,19 +72,19 @@ echo -e "${BLUE}--------------------------${NC}"
 
 # Test the GitHub MCP server directly with Docker
 echo -e "${BLUE}Testing GitHub MCP server with Docker...${NC}"
-echo -e "${YELLOW}(This will timeout after 10 seconds if stuck)${NC}"
+echo -e "${YELLOW}(This will timeout after 13 seconds if stuck)${NC}"
 
 # Create a temporary file for the test input
 TEST_INPUT=$(mktemp)
 echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"capabilities":{}}}' > "$TEST_INPUT"
 
 # Run the test with a timeout
-timeout 10s docker run -i --rm -e GITHUB_PERSONAL_ACCESS_TOKEN="$GITHUB_PERSONAL_ACCESS_TOKEN" ghcr.io/github/github-mcp-server stdio < "$TEST_INPUT"
+timeout 13s docker run -i --rm -e GITHUB_PERSONAL_ACCESS_TOKEN="$GITHUB_PERSONAL_ACCESS_TOKEN" ghcr.io/github/github-mcp-server stdio < "$TEST_INPUT"
 TEST_RESULT=$?
 
 # Check the result
 if [ $TEST_RESULT -eq 124 ]; then
-  echo -e "${RED}✗ Test timed out after 10 seconds${NC}"
+  echo -e "${RED}✗ Test timed out after 13 seconds${NC}"
 elif [ $TEST_RESULT -eq 0 ]; then
   echo -e "${GREEN}✓ GitHub MCP server responded successfully${NC}"
 else
@@ -96,14 +96,14 @@ rm -f "$TEST_INPUT"
 
 echo -e "\n${BLUE}Testing Amazon Q CLI with MCP...${NC}"
 echo -e "${BLUE}----------------------------${NC}"
-echo -e "${YELLOW}(This will timeout after 15 seconds if stuck)${NC}"
+echo -e "${YELLOW}(This will timeout after 13 seconds if stuck)${NC}"
 
 # Test Amazon Q CLI with MCP
-timeout 15s bash -c "Q_LOG_LEVEL=trace q chat --no-interactive --trust-all-tools \"try to use the github___search_repositories tool to search for 'amazon-q', this is a test\"" 2>&1 | grep -E '(mcp servers initialized|error|failed)'
+timeout 13s bash -c "Q_LOG_LEVEL=trace q chat --no-interactive --trust-all-tools \"try to use the github___search_repositories tool to search for 'amazon-q', this is a test\"" 2>&1 | grep -E '(mcp servers initialized|error|failed)'
 
 # Check the result
 if [ $? -eq 124 ]; then
-  echo -e "${RED}✗ Amazon Q CLI test timed out after 15 seconds${NC}"
+  echo -e "${RED}✗ Amazon Q CLI test timed out after 13 seconds${NC}"
 else
   echo -e "${BLUE}Test completed. Check the output above for MCP initialization status.${NC}"
 fi
