@@ -217,9 +217,9 @@ if command -v q >/dev/null 2>&1; then
   # Set up MCP for Amazon Q
   echo "Setting up MCP for Amazon Q..."
   
-  # Run the MCP installation script
-  echo "Running MCP installation script..."
-  bash "$DOT_DEN/mcp/install.sh"
+  # Run the MCP setup script directly
+  echo "Running MCP setup script..."
+  bash "$DOT_DEN/mcp/setup.sh"
   
   echo -e "${GREEN}✓ Amazon Q MCP configuration set up${NC}"
 fi
