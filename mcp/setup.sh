@@ -45,8 +45,6 @@ log() {
   fi
 }
 
-# Secrets are assumed to be already loaded into the system
-
 # Setup MCP for Amazon Q
 setup_amazonq() {
   local persona=$1
@@ -55,37 +53,46 @@ setup_amazonq() {
   # Create directory if it doesn't exist
   mkdir -p "$HOME/.aws/amazonq"
   
-  # Check for GitHub token in secrets file
-  local github_token=""
-  if [ -f "$SECRETS_FILE" ]; then
+  # Set GitHub token directly from environment variable if available
+  # This simplifies the token handling and avoids issues with the secrets file
+  local github_token="${GITHUB_PERSONAL_ACCESS_TOKEN:-}"
+  
+  # If no token in environment, check secrets file as fallback
+  if [ -z "$github_token" ] && [ -f "$SECRETS_FILE" ]; then
     # Try to extract GitHub token from secrets file
     if grep -q "GITHUB_PERSONAL_ACCESS_TOKEN=" "$SECRETS_FILE"; then
       github_token=$(grep "GITHUB_PERSONAL_ACCESS_TOKEN=" "$SECRETS_FILE" | cut -d '=' -f2)
       log "Found GitHub token in secrets file"
+      
+      # Export the token to environment for MCP server to use
+      export GITHUB_PERSONAL_ACCESS_TOKEN="$github_token"
     fi
   fi
   
-  # If no token found and not in non-interactive mode, prompt for token
+  # If still no token and in interactive mode, prompt for token
   if [ -z "$github_token" ]; then
-    echo "No GitHub token found in secrets file."
-    echo "A GitHub Personal Access Token is required for the GitHub MCP server."
-    echo "You can create one at: https://github.com/settings/tokens"
-    echo "The token needs 'repo' scope for repository access."
+    log "No GitHub token found in environment or secrets file"
     
     # Only prompt if we're in an interactive shell
     if [ -t 0 ]; then
+      echo "A GitHub Personal Access Token is required for the GitHub MCP server."
+      echo "You can create one at: https://github.com/settings/tokens"
+      echo "The token needs 'repo' scope for repository access."
       read -p "Enter your GitHub Personal Access Token (or press Enter to skip): " github_token
       
       if [ -n "$github_token" ]; then
-        echo "Adding GitHub token to secrets file..."
+        echo "Adding GitHub token to environment and secrets file..."
+        export GITHUB_PERSONAL_ACCESS_TOKEN="$github_token"
         echo "GITHUB_PERSONAL_ACCESS_TOKEN=$github_token" >> "$SECRETS_FILE"
         chmod 600 "$SECRETS_FILE"
       else
         echo "No token provided. GitHub MCP server will not function correctly."
+        # Set a placeholder token to prevent crashes during testing
+        export GITHUB_PERSONAL_ACCESS_TOKEN="placeholder_for_testing"
       fi
     else
-      echo "Running in non-interactive mode. Skipping token prompt."
-      echo "GitHub MCP server will not function correctly without a token."
+      echo "Running in non-interactive mode. Setting placeholder token for testing."
+      export GITHUB_PERSONAL_ACCESS_TOKEN="placeholder_for_testing"
     fi
   fi
   
@@ -130,7 +137,8 @@ setup_amazonq() {
     # Build the server using Go
     if command -v go &> /dev/null; then
       log "Building with Go..."
-      go build -o github-mcp-server ./cmd/github-mcp-server
+      # Pass the token directly to the build environment
+      GITHUB_PERSONAL_ACCESS_TOKEN="$GITHUB_PERSONAL_ACCESS_TOKEN" go build -o github-mcp-server ./cmd/github-mcp-server
       
       # Check if build was successful
       if [ -f "./github-mcp-server" ]; then
@@ -141,6 +149,7 @@ setup_amazonq() {
         log "Created symlink to GitHub MCP server"
         
         # Also create a symlink in .local/bin for consistency
+        mkdir -p "$HOME/.local/bin"
         ln -sf "$(pwd)/github-mcp-server" "$HOME/.local/bin/github-mcp-server"
         log "Created symlink in ~/.local/bin for github-mcp-server"
       else
@@ -164,31 +173,43 @@ setup_amazonq() {
     export PATH="$HOME/mcp:$PATH"
   fi
   
-  # Check if Docker is installed for GitHub MCP server
-  if command -v docker &> /dev/null; then
-    log "Docker is available. GitHub MCP server can be used with Docker."
-    log "To use GitHub MCP server, add the following to your ~/.aws/amazonq/mcp.json:"
-    log '{
-  "mcpServers": {
-    "github": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-e",
-        "GITHUB_PERSONAL_ACCESS_TOKEN",
-        "ghcr.io/github/github-mcp-server"
-      ],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "<YOUR_TOKEN>"
-      }
-    }
-  }
-}'
-  else
-    log "Docker not found. GitHub MCP server requires Docker or building from source."
-    log "See https://github.com/github/github-mcp-server for installation instructions."
+  # Create a wrapper script that ensures the token is available
+  cat > "$HOME/mcp/github-mcp-wrapper" << 'EOF'
+#!/bin/bash
+# Wrapper script for github-mcp-server that ensures the token is available
+
+# Check if token is in environment
+if [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
+  # Try to get from secrets file
+  if [ -f "$HOME/.bash_secrets" ]; then
+    if grep -q "GITHUB_PERSONAL_ACCESS_TOKEN=" "$HOME/.bash_secrets"; then
+      export GITHUB_PERSONAL_ACCESS_TOKEN=$(grep "GITHUB_PERSONAL_ACCESS_TOKEN=" "$HOME/.bash_secrets" | cut -d '=' -f2)
+    fi
+  fi
+  
+  # If still no token, use placeholder for testing
+  if [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
+    export GITHUB_PERSONAL_ACCESS_TOKEN="placeholder_for_testing"
+    echo "Warning: Using placeholder token for testing. GitHub API calls will fail." >&2
+  fi
+fi
+
+# Run the actual server with the token in environment
+if [ -x "$HOME/mcp/github-mcp-server" ]; then
+  exec "$HOME/mcp/github-mcp-server" stdio
+elif [ -x "$HOME/.local/bin/github-mcp-server" ]; then
+  exec "$HOME/.local/bin/github-mcp-server" stdio
+else
+  echo "Error: github-mcp-server not found" >&2
+  exit 1
+fi
+EOF
+  chmod +x "$HOME/mcp/github-mcp-wrapper"
+  
+  # Update the MCP configuration to use the wrapper
+  if [ -f "$HOME/.aws/amazonq/mcp.json" ]; then
+    # Use sed to replace the github-mcp-server command with the wrapper
+    sed -i 's|"github-mcp-server"|"github-mcp-wrapper"|g' "$HOME/.aws/amazonq/mcp.json"
   fi
   
   # Create debug script for Amazon Q
@@ -197,21 +218,38 @@ setup_amazonq() {
 # Debug script for Amazon Q MCP issues
 
 # Create log directory
-LOG_DIR="/tmp/amazonq-mcp-logs"
+LOG_DIR="$HOME/ppv/pillars/dotfiles/logs/mcp-tests"
 mkdir -p "$LOG_DIR"
 
 # Set environment variables for debugging
 export Q_LOG_LEVEL=trace
-export TMPDIR="$LOG_DIR"
+export RUST_BACKTRACE=full
+
+# Ensure GitHub token is available
+if [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ] && [ -f "$HOME/.bash_secrets" ]; then
+  if grep -q "GITHUB_PERSONAL_ACCESS_TOKEN=" "$HOME/.bash_secrets"; then
+    export GITHUB_PERSONAL_ACCESS_TOKEN=$(grep "GITHUB_PERSONAL_ACCESS_TOKEN=" "$HOME/.bash_secrets" | cut -d '=' -f2)
+  fi
+fi
+
+# If still no token, use placeholder for testing
+if [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
+  export GITHUB_PERSONAL_ACCESS_TOKEN="placeholder_for_testing"
+  echo "Warning: Using placeholder token for testing. GitHub API calls will fail."
+fi
+
+# Generate timestamp for log file
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+LOG_FILE="$LOG_DIR/debug_amazonq_${TIMESTAMP}.log"
 
 # Run Amazon Q with debugging enabled
 echo "Starting Amazon Q with debug logging..."
-echo "Logs will be available in $LOG_DIR"
-q chat
+echo "Logs will be saved to $LOG_FILE"
+q chat --trust-all-tools 2>&1 | tee "$LOG_FILE"
 
 # After exit, provide instructions
 echo ""
-echo "To view logs, run: less $LOG_DIR/qlog"
+echo "Debug session completed. Log saved to: $LOG_FILE"
 EOF
   chmod +x "$HOME/debug-amazonq-mcp.sh"
   
