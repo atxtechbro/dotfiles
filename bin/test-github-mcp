@@ -1,17 +1,29 @@
 #!/bin/bash
 
 # Script to test GitHub MCP server connectivity
-# This script runs a test command to verify the GitHub MCP server is working
+# This script runs test commands to verify the GitHub MCP server is working
+# with both trusted and untrusted tool scenarios
 
 echo "Testing GitHub MCP server connectivity..."
+echo "============================================"
+
+# First test: Without trust-all-tools flag (will likely fail with --no-interactive)
+echo "TEST 1: Without --trust-all-tools flag"
 echo "Running: Q_LOG_LEVEL=trace q chat --no-interactive \"search for repositories related to amazon-q using github___search_repositories, this is a test\""
-
+echo "---------------------------------------------"
 Q_LOG_LEVEL=trace q chat --no-interactive "search for repositories related to amazon-q using github___search_repositories, this is a test"
+echo "---------------------------------------------"
+echo "Test 1 completed."
+echo ""
 
-exit_code=$?
+# Second test: With trust-all-tools flag
+echo "TEST 2: With --trust-all-tools flag"
+echo "Running: Q_LOG_LEVEL=trace q chat --no-interactive --trust-all-tools \"search for repositories related to amazon-q using github___search_repositories, this is a test\""
+echo "---------------------------------------------"
+Q_LOG_LEVEL=trace q chat --no-interactive --trust-all-tools "search for repositories related to amazon-q using github___search_repositories, this is a test"
+test2_exit=$?
+echo "---------------------------------------------"
+echo "Test 2 completed with exit code: $test2_exit"
+echo ""
 
-if [ $exit_code -eq 0 ]; then
-  echo "Test completed. Check the output above for results."
-else
-  echo "Test failed with exit code: $exit_code"
-fi
+echo "Testing complete."
