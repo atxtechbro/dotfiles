@@ -72,38 +72,9 @@ setup_mcp() {
   mkdir -p "$MCP_CONFIG_DIR" || handle_error "Failed to create directory $MCP_CONFIG_DIR"
   log "Created directory $MCP_CONFIG_DIR"
   
-  # Set GitHub token directly from environment variable if available
-  # This is kept for backward compatibility but not used for GitHub MCP servers anymore
-  local github_token="${GITHUB_PERSONAL_ACCESS_TOKEN:-}"
-  
-  # If no token in environment, check secrets file as fallback
-  if [ -z "$github_token" ] && [ -f "$SECRETS_FILE" ]; then
-    # Try to extract GitHub token from secrets file
-    if grep -q "GITHUB_PERSONAL_ACCESS_TOKEN=" "$SECRETS_FILE" 2>/dev/null; then
-      github_token=$(grep "GITHUB_PERSONAL_ACCESS_TOKEN=" "$SECRETS_FILE" 2>/dev/null | cut -d '=' -f2 | tr -d '"')
-      log_success "Found GitHub token in secrets file"
-      
-      # Export the token to environment for backward compatibility
-      export GITHUB_PERSONAL_ACCESS_TOKEN="$github_token"
-    else
-      log_warning "No GitHub token found in secrets file"
-    fi
-  else
-    if [ -n "$github_token" ]; then
-      log_success "Using GitHub token from environment"
-    else
-      log_warning "No GitHub token found in environment"
-    fi
-  fi
-  
   # Clean up any old MCP server references
   log "Cleaning up any old MCP server references..."
-  rm -f "$HOME/mcp/test-mcp-server" 2>/dev/null
   rm -f "$HOME/.local/bin/test-mcp-server" 2>/dev/null
-  rm -f "$HOME/mcp/github-mcp-server" 2>/dev/null
-  rm -f "$HOME/.local/bin/github-mcp-server" 2>/dev/null
-  rm -f "$HOME/mcp/github-mcp-wrapper" 2>/dev/null
-  rm -f "$HOME/.local/bin/github-mcp-wrapper" 2>/dev/null
   
   # Setup AWS Documentation MCP server
   log "Setting up AWS Documentation MCP server..."
