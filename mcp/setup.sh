@@ -115,6 +115,16 @@ setup_mcp() {
   rm -f "$HOME/mcp/github-mcp-wrapper" 2>/dev/null
   rm -f "$HOME/.local/bin/github-mcp-wrapper" 2>/dev/null
   
+  # Setup AWS Documentation MCP server
+  log "Setting up AWS Documentation MCP server..."
+  if [ -f "$SCRIPT_DIR/servers/aws-docs/setup.sh" ]; then
+    chmod +x "$SCRIPT_DIR/servers/aws-docs/setup.sh"
+    "$SCRIPT_DIR/servers/aws-docs/setup.sh" || handle_error "Failed to setup AWS Documentation MCP server"
+    log_success "AWS Documentation MCP server setup complete"
+  else
+    log_error "AWS Documentation MCP server setup script not found"
+  fi
+  
   # Check if Docker is installed
   if command -v docker &> /dev/null; then
     log_success "Docker is available ($(docker --version))"
@@ -161,6 +171,10 @@ setup_mcp() {
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "'${GITHUB_PERSONAL_ACCESS_TOKEN}'"
       }
+    },
+    "aws-docs": {
+      "command": "'$SCRIPT_DIR'/servers/aws-docs/run-aws-docs-mcp.sh",
+      "args": []
     }
   }
 }' > "$MCP_CONFIG_FILE" 2>/dev/null || handle_error "Failed to create MCP config"
