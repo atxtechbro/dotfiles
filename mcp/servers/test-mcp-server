@@ -26,7 +26,7 @@ while read -r line; do
     
     # Handle the initialize method
     if [ "$method" = "initialize" ]; then
-      echo "{\"jsonrpc\":\"2.0\",\"id\":$id,\"result\":{\"name\":\"test\",\"version\":\"1.0.0\",\"tools\":[{\"name\":\"test_hello\",\"description\":\"A simple test tool that says hello\",\"parameters\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"description\":\"Name to greet\"}},\"required\":[\"name\"]}}]}}"
+      echo '{"jsonrpc":"2.0","id":'$id',"result":{"name":"test","version":"1.0.0","tools":[{"name":"test_hello","description":"A simple test tool that says hello","parameters":{"type":"object","properties":{"name":{"type":"string","description":"Name to greet"}},"required":["name"]}}]}}'
       echo "Sent initialize response" >&2
     
     # Handle the test_hello tool
@@ -48,17 +48,17 @@ while read -r line; do
         fi
         
         # Return the greeting
-        echo "{\"jsonrpc\":\"2.0\",\"id\":$id,\"result\":{\"message\":\"Hello, $name!\"}}"
+        echo '{"jsonrpc":"2.0","id":'$id',"result":{"message":"Hello, '$name'!"}}'
         echo "Sent test_hello response for $name" >&2
       else
         # Unknown tool
         echo "Unknown tool: $tool" >&2
-        echo "{\"jsonrpc\":\"2.0\",\"id\":$id,\"error\":{\"code\":-32601,\"message\":\"Tool not found: $tool\"}}"
+        echo '{"jsonrpc":"2.0","id":'$id',"error":{"code":-32601,"message":"Tool not found: '$tool'"}}'
       fi
     else
       # Unknown method
       echo "Unknown method: $method" >&2
-      echo "{\"jsonrpc\":\"2.0\",\"id\":$id,\"error\":{\"code\":-32601,\"message\":\"Method not found: $method\"}}"
+      echo '{"jsonrpc":"2.0","id":'$id',"error":{"code":-32601,"message":"Method not found: '$method'"}}'
     fi
   else
     echo "Received non-JSON-RPC line: $line" >&2
