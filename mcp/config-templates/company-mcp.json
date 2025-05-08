@@ -4,8 +4,12 @@
       "command": "npx",
       "args": [
         "-y",
-        "@github/github-mcp-server"
+        "@github/github-mcp-server",
+        "stdio"
       ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      },
       "timeout": 10000
     },
     "atlassian": {

@@ -1,53 +1,70 @@
-# Model Context Protocol (MCP) Configuration
+# MCP Server Development
 
-This directory contains configuration files and setup scripts for Model Context Protocol (MCP) servers that can be used with various AI assistants like Amazon Q, Claude, and others.
+This directory contains documentation and tools for working with Model Context Protocol (MCP) servers.
 
-## Usage
+## GitHub MCP Server
 
-MCP configuration is a two-step process:
+The GitHub MCP server provides tools for interacting with GitHub repositories, issues, pull requests, and more.
 
-### 1. Initial Installation
+### Current Status
 
-First, run the installation script to check dependencies and set up the default configuration:
+We're actively working on fixing issues with the GitHub MCP server. The main challenges are:
+
+1. Connection issues between Amazon Q CLI and the GitHub MCP server
+2. Logging and debugging the communication between components
+3. Understanding the expected interfaces and data structures
+
+### Testing
+
+Use the test script to verify connectivity:
 
 ```bash
-# Install MCP with default personal configuration
-bash mcp/install.sh
+~/ppv/pillars/dotfiles/bin/test-github-mcp
 ```
 
-### 2. Configure Persona (Optional)
+This script:
+- Tests multiple GitHub MCP tools (search_repositories, list_issues, get_issue, etc.)
+- Runs with the `--trust-all-tools` flag to bypass approval prompts
+- Consolidates all logs to `~/ppv/pillars/dotfiles/logs/mcp-tests/`
+- Creates timestamped log files for each test run
 
-After installation, you can switch between different personas:
+### Test Results
 
-```bash
-# For personal use (default)
-bash mcp/setup.sh --persona personal
+Our comprehensive testing shows:
+- MCP servers initialize successfully (github and test)
+- All tools are recognized and invoked with the correct parameters
+- All tools fail with the same error pattern:
+  - Tool execution begins but fails after ~0.15-0.53s
+  - Error message: "[tool_name] invocation failed to produce a result"
+- No debug output from our added logging is visible in the logs
+- Consistent failure pattern across all GitHub MCP tools suggests a fundamental connection issue
 
-# For company/work use
-bash mcp/setup.sh --persona company
+### Log Analysis
+
+All test logs are stored in a central location for easy comparison:
+
+```
+~/ppv/pillars/dotfiles/logs/mcp-tests/
+├── mcp_test_20250508_123456_master.log       # Master log with all test results
+├── mcp_test_20250508_123456_search_repositories.log  # Individual test log
+└── mcp_test_20250508_123456_list_issues.log  # Individual test log
 ```
 
-## What is MCP?
+### Development Approach
 
-The Model Context Protocol (MCP) is an open protocol that standardizes how applications provide context to Large Language Models (LLMs). MCP enables communication between AI assistants and locally running MCP servers that provide additional tools and resources to extend their capabilities.
+We're following a tracer bullet development approach:
 
-## Directory Structure
+1. Add extensive logging at key points in the code
+2. Build from source to incorporate logging changes
+3. Run tests to gather diagnostic information
+4. Fix one issue at a time, committing early and often
+5. Repeat until the basic functionality works
 
-- `config-templates/` - Template configuration files for different personas
-- `setup.sh` - Script to set up MCP configurations for different personas
-- `servers/` - Documentation and setup scripts for specific MCP servers
+### Next Steps
 
-## Persona-Based Configuration
-
-This setup uses a persona-based approach to MCP configuration:
-
-- **Personal** - Basic configuration for personal use
-- **Company** - Enhanced configuration for work use
-
-## Supported AI Assistants
-
-This configuration supports multiple AI assistants:
-
-- Amazon Q CLI (`~/.aws/amazonq/mcp.json`)
-- Claude CLI (`~/.config/claude/mcp.json`)
-- (Add more as they become available)
+1. Fix remaining build errors in search.go implementation
+2. Verify the GitHub token has appropriate permissions
+3. Add more logging to the server initialization process
+4. Check if the GitHub API is being rate limited
+5. Investigate if there's a network connectivity issue
+6. Check if there's a mismatch between the MCP server version and the client version

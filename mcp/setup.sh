@@ -1,23 +1,18 @@
 #!/bin/bash
 
 # MCP Configuration Setup Script
-# This script sets up MCP configurations for different personas
-
-set -e
+# This script sets up MCP configuration for Amazon Q
 
 # Default values
-PERSONA="personal"
-VERBOSE=false
-CONFIG_DIR="$(dirname "$0")/config-templates"
+VERBOSE=true
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 SECRETS_FILE="$HOME/.bash_secrets"
+MCP_CONFIG_DIR="$HOME/.aws/amazonq"
+MCP_CONFIG_FILE="$MCP_CONFIG_DIR/mcp.json"
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --persona)
-      PERSONA="$2"
-      shift 2
-      ;;
     --verbose)
       VERBOSE=true
       shift
@@ -25,15 +20,13 @@ while [[ $# -gt 0 ]]; do
     --help)
       echo "Usage: $0 [options]"
       echo "Options:"
-      echo "  --persona PERSONA    Configure MCP for the specified persona (default: personal)"
-      echo "                       Available personas: personal, company"
       echo "  --verbose            Show verbose output"
       echo "  --help               Show this help message"
-      exit 0
+      return 0 2>/dev/null || exit 0
       ;;
     *)
       echo "Unknown option: $1"
-      exit 1
+      return 1 2>/dev/null || exit 1
       ;;
   esac
 done
@@ -41,36 +34,102 @@ done
 # Function to log messages if verbose mode is enabled
 log() {
   if [ "$VERBOSE" = true ]; then
-    echo "$1"
+    echo "[$(date '+%H:%M:%S')] $1"
   fi
 }
 
-# Secrets are assumed to be already loaded into the system
+# Function to log success messages
+log_success() {
+  if [ "$VERBOSE" = true ]; then
+    echo "[$(date '+%H:%M:%S')] ✅ $1"
+  fi
+}
 
-# Setup MCP for Amazon Q
-setup_amazonq() {
-  local persona=$1
-  log "Setting up MCP for Amazon Q with persona: $persona"
+# Function to log warning messages
+log_warning() {
+  echo "[$(date '+%H:%M:%S')] ⚠️  $1"
+}
+
+# Function to log error messages
+log_error() {
+  echo "[$(date '+%H:%M:%S')] ❌ $1"
+}
+
+# Function to handle errors gracefully
+handle_error() {
+  log_error "$1"
+  # Don't exit, just continue
+}
+
+# Setup MCP configuration
+setup_mcp() {
+  log "Setting up MCP configuration for Amazon Q..."
   
   # Create directory if it doesn't exist
-  mkdir -p "$HOME/.aws/amazonq"
+  mkdir -p "$MCP_CONFIG_DIR" || handle_error "Failed to create directory $MCP_CONFIG_DIR"
+  log "Created directory $MCP_CONFIG_DIR"
   
-  # Copy the template configuration
-  cp "$CONFIG_DIR/${persona}-mcp.json" "$HOME/.aws/amazonq/mcp.json"
+  # Set GitHub token directly from environment variable if available
+  local github_token="${GITHUB_PERSONAL_ACCESS_TOKEN:-}"
   
-  # Create test MCP server in the user's path
-  mkdir -p "$HOME/mcp"
-  # Remove any existing file or symlink first
-  rm -f "$HOME/mcp/test-mcp-server"
-  # Copy the file and make it executable
-  cp "$(dirname "$0")/servers/bin/test-mcp-server" "$HOME/mcp/test-mcp-server"
-  chmod +x "$HOME/mcp/test-mcp-server"
+  # If no token in environment, check secrets file as fallback
+  if [ -z "$github_token" ] && [ -f "$SECRETS_FILE" ]; then
+    # Try to extract GitHub token from secrets file
+    if grep -q "GITHUB_PERSONAL_ACCESS_TOKEN=" "$SECRETS_FILE" 2>/dev/null; then
+      github_token=$(grep "GITHUB_PERSONAL_ACCESS_TOKEN=" "$SECRETS_FILE" 2>/dev/null | cut -d '=' -f2 | tr -d '"')
+      log_success "Found GitHub token in secrets file"
+      
+      # Export the token to environment for MCP server to use
+      export GITHUB_PERSONAL_ACCESS_TOKEN="$github_token"
+    else
+      log_warning "No GitHub token found in secrets file"
+    fi
+  else
+    if [ -n "$github_token" ]; then
+      log_success "Using GitHub token from environment"
+    else
+      log_warning "No GitHub token found in environment"
+    fi
+  fi
   
-  # Check if Docker is installed for GitHub MCP server
+  # If still no token, use placeholder for testing
+  if [ -z "$github_token" ]; then
+    log_warning "No GitHub token found in environment or secrets file"
+    log_error "Setting placeholder token for testing. GitHub API calls will fail."
+    export GITHUB_PERSONAL_ACCESS_TOKEN="placeholder_for_testing"
+    
+    # Add to secrets file if it exists
+    if [ -f "$SECRETS_FILE" ]; then
+      echo "GITHUB_PERSONAL_ACCESS_TOKEN=placeholder_for_testing" >> "$SECRETS_FILE" 2>/dev/null || handle_error "Failed to update secrets file"
+      chmod 600 "$SECRETS_FILE" 2>/dev/null || handle_error "Failed to set permissions on secrets file"
+      log "Added placeholder token to secrets file"
+    fi
+  fi
+  
+  # Clean up any old MCP server references
+  log "Cleaning up any old MCP server references..."
+  rm -f "$HOME/mcp/test-mcp-server" 2>/dev/null
+  rm -f "$HOME/.local/bin/test-mcp-server" 2>/dev/null
+  rm -f "$HOME/mcp/github-mcp-server" 2>/dev/null
+  rm -f "$HOME/.local/bin/github-mcp-server" 2>/dev/null
+  rm -f "$HOME/mcp/github-mcp-wrapper" 2>/dev/null
+  rm -f "$HOME/.local/bin/github-mcp-wrapper" 2>/dev/null
+  
+  # Check if Docker is installed
   if command -v docker &> /dev/null; then
-    log "Docker is available. GitHub MCP server can be used with Docker."
-    log "To use GitHub MCP server, add the following to your ~/.aws/amazonq/mcp.json:"
-    log '{
+    log_success "Docker is available ($(docker --version))"
+    
+    # Pull the Docker image in advance to avoid delays during first use
+    log "Pulling GitHub MCP server Docker image with sudo (ghcr.io/github/github-mcp-server)..."
+    if sudo docker pull ghcr.io/github/github-mcp-server >/dev/null 2>&1; then
+      log_success "Docker image pulled successfully with sudo (ghcr.io/github/github-mcp-server)"
+    else
+      log_error "Failed to pull Docker image with sudo. Check Docker installation and permissions."
+    fi
+    
+    # Create the MCP configuration file with both sudo and non-sudo Docker commands
+    log "Creating MCP configuration file with both sudo and non-sudo Docker options..."
+    echo '{
   "mcpServers": {
     "github": {
       "command": "docker",
@@ -80,73 +139,98 @@ setup_amazonq() {
         "--rm",
         "-e",
         "GITHUB_PERSONAL_ACCESS_TOKEN",
-        "ghcr.io/github/github-mcp-server"
+        "ghcr.io/github/github-mcp-server",
+        "stdio"
       ],
       "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "<YOUR_TOKEN>"
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "'${GITHUB_PERSONAL_ACCESS_TOKEN}'"
+      }
+    },
+    "github-sudo": {
+      "command": "sudo",
+      "args": [
+        "docker",
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server",
+        "stdio"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "'${GITHUB_PERSONAL_ACCESS_TOKEN}'"
       }
     }
   }
-}'
+}' > "$MCP_CONFIG_FILE" 2>/dev/null || handle_error "Failed to create MCP config"
+    log_success "Created MCP configuration file at $MCP_CONFIG_FILE"
   else
-    log "Docker not found. GitHub MCP server requires Docker or building from source."
-    log "See https://github.com/github/github-mcp-server for installation instructions."
+    log_error "Docker is not available. Cannot set up GitHub MCP server."
+    log_warning "Please install Docker to use the GitHub MCP server."
   fi
   
-  # Create debug script for Amazon Q
-  cat > "$HOME/debug-amazonq-mcp.sh" << 'EOF'
-#!/bin/bash
-# Debug script for Amazon Q MCP issues
-
-# Create log directory
-LOG_DIR="/tmp/amazonq-mcp-logs"
-mkdir -p "$LOG_DIR"
-
-# Set environment variables for debugging
-export Q_LOG_LEVEL=trace
-export TMPDIR="$LOG_DIR"
-
-# Run Amazon Q with debugging enabled
-echo "Starting Amazon Q with debug logging..."
-echo "Logs will be available in $LOG_DIR"
-q chat
-
-# After exit, provide instructions
-echo ""
-echo "To view logs, run: less $LOG_DIR/qlog"
-EOF
-  chmod +x "$HOME/debug-amazonq-mcp.sh"
+  # Ensure debug script is executable
+  chmod +x ~/ppv/pillars/dotfiles/mcp/debug-mcp.sh 2>/dev/null || handle_error "Failed to make debug script executable"
+  log_success "Debug script available at ~/ppv/pillars/dotfiles/mcp/debug-mcp.sh"
   
-  echo "Created debug script at $HOME/debug-amazonq-mcp.sh"
-  
-  log "Amazon Q MCP configuration set up successfully with $persona persona"
+  log_success "MCP configuration set up successfully"
 }
 
-# Setup MCP for Claude CLI
-setup_claude() {
-  local persona=$1
-  log "Setting up MCP for Claude CLI with persona: $persona"
+# Function to verify MCP server initialization
+verify_mcp_initialization() {
+  log "Verifying MCP server initialization..."
   
-  # Create directory if it doesn't exist
-  mkdir -p "$HOME/.config/claude"
+  # Run Amazon Q with the test command and a timeout
+  log "Running Amazon Q CLI test with 18s timeout..."
+  local test_output
+  test_output=$(timeout 18s bash -c "Q_LOG_LEVEL=trace q chat --no-interactive --trust-all-tools \"try to use the github___search_repositories tool to search for 'amazon-q', this is a test\"" 2>&1)
+  local timeout_status=$?
   
-  # Copy the template configuration
-  cp "$CONFIG_DIR/${persona}-mcp.json" "$HOME/.config/claude/mcp.json"
+  # Check if command timed out
+  if [ $timeout_status -eq 124 ]; then
+    log_error "Verification timed out after 18 seconds"
+    log_error "Last output: $(echo "$test_output" | tail -5)"
+    return 1
+  fi
   
-  log "Claude CLI MCP configuration set up successfully with $persona persona"
+  # Display the output for debugging
+  log "Test output preview:"
+  echo "$test_output" | head -10
+  
+  # First check for explicit failure patterns
+  if echo "$test_output" | grep -q "0 of"; then
+    log_error "MCP server initialization failed! Output contains '0 of' indicating no servers initialized"
+    log_error "Test output: $(echo "$test_output" | grep -E '(0 of|mcp servers initialized)' | head -3)"
+    return 1
+  fi
+  
+  # Then check for successful initialization patterns
+  # We need to see a pattern like "N of N mcp servers initialized" where N > 0
+  if echo "$test_output" | grep -E '[1-9][0-9]* of [1-9][0-9]* mcp servers initialized' -q; then
+    log_success "MCP server initialization successful! Servers were properly initialized"
+    log_success "Test output: $(echo "$test_output" | grep -E '([1-9][0-9]* of [1-9][0-9]* mcp servers initialized)' | head -1)"
+    return 0
+  else
+    log_error "MCP server initialization failed! Could not confirm successful initialization"
+    log_error "Test output snippet: $(echo "$test_output" | grep -E '(mcp servers initialized|failed|error)' | head -3 || echo "$test_output" | head -3)"
+    return 1
+  fi
 }
 
-# Main setup logic
+# Main setup
+setup_mcp
 
-# Validate persona
-if [ ! -f "$CONFIG_DIR/${PERSONA}-mcp.json" ]; then
-  echo "Error: Persona '$PERSONA' not found. Available personas:"
-  ls -1 "$CONFIG_DIR/" | grep -o "^.*-mcp.json" | sed 's/-mcp.json//' | sed 's/^/  - /'
-  exit 1
+# Always verify MCP initialization (mandatory)
+log "Running MCP verification test (this may take a few moments)..."
+if verify_mcp_initialization; then
+  log_success "MCP verification passed! Setup complete."
+else
+  log_error "MCP verification failed! Running diagnostic script..."
+  log "==============================================================="
+  ~/ppv/pillars/dotfiles/mcp/debug-mcp.sh
+  log "==============================================================="
+  log_error "MCP verification failed! Please check the logs and diagnostic output above."
+  # Exit with error code to indicate failure
+  return 1 2>/dev/null || exit 1
 fi
-
-# Setup for all supported assistants
-setup_amazonq "$PERSONA"
-setup_claude "$PERSONA"
-
-echo "MCP configuration set up successfully with $PERSONA persona"

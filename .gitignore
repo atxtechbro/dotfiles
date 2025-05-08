@@ -22,11 +22,15 @@ id_ed25519
 
 # Logs
 *.log
+logs/mcp-tests/*
+!logs/mcp-tests/.gitkeep
+mcp_test_*
 
 # Temporary files
 *.tmp
 *.temp
 *~
+tmp.txt
 
 # OS specific files
 .DS_Store
@@ -34,4 +38,10 @@ Thumbs.db
 
 # Documentation
 nvim/lua/config/dap.lua.backup
+
+# GitHub MCP Server
+github-mcp-server/
+
+# Amazon Q Developer CLI
+amazon-q-developer-cli/
 
