@@ -9,7 +9,8 @@
 # Default values
 PERSONA="personal"
 VERBOSE=true
-CONFIG_DIR="$(dirname "$0")/config-templates"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+CONFIG_DIR="$SCRIPT_DIR/config-templates"
 SECRETS_FILE="$HOME/.bash_secrets"
 
 # Parse command line arguments
@@ -112,15 +113,17 @@ setup_amazonq() {
   rm -f "$HOME/mcp/test-mcp-server" 2>/dev/null
   
   # Create symlink to the file in the repository if it exists
-  if [ -f "$(dirname "$0")/servers/test-mcp-server" ]; then
-    ln -sf "$(dirname "$0")/servers/test-mcp-server" "$HOME/mcp/test-mcp-server" 2>/dev/null || handle_error "Failed to create test-mcp-server symlink"
+  if [ -f "$SCRIPT_DIR/servers/test-mcp-server" ]; then
+    ln -sf "$SCRIPT_DIR/servers/test-mcp-server" "$HOME/mcp/test-mcp-server" 2>/dev/null || handle_error "Failed to create test-mcp-server symlink"
+    log "Created symlink to test-mcp-server"
   else
-    handle_error "test-mcp-server not found at $(dirname "$0")/servers/test-mcp-server"
+    handle_error "test-mcp-server not found at $SCRIPT_DIR/servers/test-mcp-server"
   fi
   
   # Also update the .local/bin symlink if it exists
   if [ -d "$HOME/.local/bin" ]; then
-    ln -sf "$(dirname "$0")/servers/test-mcp-server" "$HOME/.local/bin/test-mcp-server" 2>/dev/null || handle_error "Failed to create test-mcp-server symlink in .local/bin"
+    ln -sf "$SCRIPT_DIR/servers/test-mcp-server" "$HOME/.local/bin/test-mcp-server" 2>/dev/null || handle_error "Failed to create test-mcp-server symlink in .local/bin"
+    log "Created symlink to test-mcp-server in .local/bin"
   fi
   
   # Install GitHub MCP server
