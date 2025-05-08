@@ -1,5 +1,5 @@
 #!/bin/bash
-# Wrapper script for GitHub MCP server using Docker with timeout
+# Wrapper script for GitHub MCP server using Docker only (no Go fallback)
 
 # Check if token is in environment
 if [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
@@ -7,30 +7,34 @@ if [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
   if [ -f "$HOME/.bash_secrets" ]; then
     if grep -q "GITHUB_PERSONAL_ACCESS_TOKEN=" "$HOME/.bash_secrets"; then
       export GITHUB_PERSONAL_ACCESS_TOKEN=$(grep "GITHUB_PERSONAL_ACCESS_TOKEN=" "$HOME/.bash_secrets" | cut -d '=' -f2 | tr -d '"')
+      echo "[$(date '+%H:%M:%S')] ✅ Found GitHub token in secrets file" >&2
+    else
+      echo "[$(date '+%H:%M:%S')] ⚠️  No GitHub token found in secrets file" >&2
     fi
+  else
+    echo "[$(date '+%H:%M:%S')] ⚠️  No .bash_secrets file found" >&2
   fi
   
   # If still no token, use placeholder for testing
   if [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
     export GITHUB_PERSONAL_ACCESS_TOKEN="placeholder_for_testing"
-    echo "Warning: Using placeholder token for testing. GitHub API calls will fail." >&2
+    echo "[$(date '+%H:%M:%S')] ❌ Using placeholder token for testing. GitHub API calls will fail." >&2
   fi
 fi
 
-# Debug output
-echo "Using GitHub token: ${GITHUB_PERSONAL_ACCESS_TOKEN:0:5}..." >&2
+# Assert that the token starts with ghp_
+if [[ ! "$GITHUB_PERSONAL_ACCESS_TOKEN" == ghp_* && "$GITHUB_PERSONAL_ACCESS_TOKEN" != "placeholder_for_testing" ]]; then
+  echo "[$(date '+%H:%M:%S')] ❌ ERROR: GitHub token does not start with 'ghp_'. This is not a valid GitHub Personal Access Token." >&2
+  echo "[$(date '+%H:%M:%S')] ⚠️  Please check your token format in .bash_secrets or environment variables." >&2
+  echo "[$(date '+%H:%M:%S')] ℹ️  GitHub Personal Access Tokens should start with 'ghp_'." >&2
+  exit 1
+fi
 
-# Run the GitHub MCP server using Docker with a timeout
-timeout 10s docker run -i --rm \
+# Debug output
+echo "[$(date '+%H:%M:%S')] ℹ️  Using GitHub token: ${GITHUB_PERSONAL_ACCESS_TOKEN:0:5}..." >&2
+echo "[$(date '+%H:%M:%S')] ℹ️  Starting Docker container for GitHub MCP server..." >&2
+
+# Run the GitHub MCP server using Docker directly
+exec docker run -i --rm \
   -e GITHUB_PERSONAL_ACCESS_TOKEN="$GITHUB_PERSONAL_ACCESS_TOKEN" \
-  ghcr.io/github/github-mcp-server stdio || {
-    echo "Docker execution timed out or failed, falling back to Go implementation" >&2
-    if [ -x "$HOME/mcp/github-mcp-server" ]; then
-      exec "$HOME/mcp/github-mcp-server" stdio
-    elif [ -x "$HOME/.local/bin/github-mcp-server" ]; then
-      exec "$HOME/.local/bin/github-mcp-server" stdio
-    else
-      echo "Error: github-mcp-server not found" >&2
-      exit 1
-    fi
-  }
+  ghcr.io/github/github-mcp-server stdio
