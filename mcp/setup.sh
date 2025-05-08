@@ -209,14 +209,14 @@ verify_mcp_initialization() {
   log "Verifying MCP server initialization..."
   
   # Run Amazon Q with the test command and a timeout
-  log "Running Amazon Q CLI test with 30s timeout..."
+  log "Running Amazon Q CLI test with 18s timeout..."
   local test_output
-  test_output=$(timeout 30s bash -c "Q_LOG_LEVEL=trace q chat --no-interactive --trust-all-tools \"try to use the github___search_repositories tool to search for 'amazon-q', this is a test\"" 2>&1)
+  test_output=$(timeout 18s bash -c "Q_LOG_LEVEL=trace q chat --no-interactive --trust-all-tools \"try to use the github___search_repositories tool to search for 'amazon-q', this is a test\"" 2>&1)
   local timeout_status=$?
   
   # Check if command timed out
   if [ $timeout_status -eq 124 ]; then
-    log_error "Verification timed out after 30 seconds"
+    log_error "Verification timed out after 18 seconds"
     log_error "Last output: $(echo "$test_output" | tail -5)"
     return 1
   fi
