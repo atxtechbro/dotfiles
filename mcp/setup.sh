@@ -10,6 +10,9 @@ SECRETS_FILE="$HOME/.bash_secrets"
 MCP_CONFIG_DIR="$HOME/.aws/amazonq"
 MCP_CONFIG_FILE="$MCP_CONFIG_DIR/mcp.json"
 
+# Remove existing MCP configuration file regardless of whether it exists
+rm -f "$MCP_CONFIG_FILE" 2>/dev/null
+
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
