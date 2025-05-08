@@ -100,3 +100,7 @@ echo -e "4. Verify the MCP configuration format matches the documentation"
 echo -e "5. Try restarting your terminal or computer"
 echo -e "6. Run 'Q_LOG_LEVEL=trace q chat' for more detailed logs"
 
+
+# Backup problematic MCP configuration file to restore Amazon Q functionality
+mv ~/.aws/amazonq/mcp.json ~/.aws/amazonq/mcp-backup-buggy-did-not-load.json
+echo -e "${YELLOW}! Backed up problematic MCP config to ~/.aws/amazonq/mcp-backup-buggy-did-not-load.json${NC}"
