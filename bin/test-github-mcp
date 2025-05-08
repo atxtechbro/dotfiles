@@ -1,29 +1,41 @@
 #!/bin/bash
 
 # Script to test GitHub MCP server connectivity
-# This script runs test commands to verify the GitHub MCP server is working
-# with both trusted and untrusted tool scenarios
+# Uses dependency injection pattern to minimize code duplication
 
+# Default parameters
+LOG_LEVEL="trace"
+TRUST_FLAG=""
+QUERY="search for repositories related to amazon-q using github___search_repositories, this is a test"
+INTERACTIVE_FLAG="--no-interactive"
+
+# Function to run test with injected parameters
+run_test() {
+  local trust_flag="$1"
+  local test_name="$2"
+  local description="$3"
+  
+  echo "TEST: $test_name"
+  echo "Running: Q_LOG_LEVEL=$LOG_LEVEL q chat $INTERACTIVE_FLAG $trust_flag \"$QUERY\""
+  echo "---------------------------------------------"
+  Q_LOG_LEVEL=$LOG_LEVEL q chat $INTERACTIVE_FLAG $trust_flag "$QUERY"
+  local exit_code=$?
+  echo "---------------------------------------------"
+  echo "Test completed with exit code: $exit_code"
+  echo "Description: $description"
+  echo ""
+  
+  return $exit_code
+}
+
+# Main execution
 echo "Testing GitHub MCP server connectivity..."
 echo "============================================"
 
-# First test: Without trust-all-tools flag (will likely fail with --no-interactive)
-echo "TEST 1: Without --trust-all-tools flag"
-echo "Running: Q_LOG_LEVEL=trace q chat --no-interactive \"search for repositories related to amazon-q using github___search_repositories, this is a test\""
-echo "---------------------------------------------"
-Q_LOG_LEVEL=trace q chat --no-interactive "search for repositories related to amazon-q using github___search_repositories, this is a test"
-echo "---------------------------------------------"
-echo "Test 1 completed."
-echo ""
+# Run test without trust flag
+run_test "" "Without trust-all-tools flag" "Expected to fail with --no-interactive due to tool approval requirement"
 
-# Second test: With trust-all-tools flag
-echo "TEST 2: With --trust-all-tools flag"
-echo "Running: Q_LOG_LEVEL=trace q chat --no-interactive --trust-all-tools \"search for repositories related to amazon-q using github___search_repositories, this is a test\""
-echo "---------------------------------------------"
-Q_LOG_LEVEL=trace q chat --no-interactive --trust-all-tools "search for repositories related to amazon-q using github___search_repositories, this is a test"
-test2_exit=$?
-echo "---------------------------------------------"
-echo "Test 2 completed with exit code: $test2_exit"
-echo ""
+# Run test with trust flag
+run_test "--trust-all-tools" "With trust-all-tools flag" "Should proceed with tool execution without approval prompt"
 
 echo "Testing complete."
