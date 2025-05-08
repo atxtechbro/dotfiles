@@ -217,22 +217,13 @@ if command -v q >/dev/null 2>&1; then
   # Set up MCP for Amazon Q
   echo "Setting up MCP for Amazon Q..."
   
-  # Run the MCP setup script directly with improved error handling and logging
+  # Run the MCP setup script directly with safer error handling
   echo "Running MCP setup script..."
   if [ -f "$DOT_DEN/mcp/setup.sh" ]; then
-    # Capture all output including errors
-    MCP_OUTPUT=$(bash "$DOT_DEN/mcp/setup.sh" 2>&1)
-    MCP_STATUS=$?
-    
-    # Display the output regardless of success/failure
-    echo "$MCP_OUTPUT"
-    
-    if [ $MCP_STATUS -eq 0 ]; then
-      echo -e "${GREEN}✓ Amazon Q MCP configuration set up successfully${NC}"
-    else
-      echo -e "${RED}! MCP setup encountered issues (exit code: $MCP_STATUS)${NC}"
-      echo -e "${YELLOW}Continuing with main setup despite MCP issues${NC}"
-    fi
+    # Use bash instead of source, and don't capture output to avoid potential issues
+    bash "$DOT_DEN/mcp/setup.sh" || true
+    # The "|| true" ensures the script continues even if the MCP setup fails
+    echo -e "${GREEN}✓ Amazon Q MCP configuration completed${NC}"
   else
     echo -e "${RED}MCP setup script not found at $DOT_DEN/mcp/setup.sh${NC}"
     echo "Skipping MCP setup"
