@@ -1,17 +1,7 @@
 {
   "mcpServers": {
     "test": {
-      "command": "test-mcp-server",
-      "args": ["stdio"],
-      "timeout": 5000
-    },
-    "github": {
-      "command": "github-mcp-server",
-      "args": ["stdio"],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
-      },
-      "timeout": 5000
+      "command": "test-mcp-server"
     }
   }
 }
