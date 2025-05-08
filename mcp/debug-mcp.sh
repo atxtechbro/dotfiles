@@ -1,69 +1,118 @@
 #!/bin/bash
-# Debug and troubleshooting script for MCP servers
+# Debug script for Amazon Q MCP
+# This script helps diagnose issues with MCP server initialization
 
-# Create log directory
-LOG_DIR="/tmp/mcp-logs"
-mkdir -p "$LOG_DIR"
+# Set up colors for better readability
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
 
-# Function to check if a command exists
-command_exists() {
-  command -v "$1" &> /dev/null
-}
+echo -e "${BLUE}=== MCP Configuration Diagnostics ===${NC}"
+echo -e "${BLUE}=====================================${NC}"
 
-# Check MCP server executables
-echo "=== MCP Server Executables ==="
-if [ -x "$HOME/mcp/test-mcp-server" ]; then
-  echo "✓ test-mcp-server is installed and executable"
-else
-  echo "✗ test-mcp-server is missing or not executable"
-fi
+echo -e "\n${BLUE}Checking MCP configuration...${NC}"
+echo -e "${BLUE}-----------------------------${NC}"
 
-if [ -x "$HOME/mcp/github-mcp-server" ]; then
-  echo "✓ github-mcp-server is installed and executable"
-else
-  echo "✗ github-mcp-server is missing or not executable"
-fi
-
-# Check PATH configuration
-echo -e "\n=== PATH Configuration ==="
-if echo "$PATH" | grep -q "$HOME/mcp"; then
-  echo "✓ $HOME/mcp is in PATH"
-else
-  echo "✗ $HOME/mcp is NOT in PATH"
-  echo "  Current PATH: $PATH"
-fi
-
-# Check MCP configuration files
-echo -e "\n=== MCP Configuration Files ==="
+# Check if the MCP config file exists
 if [ -f "$HOME/.aws/amazonq/mcp.json" ]; then
-  echo "✓ Amazon Q MCP configuration exists"
-  echo "  Content:"
+  echo -e "${GREEN}✓ MCP config file exists:${NC} $HOME/.aws/amazonq/mcp.json"
+  echo -e "${BLUE}Contents:${NC}"
   cat "$HOME/.aws/amazonq/mcp.json"
 else
-  echo "✗ Amazon Q MCP configuration is missing"
+  echo -e "${RED}✗ MCP config file not found:${NC} $HOME/.aws/amazonq/mcp.json"
 fi
 
-# Test MCP servers directly
-echo -e "\n=== Testing MCP Servers ==="
-echo "Testing test-mcp-server..."
-echo '{"jsonrpc":"2.0","id":1,"method":"initialize"}' | "$HOME/mcp/test-mcp-server" | head -n 1
-echo "Testing github-mcp-server..."
-GITHUB_PERSONAL_ACCESS_TOKEN="test_token" echo '{"jsonrpc":"2.0","id":1,"method":"initialize"}' | "$HOME/mcp/github-mcp-server" stdio | head -n 1
+echo -e "\n${BLUE}Checking environment...${NC}"
+echo -e "${BLUE}----------------------${NC}"
 
-# Check for log files
-echo -e "\n=== MCP Log Files ==="
-if [ -f "$LOG_DIR/github-mcp-server.log" ]; then
-  echo "✓ GitHub MCP server log exists"
-  echo "  Last 5 lines:"
-  tail -n 5 "$LOG_DIR/github-mcp-server.log"
+# Check if the GitHub token is set
+if [ -n "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
+  echo -e "${GREEN}✓ GitHub token is set:${NC} ${GITHUB_PERSONAL_ACCESS_TOKEN:0:5}..."
+  
+  # Validate token format
+  if [[ "$GITHUB_PERSONAL_ACCESS_TOKEN" == ghp_* ]]; then
+    echo -e "${GREEN}✓ GitHub token has correct prefix (ghp_)${NC}"
+  else
+    echo -e "${RED}✗ GitHub token does not have expected prefix 'ghp_'${NC}"
+  fi
 else
-  echo "✗ GitHub MCP server log is missing"
+  echo -e "${RED}✗ GitHub token is not set${NC}"
+  
+  # Check if token is in secrets file
+  if [ -f "$HOME/.bash_secrets" ]; then
+    if grep -q "GITHUB_PERSONAL_ACCESS_TOKEN=" "$HOME/.bash_secrets"; then
+      echo -e "${YELLOW}! GitHub token found in .bash_secrets but not exported to environment${NC}"
+      echo -e "${YELLOW}! Try sourcing .bash_secrets before running this script${NC}"
+    else
+      echo -e "${RED}✗ No GitHub token found in .bash_secrets${NC}"
+    fi
+  else
+    echo -e "${RED}✗ No .bash_secrets file found${NC}"
+  fi
 fi
 
-echo -e "\n=== Recommendations ==="
-echo "1. Ensure MCP servers are in your PATH"
-echo "2. Check that MCP configuration files are properly formatted"
-echo "3. Verify that MCP servers have execute permissions"
-echo "4. Try running Amazon Q with debug logging:"
-echo "   Q_LOG_LEVEL=trace q chat"
-echo "5. Check the logs in $LOG_DIR for more details"
+# Check if Docker is installed
+if command -v docker &> /dev/null; then
+  echo -e "${GREEN}✓ Docker is installed:${NC} $(docker --version)"
+  
+  # Check if user can run Docker without sudo
+  if docker info &>/dev/null; then
+    echo -e "${GREEN}✓ User can run Docker without sudo${NC}"
+  else
+    echo -e "${YELLOW}! User may need sudo to run Docker${NC}"
+  fi
+else
+  echo -e "${RED}✗ Docker is not installed${NC}"
+fi
+
+echo -e "\n${BLUE}Testing GitHub MCP server...${NC}"
+echo -e "${BLUE}--------------------------${NC}"
+
+# Test the GitHub MCP server directly with Docker
+echo -e "${BLUE}Testing GitHub MCP server with Docker...${NC}"
+echo -e "${YELLOW}(This will timeout after 10 seconds if stuck)${NC}"
+
+# Create a temporary file for the test input
+TEST_INPUT=$(mktemp)
+echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"capabilities":{}}}' > "$TEST_INPUT"
+
+# Run the test with a timeout
+timeout 10s docker run -i --rm -e GITHUB_PERSONAL_ACCESS_TOKEN="$GITHUB_PERSONAL_ACCESS_TOKEN" ghcr.io/github/github-mcp-server stdio < "$TEST_INPUT"
+TEST_RESULT=$?
+
+# Check the result
+if [ $TEST_RESULT -eq 124 ]; then
+  echo -e "${RED}✗ Test timed out after 10 seconds${NC}"
+elif [ $TEST_RESULT -eq 0 ]; then
+  echo -e "${GREEN}✓ GitHub MCP server responded successfully${NC}"
+else
+  echo -e "${RED}✗ GitHub MCP server test failed with exit code ${TEST_RESULT}${NC}"
+fi
+
+# Clean up
+rm -f "$TEST_INPUT"
+
+echo -e "\n${BLUE}Testing Amazon Q CLI with MCP...${NC}"
+echo -e "${BLUE}----------------------------${NC}"
+echo -e "${YELLOW}(This will timeout after 15 seconds if stuck)${NC}"
+
+# Test Amazon Q CLI with MCP
+timeout 15s bash -c "Q_LOG_LEVEL=trace q chat --no-interactive --trust-all-tools \"try to use the github___search_repositories tool to search for 'amazon-q', this is a test\"" 2>&1 | grep -E '(mcp servers initialized|error|failed)'
+
+# Check the result
+if [ $? -eq 124 ]; then
+  echo -e "${RED}✗ Amazon Q CLI test timed out after 15 seconds${NC}"
+else
+  echo -e "${BLUE}Test completed. Check the output above for MCP initialization status.${NC}"
+fi
+
+echo -e "\n${BLUE}Recommendations:${NC}"
+echo -e "${BLUE}---------------${NC}"
+echo -e "1. Ensure your GitHub token has the correct permissions"
+echo -e "2. Try running 'docker pull ghcr.io/github/github-mcp-server' to ensure the image is available"
+echo -e "3. Check your Docker installation and permissions"
+echo -e "4. Verify the MCP configuration format matches the documentation"
+echo -e "5. Try restarting your terminal or computer"
+echo -e "6. Run 'Q_LOG_LEVEL=trace q chat' for more detailed logs"

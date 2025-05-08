@@ -154,51 +154,10 @@ setup_mcp() {
     log_warning "Please install Docker to use the GitHub MCP server."
   fi
   
-  # Create a debug script to help with troubleshooting
-  cat > "$HOME/debug-amazonq-mcp.sh" << 'EOF'
-#!/bin/bash
-# Debug script for Amazon Q MCP
-
-echo "Checking MCP configuration..."
-echo "-----------------------------"
-
-# Check if the MCP config file exists
-if [ -f "$HOME/.aws/amazonq/mcp.json" ]; then
-  echo "MCP config file exists: $HOME/.aws/amazonq/mcp.json"
-  echo "Contents:"
-  cat "$HOME/.aws/amazonq/mcp.json"
-else
-  echo "MCP config file not found: $HOME/.aws/amazonq/mcp.json"
-fi
-
-echo ""
-echo "Checking environment..."
-echo "----------------------"
-
-# Check if the GitHub token is set
-if [ -n "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
-  echo "GitHub token is set: ${GITHUB_PERSONAL_ACCESS_TOKEN:0:5}..."
-else
-  echo "GitHub token is not set"
-fi
-
-# Check if Docker is installed
-if command -v docker &> /dev/null; then
-  echo "Docker is installed: $(docker --version)"
-else
-  echo "Docker is not installed"
-fi
-
-echo ""
-echo "Testing GitHub MCP server..."
-echo "--------------------------"
-
-# Test the GitHub MCP server
-echo "Testing GitHub MCP server with Docker..."
-echo '{"jsonrpc":"2.0","id":1,"method":"initialize"}' | sudo docker run -i --rm -e GITHUB_PERSONAL_ACCESS_TOKEN="$GITHUB_PERSONAL_ACCESS_TOKEN" ghcr.io/github/github-mcp-server stdio
-EOF
-  chmod +x "$HOME/debug-amazonq-mcp.sh" 2>/dev/null || handle_error "Failed to make debug script executable"
-  log_success "Created debug script at $HOME/debug-amazonq-mcp.sh"
+  # Create a symlink to the debug script
+  log "Creating debug script symlink..."
+  ln -sf "$SCRIPT_DIR/debug-mcp.sh" "$HOME/debug-amazonq-mcp.sh" 2>/dev/null || handle_error "Failed to create debug script symlink"
+  log_success "Created debug script symlink at $HOME/debug-amazonq-mcp.sh"
   
   log_success "MCP configuration set up successfully"
 }
