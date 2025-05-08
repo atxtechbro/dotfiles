@@ -195,128 +195,78 @@ exit 1
 EOF
     chmod +x "$HOME/mcp/github-mcp-wrapper" 2>/dev/null || handle_error "Failed to make github-mcp-wrapper executable"
   fi
-      log "Building with Go..."
-      # Pass the token directly to the build environment
-      GITHUB_PERSONAL_ACCESS_TOKEN="$GITHUB_PERSONAL_ACCESS_TOKEN" go build -o github-mcp-server ./cmd/github-mcp-server
-      
-      # Check if build was successful
-      if [ -f "./github-mcp-server" ]; then
-        log "GitHub MCP server built successfully"
-        
-        # Create symlink to the built binary
-        ln -sf "$(pwd)/github-mcp-server" "$HOME/mcp/github-mcp-server"
-        log "Created symlink to GitHub MCP server"
-        
-        # Also create a symlink in .local/bin for consistency
-        mkdir -p "$HOME/.local/bin"
-        ln -sf "$(pwd)/github-mcp-server" "$HOME/.local/bin/github-mcp-server"
-        log "Created symlink in ~/.local/bin for github-mcp-server"
-      else
-        log "Failed to build GitHub MCP server"
-      fi
-  else
-    log "Docker is not available. Cannot set up GitHub MCP server."
-    log "Please install Docker to use the GitHub MCP server."
-    
-    # Create a placeholder wrapper that shows an error message
-    cat > "$HOME/mcp/github-mcp-wrapper" << 'EOF'
-#!/bin/bash
-echo "Error: GitHub MCP server is not available." >&2
-echo "Please install Docker to use the GitHub MCP server." >&2
-exit 1
-EOF
-    chmod +x "$HOME/mcp/github-mcp-wrapper" 2>/dev/null || handle_error "Failed to make github-mcp-wrapper executable"
-  fi
   
-  # Ensure the MCP directory is in the PATH
-  if ! echo "$PATH" | grep -q "$HOME/mcp"; then
-    echo "Adding $HOME/mcp to PATH in .bashrc"
-    echo 'export PATH="$HOME/mcp:$PATH"' >> "$HOME/.bashrc"
-    # Also add to current session
-    export PATH="$HOME/mcp:$PATH"
-  fi
-  
-  # Create a wrapper script that ensures the token is available
-  cat > "$HOME/mcp/github-mcp-wrapper" << 'EOF'
-#!/bin/bash
-# Wrapper script for github-mcp-server that ensures the token is available
-
-# Check if token is in environment
-if [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
-  # Try to get from secrets file
-  if [ -f "$HOME/.bash_secrets" ]; then
-    if grep -q "GITHUB_PERSONAL_ACCESS_TOKEN=" "$HOME/.bash_secrets"; then
-      export GITHUB_PERSONAL_ACCESS_TOKEN=$(grep "GITHUB_PERSONAL_ACCESS_TOKEN=" "$HOME/.bash_secrets" | cut -d '=' -f2)
-    fi
-  fi
-  
-  # If still no token, use placeholder for testing
-  if [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
-    export GITHUB_PERSONAL_ACCESS_TOKEN="placeholder_for_testing"
-    echo "Warning: Using placeholder token for testing. GitHub API calls will fail." >&2
-  fi
-fi
-
-# Run the actual server with the token in environment
-if [ -x "$HOME/mcp/github-mcp-server" ]; then
-  exec "$HOME/mcp/github-mcp-server" stdio
-elif [ -x "$HOME/.local/bin/github-mcp-server" ]; then
-  exec "$HOME/.local/bin/github-mcp-server" stdio
-else
-  echo "Error: github-mcp-server not found" >&2
-  exit 1
-fi
-EOF
-  chmod +x "$HOME/mcp/github-mcp-wrapper" 2>/dev/null || handle_error "Failed to make github-mcp-wrapper executable"
-  
-  # Update the MCP configuration to use the wrapper
-  if [ -f "$HOME/.aws/amazonq/mcp.json" ]; then
-    # Use sed to replace the github-mcp-server command with the wrapper
-    sed -i 's|"github-mcp-server"|"github-mcp-wrapper"|g' "$HOME/.aws/amazonq/mcp.json" 2>/dev/null || handle_error "Failed to update MCP config"
-  fi
-  
-  # Create debug script for Amazon Q
+  # Create a debug script to help with troubleshooting
   cat > "$HOME/debug-amazonq-mcp.sh" << 'EOF'
 #!/bin/bash
-# Debug script for Amazon Q MCP issues
+# Debug script for Amazon Q MCP
 
-# Create log directory
-LOG_DIR="$HOME/ppv/pillars/dotfiles/logs/mcp-tests"
-mkdir -p "$LOG_DIR"
+echo "Checking MCP configuration..."
+echo "-----------------------------"
 
-# Set environment variables for debugging
-export Q_LOG_LEVEL=trace
-export RUST_BACKTRACE=full
-
-# Ensure GitHub token is available
-if [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ] && [ -f "$HOME/.bash_secrets" ]; then
-  if grep -q "GITHUB_PERSONAL_ACCESS_TOKEN=" "$HOME/.bash_secrets"; then
-    export GITHUB_PERSONAL_ACCESS_TOKEN=$(grep "GITHUB_PERSONAL_ACCESS_TOKEN=" "$HOME/.bash_secrets" | cut -d '=' -f2)
-  fi
+# Check if the MCP config file exists
+if [ -f "$HOME/.aws/amazonq/mcp.json" ]; then
+  echo "MCP config file exists: $HOME/.aws/amazonq/mcp.json"
+  echo "Contents:"
+  cat "$HOME/.aws/amazonq/mcp.json"
+else
+  echo "MCP config file not found: $HOME/.aws/amazonq/mcp.json"
 fi
 
-# If still no token, use placeholder for testing
-if [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
-  export GITHUB_PERSONAL_ACCESS_TOKEN="placeholder_for_testing"
-  echo "Warning: Using placeholder token for testing. GitHub API calls will fail."
-fi
-
-# Generate timestamp for log file
-TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-LOG_FILE="$LOG_DIR/debug_amazonq_${TIMESTAMP}.log"
-
-# Run Amazon Q with debugging enabled
-echo "Starting Amazon Q with debug logging..."
-echo "Logs will be saved to $LOG_FILE"
-q chat --trust-all-tools 2>&1 | tee "$LOG_FILE"
-
-# After exit, provide instructions
 echo ""
-echo "Debug session completed. Log saved to: $LOG_FILE"
+echo "Checking MCP servers..."
+echo "----------------------"
+
+# Check if the test MCP server exists
+if [ -f "$HOME/mcp/test-mcp-server" ]; then
+  echo "Test MCP server exists: $HOME/mcp/test-mcp-server"
+  echo "Permissions: $(ls -la "$HOME/mcp/test-mcp-server")"
+else
+  echo "Test MCP server not found: $HOME/mcp/test-mcp-server"
+fi
+
+# Check if the GitHub MCP server exists
+if [ -f "$HOME/mcp/github-mcp-wrapper" ]; then
+  echo "GitHub MCP wrapper exists: $HOME/mcp/github-mcp-wrapper"
+  echo "Permissions: $(ls -la "$HOME/mcp/github-mcp-wrapper")"
+  echo "Contents:"
+  cat "$HOME/mcp/github-mcp-wrapper"
+else
+  echo "GitHub MCP wrapper not found: $HOME/mcp/github-mcp-wrapper"
+fi
+
+echo ""
+echo "Checking environment..."
+echo "----------------------"
+
+# Check if the GitHub token is set
+if [ -n "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
+  echo "GitHub token is set: ${GITHUB_PERSONAL_ACCESS_TOKEN:0:5}..."
+else
+  echo "GitHub token is not set"
+fi
+
+# Check if Docker is installed
+if command -v docker &> /dev/null; then
+  echo "Docker is installed: $(docker --version)"
+else
+  echo "Docker is not installed"
+fi
+
+echo ""
+echo "Testing MCP servers..."
+echo "---------------------"
+
+# Test the test MCP server
+echo "Testing test MCP server..."
+echo '{"jsonrpc":"2.0","id":1,"method":"initialize"}' | "$HOME/mcp/test-mcp-server" stdio
+
+# Test the GitHub MCP server
+echo "Testing GitHub MCP server..."
+echo '{"jsonrpc":"2.0","id":1,"method":"initialize"}' | "$HOME/mcp/github-mcp-wrapper" stdio
 EOF
-  chmod +x "$HOME/debug-amazonq-mcp.sh" 2>/dev/null || handle_error "Failed to make debug-amazonq-mcp.sh executable"
-  
-  echo "Created debug script at $HOME/debug-amazonq-mcp.sh"
+  chmod +x "$HOME/debug-amazonq-mcp.sh" 2>/dev/null || handle_error "Failed to make debug script executable"
+  log "Created debug script at $HOME/debug-amazonq-mcp.sh"
   
   log "Amazon Q MCP configuration set up successfully"
 }
@@ -326,20 +276,29 @@ setup_claude() {
   log "Setting up MCP for Claude CLI"
   
   # Create directory if it doesn't exist
-  mkdir -p "$HOME/.config/claude" 2>/dev/null || handle_error "Failed to create directory $HOME/.config/claude"
+  mkdir -p "$HOME/.config/claude" || handle_error "Failed to create directory $HOME/.config/claude"
   
-  # Copy the template configuration if it exists
-  if [ -f "$CONFIG_FILE" ]; then
-    cp "$CONFIG_FILE" "$HOME/.config/claude/mcp.json" 2>/dev/null || handle_error "Failed to copy Claude MCP config template"
-  else
-    handle_error "Claude MCP config template not found: $CONFIG_FILE"
-  fi
+  # Create a minimal config
+  echo '{
+  "mcpServers": {
+    "test": {
+      "command": "test-mcp-server",
+      "args": ["stdio"]
+    },
+    "github": {
+      "command": "github-mcp-wrapper",
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
+    }
+  }
+}' > "$HOME/.config/claude/mcp.json" 2>/dev/null || handle_error "Failed to create Claude MCP config"
   
   log "Claude CLI MCP configuration set up successfully"
 }
 
-# Main setup logic
+# Main setup
 setup_amazonq
 setup_claude
 
-echo "MCP configuration set up successfully"
+log "MCP configuration set up successfully"
