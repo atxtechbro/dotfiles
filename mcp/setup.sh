@@ -70,6 +70,7 @@ setup_mcp() {
   log "Created directory $MCP_CONFIG_DIR"
   
   # Set GitHub token directly from environment variable if available
+  # This is kept for backward compatibility but not used for GitHub MCP servers anymore
   local github_token="${GITHUB_PERSONAL_ACCESS_TOKEN:-}"
   
   # If no token in environment, check secrets file as fallback
@@ -79,7 +80,7 @@ setup_mcp() {
       github_token=$(grep "GITHUB_PERSONAL_ACCESS_TOKEN=" "$SECRETS_FILE" 2>/dev/null | cut -d '=' -f2 | tr -d '"')
       log_success "Found GitHub token in secrets file"
       
-      # Export the token to environment for MCP server to use
+      # Export the token to environment for backward compatibility
       export GITHUB_PERSONAL_ACCESS_TOKEN="$github_token"
     else
       log_warning "No GitHub token found in secrets file"
@@ -89,20 +90,6 @@ setup_mcp() {
       log_success "Using GitHub token from environment"
     else
       log_warning "No GitHub token found in environment"
-    fi
-  fi
-  
-  # If still no token, use placeholder for testing
-  if [ -z "$github_token" ]; then
-    log_warning "No GitHub token found in environment or secrets file"
-    log_error "Setting placeholder token for testing. GitHub API calls will fail."
-    export GITHUB_PERSONAL_ACCESS_TOKEN="placeholder_for_testing"
-    
-    # Add to secrets file if it exists
-    if [ -f "$SECRETS_FILE" ]; then
-      echo "GITHUB_PERSONAL_ACCESS_TOKEN=placeholder_for_testing" >> "$SECRETS_FILE" 2>/dev/null || handle_error "Failed to update secrets file"
-      chmod 600 "$SECRETS_FILE" 2>/dev/null || handle_error "Failed to set permissions on secrets file"
-      log "Added placeholder token to secrets file"
     fi
   fi
   
@@ -125,53 +112,10 @@ setup_mcp() {
     log_error "AWS Documentation MCP server setup script not found"
   fi
   
-  # Check if Docker is installed
-  if command -v docker &> /dev/null; then
-    log_success "Docker is available ($(docker --version))"
-    
-    # Pull the Docker image in advance to avoid delays during first use
-    log "Pulling GitHub MCP server Docker image with sudo (ghcr.io/github/github-mcp-server)..."
-    if sudo docker pull ghcr.io/github/github-mcp-server >/dev/null 2>&1; then
-      log_success "Docker image pulled successfully with sudo (ghcr.io/github/github-mcp-server)"
-    else
-      log_error "Failed to pull Docker image with sudo. Check Docker installation and permissions."
-    fi
-    
-    # Create the MCP configuration file with both sudo and non-sudo Docker commands
-    log "Creating MCP configuration file with both sudo and non-sudo Docker options..."
-    echo '{
+  # Create the MCP configuration file with only AWS docs server
+  log "Creating MCP configuration file with AWS docs server only..."
+  echo '{
   "mcpServers": {
-    "github": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-e",
-        "GITHUB_PERSONAL_ACCESS_TOKEN",
-        "ghcr.io/github/github-mcp-server",
-        "stdio"
-      ],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "'${GITHUB_PERSONAL_ACCESS_TOKEN}'"
-      }
-    },
-    "github-sudo": {
-      "command": "sudo",
-      "args": [
-        "docker",
-        "run",
-        "-i",
-        "--rm",
-        "-e",
-        "GITHUB_PERSONAL_ACCESS_TOKEN",
-        "ghcr.io/github/github-mcp-server",
-        "stdio"
-      ],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "'${GITHUB_PERSONAL_ACCESS_TOKEN}'"
-      }
-    },
     "aws-docs": {
       "command": "'$SCRIPT_DIR'/servers/aws-docs/run-aws-docs-mcp.sh",
       "args": []
