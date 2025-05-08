@@ -22,7 +22,7 @@ fi
 
 # Install or upgrade the AWS Documentation MCP server
 echo "Installing AWS Documentation MCP server with uv..."
-uv pip install --venv "${VENV_DIR}" awslabs.aws-documentation-mcp-server
+uv pip install --python "${VENV_DIR}/bin/python" awslabs.aws-documentation-mcp-server
 
 # Create a wrapper script to run the server
 cat > "${SCRIPT_DIR}/run-aws-docs-mcp.sh" << 'EOF'
