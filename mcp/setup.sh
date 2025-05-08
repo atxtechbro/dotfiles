@@ -113,9 +113,10 @@ setup_amazonq() {
   # Copy the template configuration if it exists
   if [ -f "$CONFIG_FILE" ]; then
     cp "$CONFIG_FILE" "$HOME/.aws/amazonq/mcp.json" 2>/dev/null || handle_error "Failed to copy MCP config template"
+    log "Copied MCP config template from $CONFIG_FILE"
   else
-    handle_error "MCP config template not found: $CONFIG_FILE"
-    # Create a minimal config
+    log_warning "MCP config template not found: $CONFIG_FILE"
+    # Create a config that directly uses Docker as per GitHub documentation
     echo '{
   "mcpServers": {
     "test": {
@@ -123,13 +124,23 @@ setup_amazonq() {
       "args": ["stdio"]
     },
     "github": {
-      "command": "github-mcp-wrapper",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server",
+        "stdio"
+      ],
       "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "'${GITHUB_PERSONAL_ACCESS_TOKEN}'"
       }
     }
   }
-}' > "$HOME/.aws/amazonq/mcp.json" 2>/dev/null || handle_error "Failed to create minimal MCP config"
+}' > "$HOME/.aws/amazonq/mcp.json" 2>/dev/null || handle_error "Failed to create MCP config"
+    log_success "Created MCP config with direct Docker command as per GitHub documentation"
   fi
   
   # Create MCP servers directory in the user's path
@@ -322,7 +333,7 @@ setup_claude() {
   # Create directory if it doesn't exist
   mkdir -p "$HOME/.config/claude" || handle_error "Failed to create directory $HOME/.config/claude"
   
-  # Create a minimal config
+  # Create a minimal config for Claude CLI
   echo '{
   "mcpServers": {
     "test": {
@@ -330,13 +341,23 @@ setup_claude() {
       "args": ["stdio"]
     },
     "github": {
-      "command": "github-mcp-wrapper",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server",
+        "stdio"
+      ],
       "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "'${GITHUB_PERSONAL_ACCESS_TOKEN}'"
       }
     }
   }
 }' > "$HOME/.config/claude/mcp.json" 2>/dev/null || handle_error "Failed to create Claude MCP config"
+  log_success "Created Claude CLI MCP config with direct Docker command"
   
   log "Claude CLI MCP configuration set up successfully"
 }
