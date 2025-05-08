@@ -23,10 +23,21 @@ Use the test script to verify connectivity:
 ```
 
 This script:
-- Runs tests with and without the `--trust-all-tools` flag
+- Tests multiple GitHub MCP tools (search_repositories, list_issues, get_issue, etc.)
+- Runs with the `--trust-all-tools` flag to bypass approval prompts
 - Consolidates all logs to `~/ppv/pillars/dotfiles/logs/mcp-tests/`
 - Creates timestamped log files for each test run
-- Generates both a master log and individual test logs
+
+### Test Results
+
+Our comprehensive testing shows:
+- MCP servers initialize successfully (github and test)
+- All tools are recognized and invoked with the correct parameters
+- All tools fail with the same error pattern:
+  - Tool execution begins but fails after ~0.15-0.53s
+  - Error message: "[tool_name] invocation failed to produce a result"
+- No debug output from our added logging is visible in the logs
+- Consistent failure pattern across all GitHub MCP tools suggests a fundamental connection issue
 
 ### Log Analysis
 
@@ -35,8 +46,8 @@ All test logs are stored in a central location for easy comparison:
 ```
 ~/ppv/pillars/dotfiles/logs/mcp-tests/
 ├── mcp_test_20250508_123456_master.log       # Master log with all test results
-├── mcp_test_20250508_123456_With_trust_flag.log  # Individual test log
-└── mcp_test_20250508_123456_Without_trust_flag.log  # Individual test log
+├── mcp_test_20250508_123456_search_repositories.log  # Individual test log
+└── mcp_test_20250508_123456_list_issues.log  # Individual test log
 ```
 
 ### Development Approach
@@ -51,7 +62,9 @@ We're following a tracer bullet development approach:
 
 ### Next Steps
 
-1. Fix build errors in the search.go implementation
-2. Ensure the search_repositories tool matches the expected interfaces
-3. Test with the simplest possible query
-4. Gradually expand functionality once the basic connection works
+1. Fix remaining build errors in search.go implementation
+2. Verify the GitHub token has appropriate permissions
+3. Add more logging to the server initialization process
+4. Check if the GitHub API is being rate limited
+5. Investigate if there's a network connectivity issue
+6. Check if there's a mismatch between the MCP server version and the client version
