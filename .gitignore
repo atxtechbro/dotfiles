@@ -45,3 +45,9 @@ github-mcp-server/
 # Amazon Q Developer CLI
 amazon-q-developer-cli/
 
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+mcp/servers/aws-docs/venv/

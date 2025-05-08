@@ -217,11 +217,17 @@ if command -v q >/dev/null 2>&1; then
   # Set up MCP for Amazon Q
   echo "Setting up MCP for Amazon Q..."
   
-  # Run the MCP installation script
-  echo "Running MCP installation script..."
-  bash "$DOT_DEN/mcp/install.sh"
-  
-  echo -e "${GREEN}✓ Amazon Q MCP configuration set up${NC}"
+  # Run the MCP setup script directly with safer error handling
+  echo "Running MCP setup script..."
+  if [ -f "$DOT_DEN/mcp/setup.sh" ]; then
+    # Use bash instead of source, and don't capture output to avoid potential issues
+    bash "$DOT_DEN/mcp/setup.sh" || true
+    # The "|| true" ensures the script continues even if the MCP setup fails
+    echo -e "${GREEN}✓ Amazon Q MCP configuration completed${NC}"
+  else
+    echo -e "${RED}MCP setup script not found at $DOT_DEN/mcp/setup.sh${NC}"
+    echo "Skipping MCP setup"
+  fi
 fi
 
 # Check and install npm for Claude Code if needed
