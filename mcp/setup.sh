@@ -143,14 +143,14 @@ setup_amazonq() {
     # Create a wrapper script for Docker-based GitHub MCP server
     cat > "$HOME/mcp/github-mcp-wrapper" << 'EOF'
 #!/bin/bash
-# Wrapper script for GitHub MCP server using Docker
+# Wrapper script for GitHub MCP server using Docker only (no Go fallback)
 
 # Check if token is in environment
 if [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
   # Try to get from secrets file
   if [ -f "$HOME/.bash_secrets" ]; then
     if grep -q "GITHUB_PERSONAL_ACCESS_TOKEN=" "$HOME/.bash_secrets"; then
-      export GITHUB_PERSONAL_ACCESS_TOKEN=$(grep "GITHUB_PERSONAL_ACCESS_TOKEN=" "$HOME/.bash_secrets" | cut -d '=' -f2)
+      export GITHUB_PERSONAL_ACCESS_TOKEN=$(grep "GITHUB_PERSONAL_ACCESS_TOKEN=" "$HOME/.bash_secrets" | cut -d '=' -f2 | tr -d '"')
     fi
   fi
   
@@ -161,7 +161,10 @@ if [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
   fi
 fi
 
-# Run the GitHub MCP server using Docker
+# Debug output
+echo "Using GitHub token: ${GITHUB_PERSONAL_ACCESS_TOKEN:0:5}..." >&2
+
+# Run the GitHub MCP server using Docker directly
 exec docker run -i --rm \
   -e GITHUB_PERSONAL_ACCESS_TOKEN="$GITHUB_PERSONAL_ACCESS_TOKEN" \
   ghcr.io/github/github-mcp-server stdio
@@ -179,16 +182,19 @@ EOF
     log "Pulling GitHub MCP server Docker image..."
     docker pull ghcr.io/github/github-mcp-server >/dev/null 2>&1 || handle_error "Failed to pull GitHub MCP server Docker image"
     log "Docker image pulled successfully"
-  elif command -v go &> /dev/null && [ -d "$HOME/ppv/pillars/dotfiles/github-mcp-server" ]; then
-    log "Docker not available, but Go is installed. Building GitHub MCP server from source as fallback."
+  else
+    log "Docker is not available. Cannot set up GitHub MCP server."
+    log "Please install Docker to use the GitHub MCP server."
     
-    # Navigate to the github-mcp-server directory
-    pushd "$HOME/ppv/pillars/dotfiles/github-mcp-server" > /dev/null
-    
-    # Kill any running instances of github-mcp-server
-    pkill -f github-mcp-server || true
-    
-    # Build the server using Go
+    # Create a placeholder wrapper that shows an error message
+    cat > "$HOME/mcp/github-mcp-wrapper" << 'EOF'
+#!/bin/bash
+echo "Error: GitHub MCP server is not available." >&2
+echo "Please install Docker to use the GitHub MCP server." >&2
+exit 1
+EOF
+    chmod +x "$HOME/mcp/github-mcp-wrapper" 2>/dev/null || handle_error "Failed to make github-mcp-wrapper executable"
+  fi
       log "Building with Go..."
       # Pass the token directly to the build environment
       GITHUB_PERSONAL_ACCESS_TOKEN="$GITHUB_PERSONAL_ACCESS_TOKEN" go build -o github-mcp-server ./cmd/github-mcp-server
@@ -209,14 +215,14 @@ EOF
         log "Failed to build GitHub MCP server"
       fi
   else
-    log "Neither Docker nor Go is available. Cannot set up GitHub MCP server."
-    log "Please install Docker or Go to use the GitHub MCP server."
+    log "Docker is not available. Cannot set up GitHub MCP server."
+    log "Please install Docker to use the GitHub MCP server."
     
     # Create a placeholder wrapper that shows an error message
     cat > "$HOME/mcp/github-mcp-wrapper" << 'EOF'
 #!/bin/bash
 echo "Error: GitHub MCP server is not available." >&2
-echo "Please install Docker or Go to use the GitHub MCP server." >&2
+echo "Please install Docker to use the GitHub MCP server." >&2
 exit 1
 EOF
     chmod +x "$HOME/mcp/github-mcp-wrapper" 2>/dev/null || handle_error "Failed to make github-mcp-wrapper executable"
