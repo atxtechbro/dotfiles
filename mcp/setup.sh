@@ -231,12 +231,12 @@ verify_mcp_initialization() {
 # Main setup
 setup_mcp
 
-# Verify MCP initialization if requested
-if [ "${VERIFY_MCP:-true}" = "true" ]; then
-  log "Running verification test..."
-  if verify_mcp_initialization; then
-    log_success "MCP verification passed! Setup complete."
-  else
-    log_error "MCP verification failed! Please check the logs and debug script."
-  fi
+# Always verify MCP initialization (mandatory)
+log "Running MCP verification test (this may take a few moments)..."
+if verify_mcp_initialization; then
+  log_success "MCP verification passed! Setup complete."
+else
+  log_error "MCP verification failed! Please check the logs and debug script."
+  # Exit with error code to indicate failure
+  return 1 2>/dev/null || exit 1
 fi
