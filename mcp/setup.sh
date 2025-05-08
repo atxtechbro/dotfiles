@@ -208,23 +208,40 @@ EOF
 verify_mcp_initialization() {
   log "Verifying MCP server initialization..."
   
-  # Run Amazon Q with the test command
+  # Run Amazon Q with the test command and a timeout
+  log "Running Amazon Q CLI test with 30s timeout..."
   local test_output
-  test_output=$(Q_LOG_LEVEL=trace q chat --no-interactive --trust-all-tools "try to use the github___search_repositories tool to search for 'amazon-q', this is a test" 2>&1 | head -50)
+  test_output=$(timeout 30s Q_LOG_LEVEL=trace q chat --no-interactive --trust-all-tools "try to use the github___search_repositories tool to search for 'amazon-q', this is a test" 2>&1)
+  local timeout_status=$?
   
-  # Check if the output contains "0 of" which indicates initialization failure
+  # Check if command timed out
+  if [ $timeout_status -eq 124 ]; then
+    log_error "Verification timed out after 30 seconds"
+    log_error "Last output: $(echo "$test_output" | tail -5)"
+    return 1
+  fi
+  
+  # Display the output for debugging
+  log "Test output preview:"
+  echo "$test_output" | head -10
+  
+  # First check for explicit failure patterns
   if echo "$test_output" | grep -q "0 of"; then
     log_error "MCP server initialization failed! Output contains '0 of' indicating no servers initialized"
     log_error "Test output: $(echo "$test_output" | grep -E '(0 of|mcp servers initialized)' | head -3)"
     return 1
-  elif echo "$test_output" | grep -q "mcp servers initialized"; then
-    log_success "MCP server initialization successful! At least one server was initialized"
-    log_success "Test output: $(echo "$test_output" | grep -E '(of|mcp servers initialized)' | head -3)"
+  fi
+  
+  # Then check for successful initialization patterns
+  # We need to see a pattern like "N of N mcp servers initialized" where N > 0
+  if echo "$test_output" | grep -E '[1-9][0-9]* of [1-9][0-9]* mcp servers initialized' -q; then
+    log_success "MCP server initialization successful! Servers were properly initialized"
+    log_success "Test output: $(echo "$test_output" | grep -E '([1-9][0-9]* of [1-9][0-9]* mcp servers initialized)' | head -1)"
     return 0
   else
-    log_warning "Could not determine MCP server initialization status"
-    log_warning "Test output snippet: $(echo "$test_output" | head -3)"
-    return 2
+    log_error "MCP server initialization failed! Could not confirm successful initialization"
+    log_error "Test output snippet: $(echo "$test_output" | grep -E '(mcp servers initialized|failed|error)' | head -3)"
+    return 1
   fi
 }
 
