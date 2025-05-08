@@ -37,22 +37,40 @@ done
 # Function to log messages if verbose mode is enabled
 log() {
   if [ "$VERBOSE" = true ]; then
-    echo "$1"
+    echo "[$(date '+%H:%M:%S')] $1"
   fi
+}
+
+# Function to log success messages
+log_success() {
+  if [ "$VERBOSE" = true ]; then
+    echo "[$(date '+%H:%M:%S')] ✅ $1"
+  fi
+}
+
+# Function to log warning messages
+log_warning() {
+  echo "[$(date '+%H:%M:%S')] ⚠️  $1"
+}
+
+# Function to log error messages
+log_error() {
+  echo "[$(date '+%H:%M:%S')] ❌ $1"
 }
 
 # Function to handle errors gracefully
 handle_error() {
-  echo "Warning: $1"
+  log_error "$1"
   # Don't exit, just continue
 }
 
 # Setup MCP for Amazon Q
 setup_amazonq() {
-  log "Setting up MCP for Amazon Q"
+  log "Setting up MCP for Amazon Q..."
   
   # Create directory if it doesn't exist
   mkdir -p "$HOME/.aws/amazonq" || handle_error "Failed to create directory $HOME/.aws/amazonq"
+  log "Created directory $HOME/.aws/amazonq"
   
   # Set GitHub token directly from environment variable if available
   # This simplifies the token handling and avoids issues with the secrets file
@@ -63,23 +81,32 @@ setup_amazonq() {
     # Try to extract GitHub token from secrets file
     if grep -q "GITHUB_PERSONAL_ACCESS_TOKEN=" "$SECRETS_FILE" 2>/dev/null; then
       github_token=$(grep "GITHUB_PERSONAL_ACCESS_TOKEN=" "$SECRETS_FILE" 2>/dev/null | cut -d '=' -f2)
-      log "Found GitHub token in secrets file"
+      log_success "Found GitHub token in secrets file"
       
       # Export the token to environment for MCP server to use
       export GITHUB_PERSONAL_ACCESS_TOKEN="$github_token"
+    else
+      log_warning "No GitHub token found in secrets file"
+    fi
+  else
+    if [ -n "$github_token" ]; then
+      log_success "Using GitHub token from environment"
+    else
+      log_warning "No GitHub token found in environment"
     fi
   fi
   
   # If still no token, use placeholder for testing
   if [ -z "$github_token" ]; then
-    log "No GitHub token found in environment or secrets file"
-    echo "Setting placeholder token for testing."
+    log_warning "No GitHub token found in environment or secrets file"
+    log_error "Setting placeholder token for testing. GitHub API calls will fail."
     export GITHUB_PERSONAL_ACCESS_TOKEN="placeholder_for_testing"
     
     # Add to secrets file if it exists
     if [ -f "$SECRETS_FILE" ]; then
       echo "GITHUB_PERSONAL_ACCESS_TOKEN=placeholder_for_testing" >> "$SECRETS_FILE" 2>/dev/null || handle_error "Failed to update secrets file"
       chmod 600 "$SECRETS_FILE" 2>/dev/null || handle_error "Failed to set permissions on secrets file"
+      log "Added placeholder token to secrets file"
     fi
   fi
   
@@ -138,7 +165,7 @@ setup_amazonq() {
   
   # Check if Docker is installed
   if command -v docker &> /dev/null; then
-    log "Docker is available. Using Docker for GitHub MCP server."
+    log_success "Docker is available ($(docker --version)). Using Docker for GitHub MCP server."
     
     # Create a wrapper script for Docker-based GitHub MCP server
     cat > "$HOME/mcp/github-mcp-wrapper" << 'EOF'
@@ -151,18 +178,24 @@ if [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
   if [ -f "$HOME/.bash_secrets" ]; then
     if grep -q "GITHUB_PERSONAL_ACCESS_TOKEN=" "$HOME/.bash_secrets"; then
       export GITHUB_PERSONAL_ACCESS_TOKEN=$(grep "GITHUB_PERSONAL_ACCESS_TOKEN=" "$HOME/.bash_secrets" | cut -d '=' -f2 | tr -d '"')
+      echo "[$(date '+%H:%M:%S')] ✅ Found GitHub token in secrets file" >&2
+    else
+      echo "[$(date '+%H:%M:%S')] ⚠️  No GitHub token found in secrets file" >&2
     fi
+  else
+    echo "[$(date '+%H:%M:%S')] ⚠️  No .bash_secrets file found" >&2
   fi
   
   # If still no token, use placeholder for testing
   if [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
     export GITHUB_PERSONAL_ACCESS_TOKEN="placeholder_for_testing"
-    echo "Warning: Using placeholder token for testing. GitHub API calls will fail." >&2
+    echo "[$(date '+%H:%M:%S')] ❌ Using placeholder token for testing. GitHub API calls will fail." >&2
   fi
 fi
 
 # Debug output
-echo "Using GitHub token: ${GITHUB_PERSONAL_ACCESS_TOKEN:0:5}..." >&2
+echo "[$(date '+%H:%M:%S')] ℹ️  Using GitHub token: ${GITHUB_PERSONAL_ACCESS_TOKEN:0:5}..." >&2
+echo "[$(date '+%H:%M:%S')] ℹ️  Starting Docker container for GitHub MCP server..." >&2
 
 # Run the GitHub MCP server using Docker directly
 exec docker run -i --rm \
@@ -170,30 +203,41 @@ exec docker run -i --rm \
   ghcr.io/github/github-mcp-server stdio
 EOF
     chmod +x "$HOME/mcp/github-mcp-wrapper" 2>/dev/null || handle_error "Failed to make github-mcp-wrapper executable"
-    log "Created Docker-based GitHub MCP server wrapper"
+    log_success "Created Docker-based GitHub MCP server wrapper at $HOME/mcp/github-mcp-wrapper"
     
     # Also create a symlink in .local/bin for consistency
     if [ -d "$HOME/.local/bin" ]; then
       ln -sf "$HOME/mcp/github-mcp-wrapper" "$HOME/.local/bin/github-mcp-wrapper" 2>/dev/null || handle_error "Failed to create github-mcp-wrapper symlink in .local/bin"
-      log "Created symlink in ~/.local/bin for github-mcp-wrapper"
+      log_success "Created symlink at ~/.local/bin/github-mcp-wrapper"
     fi
     
     # Pull the Docker image in advance to avoid delays during first use
-    log "Pulling GitHub MCP server Docker image..."
-    docker pull ghcr.io/github/github-mcp-server >/dev/null 2>&1 || handle_error "Failed to pull GitHub MCP server Docker image"
-    log "Docker image pulled successfully"
+    log "Pulling GitHub MCP server Docker image (ghcr.io/github/github-mcp-server)..."
+    if docker pull ghcr.io/github/github-mcp-server >/dev/null 2>&1; then
+      log_success "Docker image pulled successfully (ghcr.io/github/github-mcp-server)"
+    else
+      log_warning "Failed to pull GitHub MCP server Docker image. First use may be slower."
+      # Try with sudo as a fallback
+      log "Attempting to pull Docker image with sudo..."
+      if sudo docker pull ghcr.io/github/github-mcp-server >/dev/null 2>&1; then
+        log_success "Docker image pulled successfully with sudo"
+      else
+        log_error "Failed to pull Docker image even with sudo. Check Docker permissions."
+      fi
+    fi
   else
-    log "Docker is not available. Cannot set up GitHub MCP server."
-    log "Please install Docker to use the GitHub MCP server."
+    log_error "Docker is not available. Cannot set up GitHub MCP server."
+    log_warning "Please install Docker to use the GitHub MCP server."
     
     # Create a placeholder wrapper that shows an error message
     cat > "$HOME/mcp/github-mcp-wrapper" << 'EOF'
 #!/bin/bash
-echo "Error: GitHub MCP server is not available." >&2
-echo "Please install Docker to use the GitHub MCP server." >&2
+echo "[$(date '+%H:%M:%S')] ❌ Error: GitHub MCP server is not available." >&2
+echo "[$(date '+%H:%M:%S')] ⚠️  Please install Docker to use the GitHub MCP server." >&2
 exit 1
 EOF
     chmod +x "$HOME/mcp/github-mcp-wrapper" 2>/dev/null || handle_error "Failed to make github-mcp-wrapper executable"
+    log "Created placeholder wrapper with error message"
   fi
   
   # Create a debug script to help with troubleshooting
