@@ -1,25 +1,21 @@
 #!/bin/bash
 
 # MCP Configuration Setup Script
-# This script sets up MCP configurations for different personas
+# This script sets up MCP configurations
 
 # Don't use set -e as it causes the script to exit on errors
 # which breaks when sourced
 
 # Default values
-PERSONA="personal"
 VERBOSE=true
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 CONFIG_DIR="$SCRIPT_DIR/config-templates"
 SECRETS_FILE="$HOME/.bash_secrets"
+CONFIG_FILE="$CONFIG_DIR/mcp.json"
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --persona)
-      PERSONA="$2"
-      shift 2
-      ;;
     --verbose)
       VERBOSE=true
       shift
@@ -27,8 +23,6 @@ while [[ $# -gt 0 ]]; do
     --help)
       echo "Usage: $0 [options]"
       echo "Options:"
-      echo "  --persona PERSONA    Configure MCP for the specified persona (default: personal)"
-      echo "                       Available personas: personal, company"
       echo "  --verbose            Show verbose output"
       echo "  --help               Show this help message"
       return 0 2>/dev/null || exit 0
@@ -55,8 +49,7 @@ handle_error() {
 
 # Setup MCP for Amazon Q
 setup_amazonq() {
-  local persona=$1
-  log "Setting up MCP for Amazon Q with persona: $persona"
+  log "Setting up MCP for Amazon Q"
   
   # Create directory if it doesn't exist
   mkdir -p "$HOME/.aws/amazonq" || handle_error "Failed to create directory $HOME/.aws/amazonq"
@@ -91,15 +84,22 @@ setup_amazonq() {
   fi
   
   # Copy the template configuration if it exists
-  if [ -f "$CONFIG_DIR/${persona}-mcp.json" ]; then
-    cp "$CONFIG_DIR/${persona}-mcp.json" "$HOME/.aws/amazonq/mcp.json" 2>/dev/null || handle_error "Failed to copy MCP config template"
+  if [ -f "$CONFIG_FILE" ]; then
+    cp "$CONFIG_FILE" "$HOME/.aws/amazonq/mcp.json" 2>/dev/null || handle_error "Failed to copy MCP config template"
   else
-    handle_error "MCP config template not found: $CONFIG_DIR/${persona}-mcp.json"
+    handle_error "MCP config template not found: $CONFIG_FILE"
     # Create a minimal config
     echo '{
   "mcpServers": {
     "test": {
-      "command": "test-mcp-server"
+      "command": "test-mcp-server",
+      "args": ["stdio"]
+    },
+    "github": {
+      "command": "github-mcp-wrapper",
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
     }
   }
 }' > "$HOME/.aws/amazonq/mcp.json" 2>/dev/null || handle_error "Failed to create minimal MCP config"
@@ -267,37 +267,28 @@ EOF
   
   echo "Created debug script at $HOME/debug-amazonq-mcp.sh"
   
-  log "Amazon Q MCP configuration set up successfully with $persona persona"
+  log "Amazon Q MCP configuration set up successfully"
 }
 
 # Setup MCP for Claude CLI
 setup_claude() {
-  local persona=$1
-  log "Setting up MCP for Claude CLI with persona: $persona"
+  log "Setting up MCP for Claude CLI"
   
   # Create directory if it doesn't exist
   mkdir -p "$HOME/.config/claude" 2>/dev/null || handle_error "Failed to create directory $HOME/.config/claude"
   
   # Copy the template configuration if it exists
-  if [ -f "$CONFIG_DIR/${persona}-mcp.json" ]; then
-    cp "$CONFIG_DIR/${persona}-mcp.json" "$HOME/.config/claude/mcp.json" 2>/dev/null || handle_error "Failed to copy Claude MCP config template"
+  if [ -f "$CONFIG_FILE" ]; then
+    cp "$CONFIG_FILE" "$HOME/.config/claude/mcp.json" 2>/dev/null || handle_error "Failed to copy Claude MCP config template"
   else
-    handle_error "Claude MCP config template not found: $CONFIG_DIR/${persona}-mcp.json"
+    handle_error "Claude MCP config template not found: $CONFIG_FILE"
   fi
   
-  log "Claude CLI MCP configuration set up successfully with $persona persona"
+  log "Claude CLI MCP configuration set up successfully"
 }
 
 # Main setup logic
+setup_amazonq
+setup_claude
 
-# Validate persona and use default if not found
-if [ ! -f "$CONFIG_DIR/${PERSONA}-mcp.json" ]; then
-  echo "Warning: Persona '$PERSONA' not found. Using default configuration."
-  PERSONA="personal"
-fi
-
-# Setup for all supported assistants
-setup_amazonq "$PERSONA"
-setup_claude "$PERSONA"
-
-echo "MCP configuration set up successfully with $PERSONA persona"
+echo "MCP configuration set up successfully"
