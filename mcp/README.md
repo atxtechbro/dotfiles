@@ -44,7 +44,7 @@ If you encounter issues with MCP servers:
 
 3. For Amazon Q specific debugging:
    ```bash
-   Q_LOG_LEVEL=trace q chat
+   Q_LOG_LEVEL=trace RUST_BACKTRACE=1 q chat --no-interactive
    ```
 
 ## What is MCP?
@@ -93,7 +93,7 @@ The GitHub MCP server is configured in the MCP configuration file:
       "command": "github-mcp-server",
       "args": ["stdio"],
       "env": {
-        "GITHUB_TOKEN": "<YOUR_TOKEN>"
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "<YOUR_TOKEN>"
       },
       "timeout": 5000
     }
@@ -108,10 +108,10 @@ You can set up your GitHub token in one of two ways:
 1. Add it to your `.bash_secrets` file:
    ```bash
    # For personal use
-   GITHUB_TOKEN=your_token_here
+   GITHUB_PERSONAL_ACCESS_TOKEN=your_token_here
    
    # For company use
-   COMPANY_GITHUB_TOKEN=your_token_here
+   COMPANY_GITHUB_PERSONAL_ACCESS_TOKEN=your_token_here
    ```
 
 2. Let the setup script prompt you for the token (interactive mode only)
