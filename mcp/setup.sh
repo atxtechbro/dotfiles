@@ -211,7 +211,7 @@ verify_mcp_initialization() {
   # Run Amazon Q with the test command and a timeout
   log "Running Amazon Q CLI test with 30s timeout..."
   local test_output
-  test_output=$(timeout 30s Q_LOG_LEVEL=trace q chat --no-interactive --trust-all-tools "try to use the github___search_repositories tool to search for 'amazon-q', this is a test" 2>&1)
+  test_output=$(timeout 30s bash -c "Q_LOG_LEVEL=trace q chat --no-interactive --trust-all-tools \"try to use the github___search_repositories tool to search for 'amazon-q', this is a test\"" 2>&1)
   local timeout_status=$?
   
   # Check if command timed out
@@ -240,7 +240,7 @@ verify_mcp_initialization() {
     return 0
   else
     log_error "MCP server initialization failed! Could not confirm successful initialization"
-    log_error "Test output snippet: $(echo "$test_output" | grep -E '(mcp servers initialized|failed|error)' | head -3)"
+    log_error "Test output snippet: $(echo "$test_output" | grep -E '(mcp servers initialized|failed|error)' | head -3 || echo "$test_output" | head -3)"
     return 1
   fi
 }
