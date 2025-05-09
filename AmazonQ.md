@@ -3,9 +3,6 @@
 ### Commit early and often
 Always use conventional commit syntax: `<type>[scope]: description` (scope optional but encouraged; use separate `-m` for trailers)
 
-## Common Errors to Avoid
-- Don't thank self when closing your own PRs
-
 ## GitHub CLI Best Practices
 - Always use text files and pipe them to GitHub CLI commands
 
@@ -73,3 +70,6 @@ gh issue create --title "Title" -F tmp.txt
 - Use installation scripts that detect and create required directories
 - Prefer symlinks managed by setup scripts over manual file copying
 - Document all dependencies and installation steps in README files
+
+## Common Errors to Avoid
+- Don't thank self when closing your own PRs
