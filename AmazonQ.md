@@ -24,9 +24,6 @@ Always include blank line at end of files
 - Prefer concise issues with less context over verbose ones
 - Treat GitHub issues as discussion points and suggestions, not strict mandates
 
-## Quick AmazonQ.md Updates
-- use branch name: `docs/update-amazonq-guidance`
-
 ## Debugging Amazon Q CLI
 - Amazon Q CLI does not appear to generate log files in the expected locations (`/tmp/q-logs/` or `~/.amazonq/logs/`)
 - Data is stored in `~/.local/share/amazon-q/` (including SQLite database and history)
