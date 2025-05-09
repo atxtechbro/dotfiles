@@ -2,7 +2,6 @@
 
 ### Commit early and often
 Always use conventional commit syntax: `<type>[scope]: description` (scope optional but encouraged; use separate `-m` for trailers)
-Always include blank line at end of files
 
 ## Common Errors to Avoid
 - Don't thank yourself when closing your own PRs
