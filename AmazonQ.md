@@ -33,7 +33,6 @@ gh issue create --title "Title" -F tmp.txt
 - Configuration directories exist at `~/.aws/amazonq/` and `~/.config/amazonq/`
 - Setting environment variables like `Q_LOG_LEVEL=trace` and `RUST_BACKTRACE=full` doesn't produce visible logs
 - For debugging MCP server issues, use `Q_LOG_LEVEL=trace q chat --no-interactive` and try to use tools
-- Always try to use the MCP, never use the CLI directly (MCP is currently broken but we're actively working to fix it)
 - For definitive answers on CLI behavior and MCP connections, refer to the amazon-q-developer-cli source code
   
 ## Branching Strategy
