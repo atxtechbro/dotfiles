@@ -117,6 +117,10 @@ ln -sf "$DOT_DEN/.bash_aliases" ~/.bash_aliases
 ln -sf "$DOT_DEN/.bash_aliases.d" ~/.bash_aliases.d
 ln -sf "$DOT_DEN/.bash_exports" ~/.bash_exports
 ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
+# Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
+# (as opposed to Workspace Configuration: .amazonq/mcp.json - Specific to the current workspace)
+mkdir -p ~/.aws/amazonq
+ln -sf "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
 
 # Set up Git configuration
 echo "Setting up Git configuration..."
@@ -213,23 +217,8 @@ if command -v q >/dev/null 2>&1; then
   else
     echo "Amazon Q telemetry already disabled"
   fi
-  
-  # Set up MCP for Amazon Q
-  echo "Setting up MCP for Amazon Q..."
-  
-  # Run the MCP setup script directly with safer error handling
-  echo "Running MCP setup script..."
-  if [ -f "$DOT_DEN/mcp/setup.sh" ]; then
-    # Use bash instead of source, and don't capture output to avoid potential issues
-    bash "$DOT_DEN/mcp/setup.sh" || true
-    # The "|| true" ensures the script continues even if the MCP setup fails
-    echo -e "${GREEN}✓ Amazon Q MCP configuration completed${NC}"
-  else
-    echo -e "${RED}MCP setup script not found at $DOT_DEN/mcp/setup.sh${NC}"
-    echo "Skipping MCP setup"
-  fi
 fi
-
+  
 # Check and install npm for Claude Code if needed
 if ! command -v npm >/dev/null 2>&1; then
   echo "Installing nodejs and npm..."
