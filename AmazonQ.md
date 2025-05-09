@@ -4,7 +4,7 @@
 Always use conventional commit syntax: `<type>[scope]: description` (scope optional but encouraged; use separate `-m` for trailers)
 
 ## Common Errors to Avoid
-- Don't thank yourself when closing your own PRs
+- Don't thank self when closing your own PRs
 
 ## GitHub CLI Best Practices
 - Always use text files and pipe them to GitHub CLI commands
