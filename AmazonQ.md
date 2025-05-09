@@ -1,4 +1,6 @@
-## Commit early and often
+## We're following a tracer bullet development approach, therefore:
+
+### Commit early and often
 Always use conventional commit syntax: `<type>[scope]: description` (scope optional but encouraged; use separate `-m` for trailers)
 Always include blank line at end of files
 
