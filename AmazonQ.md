@@ -39,7 +39,6 @@ gh issue create --title "Title" -F tmp.txt
 - Tracer bullet / vibe coding development style
 - When making discrete changes, always branch from main unless specifically asked otherwise
 - Use `git checkout main && git pull && git checkout -b type/description` to ensure clean branches
-- For changes to documentation or configuration files like AmazonQ.md, especially prefer branching from main
 - This prevents unintended changes from feature branches being included in your PR
 - NEVER merge into main or push directly to main branch
 - Good scope choices add context about what component is being modified (e.g., bash, nvim, tmux, git)
