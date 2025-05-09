@@ -1,8 +1,0 @@
-#!/bin/bash
-# NOTE: This is just a placeholder. The actual GitHub MCP server is not implemented here.
-# We build it with Go from the github-mcp-server repository which already exists.
-# This script is only used for testing purposes when the actual Go-built binary is not available.
-
-echo "This is a placeholder for the GitHub MCP server."
-echo "The actual server should be built with Go from the github-mcp-server repository."
-exit 1
