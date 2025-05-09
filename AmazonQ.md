@@ -17,6 +17,7 @@ Always include blank line at end of files
 
 ## GitHub Issues Best Practices
 - Use the same text file approach for GitHub issues
+
 **Example:**
 ```bash
 echo "Issue description" > tmp.txt && \
