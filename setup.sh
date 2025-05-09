@@ -117,7 +117,8 @@ ln -sf "$DOT_DEN/.bash_aliases" ~/.bash_aliases
 ln -sf "$DOT_DEN/.bash_aliases.d" ~/.bash_aliases.d
 ln -sf "$DOT_DEN/.bash_exports" ~/.bash_exports
 ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
-# Create .aws/amazonq directory if it doesn't exist
+# Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
+# (as opposed to Workspace Configuration: .amazonq/mcp.json - Specific to the current workspace)
 mkdir -p ~/.aws/amazonq
 ln -sf "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
 
