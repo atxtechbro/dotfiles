@@ -13,7 +13,6 @@ Always include blank line at end of files
 - Example: `echo "Your comment text here" > tmp.txt && gh pr comment <number> -F tmp.txt` ✓
 - Use tmp.txt for temporary files (it's already in .gitignore)
 - This approach follows Unix philosophy and avoids escape sequence issues
-- For quick one-liners, you can still use: `gh pr comment <number> -b "Brief comment"`
 - Keep PR descriptions to 34 lines or less to ensure they display properly in all contexts
 
 ## GitHub Issues Best Practices
