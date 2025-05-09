@@ -8,7 +8,7 @@ Always include blank line at end of files
 - Don't thank yourself when closing your own PRs
 
 ## GitHub CLI Best Practices
-- Always use text files and pipe them to GitHub CLI commands for multi-line content
+- Always use text files and pipe them to GitHub CLI commands
 
 **Example:**
 ```bash
