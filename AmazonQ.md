@@ -3,6 +3,17 @@
 ### Commit early and often
 Always use conventional commit syntax: `<type>[scope]: description` (scope optional but encouraged; use separate `-m` for trailers)
 
+## Branching Strategy
+- Follow versioning mindset: edit or branch existing files rather than creating new ones with "-fixed" suffix
+- Use branch naming pattern: `type/description` (e.g., `feature/add-tool`, `fix/typo`)
+- Pull Request based workflow (GitHub)
+- Tracer bullet / vibe coding development style
+- When making discrete changes, always branch from main unless specifically asked otherwise
+- Use `git checkout main && git pull && git checkout -b type/description` to ensure clean branches
+- This prevents unintended changes from feature branches being included in your PR
+- NEVER merge into main or push directly to main branch
+- Good scope choices add context about what component is being modified (e.g., bash, nvim, tmux, git)
+
 ## GitHub CLI Best Practices
 - Always use text files and pipe them to GitHub CLI commands
 
@@ -29,17 +40,6 @@ gh issue create --title "Title" -F tmp.txt
 - Setting environment variables like `Q_LOG_LEVEL=trace` and `RUST_BACKTRACE=full` doesn't produce visible logs
 - For debugging MCP server issues, use `Q_LOG_LEVEL=trace q chat --no-interactive` and try to use tools
 - For definitive answers on CLI behavior and MCP connections, refer to the amazon-q-developer-cli source code
-  
-## Branching Strategy
-- Follow versioning mindset: edit or branch existing files rather than creating new ones with "-fixed" suffix
-- Use branch naming pattern: `type/description` (e.g., `feature/add-tool`, `fix/typo`)
-- Pull Request based workflow (GitHub)
-- Tracer bullet / vibe coding development style
-- When making discrete changes, always branch from main unless specifically asked otherwise
-- Use `git checkout main && git pull && git checkout -b type/description` to ensure clean branches
-- This prevents unintended changes from feature branches being included in your PR
-- NEVER merge into main or push directly to main branch
-- Good scope choices add context about what component is being modified (e.g., bash, nvim, tmux, git)
 
 ## MCP Testing Best Practices
 - Focus on logging to gather feedback when testing MCP server functionality
