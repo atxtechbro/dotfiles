@@ -254,6 +254,25 @@ if ! command -v uv >/dev/null 2>&1; then
   echo -e "${GREEN}✓ uv package manager installed${NC}"
 fi
 
+# Docker setup
+echo -e "${DIVIDER}"
+echo "Setting up Docker..."
+
+# Install Docker if not already installed
+if ! command -v docker &> /dev/null; then
+  echo "Installing Docker..."
+  sudo apt-get update && sudo apt-get install -y docker.io
+  sudo systemctl enable docker
+  sudo systemctl start docker
+fi
+
+# Add user to docker group (reboot required)
+sudo usermod -aG docker $USER
+
+# Verify access
+groups | grep docker
+docker run hello-world > /dev/null 2>&1
+
 echo -e "${DIVIDER}"
 echo -e "${GREEN}✅ Dotfiles setup complete!${NC}"
 echo "Your development environment is now configured and ready to use."

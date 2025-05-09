@@ -57,6 +57,20 @@
         "GITLAB_PERSONAL_ACCESS_TOKEN": "<YOUR_TOKEN>",
         "GITLAB_API_URL": "https://gitlab.com/api/v4"
       }
+    },
+    "github": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "<YOUR_TOKEN>"
+      }
     }
   }
 }
