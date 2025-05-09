@@ -10,6 +10,7 @@ Always include blank line at end of files
 
 ## GitHub CLI Best Practices
 - Always use text files and pipe them to GitHub CLI commands for multi-line content
+
 **Example:**
 ```bash
 echo "Issue description" > tmp.txt && \
