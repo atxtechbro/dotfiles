@@ -5,7 +5,6 @@ Always use conventional commit syntax: `<type>[scope]: description` (scope optio
 Always include blank line at end of files
 
 ## Common Errors to Avoid
-- Use branch naming pattern: `type/description` (e.g., `feature/add-tool`, `fix/typo`)
 - Don't thank yourself when closing your own PRs
 
 ## GitHub CLI Best Practices
@@ -36,8 +35,9 @@ gh issue create --title "Title" -F tmp.txt
 - For definitive answers on CLI behavior and MCP connections, refer to the amazon-q-developer-cli source code
   
 ## Branching Strategy
+- Use branch naming pattern: `type/description` (e.g., `feature/add-tool`, `fix/typo`)
 - Pull Request based workflow (GitHub)
-- Tracer bullet vibe coding development style (atomic commits)
+- Tracer bullet / vibe coding development style
 - When making discrete changes, always branch from main unless specifically asked otherwise
 - Use `git checkout main && git pull && git checkout -b type/description` to ensure clean branches
 - For changes to documentation or configuration files like AmazonQ.md, especially prefer branching from main
