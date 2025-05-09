@@ -34,6 +34,7 @@ gh issue create --title "Title" -F tmp.txt
 - For definitive answers on CLI behavior and MCP connections, refer to the amazon-q-developer-cli source code
   
 ## Branching Strategy
+- Follow versioning mindset: edit or branch existing files rather than creating new ones with "-fixed" suffix
 - Use branch naming pattern: `type/description` (e.g., `feature/add-tool`, `fix/typo`)
 - Pull Request based workflow (GitHub)
 - Tracer bullet / vibe coding development style
@@ -51,7 +52,6 @@ gh issue create --title "Title" -F tmp.txt
 - When testing, add "this is a test" at the end of your prompt - don't apologize or wonder why it's not working after it fails, just return to caller ASAP
 - While test-mcp-server is built and designed ourselves, github-mcp-server must be built from source using Go (not Docker) in the github-mcp-server directory to function properly
 - Always assume latest Amazon Q version is installed
-- Follow versioning mindset: edit existing files rather than creating new ones with "-fixed" suffix
 - For dotfiles, use setup scripts for symlinks rather than manual linking
 
 ## Building from Source
