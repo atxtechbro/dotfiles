@@ -1,5 +1,14 @@
 ## We're following a tracer bullet development approach, therefore:
 
+## Dotfiles Philosophy
+- All configuration changes should be reproducible across machines
+- Avoid manual, one-off commands like `mkdir -p /path/to/dir && cp /source/file /destination/`
+- Always create setup scripts for file operations instead of ad-hoc terminal commands
+- Follow the "spilled coffee" principle: anyone should be able to destroy their machine and be fully operational again that afternoon
+- Use installation scripts that detect and create required directories
+- Prefer symlinks managed by setup scripts over manual file copying
+- Document all dependencies and installation steps in README files
+
 ### Commit early and often
 Always use conventional commit syntax: `<type>[scope]: description` (scope optional but encouraged; use separate `-m` for trailers)
 
@@ -62,14 +71,6 @@ gh issue create --title "Title" -F tmp.txt
 - Use conventional commit syntax and atomic commits for source code changes
 - NEVER create PRs to forked repositories like amazon-q-developer-cli and github-mcp-server
 - Keep all changes to forked repos local only - they are for our understanding and debugging
-## Dotfiles Philosophy
-- All configuration changes should be reproducible across machines
-- Avoid manual, one-off commands like `mkdir -p /path/to/dir && cp /source/file /destination/`
-- Always create setup scripts for file operations instead of ad-hoc terminal commands
-- Follow the "spilled coffee" principle: anyone should be able to destroy their machine and be fully operational again that afternoon
-- Use installation scripts that detect and create required directories
-- Prefer symlinks managed by setup scripts over manual file copying
-- Document all dependencies and installation steps in README files
 
 ## Common Errors to Avoid
 - Don't thank self when closing your own PRs
