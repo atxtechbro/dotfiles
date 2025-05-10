@@ -48,8 +48,11 @@
       "autoApprove": []
     },
     "git": {
-      "command": "python",
-      "args": ["/home/linuxmint-lp/ppv/pillars/git-mcp-server/main.py"],
+      "command": "uvx",
+      "args": ["kzms-mcp-server-git@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
       "disabled": false,
       "autoApprove": []
     },
