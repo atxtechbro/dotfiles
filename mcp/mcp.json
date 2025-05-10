@@ -48,9 +48,15 @@
       "autoApprove": []
     },
     "git": {
-      "command": "python",
-      "args": ["/home/linuxmint-lp/ppv/pillars/git-mcp-server/main.py"],
-      "disabled": false,
+      "command": "docker",
+      "args": [
+	"run",
+	"--rm",
+	"-i",
+        "--mount", "type=bind,src=$HOME/ppv/,dst=/workspace",
+	"mcp/git"
+			],
+      "disabled": true,
       "autoApprove": [],
       "timeout": 18000
     },
