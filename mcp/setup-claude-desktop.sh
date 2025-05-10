@@ -4,8 +4,6 @@
 # Install with: sudo apt-get install -y nodejs npm icoutils
 
 set -e
-echo "NOTE: This script requires nodejs, npm, icoutils, and wine to be installed"
-echo "If build fails, install with: sudo apt-get install -y nodejs npm icoutils wine"
 
 # Clone this repository
 git clone https://github.com/aaddrick/claude-desktop-debian.git
