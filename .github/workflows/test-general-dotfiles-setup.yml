@@ -39,6 +39,9 @@ jobs:
           sed -i 's/sudo dnf/echo "Would run dnf:"/g' setup-test.sh
           sed -i 's/brew install/echo "Would brew install:"/g' setup-test.sh
           
+          # Mock the GitHub CLI token retrieval
+          sed -i 's/GITHUB_TOKEN=$(gh auth token)/GITHUB_TOKEN="mock-github-token"/g' setup-test.sh
+          
           # Run the modified script by sourcing it as required
           source setup-test.sh || true
           
@@ -69,6 +72,9 @@ jobs:
           sed -i '' 's/sudo pacman/echo "Would run pacman:"/g' setup-test.sh
           sed -i '' 's/sudo dnf/echo "Would run dnf:"/g' setup-test.sh
           sed -i '' 's/brew install/echo "Would brew install:"/g' setup-test.sh
+          
+          # Mock the GitHub CLI token retrieval
+          sed -i '' 's/GITHUB_TOKEN=$(gh auth token)/GITHUB_TOKEN="mock-github-token"/g' setup-test.sh
           
           # Run the modified script by sourcing it as required
           source setup-test.sh || true

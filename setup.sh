@@ -19,6 +19,8 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 fi
 
 DOT_DEN="$HOME/ppv/pillars/dotfiles"
+# Export DOT_DEN as a global variable for other scripts to use
+export DOT_DEN
 
 # Export flag to tell subscripts we're running from the main setup
 export SETUP_SCRIPT_RUNNING=true
@@ -252,6 +254,57 @@ if ! command -v uv >/dev/null 2>&1; then
   # Make uv available in the current shell
   export PATH="$HOME/.local/bin:$PATH"
   echo -e "${GREEN}✓ uv package manager installed${NC}"
+fi
+
+# Export GitHub token for MCP
+if command -v gh &> /dev/null; then
+  echo "Exporting GitHub token for MCP..."
+  GITHUB_TOKEN=$(gh auth token)
+  export GITHUB_TOKEN
+  echo -e "${GREEN}✓ GitHub token exported as GITHUB_TOKEN${NC}"
+else
+  echo -e "${YELLOW}GitHub CLI not installed. Skipping GitHub token export.${NC}"
+  echo "To use GitHub MCP features, install GitHub CLI and run: export GITHUB_TOKEN=\$(gh auth token)"
+fi
+
+# Docker setup
+echo -e "${DIVIDER}"
+echo "Checking Docker setup..."
+
+# Check if Docker is already installed
+if command -v docker &> /dev/null; then
+  echo -e "${GREEN}✓ Docker is already installed${NC}"
+else
+  echo -e "${YELLOW}Docker is not installed.${NC}"
+  echo "To install Docker, please run the following commands manually:"
+  echo -e "${GREEN}sudo apt-get update && sudo apt-get install -y docker.io${NC}"
+  echo -e "${GREEN}sudo systemctl enable docker${NC}"
+  echo -e "${GREEN}sudo systemctl start docker${NC}"
+  echo -e "${GREEN}sudo usermod -aG docker \$USER${NC}"
+  echo "After installation, you'll need to log out and back in for group changes to take effect."
+fi
+
+# Check if user is in docker group
+if groups | grep -q docker; then
+  echo -e "${GREEN}✓ User is in the docker group${NC}"
+else
+  echo -e "${YELLOW}User is not in the docker group.${NC}"
+  echo "To add yourself to the docker group, run:"
+  echo -e "${GREEN}sudo usermod -aG docker \$USER${NC}"
+  echo "Then log out and back in for changes to take effect."
+fi
+
+# Test Docker if it's installed (without sudo)
+if command -v docker &> /dev/null; then
+  echo "Testing Docker access..."
+  if docker info &>/dev/null; then
+    echo -e "${GREEN}✓ Docker is working correctly${NC}"
+    # Only run hello-world if Docker is working
+    docker run --rm hello-world &>/dev/null && echo -e "${GREEN}✓ Docker hello-world test passed${NC}" || echo -e "${YELLOW}Docker hello-world test failed. You may need to restart your system.${NC}"
+  else
+    echo -e "${YELLOW}Docker is installed but not accessible without sudo.${NC}"
+    echo "Please log out and back in, or restart your system to apply group changes."
+  fi
 fi
 
 echo -e "${DIVIDER}"
