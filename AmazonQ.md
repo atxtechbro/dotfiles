@@ -12,7 +12,10 @@
 
 ## Tips
 
-### Commit early and often but DO NOT EVER PUSH
+### ⚠️ CRITICAL: Commit early and often but NEVER EVER PUSH ⚠️
+- **LOCAL DEVELOPMENT ONLY** - All changes should remain on your local machine
+- **ZERO EXCEPTIONS** - There are no valid reasons to push directly to remote repositories
+- **USE PULL REQUESTS** - All changes must go through the PR workflow for review
 - Always use conventional commit syntax: `<type>[scope]: description` (scope optional but encouraged; use separate `-m` for trailers)
 - Good scope choices add context about what component is being modified (e.g., bash, mcp, tmux, git)
 - Always assume latest Amazon Q version is installed
