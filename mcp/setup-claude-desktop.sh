@@ -1,7 +1,7 @@
 #!/bin/bash
 # Setup script for Claude Desktop Debian MCP client
-# DEPENDENCIES: nodejs, npm, icoutils, wine
-# Install with: sudo apt-get install -y nodejs npm icoutils wine
+# DEPENDENCIES: nodejs, npm, icoutils
+# Install with: sudo apt-get install -y nodejs npm icoutils
 
 set -e
 echo "NOTE: This script requires nodejs, npm, icoutils, and wine to be installed"
