@@ -54,7 +54,14 @@
         "FASTMCP_LOG_LEVEL": "ERROR"
       },
       "disabled": false,
-      "autoApprove": []
+      "autoApprove": [
+        "git___git_status",
+        "git___git_add",
+        "git___git_diff",
+        "git___git_diff_unstaged",
+        "git___git_diff_staged",
+        "git___git_log"
+      ]
     },
     "gitlab": {
       "command": "npx",
