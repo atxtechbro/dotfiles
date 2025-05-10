@@ -21,6 +21,9 @@
 - Use branch naming pattern: `type/description` (e.g., `feature/add-tool`, `fix/typo`)
 - Pull Request based workflow (GitHub)
 - Tracer bullet / vibe coding development style
+- Keep changes small and frequent – Encourage developers to commit small, incremental changes or features. This reduces the risk of merge conflicts and makes it easier to identify and fix issues quickly
+- Use short-lived branches for complex tasks – For larger or more complex tasks, use short-lived branches (also known as task branches) to work on the changes. However, make sure to keep the branch lifespan short, typically less than a day. Merge the changes back into the develop branch (Gitflow) or main branch (Trunk or GitHub Flow) as soon as possible. Smaller and more frequent merges and reviews are easier for a team to consume and process than one large merge request
+- Maintain a robust test suite – A comprehensive, well-maintained test suite is crucial for detecting issues early and verifying that the code base remains stable. Invest in test automation and prioritize fixing any failing tests
 
 ## Debugging Amazon Q CLI
 - For definitive answers refer to the amazon-q-developer-cli source code at https://github.com/aws/amazon-q-developer-cli
