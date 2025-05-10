@@ -116,7 +116,10 @@ fi
 echo "Creating symlinks for config files..."
 ln -sf "$DOT_DEN/.bashrc" ~/.bashrc
 ln -sf "$DOT_DEN/.bash_aliases" ~/.bash_aliases
-ln -sf "$DOT_DEN/.bash_aliases.d" ~/.bash_aliases.d
+# Create directory for modular aliases if it doesn't exist
+mkdir -p ~/.bash_aliases.d
+# Copy the contents instead of creating a symlink to avoid recursive symlink issues
+cp -r "$DOT_DEN/.bash_aliases.d/"* ~/.bash_aliases.d/ 2>/dev/null || true
 ln -sf "$DOT_DEN/.bash_exports" ~/.bash_exports
 ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 # Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
