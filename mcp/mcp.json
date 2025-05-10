@@ -59,7 +59,7 @@
       }
     },
     "github": {
-      "command": "/home/linuxmint-lp/ppv/pillars/dotfiles/mcp/github-mcp-wrapper.sh",
+      "command": "$HOME/ppv/pillars/dotfiles/mcp/github-mcp-wrapper.sh",
       "args": [],
       "env": {}
     }
