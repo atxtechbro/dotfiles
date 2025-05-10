@@ -59,7 +59,7 @@
       }
     },
     "github": {
-      "command": "$HOME/ppv/pillars/dotfiles/mcp/github-mcp-wrapper.sh",
+      "command": "$DOT_DEN/mcp/github-mcp-wrapper.sh",
       "args": [],
       "env": {}
     }
