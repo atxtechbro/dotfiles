@@ -47,6 +47,19 @@
       "disabled": false,
       "autoApprove": []
     },
+    "git": {
+      "command": "docker",
+      "args": [
+	"run",
+	"--rm",
+	"-i",
+        "--mount", "type=bind,src=$HOME/ppv/,dst=/workspace",
+	"mcp/git"
+			],
+      "disabled": true,
+      "autoApprove": [],
+      "timeout": 18000
+    },
     "gitlab": {
       "command": "npx",
       "args": [
