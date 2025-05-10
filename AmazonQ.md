@@ -1,62 +1,35 @@
 ## We're following a tracer bullet development approach, therefore:
 
 ## Dotfiles Philosophy
-- All configuration changes should be reproducible across machines
-- Avoid manual, one-off commands like `mkdir -p /path/to/dir && cp /source/file /destination/`
-- Always create setup scripts for file operations instead of ad-hoc terminal commands
 - Follow the "spilled coffee" principle: anyone should be able to destroy their machine and be fully operational again that afternoon
+- All configuration changes should be reproducible across machines
+- Avoid manual, one-off commands. Instead, commit to setup scripts and run them (automation mindset)
+- Always create setup scripts for file operations instead of ad-hoc terminal commands
 - Use installation scripts that detect and create required directories
 - Prefer symlinks managed by setup scripts over manual file copying
 - Document all dependencies and installation steps in README files
+- For dotfiles, use setup scripts for symlinks rather than manual linking
 
-### Commit early and often
-Always use conventional commit syntax: `<type>[scope]: description` (scope optional but encouraged; use separate `-m` for trailers)
+## Tips
 
-## Branching Strategy
-- Follow versioning mindset: edit or branch existing files rather than creating new ones with "-fixed" suffix
+### Commit early and often but DO NOT EVER PUSH
+- Always use conventional commit syntax: `<type>[scope]: description` (scope optional but encouraged; use separate `-m` for trailers)
+- Good scope choices add context about what component is being modified (e.g., bash, mcp, tmux, git)
+- Always assume latest Amazon Q version is installed
+- Follow Versioning Mindset: iterate rather than reinvent
+- Scalpel for edits instead of machete
 - Use branch naming pattern: `type/description` (e.g., `feature/add-tool`, `fix/typo`)
 - Pull Request based workflow (GitHub)
 - Tracer bullet / vibe coding development style
-- When making discrete changes, always branch from main unless specifically asked otherwise
-- Use `git checkout main && git pull && git checkout -b type/description` to ensure clean branches
-- This prevents unintended changes from feature branches being included in your PR
-- NEVER merge into main or push directly to main branch
-- Good scope choices add context about what component is being modified (e.g., bash, nvim, tmux, git)
-
-## GitHub Issues Best Practices
-- Keep issue descriptions to 18 lines or less when creating new issues to allow room for future discoveries and context
-- Never edit an issue if it would cause the total length to exceed 55 lines - create a new issue instead
-- Prefer concise issues with less context over verbose ones
-- Treat GitHub issues as discussion points and suggestions, not strict mandates
 
 ## Debugging Amazon Q CLI
-- Amazon Q CLI does not appear to generate log files in the expected locations (`/tmp/q-logs/` or `~/.amazonq/logs/`)
-- Data is stored in `~/.local/share/amazon-q/` (including SQLite database and history)
-- Configuration directories exist at `~/.aws/amazonq/` and `~/.config/amazonq/`
-- Setting environment variables like `Q_LOG_LEVEL=trace` and `RUST_BACKTRACE=full` doesn't produce visible logs
-- For debugging MCP server issues, use `Q_LOG_LEVEL=trace q chat --no-interactive` and try to use tools
-- For definitive answers on CLI behavior and MCP connections, refer to the amazon-q-developer-cli source code
-
-## MCP Testing Best Practices
-- Focus on logging to gather feedback when testing MCP server functionality
-- Preferred test command: `Q_LOG_LEVEL=trace q chat --no-interactive`
-- Test MCP tools directly with: `Q_LOG_LEVEL=trace q chat --no-interactive "try to use the test_hello tool, this is a test"`
-- When testing, add "this is a test" at the end of your prompt - don't apologize or wonder why it's not working after it fails, just return to caller ASAP
-- While test-mcp-server is built and designed ourselves, github-mcp-server must be built from source using Go (not Docker) in the github-mcp-server directory to function properly
-- Always assume latest Amazon Q version is installed
-- For dotfiles, use setup scripts for symlinks rather than manual linking
+- For definitive answers refer to the amazon-q-developer-cli source code at https://github.com/aws/amazon-q-developer-cli
 
 ## Building from Source
-- Source code for both Amazon Q CLI and github-mcp-server is conveniently located and gitignored
-- Always prefer to build and use the source version of these tools whenever possible
 - Building from source allows us to add logging, debug issues, and make contributions
 - When working with these tools, cd into their respective directories to make changes and commit them
 - This approach gives us more control and visibility into how these tools function
 - Leverage the ability to modify the source code to improve our understanding and usage of these tools
-- Apply the same "commit early and often" principles when making changes to source code
-- Use conventional commit syntax and atomic commits for source code changes
-- NEVER create PRs to forked repositories like amazon-q-developer-cli and github-mcp-server
-- Keep all changes to forked repos local only - they are for our understanding and debugging
 
 ## Common Errors to Avoid
 - Don't thank self when closing your own PRs
