@@ -157,18 +157,19 @@ brew install git gh jq tmux curl wget
 Install Google Chrome with automatic updates via the official Google repository:
 
 ```bash
-# Add Google Chrome repository key
-wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+# Modern method (recommended)
+# Download Google's signing key
+wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg
 
-# Add the Google Chrome repository
-sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
+# Add the Google Chrome repository with signed-by option
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
 
 # Update package lists and install Chrome
 sudo apt update
 sudo apt install -y google-chrome-stable
 ```
 
-Chrome will automatically update when you run `sudo apt update` and `sudo apt upgrade` as part of your regular system maintenance.
+Chrome will automatically update when you run both `sudo apt update` AND `sudo apt upgrade` as part of your regular system maintenance. Remember that `apt update` only refreshes package information, while `apt upgrade` actually installs the updates.
 
 ## Secret Management
 
