@@ -259,11 +259,12 @@ fi
 # Export GitHub token for MCP
 if command -v gh &> /dev/null; then
   echo "Exporting GitHub token for MCP..."
-  export GITHUB_TOKEN=$(gh auth token)
+  GITHUB_TOKEN=$(gh auth token)
+  export GITHUB_TOKEN
   echo -e "${GREEN}✓ GitHub token exported as GITHUB_TOKEN${NC}"
 else
   echo -e "${YELLOW}GitHub CLI not installed. Skipping GitHub token export.${NC}"
-  echo "To use GitHub MCP features, install GitHub CLI and run: export GITHUB_TOKEN=$(gh auth token)"
+  echo "To use GitHub MCP features, install GitHub CLI and run: export GITHUB_TOKEN=\$(gh auth token)"
 fi
 
 # Docker setup
