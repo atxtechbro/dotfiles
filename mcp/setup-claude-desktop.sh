@@ -13,3 +13,4 @@ cd claude-desktop-debian
 ./build.sh
 
 echo "Note: After installation, you may need to quit and restart the application from the system tray for it to work properly the first time."
+echo "restart it by running claude-desktop with expected result being Sign In screen with Claude branding and one box to enter your email
