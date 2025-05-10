@@ -34,5 +34,6 @@ jobs:
         working-directory: ./github-mcp-server/e2e
         env:
           GITHUB_MCP_SERVER_E2E_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_MCP_SERVER_E2E_DEBUG: "true"
         run: |
           go test -v --tags e2e ./
