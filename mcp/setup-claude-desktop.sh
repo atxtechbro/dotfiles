@@ -12,5 +12,12 @@ cd claude-desktop-debian
 # Build the package (Defaults to .deb and cleans build files)
 ./build.sh
 
+echo "IMPORTANT: You must manually install the package by running:"
+echo "sudo apt install $HOME/ppv/pillars/dotfiles/mcp/claude-desktop-debian/claude-desktop_0.9.3_amd64.deb"
+echo ""
 echo "Note: After installation, you may need to quit and restart the application from the system tray for it to work properly the first time."
-echo "restart it by running claude-desktop with expected result being Sign In screen with Claude branding and one box to enter your email
+echo "When you launch Claude Desktop:"
+echo "1. You'll see a 'Claude for Windows' screen with a black 'Get Started' button"
+echo "   (Note: Yes, it says 'Windows' even though you're on Linux)"
+echo "2. Click 'Get Started' to proceed to the email sign-in screen"
+echo "3. Sign in with the email associated with your Claude account"
