@@ -47,6 +47,15 @@
       "disabled": false,
       "autoApprove": []
     },
+    "git": {
+      "command": "uvx",
+      "args": ["kzms-mcp-server-git@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": []
+    },
     "gitlab": {
       "command": "npx",
       "args": [
