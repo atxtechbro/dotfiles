@@ -51,7 +51,8 @@
       "command": "python",
       "args": ["/home/linuxmint-lp/ppv/pillars/git-mcp-server/main.py"],
       "disabled": false,
-      "autoApprove": []
+      "autoApprove": [],
+      "timeout": 18000
     },
     "gitlab": {
       "command": "npx",
