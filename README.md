@@ -211,6 +211,9 @@ Basic usage:
 - Close current pane: `Ctrl+a x`
 - Detach from session: `Ctrl+a d`
 - Reattach to session: `tmux attach`
+- Enter copy mode: `Ctrl+a v`
+- Search forward (literal): `Ctrl+a F`
+- Search backward (literal): `Ctrl+a B`
 
 ### jira-cli
 
