@@ -266,22 +266,43 @@ fi
 
 # Docker setup
 echo -e "${DIVIDER}"
-echo "Setting up Docker..."
+echo "Checking Docker setup..."
 
-# Install Docker if not already installed
-if ! command -v docker &> /dev/null; then
-  echo "Installing Docker..."
-  sudo apt-get update && sudo apt-get install -y docker.io
-  sudo systemctl enable docker
-  sudo systemctl start docker
+# Check if Docker is already installed
+if command -v docker &> /dev/null; then
+  echo -e "${GREEN}✓ Docker is already installed${NC}"
+else
+  echo -e "${YELLOW}Docker is not installed.${NC}"
+  echo "To install Docker, please run the following commands manually:"
+  echo -e "${GREEN}sudo apt-get update && sudo apt-get install -y docker.io${NC}"
+  echo -e "${GREEN}sudo systemctl enable docker${NC}"
+  echo -e "${GREEN}sudo systemctl start docker${NC}"
+  echo -e "${GREEN}sudo usermod -aG docker \$USER${NC}"
+  echo "After installation, you'll need to log out and back in for group changes to take effect."
 fi
 
-# Add user to docker group (reboot required)
-sudo usermod -aG docker $USER
+# Check if user is in docker group
+if groups | grep -q docker; then
+  echo -e "${GREEN}✓ User is in the docker group${NC}"
+else
+  echo -e "${YELLOW}User is not in the docker group.${NC}"
+  echo "To add yourself to the docker group, run:"
+  echo -e "${GREEN}sudo usermod -aG docker \$USER${NC}"
+  echo "Then log out and back in for changes to take effect."
+fi
 
-# Verify access
-groups | grep docker
-docker run hello-world > /dev/null 2>&1
+# Test Docker if it's installed (without sudo)
+if command -v docker &> /dev/null; then
+  echo "Testing Docker access..."
+  if docker info &>/dev/null; then
+    echo -e "${GREEN}✓ Docker is working correctly${NC}"
+    # Only run hello-world if Docker is working
+    docker run --rm hello-world &>/dev/null && echo -e "${GREEN}✓ Docker hello-world test passed${NC}" || echo -e "${YELLOW}Docker hello-world test failed. You may need to restart your system.${NC}"
+  else
+    echo -e "${YELLOW}Docker is installed but not accessible without sudo.${NC}"
+    echo "Please log out and back in, or restart your system to apply group changes."
+  fi
+fi
 
 echo -e "${DIVIDER}"
 echo -e "${GREEN}✅ Dotfiles setup complete!${NC}"
