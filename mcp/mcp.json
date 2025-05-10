@@ -59,7 +59,7 @@
       }
     },
     "github": {
-      "command": "./github-mcp-wrapper.sh",
+      "command": "github-mcp-wrapper.sh",
       "args": [],
       "env": {}
     }
