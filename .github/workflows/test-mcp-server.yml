@@ -1,0 +1,42 @@
+name: Test MCP Server Functionality
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    # Allow manual triggering
+
+permissions:
+  contents: read
+  metadata: read
+
+jobs:
+  test-mcp-server:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout dotfiles repository
+        uses: actions/checkout@v3
+        
+      - name: Checkout github-mcp-server repository
+        uses: actions/checkout@v3
+        with:
+          repository: github/github-mcp-server
+          path: github-mcp-server
+          
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+        
+      - name: Run MCP server tests
+        working-directory: ./github-mcp-server/e2e
+        env:
+          GITHUB_MCP_SERVER_E2E_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          go test -v --tags e2e ./
