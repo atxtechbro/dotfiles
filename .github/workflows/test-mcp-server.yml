@@ -8,10 +8,6 @@ on:
   workflow_dispatch:
     # Allow manual triggering
 
-permissions:
-  contents: read
-  id-token: write
-
 jobs:
   test-mcp-server:
     runs-on: ubuntu-latest
