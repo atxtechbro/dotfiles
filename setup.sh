@@ -254,6 +254,16 @@ if ! command -v uv >/dev/null 2>&1; then
   echo -e "${GREEN}✓ uv package manager installed${NC}"
 fi
 
+# Export GitHub token for MCP
+if command -v gh &> /dev/null; then
+  echo "Exporting GitHub token for MCP..."
+  export GITHUB_TOKEN=$(gh auth token)
+  echo -e "${GREEN}✓ GitHub token exported as GITHUB_TOKEN${NC}"
+else
+  echo -e "${YELLOW}GitHub CLI not installed. Skipping GitHub token export.${NC}"
+  echo "To use GitHub MCP features, install GitHub CLI and run: export GITHUB_TOKEN=$(gh auth token)"
+fi
+
 # Docker setup
 echo -e "${DIVIDER}"
 echo "Setting up Docker..."
