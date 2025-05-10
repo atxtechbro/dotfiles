@@ -24,6 +24,7 @@
 - Keep changes small and frequent – Encourage developers to commit small, incremental changes or features. This reduces the risk of merge conflicts and makes it easier to identify and fix issues quickly
 - Use short-lived branches for complex tasks – For larger or more complex tasks, use short-lived branches (also known as task branches) to work on the changes. However, make sure to keep the branch lifespan short, typically less than a day. Merge the changes back into the develop branch (Gitflow) or main branch (Trunk or GitHub Flow) as soon as possible. Smaller and more frequent merges and reviews are easier for a team to consume and process than one large merge request
 - Maintain a robust test suite – A comprehensive, well-maintained test suite is crucial for detecting issues early and verifying that the code base remains stable. Invest in test automation and prioritize fixing any failing tests
+- Proactively suggest git hook opportunities – During workflows, identify and suggest when a git hook implementation would be valuable. Since the driver is actively learning about git hooks, highlight potential use cases with high reward-to-effort ratios. Store these hooks in the dotfiles repository to maintain consistency across environments
 
 ## Debugging Amazon Q CLI
 - For definitive answers refer to the amazon-q-developer-cli source code at https://github.com/aws/amazon-q-developer-cli
