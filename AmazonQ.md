@@ -12,7 +12,8 @@
 
 ## Tips
 
-### Commit early and often but DO NOT EVER PUSH
+### Git Workflow
+- Commit early and often with meaningful changes
 - Always use conventional commit syntax: `<type>[scope]: description` (scope optional but encouraged; use separate `-m` for trailers)
 - Good scope choices add context about what component is being modified (e.g., bash, mcp, tmux, git)
 - Always assume latest Amazon Q version is installed

@@ -267,20 +267,6 @@ For SSO, the URL typically follows this format:
 https://d-XXXXXXXXXX.awsapps.com/start/#/console?account_id=XXXXXXXXXXXX&role_name=YOUR_ROLE_NAME
 ```
 
-### Tmux Config Comparison
-
-To compare different tmux configurations (like at an optometrist):
-
-```bash
-# Switch to main branch config
-tmux-main
-
-# Switch to PR branch config
-tmux-pr
-```
-
-This is useful when testing different tmux configurations to see which one you prefer. You can quickly toggle between them like at the optometrist ("which is better, 1 or 2?").
-
 ## WSL Tips
 - **Distraction-Free Mode**: Press `Alt+Enter` in Windows Terminal to toggle full-screen and hide the taskbar.
 

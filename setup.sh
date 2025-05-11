@@ -127,6 +127,10 @@ ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 mkdir -p ~/.aws/amazonq
 ln -sf "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
 
+# Claude Desktop MCP integration
+mkdir -p ~/.config/Claude
+cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json
+
 # Set up Git configuration
 echo "Setting up Git configuration..."
 gitconfig_path="$HOME/.gitconfig"
