@@ -55,13 +55,16 @@
       },
       "disabled": false,
       "autoApprove": [
-        "git_status",
-        "git_add",
-        "git_diff",
-        "git_diff_unstaged",
-        "git_diff_staged",
-        "git_log",
-        "git_show"
+        "git___git_log",
+        "git___git_diff_staged",
+        "git___git_reset",
+        "git___git_add",
+        "git___git_status",
+        "git___git_diff",
+        "git___git_checkout",
+        "git___git_show",
+        "git___git_diff_unstaged",
+        "git___git_create_branch"
       ]
     },
     "gitlab": {
