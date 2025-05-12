@@ -6,8 +6,7 @@
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
       },
-      "disabled": false,
-      "autoApprove": []
+      "disabled": false
     },
     "awslabs.bedrock-kb-retrieval-mcp-server": {
       "command": "uvx",
@@ -17,8 +16,7 @@
         "AWS_REGION": "us-east-1",
         "BEDROCK_KB_RERANKING_ENABLED": "false"
       },
-      "disabled": false,
-      "autoApprove": []
+      "disabled": false
     },
     "awslabs.aws-diagram-mcp-server": {
       "command": "uvx",
@@ -26,7 +24,6 @@
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
       },
-      "autoApprove": [],
       "disabled": false
     },
     "awslabs.cdk-mcp-server": {
@@ -35,8 +32,7 @@
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
       },
-      "disabled": false,
-      "autoApprove": []
+      "disabled": false
     },
     "awslabs.aws-documentation-mcp-server": {
       "command": "uvx",
@@ -44,8 +40,7 @@
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
       },
-      "disabled": false,
-      "autoApprove": []
+      "disabled": false
     },
     "git": {
       "command": "uvx",
@@ -53,8 +48,7 @@
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
       },
-      "disabled": false,
-      "autoApprove": []
+      "disabled": false
     },
     "gitlab": {
       "command": "npx",
