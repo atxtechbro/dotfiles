@@ -61,7 +61,7 @@
       "env": {}
     },
     "atlassian": {
-      "command": "servers/atlassian-mcp-wrapper.sh",
+      "command": "atlassian-mcp-wrapper.sh",
       "args": [],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
