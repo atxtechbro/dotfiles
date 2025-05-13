@@ -24,6 +24,8 @@ export DOT_DEN
 
 # Add MCP directory to PATH for easier access to MCP scripts
 export PATH="$DOT_DEN/mcp:$PATH"
+# Add MCP servers directory to PATH
+export PATH="$DOT_DEN/mcp/servers:$PATH"
 
 # Export flag to tell subscripts we're running from the main setup
 export SETUP_SCRIPT_RUNNING=true
