@@ -66,13 +66,6 @@
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
       }
-    },
-    "mssql": {
-      "command": "servers/mssql-mcp-wrapper.sh",
-      "args": [],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
     }
   }
 }
