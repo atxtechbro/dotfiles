@@ -22,6 +22,9 @@ DOT_DEN="$HOME/ppv/pillars/dotfiles"
 # Export DOT_DEN as a global variable for other scripts to use
 export DOT_DEN
 
+# Add MCP directory to PATH for easier access to MCP scripts
+export PATH="$DOT_DEN/mcp:$PATH"
+
 # Export flag to tell subscripts we're running from the main setup
 export SETUP_SCRIPT_RUNNING=true
 
