@@ -5,8 +5,7 @@
       "args": ["awslabs.core-mcp-server@latest"],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
-      },
-      "disabled": false
+      }
     },
     "awslabs.bedrock-kb-retrieval-mcp-server": {
       "command": "uvx",
@@ -15,40 +14,35 @@
         "FASTMCP_LOG_LEVEL": "ERROR",
         "AWS_REGION": "us-east-1",
         "BEDROCK_KB_RERANKING_ENABLED": "false"
-      },
-      "disabled": false
+      }
     },
     "awslabs.aws-diagram-mcp-server": {
       "command": "uvx",
       "args": ["awslabs.aws-diagram-mcp-server"],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
-      },
-      "disabled": false
+      }
     },
     "awslabs.cdk-mcp-server": {
       "command": "uvx",
       "args": ["awslabs.cdk-mcp-server@latest"],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
-      },
-      "disabled": false
+      }
     },
     "awslabs.aws-documentation-mcp-server": {
       "command": "uvx",
       "args": ["awslabs.aws-documentation-mcp-server@latest"],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
-      },
-      "disabled": false
+      }
     },
     "git": {
       "command": "uvx",
       "args": ["kzms-mcp-server-git@latest"],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
-      },
-      "disabled": false
+      }
     },
     "gitlab": {
       "command": "npx",
@@ -65,6 +59,20 @@
       "command": "github-mcp-wrapper.sh",
       "args": [],
       "env": {}
+    },
+    "atlassian": {
+      "command": "servers/atlassian-mcp-wrapper.sh",
+      "args": [],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      }
+    },
+    "mssql": {
+      "command": "servers/mssql-mcp-wrapper.sh",
+      "args": [],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      }
     }
   }
 }
