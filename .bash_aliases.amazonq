@@ -3,14 +3,12 @@
 
 # Function to run Amazon Q with trust permissions setup
 function q() {
-  # Check if we're running in interactive mode
-  if [[ "$1" == "chat" && "$2" != "--no-interactive" ]]; then
-    # Run the trust setup script first
-    "$HOME/ppv/pillars/dotfiles/mcp/setup-amazon-q-trust.sh" > /dev/null 2>&1
-  fi
+  # Always run the trust setup script regardless of command
+  "$HOME/ppv/pillars/dotfiles/mcp/setup-amazon-q-trust.sh" > /dev/null 2>&1
   
   # Forward all arguments to the real q command
-  command q "$@"
+  # Use the full path to avoid recursion
+  /home/shellmaestro/.local/bin/q "$@"
 }
 
 # Export the function
