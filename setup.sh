@@ -125,8 +125,6 @@ ln -sf "$DOT_DEN/.bash_aliases" ~/.bash_aliases
 mkdir -p ~/.bash_aliases.d
 # Copy the contents instead of creating a symlink to avoid recursive symlink issues
 cp -r "$DOT_DEN/.bash_aliases.d/"* ~/.bash_aliases.d/ 2>/dev/null || true
-# Link individual bash_aliases files
-ln -sf "$DOT_DEN/.bash_aliases.amazonq" ~/.bash_aliases.amazonq
 ln -sf "$DOT_DEN/.bash_exports" ~/.bash_exports
 ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 # Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
@@ -197,7 +195,7 @@ echo "Setting up development tools..."
 if command -v q >/dev/null 2>&1; then
   echo "Checking Amazon Q..."
   
-  # Check if update is available without launching a full Q session
+  # Check if update is available
   UPDATE_CHECK=$(q update 2>&1 | grep "A new version of q is available:" || echo "")
   
   if [ -n "$UPDATE_CHECK" ]; then
@@ -232,14 +230,6 @@ if command -v q >/dev/null 2>&1; then
     echo -e "${GREEN}✓ Amazon Q telemetry disabled${NC}"
   else
     echo "Amazon Q telemetry already disabled"
-  fi
-  
-  # Make sure the trust setup script is executable
-  if [ -f "$DOT_DEN/mcp/setup-amazon-q-trust.sh" ]; then
-    chmod +x "$DOT_DEN/mcp/setup-amazon-q-trust.sh"
-    echo -e "${GREEN}✓ Amazon Q trust setup script is ready${NC}"
-  else
-    echo -e "${YELLOW}Amazon Q trust setup script not found.${NC}"
   fi
 fi
   
