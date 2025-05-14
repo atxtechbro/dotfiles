@@ -2,8 +2,8 @@
 # Amazon Q Trust Setup Script
 # Sets up trusted tools for Amazon Q CLI
 #
-# This script first trusts all tools and then explicitly unsets trust
-# for specific tools we want to restrict.
+# This script configures Amazon Q trust permissions in a single command
+# to avoid multiple Amazon Q initialization cycles.
 
 set -e  # Exit on error
 
@@ -24,27 +24,27 @@ if ! command -v q &> /dev/null; then
     exit 1
 fi
 
-# First, trust all tools
-echo "Trusting all tools..."
-q chat --no-interactive "/tools trustall"
-
 # List of tools to explicitly untrust
-# These are tools that might be considered higher risk
-UNTRUSTED_TOOLS=(
-    "execute_bash"
-    "use_aws"
-    "fs_write"
-)
+UNTRUSTED_TOOLS="execute_bash use_aws fs_write"
 
-# Untrust specific tools
-for tool in "${UNTRUSTED_TOOLS[@]}"; do
-    echo "Untrusting tool: $tool"
-    q chat --no-interactive "/tools untrust $tool"
-done
+# Create a temporary script file with all commands
+TEMP_SCRIPT=$(mktemp)
+cat > "$TEMP_SCRIPT" << EOF
+/tools trustall
+/tools untrust ${UNTRUSTED_TOOLS}
+/quit
+EOF
+
+# Run all commands in a single Amazon Q session
+echo "Configuring Amazon Q trust permissions..."
+q chat --no-interactive < "$TEMP_SCRIPT"
+
+# Clean up
+rm "$TEMP_SCRIPT"
 
 echo -e "${GREEN}✅ Amazon Q trust permissions setup complete!${NC}"
 echo "All tools are trusted except for the following:"
-for tool in "${UNTRUSTED_TOOLS[@]}"; do
+for tool in $UNTRUSTED_TOOLS; do
     echo "- $tool"
 done
 echo -e "${DIVIDER}"
