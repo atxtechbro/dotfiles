@@ -197,7 +197,7 @@ echo "Setting up development tools..."
 if command -v q >/dev/null 2>&1; then
   echo "Checking Amazon Q..."
   
-  # Check if update is available
+  # Check if update is available without launching a full Q session
   UPDATE_CHECK=$(q update 2>&1 | grep "A new version of q is available:" || echo "")
   
   if [ -n "$UPDATE_CHECK" ]; then
@@ -234,14 +234,12 @@ if command -v q >/dev/null 2>&1; then
     echo "Amazon Q telemetry already disabled"
   fi
   
-  # Set up Amazon Q trust permissions
-  echo "Setting up Amazon Q trust permissions..."
+  # Make sure the trust setup script is executable
   if [ -f "$DOT_DEN/mcp/setup-amazon-q-trust.sh" ]; then
     chmod +x "$DOT_DEN/mcp/setup-amazon-q-trust.sh"
-    "$DOT_DEN/mcp/setup-amazon-q-trust.sh"
-    echo -e "${GREEN}✓ Amazon Q trust permissions configured${NC}"
+    echo -e "${GREEN}✓ Amazon Q trust setup script is ready${NC}"
   else
-    echo -e "${YELLOW}Amazon Q trust setup script not found. Skipping trust configuration.${NC}"
+    echo -e "${YELLOW}Amazon Q trust setup script not found.${NC}"
   fi
 fi
   
