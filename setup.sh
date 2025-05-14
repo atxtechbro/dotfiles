@@ -125,6 +125,8 @@ ln -sf "$DOT_DEN/.bash_aliases" ~/.bash_aliases
 mkdir -p ~/.bash_aliases.d
 # Copy the contents instead of creating a symlink to avoid recursive symlink issues
 cp -r "$DOT_DEN/.bash_aliases.d/"* ~/.bash_aliases.d/ 2>/dev/null || true
+# Link individual bash_aliases files
+ln -sf "$DOT_DEN/.bash_aliases.amazonq" ~/.bash_aliases.amazonq
 ln -sf "$DOT_DEN/.bash_exports" ~/.bash_exports
 ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 # Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces

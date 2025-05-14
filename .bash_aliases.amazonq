@@ -1,0 +1,17 @@
+#!/bin/bash
+# Amazon Q aliases and functions
+
+# Function to run Amazon Q with trust permissions setup
+q_with_trust() {
+  # Check if we're running in interactive mode
+  if [[ "$1" == "chat" && "$2" != "--no-interactive" ]]; then
+    # Run the trust setup script first
+    "$HOME/ppv/pillars/dotfiles/mcp/setup-amazon-q-trust.sh" > /dev/null 2>&1
+  fi
+  
+  # Forward all arguments to the real q command
+  command q "$@"
+}
+
+# Alias q to our wrapper function
+alias q='q_with_trust'
