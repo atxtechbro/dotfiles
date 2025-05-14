@@ -14,43 +14,40 @@ alias q-dev="cd $HOME/ppv/pillars/q-cli && cargo run --bin q_cli -- chat"
 alias q-doc-merge="git checkout main && git pull && git merge docs/update-amazonq-guidance --no-ff && git push origin main && echo '✅ AmazonQ.md changes merged with preserved history and pushed to main'"
 alias q-doc-add="add-amazonq"
 
-# Amazon Q with trust setup - using FIFO (named pipe) approach
+# Amazon Q with trust setup - using improved FIFO approach to prevent hanging
 # This function creates a named pipe to feed commands to Amazon Q while keeping the session interactive
 # 
-# How FIFO works:
-# 1. A named pipe (FIFO) is a special file that acts as a pipe between processes
-# 2. One process writes to the FIFO, another reads from it
-# 3. Unlike regular files, data written to a FIFO is consumed when read
-# 4. This allows for interprocess communication while maintaining an interactive session
-#
-# The automation flow:
-# - Create a named pipe (FIFO) using mkfifo
-# - Start a background process that writes trust commands to the FIFO
-# - Then redirect stdin to the FIFO so user can continue interacting
-# - Launch Amazon Q reading from the FIFO
-# - When Amazon Q exits, clean up the FIFO
+# How this works:
+# 1. Create a temporary file with the trust commands
+# 2. Create a named pipe (FIFO) for communication
+# 3. Start a background process that feeds commands then user input
+# 4. Launch Amazon Q reading from the FIFO
+# 5. Clean up processes and files when done
 qtrust() {
   echo "Setting up Amazon Q trust permissions..."
+  
+  # Create a temporary file for the commands
+  TEMP_FILE=$(mktemp)
+  echo "/tools trustall" > "$TEMP_FILE"
+  echo "/tools untrust fs_write execute_bash use_aws" >> "$TEMP_FILE"
   
   # Create a named pipe (FIFO)
   FIFO=$(mktemp -u)
   mkfifo "$FIFO"
   
-  # Start a background process that will write to the FIFO
-  (
-    # Write the trust commands
-    echo "/tools trustall"
-    echo "/tools untrust fs_write execute_bash use_aws"
-    
-    # Keep the pipe open for user input
-    cat > "$FIFO"
-  ) > "$FIFO" &
+  # Start a background process that will feed commands then user input
+  (cat "$TEMP_FILE"; cat) > "$FIFO" &
+  BG_PID=$!
   
   # Launch Amazon Q reading from the FIFO
   q chat < "$FIFO"
   
   # Clean up
-  rm "$FIFO"
+  kill $BG_PID 2>/dev/null || true
+  rm "$TEMP_FILE" "$FIFO"
+  
+  # Log completion
+  echo "Amazon Q session ended, trust setup complete."
 }
 
 # Export the function so it's available in subshells
