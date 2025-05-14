@@ -231,6 +231,16 @@ if command -v q >/dev/null 2>&1; then
   else
     echo "Amazon Q telemetry already disabled"
   fi
+  
+  # Set up Amazon Q trust permissions
+  echo "Setting up Amazon Q trust permissions..."
+  if [ -f "$DOT_DEN/mcp/setup-amazon-q-trust.sh" ]; then
+    chmod +x "$DOT_DEN/mcp/setup-amazon-q-trust.sh"
+    "$DOT_DEN/mcp/setup-amazon-q-trust.sh"
+    echo -e "${GREEN}✓ Amazon Q trust permissions configured${NC}"
+  else
+    echo -e "${YELLOW}Amazon Q trust setup script not found. Skipping trust configuration.${NC}"
+  fi
 fi
   
 # Check and install npm for Claude Code if needed
