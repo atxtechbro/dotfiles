@@ -24,6 +24,9 @@ if ! command -v q &> /dev/null; then
     exit 1
 fi
 
+# Get the actual path to the q binary to avoid recursion
+Q_BIN=$(which q)
+
 # List of tools to explicitly untrust
 UNTRUSTED_TOOLS="execute_bash use_aws fs_write"
 
@@ -37,7 +40,7 @@ EOF
 
 # Run all commands in a single Amazon Q session
 echo "Configuring Amazon Q trust permissions..."
-q chat --no-interactive < "$TEMP_SCRIPT"
+$Q_BIN chat --no-interactive < "$TEMP_SCRIPT"
 
 # Clean up
 rm "$TEMP_SCRIPT"

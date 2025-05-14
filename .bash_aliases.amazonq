@@ -3,11 +3,13 @@
 
 # Function to run Amazon Q with trust permissions setup
 function q() {
-  # Always run the trust setup script regardless of command
-  "$HOME/ppv/pillars/dotfiles/mcp/setup-amazon-q-trust.sh" > /dev/null 2>&1
+  # Always run the trust setup script and show logs
+  echo "Running Amazon Q trust setup..."
+  "$HOME/ppv/pillars/dotfiles/mcp/setup-amazon-q-trust.sh"
   
   # Forward all arguments to the real q command
   # Use the full path to avoid recursion
+  echo "Launching Amazon Q..."
   /home/shellmaestro/.local/bin/q "$@"
 }
 
