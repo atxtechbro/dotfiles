@@ -26,7 +26,7 @@ fi
 
 # First, trust all tools
 echo "Trusting all tools..."
-q chat --no-interactive "/tools trust all"
+q chat --no-interactive "/tools trustall"
 
 # List of tools to explicitly untrust
 # These are tools that might be considered higher risk
