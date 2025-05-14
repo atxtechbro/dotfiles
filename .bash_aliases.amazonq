@@ -8,9 +8,9 @@ function q() {
   "$HOME/ppv/pillars/dotfiles/mcp/setup-amazon-q-trust.sh"
   
   # Forward all arguments to the real q command
-  # Use the full path to avoid recursion
   echo "Launching Amazon Q..."
-  /home/shellmaestro/.local/bin/q "$@"
+  # Use command to bypass the function and call the binary directly
+  command q "$@"
 }
 
 # Export the function

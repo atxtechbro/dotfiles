@@ -7,10 +7,11 @@
 
 set -e  # Exit on error
 
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-NC='\033[0m' # No Color
+# Define colors properly with double quotes
+GREEN="\033[0;32m"
+YELLOW="\033[1;33m"
+RED="\033[0;31m"
+NC="\033[0m" # No Color
 DIVIDER="----------------------------------------"
 
 echo -e "${DIVIDER}"
@@ -40,7 +41,7 @@ EOF
 
 # Run all commands in a single Amazon Q session
 echo "Configuring Amazon Q trust permissions..."
-$Q_BIN chat --no-interactive < "$TEMP_SCRIPT"
+"$Q_BIN" chat --no-interactive < "$TEMP_SCRIPT"
 
 # Clean up
 rm "$TEMP_SCRIPT"
