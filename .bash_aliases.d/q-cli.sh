@@ -14,3 +14,7 @@ alias q-dev="cd $HOME/ppv/pillars/q-cli && cargo run --bin q_cli -- chat"
 alias q-doc-merge="git checkout main && git pull && git merge docs/update-amazonq-guidance --no-ff && git push origin main && echo '✅ AmazonQ.md changes merged with preserved history and pushed to main'"
 alias q-doc-add="add-amazonq"
 
+# Trust all tools command
+# Use with qsafe alias from clipboard.sh for a complete security workflow
+alias qtrust='q chat "/tools trustall"'
+
