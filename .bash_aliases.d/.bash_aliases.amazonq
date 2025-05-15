@@ -1,0 +1,10 @@
+#!/bin/bash
+# Amazon Q aliases and functions
+
+# Quick alias to trust all tools and then suggest which ones to untrust
+alias qtrust='q chat "/tools trustall" && echo -e "\n\033[1;33mSecurity Tip:\033[0m Consider untrusting tools that modify resources:"
+echo -e "  \033[1;36m/tools untrust fs_write execute_bash use_aws\033[0m"
+echo -e "  \033[1;36m/tools untrust github___create_issue github___add_issue_comment github___push_files\033[0m"
+echo -e "  \033[1;36m/tools untrust github___create_or_update_file github___create_repository\033[0m"
+echo -e "  \033[1;36m/tools untrust gitlab___push_files gitlab___create_or_update_file\033[0m"
+echo -e "  \033[1;36m/tools untrust git___git_commit git___git_add\033[0m"'
