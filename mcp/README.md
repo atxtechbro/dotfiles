@@ -4,20 +4,22 @@ This directory contains wrapper scripts and configuration for Model Context Prot
 
 ## Available MCP Integrations
 
-| Integration | Description | Authentication Method |
-|-------------|-------------|----------------------|
-| GitHub | GitHub API integration | Uses GitHub CLI token |
-| Atlassian | Jira and Confluence integration | API tokens from `.bash_secrets` |
-| Google Maps | Google Maps API integration | API key from `.bash_secrets` |
+| Integration | Description | Authentication Method | Installation Method |
+|-------------|-------------|----------------------|---------------------|
+| AWS Labs | AWS documentation, diagrams, CDK | None required | PyPI packages via UVX |
+| GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script |
+| Atlassian | Jira and Confluence integration | API tokens from `.bash_secrets` | Custom setup script |
+| Google Maps | Google Maps API integration | API key from `.bash_secrets` | Docker container |
 
 ## Setup Instructions
 
-Each MCP integration has its own setup script that handles installation and configuration:
+Each MCP integration has its own setup method:
 
+- **AWS Labs MCP Servers**: No setup script needed - these are installed automatically via UVX package manager from PyPI, making integration straightforward
 - `setup-atlassian-mcp.sh` - Sets up Atlassian (Jira/Confluence) integration
 - `setup-google-maps-mcp.sh` - Sets up Google Maps integration
 
-Run the appropriate setup script to configure the integration:
+For custom integrations, run the appropriate setup script:
 
 ```bash
 # Example: Set up Google Maps integration
