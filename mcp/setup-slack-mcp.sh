@@ -11,59 +11,40 @@
 # component that gets executed by the MCP system.
 # =========================================================
 
+# Source the utility functions
+SCRIPT_DIR="$(dirname "$0")"
+source "${SCRIPT_DIR}/utils/mcp-setup-utils.sh"
+
 echo "Setting up Slack MCP server..."
 
-# Check if Docker is installed
-if ! command -v docker &> /dev/null; then
-    echo "Error: Docker is not installed. Please install Docker first." >&2
-    exit 1
-fi
+# Check prerequisites
+check_docker_installed
+check_dotfiles_repo
+REPO_ROOT=$(get_repo_root)
 
-# Check if we're in the dotfiles repository
-if [ ! -d "$(dirname "$0")/../.git" ]; then
-    echo "Error: This script must be run from the dotfiles repository." >&2
-    exit 1
-fi
+# Setup MCP servers repository
+setup_mcp_servers_repo
 
-# Get the repository root directory
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# Build Docker image
+build_mcp_docker_image "slack"
 
-# Clone the MCP servers repository if it doesn't exist
-if [ ! -d "/tmp/mcp-servers" ]; then
-    echo "Cloning MCP servers repository..."
-    git clone https://github.com/modelcontextprotocol/servers.git /tmp/mcp-servers
-else
-    echo "Updating MCP servers repository..."
-    cd /tmp/mcp-servers && git pull
-fi
-
-# Build the Docker image
-echo "Building Docker image for Slack MCP server..."
-cd /tmp/mcp-servers && docker build -t mcp/slack -f src/slack/Dockerfile .
-
-# Update .bash_secrets.example if needed
-SECRETS_EXAMPLE="$REPO_ROOT/.bash_secrets.example"
-if ! grep -q "SLACK_BOT_TOKEN" "$SECRETS_EXAMPLE"; then
-    echo "" >> "$SECRETS_EXAMPLE"
-    echo "# ==== SLACK API CREDENTIALS ====" >> "$SECRETS_EXAMPLE"
-    echo "# Create a Slack app and get a bot token: https://api.slack.com/apps" >> "$SECRETS_EXAMPLE"
-    echo "# export SLACK_BOT_TOKEN=\"xoxb-your-token\"" >> "$SECRETS_EXAMPLE"
-    
-    echo "Updated .bash_secrets.example with Slack bot token template"
-fi
+# Update secrets template
+update_secrets_template \
+  "$REPO_ROOT" \
+  "SLACK_BOT_TOKEN" \
+  "SLACK API CREDENTIALS" \
+  "Create a Slack app and get a bot token: https://api.slack.com/apps" \
+  "export SLACK_BOT_TOKEN=\"xoxb-your-token\""
 
 # Note: The mcp.json configuration is now managed directly in the repository
 # and doesn't need to be updated by this script
 
-echo ""
-echo "Setup complete! To use the Slack MCP server:"
-echo "1. Add your Slack bot token to ~/.bash_secrets:"
-echo "   export SLACK_BOT_TOKEN=\"xoxb-your-token\""
-echo "2. Restart your Amazon Q CLI or other MCP client"
-echo ""
-echo "The Slack MCP server provides these tools:"
-echo "- slack_send_message: Send a message to a Slack channel or user"
-echo "- slack_get_messages: Get messages from a Slack channel"
-echo "- slack_list_channels: List available Slack channels"
-echo "- slack_list_users: List users in your Slack workspace"
-echo "- slack_search: Search for messages in Slack"
+# Print setup completion message
+print_setup_complete \
+  "Slack" \
+  "   export SLACK_BOT_TOKEN=\"xoxb-your-token\"" \
+  "- slack_send_message: Send a message to a Slack channel or user
+- slack_get_messages: Get messages from a Slack channel
+- slack_list_channels: List available Slack channels
+- slack_list_users: List users in your Slack workspace
+- slack_search: Search for messages in Slack"

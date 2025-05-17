@@ -11,64 +11,50 @@
 # component that gets executed by the MCP system.
 # =========================================================
 
+# Source the utility functions
+SCRIPT_DIR="$(dirname "$0")"
+source "${SCRIPT_DIR}/utils/mcp-setup-utils.sh"
+
 echo "Setting up Google Drive MCP server..."
 
-# Check if Docker is installed
-if ! command -v docker &> /dev/null; then
-    echo "Error: Docker is not installed. Please install Docker first." >&2
-    exit 1
-fi
+# Check prerequisites
+check_docker_installed
+check_dotfiles_repo
+REPO_ROOT=$(get_repo_root)
 
-# Check if we're in the dotfiles repository
-if [ ! -d "$(dirname "$0")/../.git" ]; then
-    echo "Error: This script must be run from the dotfiles repository." >&2
-    exit 1
-fi
+# Setup MCP servers repository
+setup_mcp_servers_repo
 
-# Get the repository root directory
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# Build Docker image
+build_mcp_docker_image "gdrive"
 
-# Clone the MCP servers repository if it doesn't exist
-if [ ! -d "/tmp/mcp-servers" ]; then
-    echo "Cloning MCP servers repository..."
-    git clone https://github.com/modelcontextprotocol/servers.git /tmp/mcp-servers
-else
-    echo "Updating MCP servers repository..."
-    cd /tmp/mcp-servers && git pull
-fi
+# Update secrets template
+update_secrets_template \
+  "$REPO_ROOT" \
+  "GOOGLE_DRIVE_CLIENT_ID" \
+  "GOOGLE DRIVE API CREDENTIALS" \
+  "Create credentials at: https://console.cloud.google.com/apis/credentials" \
+  "export GOOGLE_DRIVE_CLIENT_ID=\"your_client_id\""
 
-# Build the Docker image
-echo "Building Docker image for Google Drive MCP server..."
-cd /tmp/mcp-servers && docker build -t mcp/gdrive -f src/gdrive/Dockerfile .
-
-# Update .bash_secrets.example if needed
+# Add additional environment variables to secrets template
 SECRETS_EXAMPLE="$REPO_ROOT/.bash_secrets.example"
-if ! grep -q "GOOGLE_DRIVE_CLIENT_ID" "$SECRETS_EXAMPLE"; then
-    echo "" >> "$SECRETS_EXAMPLE"
-    echo "# ==== GOOGLE DRIVE API CREDENTIALS ====" >> "$SECRETS_EXAMPLE"
-    echo "# Create credentials at: https://console.cloud.google.com/apis/credentials" >> "$SECRETS_EXAMPLE"
-    echo "# export GOOGLE_DRIVE_CLIENT_ID=\"your_client_id\"" >> "$SECRETS_EXAMPLE"
-    echo "# export GOOGLE_DRIVE_CLIENT_SECRET=\"your_client_secret\"" >> "$SECRETS_EXAMPLE"
-    echo "# export GOOGLE_DRIVE_REFRESH_TOKEN=\"your_refresh_token\"" >> "$SECRETS_EXAMPLE"
-    
-    echo "Updated .bash_secrets.example with Google Drive API credentials template"
+if grep -q "GOOGLE_DRIVE_CLIENT_ID" "$SECRETS_EXAMPLE" && ! grep -q "GOOGLE_DRIVE_CLIENT_SECRET" "$SECRETS_EXAMPLE"; then
+  echo "# export GOOGLE_DRIVE_CLIENT_SECRET=\"your_client_secret\"" >> "$SECRETS_EXAMPLE"
+  echo "# export GOOGLE_DRIVE_REFRESH_TOKEN=\"your_refresh_token\"" >> "$SECRETS_EXAMPLE"
 fi
 
 # Note: The mcp.json configuration is now managed directly in the repository
 # and doesn't need to be updated by this script
 
-echo ""
-echo "Setup complete! To use the Google Drive MCP server:"
-echo "1. Add your Google Drive API credentials to ~/.bash_secrets:"
-echo "   export GOOGLE_DRIVE_CLIENT_ID=\"your_client_id\""
-echo "   export GOOGLE_DRIVE_CLIENT_SECRET=\"your_client_secret\""
-echo "   export GOOGLE_DRIVE_REFRESH_TOKEN=\"your_refresh_token\""
-echo "2. Restart your Amazon Q CLI or other MCP client"
-echo ""
-echo "The Google Drive MCP server provides these tools:"
-echo "- gdrive_list: List files and folders in Google Drive"
-echo "- gdrive_get: Download a file from Google Drive"
-echo "- gdrive_create: Create a new file in Google Drive"
-echo "- gdrive_update: Update an existing file in Google Drive"
-echo "- gdrive_delete: Delete a file or folder in Google Drive"
-echo "- gdrive_search: Search for files in Google Drive"
+# Print setup completion message
+print_setup_complete \
+  "Google Drive" \
+  "   export GOOGLE_DRIVE_CLIENT_ID=\"your_client_id\"
+   export GOOGLE_DRIVE_CLIENT_SECRET=\"your_client_secret\"
+   export GOOGLE_DRIVE_REFRESH_TOKEN=\"your_refresh_token\"" \
+  "- gdrive_list: List files and folders in Google Drive
+- gdrive_get: Download a file from Google Drive
+- gdrive_create: Create a new file in Google Drive
+- gdrive_update: Update an existing file in Google Drive
+- gdrive_delete: Delete a file or folder in Google Drive
+- gdrive_search: Search for files in Google Drive"

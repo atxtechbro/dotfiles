@@ -111,3 +111,17 @@ Based on our current experience, here's a working procedure for adding new MCP s
    - Create test documentation in `tests/test-<server-name>.md`
 
 This workflow represents our current understanding and approach, which we expect to refine as we gain more experience with different types of MCP servers and discover better patterns for integration.
+## Utility Functions
+
+To reduce code duplication and ensure consistent behavior across setup scripts, we use shared utility functions in the `utils/` directory:
+
+- `mcp-setup-utils.sh` - Common functions for MCP server setup scripts
+
+These utilities handle common tasks like:
+- Checking prerequisites (Docker, repository structure)
+- Setting up the MCP servers repository
+- Building Docker images
+- Updating secrets templates
+- Printing consistent setup completion messages
+
+See the [utils/README.md](utils/README.md) file for more details on available functions and usage.

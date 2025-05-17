@@ -11,56 +11,37 @@
 # component that gets executed by the MCP system.
 # =========================================================
 
+# Source the utility functions
+SCRIPT_DIR="$(dirname "$0")"
+source "${SCRIPT_DIR}/utils/mcp-setup-utils.sh"
+
 echo "Setting up Brave Search MCP server..."
 
-# Check if Docker is installed
-if ! command -v docker &> /dev/null; then
-    echo "Error: Docker is not installed. Please install Docker first." >&2
-    exit 1
-fi
+# Check prerequisites
+check_docker_installed
+check_dotfiles_repo
+REPO_ROOT=$(get_repo_root)
 
-# Check if we're in the dotfiles repository
-if [ ! -d "$(dirname "$0")/../.git" ]; then
-    echo "Error: This script must be run from the dotfiles repository." >&2
-    exit 1
-fi
+# Setup MCP servers repository
+setup_mcp_servers_repo
 
-# Get the repository root directory
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# Build Docker image
+build_mcp_docker_image "brave-search"
 
-# Clone the MCP servers repository if it doesn't exist
-if [ ! -d "/tmp/mcp-servers" ]; then
-    echo "Cloning MCP servers repository..."
-    git clone https://github.com/modelcontextprotocol/servers.git /tmp/mcp-servers
-else
-    echo "Updating MCP servers repository..."
-    cd /tmp/mcp-servers && git pull
-fi
-
-# Build the Docker image
-echo "Building Docker image for Brave Search MCP server..."
-cd /tmp/mcp-servers && docker build -t mcp/brave-search -f src/brave-search/Dockerfile .
-
-# Update .bash_secrets.example if needed
-SECRETS_EXAMPLE="$REPO_ROOT/.bash_secrets.example"
-if ! grep -q "BRAVE_SEARCH_API_KEY" "$SECRETS_EXAMPLE"; then
-    echo "" >> "$SECRETS_EXAMPLE"
-    echo "# ==== BRAVE SEARCH API CREDENTIALS ====" >> "$SECRETS_EXAMPLE"
-    echo "# Get API key from: https://brave.com/search/api/" >> "$SECRETS_EXAMPLE"
-    echo "# export BRAVE_SEARCH_API_KEY=\"your_api_key\"" >> "$SECRETS_EXAMPLE"
-    
-    echo "Updated .bash_secrets.example with Brave Search API key template"
-fi
+# Update secrets template
+update_secrets_template \
+  "$REPO_ROOT" \
+  "BRAVE_SEARCH_API_KEY" \
+  "BRAVE SEARCH API CREDENTIALS" \
+  "Get API key from: https://brave.com/search/api/" \
+  "export BRAVE_SEARCH_API_KEY=\"your_api_key\""
 
 # Note: The mcp.json configuration is now managed directly in the repository
 # and doesn't need to be updated by this script
 
-echo ""
-echo "Setup complete! To use the Brave Search MCP server:"
-echo "1. Add your Brave Search API key to ~/.bash_secrets:"
-echo "   export BRAVE_SEARCH_API_KEY=\"your_api_key\""
-echo "2. Restart your Amazon Q CLI or other MCP client"
-echo ""
-echo "The Brave Search MCP server provides these tools:"
-echo "- brave_search: Search the web using Brave Search"
-echo "- brave_suggest: Get search suggestions from Brave"
+# Print setup completion message
+print_setup_complete \
+  "Brave Search" \
+  "   export BRAVE_SEARCH_API_KEY=\"your_api_key\"" \
+  "- brave_search: Search the web using Brave Search
+- brave_suggest: Get search suggestions from Brave"
