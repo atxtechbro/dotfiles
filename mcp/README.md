@@ -1,6 +1,16 @@
 # MCP Servers Integration
 
-This directory contains wrapper scripts and configuration for Model Context Protocol (MCP) servers used with Amazon Q and other MCP-compatible clients.
+This directory contains wrapper scripts and configuration for MCP clients (Claude Code, OpenAI Codex, Claude Desktop, Cursor, VSCode, or Amazon Q).
+
+## MCP Server Origins
+
+Many of our MCP servers are sourced from the official [Model Context Protocol servers repository](https://github.com/modelcontextprotocol/servers), which provides a standardized collection of vetted MCP servers. This repository appears to be maintained with oversight from Anthropic and offers a consistent framework for building and deploying MCP servers.
+
+Current servers from this source:
+- Google Maps
+- GitHub
+
+This standardized approach makes it easy to add more MCP servers in the future from this abundant collection.
 
 ## Available MCP Integrations
 
