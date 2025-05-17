@@ -134,20 +134,18 @@ ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 echo "Setting up MCP toggle system..."
 chmod +x "$DOT_DEN/mcp/mcp-toggle.sh"
 # Create initial MCP configuration if it doesn't exist
-"$DOT_DEN/mcp/mcp-toggle.sh" init
+bash "$DOT_DEN/mcp/mcp-toggle.sh" init
 # Apply the configuration to generate mcp.json
-"$DOT_DEN/mcp/mcp-toggle.sh" apply
+bash "$DOT_DEN/mcp/mcp-toggle.sh" apply
 echo -e "${GREEN}✓ MCP toggle system configured${NC}"
-echo "You can manage MCP servers with: mcp-toggle.sh [list|on|off|apply]"
+# No need to tell users to run these commands manually since setup.sh already handles it
 
 # Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
 # (as opposed to Workspace Configuration: .amazonq/mcp.json - Specific to the current workspace)
 mkdir -p ~/.aws/amazonq
-ln -sf "$HOME/.aws/amazonq/mcp.json" ~/.aws/amazonq/mcp.json
 
 # Claude Desktop MCP integration
 mkdir -p ~/.config/Claude
-cp "$HOME/.aws/amazonq/mcp.json" ~/.config/Claude/claude_desktop_config.json
 
 # Set up Git configuration
 echo "Setting up Git configuration..."

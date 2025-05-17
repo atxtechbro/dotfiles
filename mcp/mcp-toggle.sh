@@ -2,7 +2,9 @@
 # mcp-toggle.sh - Simple MCP Server Toggle System
 # Enables/disables MCP servers based on a simple configuration file
 
-set -e
+# Don't use set -e in scripts that might be sourced
+# This prevents the terminal from exiting when there's an error
+# set -e
 
 # Determine dotfiles directory
 if [ -z "$DOT_DEN" ]; then
@@ -13,8 +15,8 @@ fi
 CONFIG_FILE="$HOME/.mcp-enabled-servers"
 TEMPLATE_FILE="$DOT_DEN/mcp/mcp-enabled-servers.template"
 MCP_JSON="$DOT_DEN/mcp/mcp.json"
-OUTPUT_JSON="$HOME/.aws/amazonq/mcp.json"
-CLAUDE_JSON="$HOME/.config/Claude/claude_desktop_config.json"
+AMAZONQ_MCP_JSON="$HOME/.aws/amazonq/mcp.json"
+CLAUDE_MCP_JSON="$HOME/.config/Claude/claude_desktop_config.json"
 
 # Colors for output
 GREEN='\033[0;32m'
@@ -34,7 +36,8 @@ init_config() {
 # List all available MCP servers from the master config
 list_servers() {
   echo "Available MCP servers:"
-  jq -r '.servers[].name' "$MCP_JSON" | sort
+  # Get server names from mcpServers object keys instead of servers array
+  jq -r '.mcpServers | keys[]' "$MCP_JSON" | sort
   
   echo -e "\nCurrently enabled servers:"
   grep -v "^#" "$CONFIG_FILE" | grep "=1" | cut -d= -f1 || echo "None"
@@ -47,8 +50,8 @@ list_servers() {
 enable_server() {
   local server=$1
   
-  # Check if server exists in master config
-  if ! jq -e ".servers[] | select(.name == \"$server\")" "$MCP_JSON" > /dev/null; then
+  # Check if server exists in master config using mcpServers object keys
+  if ! jq -e ".mcpServers | has(\"$server\")" "$MCP_JSON" > /dev/null; then
     echo -e "${YELLOW}Server '$server' not found in MCP configuration${NC}"
     return 1
   fi
@@ -63,15 +66,19 @@ enable_server() {
   fi
   
   echo -e "${GREEN}Enabled MCP server: $server${NC}"
-  echo "Run 'mcp-toggle.sh apply' to apply changes"
+  
+  # Only show apply message if we're not going to apply immediately
+  if [[ "$2" != "--apply" ]]; then
+    echo "Run 'mcp-toggle.sh apply' to apply changes or use --apply flag"
+  fi
 }
 
 # Disable a specific server (set to 0)
 disable_server() {
   local server=$1
   
-  # Check if server exists in master config
-  if ! jq -e ".servers[] | select(.name == \"$server\")" "$MCP_JSON" > /dev/null; then
+  # Check if server exists in master config using mcpServers object keys
+  if ! jq -e ".mcpServers | has(\"$server\")" "$MCP_JSON" > /dev/null; then
     echo -e "${YELLOW}Server '$server' not found in MCP configuration${NC}"
     return 1
   fi
@@ -86,7 +93,11 @@ disable_server() {
   fi
   
   echo -e "${GREEN}Disabled MCP server: $server${NC}"
-  echo "Run 'mcp-toggle.sh apply' to apply changes"
+  
+  # Only show apply message if we're not going to apply immediately
+  if [[ "$2" != "--apply" ]]; then
+    echo "Run 'mcp-toggle.sh apply' to apply changes or use --apply flag"
+  fi
 }
 
 # Apply the configuration to generate mcp.json
@@ -94,8 +105,8 @@ apply_config() {
   # Get the base configuration
   local config=$(cat "$MCP_JSON")
   
-  # Get all server names from the master config
-  local all_servers=($(jq -r '.servers[].name' "$MCP_JSON"))
+  # Get all server names from the master config using mcpServers object keys
+  local all_servers=($(jq -r '.mcpServers | keys[]' "$MCP_JSON"))
   
   # Create a new servers array with only enabled servers
   local new_config=$(echo "$config" | jq '.servers = []')
@@ -105,11 +116,11 @@ apply_config() {
     # Skip comments and empty lines
     [[ "$server" =~ ^#.*$ || -z "$server" ]] && continue
     
-    # Check if server exists in master config
-    if jq -e ".servers[] | select(.name == \"$server\")" "$MCP_JSON" > /dev/null; then
+    # Check if server exists in master config using mcpServers object
+    if jq -e ".mcpServers | has(\"$server\")" "$MCP_JSON" > /dev/null; then
       if [[ "$value" == "1" ]]; then
-        # Add server to new config
-        local server_config=$(jq -c ".servers[] | select(.name == \"$server\")" "$MCP_JSON")
+        # Get server config from mcpServers and create a server entry
+        local server_config=$(jq -c "{name: \"$server\", command: .mcpServers[\"$server\"].command, args: .mcpServers[\"$server\"].args, env: .mcpServers[\"$server\"].env}" "$MCP_JSON")
         new_config=$(echo "$new_config" | jq ".servers += [$server_config]")
         echo "Enabling MCP server: $server"
       else
@@ -118,14 +129,14 @@ apply_config() {
     fi
   done < "$CONFIG_FILE"
   
-  # Write the new configuration
-  mkdir -p "$(dirname "$OUTPUT_JSON")"
-  echo "$new_config" > "$OUTPUT_JSON"
+  # Write the new configuration to Amazon Q
+  mkdir -p "$(dirname "$AMAZONQ_MCP_JSON")"
+  echo "$new_config" > "$AMAZONQ_MCP_JSON"
   
   # Also update Claude Desktop config if it exists
-  if [ -d "$(dirname "$CLAUDE_JSON")" ]; then
-    mkdir -p "$(dirname "$CLAUDE_JSON")"
-    echo "$new_config" > "$CLAUDE_JSON"
+  if [ -d "$(dirname "$CLAUDE_MCP_JSON")" ]; then
+    mkdir -p "$(dirname "$CLAUDE_MCP_JSON")"
+    echo "$new_config" > "$CLAUDE_MCP_JSON"
   fi
   
   # Count enabled servers
@@ -148,11 +159,14 @@ show_usage() {
   echo "MCP Toggle - Simple MCP Server Management"
   echo ""
   echo "Usage:"
-  echo "  mcp-toggle.sh init      - Create initial configuration"
-  echo "  mcp-toggle.sh list      - List available and enabled servers"
-  echo "  mcp-toggle.sh on <server>     - Enable a server (set to 1)"
-  echo "  mcp-toggle.sh off <server>    - Disable a server (set to 0)"
-  echo "  mcp-toggle.sh apply     - Apply configuration changes"
+  echo "  mcp-toggle.sh init                  - Create initial configuration"
+  echo "  mcp-toggle.sh list                  - List available and enabled servers"
+  echo "  mcp-toggle.sh on <server> [--apply] - Enable a server (set to 1)"
+  echo "  mcp-toggle.sh off <server> [--apply] - Disable a server (set to 0)"
+  echo "  mcp-toggle.sh apply                 - Apply configuration changes"
+  echo ""
+  echo "Options:"
+  echo "  --apply                             - Apply changes immediately after enabling/disabling"
   echo ""
   echo "Configuration file: $CONFIG_FILE"
   echo "Format: server=1 (enabled) or server=0 (disabled)"
@@ -172,6 +186,10 @@ case "$1" in
       exit 1
     fi
     enable_server "$2"
+    # Check if --apply flag is present
+    if [[ "$3" == "--apply" ]]; then
+      apply_config
+    fi
     ;;
   disable|off)
     if [ -z "$2" ]; then
@@ -179,6 +197,10 @@ case "$1" in
       exit 1
     fi
     disable_server "$2"
+    # Check if --apply flag is present
+    if [[ "$3" == "--apply" ]]; then
+      apply_config
+    fi
     ;;
   apply)
     apply_config
