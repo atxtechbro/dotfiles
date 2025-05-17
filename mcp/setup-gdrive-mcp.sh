@@ -54,15 +54,8 @@ if ! grep -q "GOOGLE_DRIVE_CLIENT_ID" "$SECRETS_EXAMPLE"; then
     echo "Updated .bash_secrets.example with Google Drive API credentials template"
 fi
 
-# Update mcp.json to include the Google Drive server
-MCP_CONFIG="$REPO_ROOT/mcp/mcp.json"
-if ! grep -q "\"gdrive\"" "$MCP_CONFIG"; then
-    echo "Adding Google Drive configuration to mcp.json..."
-    # Use a temporary file for the update
-    TMP_FILE=$(mktemp)
-    jq '.mcpServers += {"gdrive": {"command": "gdrive-mcp-wrapper.sh", "args": [], "env": {"FASTMCP_LOG_LEVEL": "ERROR"}}}' "$MCP_CONFIG" > "$TMP_FILE"
-    mv "$TMP_FILE" "$MCP_CONFIG"
-fi
+# Note: The mcp.json configuration is now managed directly in the repository
+# and doesn't need to be updated by this script
 
 echo ""
 echo "Setup complete! To use the Google Drive MCP server:"

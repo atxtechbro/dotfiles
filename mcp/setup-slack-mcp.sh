@@ -52,15 +52,8 @@ if ! grep -q "SLACK_BOT_TOKEN" "$SECRETS_EXAMPLE"; then
     echo "Updated .bash_secrets.example with Slack bot token template"
 fi
 
-# Update mcp.json to include the Slack server
-MCP_CONFIG="$REPO_ROOT/mcp/mcp.json"
-if ! grep -q "\"slack\"" "$MCP_CONFIG"; then
-    echo "Adding Slack configuration to mcp.json..."
-    # Use a temporary file for the update
-    TMP_FILE=$(mktemp)
-    jq '.mcpServers += {"slack": {"command": "slack-mcp-wrapper.sh", "args": [], "env": {"FASTMCP_LOG_LEVEL": "ERROR"}}}' "$MCP_CONFIG" > "$TMP_FILE"
-    mv "$TMP_FILE" "$MCP_CONFIG"
-fi
+# Note: The mcp.json configuration is now managed directly in the repository
+# and doesn't need to be updated by this script
 
 echo ""
 echo "Setup complete! To use the Slack MCP server:"

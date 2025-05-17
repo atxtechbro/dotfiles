@@ -88,3 +88,26 @@ If you encounter issues with an MCP integration:
 2. Verify that the wrapper script has execute permissions (`chmod +x wrapper-script.sh`)
 3. For Docker-based integrations, ensure Docker is running (`docker ps`)
 4. Check the logs from the MCP server for more detailed error messages
+## Adding New MCP Servers
+
+Based on our current experience, here's a working procedure for adding new MCP servers (subject to improvement as we learn more):
+
+1. **Start with mcp.json configuration**:
+   - Add the server entry to `mcp.json` first, even if the wrapper script doesn't exist yet
+   - Define the command, args, and environment variables needed
+
+2. **Create the wrapper script**:
+   - Implement `<server-name>-mcp-wrapper.sh` that handles authentication and execution
+   - Ensure it properly sources credentials from `~/.bash_secrets` if needed
+
+3. **Implement the setup script**:
+   - Create `setup-<server-name>-mcp.sh` for one-time setup tasks
+   - For Docker-based servers, include image building steps
+   - For package-based servers, document installation requirements
+
+4. **Document the integration**:
+   - Add an entry to the MCP Integrations table in the README
+   - Classify the server by source, authentication method, and installation approach
+   - Create test documentation in `tests/test-<server-name>.md`
+
+This workflow represents our current understanding and approach, which we expect to refine as we gain more experience with different types of MCP servers and discover better patterns for integration.
