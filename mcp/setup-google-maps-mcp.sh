@@ -41,29 +41,9 @@ fi
 echo "Building Docker image for Google Maps MCP server..."
 cd /tmp/mcp-servers && docker build -t mcp/google-maps -f src/google-maps/Dockerfile .
 
-# Update mcp.json to include the Google Maps MCP server
-echo "Updating mcp.json configuration..."
-MCP_JSON="$REPO_ROOT/mcp/mcp.json"
-
-# Check if google-maps entry already exists in mcp.json
-if grep -q "google-maps" "$MCP_JSON"; then
-    echo "Google Maps MCP server already configured in mcp.json"
-else
-    # Create a backup of the current mcp.json
-    cp "$MCP_JSON" "$MCP_JSON.bak"
-    
-    # Insert the google-maps configuration before the last closing brace
-    sed -i '/"mcpServers": {/a \
-    "google-maps": {\
-      "command": "google-maps-mcp-wrapper.sh",\
-      "args": [],\
-      "env": {\
-        "FASTMCP_LOG_LEVEL": "ERROR"\
-      }\
-    },' "$MCP_JSON"
-    
-    echo "Added Google Maps MCP server configuration to mcp.json"
-fi
+# Google Maps configuration is already included in mcp.json
+# No need to modify the file during setup
+echo "Using pre-configured Google Maps settings in mcp.json"
 
 # Update .bash_secrets.example if needed
 SECRETS_EXAMPLE="$REPO_ROOT/.bash_secrets.example"
