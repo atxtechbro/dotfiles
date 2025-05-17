@@ -8,7 +8,6 @@ Many of our MCP servers are sourced from the official [Model Context Protocol se
 
 Current servers from this source:
 - Google Maps
-- GitHub
 
 This standardized approach makes it easy to add more MCP servers in the future from this abundant collection.
 
