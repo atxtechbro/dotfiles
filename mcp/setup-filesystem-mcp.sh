@@ -11,48 +11,34 @@
 # component that gets executed by the MCP system.
 # =========================================================
 
+# Source the utility functions
+SCRIPT_DIR="$(dirname "$0")"
+source "${SCRIPT_DIR}/utils/mcp-setup-utils.sh"
+
 echo "Setting up Filesystem MCP server..."
 
-# Check if Docker is installed
-if ! command -v docker &> /dev/null; then
-    echo "Error: Docker is not installed. Please install Docker first." >&2
-    exit 1
-fi
+# Check prerequisites
+check_docker_installed
+check_dotfiles_repo
+REPO_ROOT=$(get_repo_root)
 
-# Check if we're in the dotfiles repository
-if [ ! -d "$(dirname "$0")/../.git" ]; then
-    echo "Error: This script must be run from the dotfiles repository." >&2
-    exit 1
-fi
+# Setup MCP servers repository
+setup_mcp_servers_repo
 
-# Get the repository root directory
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-
-# Clone the MCP servers repository if it doesn't exist
-if [ ! -d "/tmp/mcp-servers" ]; then
-    echo "Cloning MCP servers repository..."
-    git clone https://github.com/modelcontextprotocol/servers.git /tmp/mcp-servers
-else
-    echo "Updating MCP servers repository..."
-    cd /tmp/mcp-servers && git pull
-fi
-
-# Build the Docker image
-echo "Building Docker image for Filesystem MCP server..."
-cd /tmp/mcp-servers && docker build -t mcp/filesystem -f src/filesystem/Dockerfile .
+# Build Docker image
+build_mcp_docker_image "filesystem"
 
 # Note: The mcp.json configuration is now managed directly in the repository
 # and doesn't need to be updated by this script
 
-echo ""
-echo "Setup complete! To use the Filesystem MCP server:"
-echo "1. Restart your Amazon Q CLI or other MCP client"
-echo ""
-echo "The Filesystem MCP server provides these tools:"
-echo "- fs_read: Read files and directories"
-echo "- fs_write: Create and modify files"
-echo "- fs_delete: Delete files and directories"
-echo "- fs_move: Move or rename files and directories"
-echo "- fs_copy: Copy files and directories"
-echo "- fs_list: List directory contents"
-echo "- fs_search: Search for files and directories"
+# Print setup completion message
+print_setup_complete \
+  "Filesystem" \
+  "" \
+  "- fs_read: Read files and directories
+- fs_write: Create and modify files
+- fs_delete: Delete files and directories
+- fs_move: Move or rename files and directories
+- fs_copy: Copy files and directories
+- fs_list: List directory contents
+- fs_search: Search for files and directories"
