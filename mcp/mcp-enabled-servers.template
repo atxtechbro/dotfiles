@@ -1,0 +1,18 @@
+# MCP Servers Configuration
+# 1 = enabled, 0 = disabled
+# Default is 1 (enabled)
+
+# Core servers
+github=1
+atlassian=1
+
+# Search servers
+brave-search=1
+google-maps=0
+
+# Productivity servers
+gdrive=0
+slack=0
+filesystem=1
+
+# Add custom servers below

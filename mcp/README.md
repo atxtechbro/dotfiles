@@ -18,7 +18,7 @@ This standardized approach makes it easy to add more MCP servers in the future f
 ## Available MCP Integrations
 
 | Integration | Description | Authentication Method | Installation Method |
-|-------------|-------------|----------------------|---------------------|
+|-------------|-------------|------------------------|---------------------|
 | AWS Labs | AWS documentation, diagrams, CDK | None required | PyPI packages via UVX |
 | GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script |
 | Atlassian | Jira and Confluence integration | API tokens from `.bash_secrets` | Custom setup script |
@@ -27,6 +27,65 @@ This standardized approach makes it easy to add more MCP servers in the future f
 | Filesystem | Local filesystem operations | None required | Docker container |
 | Google Drive | Google Drive file operations | OAuth credentials from `.bash_secrets` | Docker container |
 | Slack | Slack messaging and search | Bot token from `.bash_secrets` | Docker container |
+
+## MCP Toggle System
+
+The MCP Toggle System allows you to easily enable or disable MCP servers without editing complex JSON configuration files.
+
+### Getting Started
+
+Initialize your configuration:
+
+```bash
+./mcp/mcp-toggle.sh init
+```
+
+This creates a `.mcp-enabled-servers` file in your home directory with default settings.
+
+### Managing MCP Servers
+
+List available and enabled servers:
+
+```bash
+./mcp/mcp-toggle.sh list
+```
+
+Enable a server (set to 1):
+
+```bash
+./mcp/mcp-toggle.sh on brave-search
+```
+
+Disable a server (set to 0):
+
+```bash
+./mcp/mcp-toggle.sh off gdrive
+```
+
+Apply your changes:
+
+```bash
+./mcp/mcp-toggle.sh apply
+```
+
+### Configuration File
+
+The configuration file at `~/.mcp-enabled-servers` uses a simple key=value format:
+- `server=1` means the server is enabled
+- `server=0` means the server is disabled
+
+Example:
+```
+# Core servers
+github=1
+atlassian=1
+
+# Search servers
+brave-search=1
+google-maps=0
+```
+
+You can edit this file directly and then run `mcp-toggle.sh apply` to update your configuration.
 
 ## Setup Instructions
 
