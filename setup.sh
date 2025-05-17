@@ -8,6 +8,8 @@ set -e  # Exit on error
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 DIVIDER="----------------------------------------"
 
@@ -127,14 +129,25 @@ mkdir -p ~/.bash_aliases.d
 cp -r "$DOT_DEN/.bash_aliases.d/"* ~/.bash_aliases.d/ 2>/dev/null || true
 ln -sf "$DOT_DEN/.bash_exports" ~/.bash_exports
 ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
+
+# Set up MCP toggle system
+echo "Setting up MCP toggle system..."
+chmod +x "$DOT_DEN/mcp/mcp-toggle.sh"
+# Create initial MCP configuration if it doesn't exist
+"$DOT_DEN/mcp/mcp-toggle.sh" init
+# Apply the configuration to generate mcp.json
+"$DOT_DEN/mcp/mcp-toggle.sh" apply
+echo -e "${GREEN}✓ MCP toggle system configured${NC}"
+echo "You can manage MCP servers with: mcp-toggle.sh [list|on|off|apply]"
+
 # Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
 # (as opposed to Workspace Configuration: .amazonq/mcp.json - Specific to the current workspace)
 mkdir -p ~/.aws/amazonq
-ln -sf "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
+ln -sf "$HOME/.aws/amazonq/mcp.json" ~/.aws/amazonq/mcp.json
 
 # Claude Desktop MCP integration
 mkdir -p ~/.config/Claude
-cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json
+cp "$HOME/.aws/amazonq/mcp.json" ~/.config/Claude/claude_desktop_config.json
 
 # Set up Git configuration
 echo "Setting up Git configuration..."
