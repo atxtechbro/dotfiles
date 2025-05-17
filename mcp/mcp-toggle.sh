@@ -37,10 +37,13 @@ list_servers() {
   jq -r '.servers[].name' "$MCP_JSON" | sort
   
   echo -e "\nCurrently enabled servers:"
-  grep -v "^#" "$CONFIG_FILE" | grep -v "^$" || echo "None"
+  grep -v "^#" "$CONFIG_FILE" | grep "=1" | cut -d= -f1 || echo "None"
+  
+  echo -e "\nCurrently disabled servers:"
+  grep -v "^#" "$CONFIG_FILE" | grep "=0" | cut -d= -f1 || echo "None"
 }
 
-# Enable a specific server
+# Enable a specific server (set to 1)
 enable_server() {
   local server=$1
   
@@ -50,36 +53,37 @@ enable_server() {
     return 1
   fi
   
-  # Check if already enabled (not commented out)
-  if grep -q "^$server$" "$CONFIG_FILE"; then
-    echo -e "${YELLOW}Server '$server' is already enabled${NC}"
-    return 0
-  fi
-  
-  # If commented out, uncomment it
-  if grep -q "^#[[:space:]]*$server$" "$CONFIG_FILE"; then
-    sed -i "s/^#[[:space:]]*$server$/$server/" "$CONFIG_FILE"
+  # Check if already in config file
+  if grep -q "^$server=" "$CONFIG_FILE"; then
+    # Update value to 1
+    sed -i "s/^$server=.*/$server=1/" "$CONFIG_FILE"
   else
-    # Otherwise add it
-    echo "$server" >> "$CONFIG_FILE"
+    # Add it with value 1
+    echo "$server=1" >> "$CONFIG_FILE"
   fi
   
   echo -e "${GREEN}Enabled MCP server: $server${NC}"
   echo "Run 'mcp-toggle.sh apply' to apply changes"
 }
 
-# Disable a specific server
+# Disable a specific server (set to 0)
 disable_server() {
   local server=$1
   
-  # Check if already disabled or not in file
-  if ! grep -q "^$server$" "$CONFIG_FILE"; then
-    echo -e "${YELLOW}Server '$server' is already disabled or not in config${NC}"
-    return 0
+  # Check if server exists in master config
+  if ! jq -e ".servers[] | select(.name == \"$server\")" "$MCP_JSON" > /dev/null; then
+    echo -e "${YELLOW}Server '$server' not found in MCP configuration${NC}"
+    return 1
   fi
   
-  # Comment out the server
-  sed -i "s/^$server$/#$server/" "$CONFIG_FILE"
+  # Check if already in config file
+  if grep -q "^$server=" "$CONFIG_FILE"; then
+    # Update value to 0
+    sed -i "s/^$server=.*/$server=0/" "$CONFIG_FILE"
+  else
+    # Add it with value 0
+    echo "$server=0" >> "$CONFIG_FILE"
+  fi
   
   echo -e "${GREEN}Disabled MCP server: $server${NC}"
   echo "Run 'mcp-toggle.sh apply' to apply changes"
@@ -93,19 +97,26 @@ apply_config() {
   # Get all server names from the master config
   local all_servers=($(jq -r '.servers[].name' "$MCP_JSON"))
   
-  # Get enabled servers from config file
-  local enabled_servers=($(grep -v "^#" "$CONFIG_FILE" | grep -v "^$"))
-  
   # Create a new servers array with only enabled servers
   local new_config=$(echo "$config" | jq '.servers = []')
   
-  # Add each enabled server from the original config
-  for server in "${enabled_servers[@]}"; do
-    local server_config=$(jq -c ".servers[] | select(.name == \"$server\")" "$MCP_JSON")
-    if [ -n "$server_config" ]; then
-      new_config=$(echo "$new_config" | jq ".servers += [$server_config]")
+  # Process each server in the config file
+  while IFS='=' read -r server value || [[ -n "$server" ]]; do
+    # Skip comments and empty lines
+    [[ "$server" =~ ^#.*$ || -z "$server" ]] && continue
+    
+    # Check if server exists in master config
+    if jq -e ".servers[] | select(.name == \"$server\")" "$MCP_JSON" > /dev/null; then
+      if [[ "$value" == "1" ]]; then
+        # Add server to new config
+        local server_config=$(jq -c ".servers[] | select(.name == \"$server\")" "$MCP_JSON")
+        new_config=$(echo "$new_config" | jq ".servers += [$server_config]")
+        echo "Enabling MCP server: $server"
+      else
+        echo "Disabling MCP server: $server"
+      fi
     fi
-  done
+  done < "$CONFIG_FILE"
   
   # Write the new configuration
   mkdir -p "$(dirname "$OUTPUT_JSON")"
@@ -117,8 +128,19 @@ apply_config() {
     echo "$new_config" > "$CLAUDE_JSON"
   fi
   
-  echo -e "${GREEN}MCP configuration updated with $(echo ${#enabled_servers[@]}) enabled servers${NC}"
-  echo "Enabled servers: ${enabled_servers[*]}"
+  # Count enabled servers
+  local enabled_count=$(echo "$new_config" | jq '.servers | length')
+  echo -e "${GREEN}MCP configuration updated with $enabled_count enabled servers${NC}"
+}
+
+# Set a server to on (1)
+on_server() {
+  enable_server "$1"
+}
+
+# Set a server to off (0)
+off_server() {
+  disable_server "$1"
 }
 
 # Show usage information
@@ -128,11 +150,12 @@ show_usage() {
   echo "Usage:"
   echo "  mcp-toggle.sh init      - Create initial configuration"
   echo "  mcp-toggle.sh list      - List available and enabled servers"
-  echo "  mcp-toggle.sh enable <server>  - Enable a specific server"
-  echo "  mcp-toggle.sh disable <server> - Disable a specific server"
+  echo "  mcp-toggle.sh on <server>     - Enable a server (set to 1)"
+  echo "  mcp-toggle.sh off <server>    - Disable a server (set to 0)"
   echo "  mcp-toggle.sh apply     - Apply configuration changes"
   echo ""
   echo "Configuration file: $CONFIG_FILE"
+  echo "Format: server=1 (enabled) or server=0 (disabled)"
 }
 
 # Main command router
@@ -143,14 +166,14 @@ case "$1" in
   list)
     list_servers
     ;;
-  enable)
+  enable|on)
     if [ -z "$2" ]; then
       echo "Error: Please specify a server name"
       exit 1
     fi
     enable_server "$2"
     ;;
-  disable)
+  disable|off)
     if [ -z "$2" ]; then
       echo "Error: Please specify a server name"
       exit 1
