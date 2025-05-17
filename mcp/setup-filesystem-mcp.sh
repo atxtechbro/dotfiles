@@ -41,15 +41,8 @@ fi
 echo "Building Docker image for Filesystem MCP server..."
 cd /tmp/mcp-servers && docker build -t mcp/filesystem -f src/filesystem/Dockerfile .
 
-# Update mcp.json to include the Filesystem server
-MCP_CONFIG="$REPO_ROOT/mcp/mcp.json"
-if ! grep -q "\"filesystem\"" "$MCP_CONFIG"; then
-    echo "Adding Filesystem configuration to mcp.json..."
-    # Use a temporary file for the update
-    TMP_FILE=$(mktemp)
-    jq '.mcpServers += {"filesystem": {"command": "filesystem-mcp-wrapper.sh", "args": [], "env": {"FASTMCP_LOG_LEVEL": "ERROR"}}}' "$MCP_CONFIG" > "$TMP_FILE"
-    mv "$TMP_FILE" "$MCP_CONFIG"
-fi
+# Note: The mcp.json configuration is now managed directly in the repository
+# and doesn't need to be updated by this script
 
 echo ""
 echo "Setup complete! To use the Filesystem MCP server:"
