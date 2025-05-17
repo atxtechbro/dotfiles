@@ -1,20 +1,18 @@
-# MCP Enabled Servers Configuration
-# 
-# This file controls which MCP servers are active in your environment.
-# Uncomment a line to enable a server, comment it to disable.
-# Run 'mcp-toggle.sh apply' after making changes.
+# MCP Servers Configuration
+# 1 = enabled, 0 = disabled
+# Default is 1 (enabled)
 
 # Core servers
-github
-atlassian
+github=1
+atlassian=1
 
 # Search servers
-brave-search
-# google-maps
+brave-search=1
+google-maps=0
 
 # Productivity servers
-# gdrive
-# slack
-# filesystem
+gdrive=0
+slack=0
+filesystem=1
 
 # Add custom servers below
