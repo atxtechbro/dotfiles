@@ -66,6 +66,13 @@
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
       }
+    },
+    "google-maps": {
+      "command": "google-maps-mcp-wrapper.sh",
+      "args": [],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      }
     }
   }
 }
