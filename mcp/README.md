@@ -8,6 +8,10 @@ Many of our MCP servers are sourced from the official [Model Context Protocol se
 
 Current servers from this source:
 - Google Maps
+- Brave Search
+- Filesystem
+- Google Drive
+- Slack
 
 This standardized approach makes it easy to add more MCP servers in the future from this abundant collection.
 
@@ -19,6 +23,10 @@ This standardized approach makes it easy to add more MCP servers in the future f
 | GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script |
 | Atlassian | Jira and Confluence integration | API tokens from `.bash_secrets` | Custom setup script |
 | Google Maps | Google Maps API integration | API key from `.bash_secrets` | Docker container |
+| Brave Search | Web search via Brave | API key from `.bash_secrets` | Docker container |
+| Filesystem | Local filesystem operations | None required | Docker container |
+| Google Drive | Google Drive file operations | OAuth credentials from `.bash_secrets` | Docker container |
+| Slack | Slack messaging and search | Bot token from `.bash_secrets` | Docker container |
 
 ## Setup Instructions
 
@@ -27,6 +35,10 @@ Each MCP integration has its own setup method:
 - **AWS Labs MCP Servers**: No setup script needed - these are installed automatically via UVX package manager from PyPI, making integration straightforward
 - `setup-atlassian-mcp.sh` - Sets up Atlassian (Jira/Confluence) integration
 - `setup-google-maps-mcp.sh` - Sets up Google Maps integration
+- `setup-brave-search-mcp.sh` - Sets up Brave Search integration
+- `setup-filesystem-mcp.sh` - Sets up Filesystem integration
+- `setup-gdrive-mcp.sh` - Sets up Google Drive integration
+- `setup-slack-mcp.sh` - Sets up Slack integration
 
 For custom integrations, run the appropriate setup script:
 
