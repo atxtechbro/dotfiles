@@ -285,6 +285,94 @@ if ! command -v uv >/dev/null 2>&1; then
   echo -e "${GREEN}✓ uv package manager installed${NC}"
 fi
 
+# GitHub CLI setup and update
+echo -e "${DIVIDER}"
+echo "Checking GitHub CLI..."
+
+install_or_update_gh_cli() {
+  echo "Installing/updating GitHub CLI using official method..."
+  
+  # Determine OS type for installation
+  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # For Debian/Ubuntu-based systems
+    if command -v apt &> /dev/null; then
+      echo "Using apt-based installation..."
+      (
+        curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg 2>/dev/null
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+        sudo apt update 2>/dev/null
+        sudo apt install -y gh
+      ) || echo -e "${YELLOW}Failed to install/update GitHub CLI via apt. Continuing...${NC}"
+    
+    # For Arch-based systems
+    elif command -v pacman &> /dev/null; then
+      echo "Using pacman installation..."
+      (sudo pacman -Sy --noconfirm github-cli) || echo -e "${YELLOW}Failed to install/update GitHub CLI via pacman. Continuing...${NC}"
+    
+    # For Fedora/RHEL-based systems
+    elif command -v dnf &> /dev/null; then
+      echo "Using dnf installation..."
+      (sudo dnf install -y gh) || echo -e "${YELLOW}Failed to install/update GitHub CLI via dnf. Continuing...${NC}"
+    
+    # Fallback to direct binary installation
+    else
+      echo "Using direct binary installation..."
+      (
+        # Get latest version
+        VERSION=$(curl -s https://api.github.com/repos/cli/cli/releases/latest | grep -Po '"tag_name": "v\K[^"]*')
+        
+        # Download and extract
+        curl -Lo gh.tar.gz "https://github.com/cli/cli/releases/latest/download/gh_${VERSION}_linux_amd64.tar.gz"
+        tar xzf gh.tar.gz
+        sudo install -o root -g root -m 0755 gh_${VERSION}_linux_amd64/bin/gh /usr/local/bin/gh
+        sudo cp -r gh_${VERSION}_linux_amd64/share/man/man1/* /usr/local/share/man/man1/ 2>/dev/null || true
+        rm -rf gh_${VERSION}_linux_amd64 gh.tar.gz
+      ) || echo -e "${YELLOW}Failed to install/update GitHub CLI via binary. Continuing...${NC}"
+    fi
+  
+  # For macOS
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+    if command -v brew &> /dev/null; then
+      echo "Using Homebrew installation..."
+      (brew install gh || brew upgrade gh) || echo -e "${YELLOW}Failed to install/update GitHub CLI via Homebrew. Continuing...${NC}"
+    else
+      echo -e "${YELLOW}Homebrew not found. Please install Homebrew first to install GitHub CLI on macOS.${NC}"
+    fi
+  else
+    echo -e "${YELLOW}Unsupported OS: $OSTYPE. Please install GitHub CLI manually.${NC}"
+  fi
+}
+
+# Check if GitHub CLI is installed
+if command -v gh &> /dev/null; then
+  CURRENT_VERSION=$(gh --version | head -n 1 | cut -d' ' -f3)
+  echo "Current GitHub CLI version: $CURRENT_VERSION"
+  
+  # Always update to latest version
+  install_or_update_gh_cli
+  
+  # Get new version
+  if command -v gh &> /dev/null; then
+    NEW_VERSION=$(gh --version | head -n 1 | cut -d' ' -f3)
+    if [[ "$CURRENT_VERSION" != "$NEW_VERSION" ]]; then
+      echo -e "${GREEN}✓ GitHub CLI updated from $CURRENT_VERSION to $NEW_VERSION${NC}"
+    else
+      echo -e "${GREEN}✓ GitHub CLI is already at the latest version ($CURRENT_VERSION)${NC}"
+    fi
+  fi
+else
+  echo "GitHub CLI not installed. Installing now..."
+  install_or_update_gh_cli
+  
+  # Verify installation
+  if command -v gh &> /dev/null; then
+    INSTALLED_VERSION=$(gh --version | head -n 1 | cut -d' ' -f3)
+    echo -e "${GREEN}✓ GitHub CLI installed successfully (version $INSTALLED_VERSION)${NC}"
+  else
+    echo -e "${RED}GitHub CLI installation failed.${NC}"
+  fi
+fi
+
 # Export GitHub token for MCP
 if command -v gh &> /dev/null; then
   echo "Exporting GitHub token for MCP..."
