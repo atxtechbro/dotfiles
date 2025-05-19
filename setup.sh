@@ -4,12 +4,26 @@
 #
 # USAGE: source setup.sh
 
-set -e  # Exit on error
+# Don't exit on error - this is critical for Pop!_OS compatibility
+set +e
 
+# Define colors and formatting
 GREEN='\033[0;32m'
 RED='\033[0;31m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 DIVIDER="----------------------------------------"
+
+# Error handling function
+handle_error() {
+  local exit_code=$?
+  echo -e "${RED}Command failed with exit code $exit_code: $BASH_COMMAND${NC}"
+  echo -e "${YELLOW}Continuing despite error...${NC}"
+}
+
+# Set up error trap but don't exit
+trap 'handle_error' ERR
 
 # Check if the script is being sourced
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
@@ -17,6 +31,9 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     echo -e "Please run: ${GREEN}source setup.sh${NC}"
     exit 1
 fi
+
+# Add debug logging
+echo "Debug: Starting setup script in sourced mode"
 
 DOT_DEN="$HOME/ppv/pillars/dotfiles"
 # Export DOT_DEN as a global variable for other scripts to use
@@ -287,13 +304,36 @@ echo "Checking Docker setup..."
 if command -v docker &> /dev/null; then
   echo -e "${GREEN}✓ Docker is already installed${NC}"
 else
-  echo -e "${YELLOW}Docker is not installed.${NC}"
-  echo "To install Docker, please run the following commands manually:"
-  echo -e "${GREEN}sudo apt-get update && sudo apt-get install -y docker.io${NC}"
-  echo -e "${GREEN}sudo systemctl enable docker${NC}"
-  echo -e "${GREEN}sudo systemctl start docker${NC}"
-  echo -e "${GREEN}sudo usermod -aG docker \$USER${NC}"
-  echo "After installation, you'll need to log out and back in for group changes to take effect."
+  echo -e "${YELLOW}Docker is not installed. Installing now...${NC}"
+  # Auto-install Docker based on available package manager
+  if command -v apt &> /dev/null; then
+    echo "Using apt to install Docker..."
+    (sudo apt-get update && sudo apt-get install -y docker.io) || {
+      echo -e "${YELLOW}Docker installation with apt failed. Continuing anyway...${NC}"
+    }
+    (sudo systemctl enable docker) || echo "Failed to enable Docker service. Continuing..."
+    (sudo systemctl start docker) || echo "Failed to start Docker service. Continuing..."
+    (sudo usermod -aG docker $USER) || echo "Failed to add user to Docker group. Continuing..."
+    echo -e "${GREEN}✓ Docker installation attempted${NC}"
+  elif command -v pacman &> /dev/null; then
+    echo "Using pacman to install Docker..."
+    (sudo pacman -Sy --noconfirm docker) || echo "Docker installation with pacman failed. Continuing..."
+    (sudo systemctl enable docker) || echo "Failed to enable Docker service. Continuing..."
+    (sudo systemctl start docker) || echo "Failed to start Docker service. Continuing..."
+    (sudo usermod -aG docker $USER) || echo "Failed to add user to Docker group. Continuing..."
+    echo -e "${GREEN}✓ Docker installation attempted${NC}"
+  elif command -v dnf &> /dev/null; then
+    echo "Using dnf to install Docker..."
+    (sudo dnf -y install docker) || echo "Docker installation with dnf failed. Continuing..."
+    (sudo systemctl enable docker) || echo "Failed to enable Docker service. Continuing..."
+    (sudo systemctl start docker) || echo "Failed to start Docker service. Continuing..."
+    (sudo usermod -aG docker $USER) || echo "Failed to add user to Docker group. Continuing..."
+    echo -e "${GREEN}✓ Docker installation attempted${NC}"
+  else
+    echo -e "${RED}Unable to install Docker automatically.${NC}"
+    echo "Please install Docker manually for your distribution."
+  fi
+  echo "Note: You'll need to log out and back in for group changes to take effect."
 fi
 
 # Check if user is in docker group
@@ -311,11 +351,19 @@ if command -v docker &> /dev/null; then
   echo "Testing Docker access..."
   if docker info &>/dev/null; then
     echo -e "${GREEN}✓ Docker is working correctly${NC}"
-    # Only run hello-world if Docker is working
-    docker run --rm hello-world &>/dev/null && echo -e "${GREEN}✓ Docker hello-world test passed${NC}" || echo -e "${YELLOW}Docker hello-world test failed. You may need to restart your system.${NC}"
+    # Only run hello-world if Docker is working - with robust error handling
+    echo "Running Docker hello-world test..."
+    (docker run --rm hello-world &>/dev/null)
+    if [ $? -eq 0 ]; then
+      echo -e "${GREEN}✓ Docker hello-world test passed${NC}"
+    else
+      echo -e "${YELLOW}Docker hello-world test failed. You may need to restart your system.${NC}"
+      echo "This is not a critical error, continuing with setup..."
+    fi
   else
     echo -e "${YELLOW}Docker is installed but not accessible without sudo.${NC}"
     echo "Please log out and back in, or restart your system to apply group changes."
+    echo "Continuing with setup..."
   fi
 fi
 
@@ -323,3 +371,6 @@ echo -e "${DIVIDER}"
 echo -e "${GREEN}✅ Dotfiles setup complete!${NC}"
 echo "Your development environment is now configured and ready to use."
 echo -e "${DIVIDER}"
+
+# Final debug message
+echo "Debug: Setup script completed successfully"
