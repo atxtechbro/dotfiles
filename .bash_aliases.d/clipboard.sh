@@ -11,7 +11,8 @@ alias clip="xclip -selection clipboard"
 # Works with qtrust alias in q-cli.sh for a complete security workflow
 qsafe() {
     # Format as a single command with all tools on one line that updates, creates, or deletes resources
-    echo "/tools untrust fs_write execute_bash use_aws git___git_commit git___git_reset \
+    echo "/tools untrust fs_write execute_bash use_aws \
+    git___git_commit git___git_reset\
     github___create_issue github___add_issue_comment github___push_files github___create_or_update_file github___create_repository \
     github___fork_repository github___create_branch github___create_pull_request github___merge_pull_request github___add_pull_request_review_comment \
     gitlab___push_files gitlab___create_or_update_file gitlab___create_repository \
