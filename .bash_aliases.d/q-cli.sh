@@ -18,3 +18,6 @@ alias q-doc-add="add-amazonq"
 # Use with qsafe alias from clipboard.sh for a complete security workflow
 alias qtrust='q chat "/tools trustall"'
 
+# Resume last Amazon Q conversation
+alias qr='q chat --resume'
+
