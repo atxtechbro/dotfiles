@@ -5,6 +5,7 @@
 # USAGE: source setup.sh
 
 set -e  # Exit on error
+trap 'echo -e "${RED}Error occurred at line $LINENO. Command: $BASH_COMMAND${NC}"; return 1' ERR
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -287,13 +288,31 @@ echo "Checking Docker setup..."
 if command -v docker &> /dev/null; then
   echo -e "${GREEN}✓ Docker is already installed${NC}"
 else
-  echo -e "${YELLOW}Docker is not installed.${NC}"
-  echo "To install Docker, please run the following commands manually:"
-  echo -e "${GREEN}sudo apt-get update && sudo apt-get install -y docker.io${NC}"
-  echo -e "${GREEN}sudo systemctl enable docker${NC}"
-  echo -e "${GREEN}sudo systemctl start docker${NC}"
-  echo -e "${GREEN}sudo usermod -aG docker \$USER${NC}"
-  echo "After installation, you'll need to log out and back in for group changes to take effect."
+  echo -e "${YELLOW}Docker is not installed. Installing now...${NC}"
+  # Auto-install Docker based on available package manager
+  if command -v apt &> /dev/null; then
+    sudo apt-get update && sudo apt-get install -y docker.io
+    sudo systemctl enable docker
+    sudo systemctl start docker
+    sudo usermod -aG docker $USER
+    echo -e "${GREEN}✓ Docker installed successfully${NC}"
+  elif command -v pacman &> /dev/null; then
+    sudo pacman -Sy --noconfirm docker
+    sudo systemctl enable docker
+    sudo systemctl start docker
+    sudo usermod -aG docker $USER
+    echo -e "${GREEN}✓ Docker installed successfully${NC}"
+  elif command -v dnf &> /dev/null; then
+    sudo dnf -y install docker
+    sudo systemctl enable docker
+    sudo systemctl start docker
+    sudo usermod -aG docker $USER
+    echo -e "${GREEN}✓ Docker installed successfully${NC}"
+  else
+    echo -e "${RED}Unable to install Docker automatically.${NC}"
+    echo "Please install Docker manually for your distribution."
+  fi
+  echo "Note: You'll need to log out and back in for group changes to take effect."
 fi
 
 # Check if user is in docker group
@@ -312,7 +331,12 @@ if command -v docker &> /dev/null; then
   if docker info &>/dev/null; then
     echo -e "${GREEN}✓ Docker is working correctly${NC}"
     # Only run hello-world if Docker is working
-    docker run --rm hello-world &>/dev/null && echo -e "${GREEN}✓ Docker hello-world test passed${NC}" || echo -e "${YELLOW}Docker hello-world test failed. You may need to restart your system.${NC}"
+    docker run --rm hello-world &>/dev/null || true  # Continue even if this fails
+    if [ $? -eq 0 ]; then
+      echo -e "${GREEN}✓ Docker hello-world test passed${NC}"
+    else
+      echo -e "${YELLOW}Docker hello-world test failed. You may need to restart your system.${NC}"
+    fi
   else
     echo -e "${YELLOW}Docker is installed but not accessible without sudo.${NC}"
     echo "Please log out and back in, or restart your system to apply group changes."
