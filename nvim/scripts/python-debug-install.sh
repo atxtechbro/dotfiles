@@ -30,6 +30,14 @@ uv pip install --target "$UV_TOOLS_PATH" debugpy
 # Verify debugpy is correctly installed
 if [ -d "$UV_TOOLS_PATH/debugpy" ]; then
     echo -e "${GREEN}✓ Debugpy installed successfully at $UV_TOOLS_PATH/debugpy${NC}"
+    
+    # Check specifically for the adapter directory
+    if [ -d "$UV_TOOLS_PATH/debugpy/adapter" ]; then
+        echo -e "${BLUE}Neovim will use the debugpy adapter at: $UV_TOOLS_PATH/debugpy/adapter${NC}"
+    else
+        echo -e "${YELLOW}Warning: Debugpy adapter directory not found at $UV_TOOLS_PATH/debugpy/adapter${NC}"
+        echo -e "${YELLOW}You may need to update the path in nvim/lua/config/dap.lua${NC}"
+    fi
 else
     echo -e "${RED}× Debugpy installation failed. Directory not found at $UV_TOOLS_PATH/debugpy${NC}"
     exit 1
