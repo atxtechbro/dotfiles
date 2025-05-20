@@ -56,12 +56,34 @@ dap.listeners.before.event_exited['dapui_config'] = function()
   dapui.close()
 end
 
--- Python adapter configuration
-dap.adapters.python = {
-  type = 'executable',
-  command = 'python',
-  args = {'-m', 'debugpy.adapter'},
-}
+-- Python adapter configuration with absolute path to debugpy
+-- First, try to use the absolute path to debugpy adapter
+local debugpy_adapter_path = vim.fn.expand('$HOME/.local/uv-tools/debugpy/adapter')
+local debugpy_module_exists = (vim.fn.glob(debugpy_adapter_path) ~= '')
+
+if debugpy_module_exists then
+  -- Use absolute path if debugpy adapter exists
+  dap.adapters.python = {
+    type = 'executable',
+    command = 'python',
+    args = {debugpy_adapter_path},
+  }
+else
+  -- Fallback to module import (requires debugpy in PYTHONPATH)
+  dap.adapters.python = {
+    type = 'executable',
+    command = 'python',
+    args = {'-m', 'debugpy.adapter'},
+  }
+  
+  -- Print a warning message to help with troubleshooting
+  vim.notify(
+    "Debugpy adapter path not found at: " .. debugpy_adapter_path .. 
+    "\nFalling back to module import. If debugging fails, run: " ..
+    "\n~/dotfiles/nvim/scripts/python-debug-install.sh",
+    vim.log.levels.WARN
+  )
+end
 dap.configurations.python = {
   {
     type = 'python',

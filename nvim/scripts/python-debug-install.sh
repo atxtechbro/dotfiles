@@ -27,6 +27,14 @@ echo -e "${BLUE}Using uv for Python package management...${NC}"
 UV_TOOLS_PATH="$HOME/.local/uv-tools"
 uv pip install --target "$UV_TOOLS_PATH" debugpy
 
+# Verify debugpy is correctly installed
+if [ -d "$UV_TOOLS_PATH/debugpy" ]; then
+    echo -e "${GREEN}✓ Debugpy installed successfully at $UV_TOOLS_PATH/debugpy${NC}"
+else
+    echo -e "${RED}× Debugpy installation failed. Directory not found at $UV_TOOLS_PATH/debugpy${NC}"
+    exit 1
+fi
+
 if ! grep -q "export PATH=\"\$HOME/.local/uv-tools/bin:\$PATH\"" ~/.bashrc; then
     echo -e "${BLUE}Adding ~/.local/uv-tools/bin to PATH in ~/.bashrc...${NC}"
     echo "export PATH=\"\$HOME/.local/uv-tools/bin:\$PATH\"" >> ~/.bashrc

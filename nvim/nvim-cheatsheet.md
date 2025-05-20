@@ -161,6 +161,8 @@ For Python debugging support:
 
 This installs:
 - debugpy: Python debugger used by nvim-dap
+  - Installed to `~/.local/uv-tools/debugpy`
+  - The DAP configuration uses an absolute path to the debugpy adapter
 - DAP plugins:
   - nvim-dap: Debug Adapter Protocol core
   - nvim-dap-ui: UI for live inspection of variables, stack, watches
