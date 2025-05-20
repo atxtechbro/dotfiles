@@ -250,25 +250,64 @@ if command -v q >/dev/null 2>&1; then
   fi
 fi
   
-# Check and install npm for Claude Code if needed
-if ! command -v npm >/dev/null 2>&1; then
-  echo "Installing nodejs and npm..."
-  if command -v apt >/dev/null 2>&1; then
-    # Debian/Ubuntu
-    sudo apt update >/dev/null 2>&1
-    sudo apt install -y nodejs npm >/dev/null 2>&1
-    echo -e "${GREEN}✓ NodeJS and npm installed${NC}"
-  elif command -v pacman >/dev/null 2>&1; then
-    # Arch Linux
-    sudo pacman -S --needed nodejs npm >/dev/null 2>&1
-    echo -e "${GREEN}✓ NodeJS and npm installed${NC}"
-  elif command -v brew >/dev/null 2>&1; then
-    # macOS
-    brew install node >/dev/null 2>&1
-    echo -e "${GREEN}✓ NodeJS and npm installed${NC}"
+# Node.js setup with NVM
+echo -e "${DIVIDER}"
+echo "Setting up Node.js with NVM..."
+
+# Ensure NVM directory exists
+export NVM_DIR="$HOME/.nvm"
+
+# Install NVM if not already installed
+if [ ! -d "$NVM_DIR" ]; then
+  echo "Installing NVM (Node Version Manager)..."
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash >/dev/null 2>&1
+  
+  # Source NVM immediately after installation
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  
+  # Install latest LTS version of Node.js and set as default
+  nvm install --lts >/dev/null 2>&1
+  nvm use --lts >/dev/null 2>&1
+  nvm alias default 'lts/*' >/dev/null 2>&1
+  
+  NODE_VERSION=$(node -v 2>/dev/null || echo "unknown")
+  echo -e "${GREEN}✓ Node.js LTS version ${NODE_VERSION} installed and set as default${NC}"
+else
+  # Source NVM if it exists
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  
+  # Check if NVM is available
+  if command -v nvm >/dev/null 2>&1; then
+    CURRENT_NODE_VERSION=$(node -v 2>/dev/null || echo "none")
+    LATEST_LTS=$(nvm version-remote --lts 2>/dev/null || echo "unknown")
+    
+    # Remove 'v' prefix for version comparison
+    CURRENT_VERSION=${CURRENT_NODE_VERSION#v}
+    LATEST_VERSION=${LATEST_LTS#v}
+    
+    # Check if current version is different from latest LTS
+    if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ] && [ "$LATEST_VERSION" != "unknown" ]; then
+      echo "Updating Node.js from $CURRENT_NODE_VERSION to $LATEST_LTS..."
+      nvm install --lts >/dev/null 2>&1
+      nvm use --lts >/dev/null 2>&1
+      nvm alias default 'lts/*' >/dev/null 2>&1
+      NEW_VERSION=$(node -v)
+      echo -e "${GREEN}✓ Node.js updated to latest LTS version: ${NEW_VERSION}${NC}"
+    else
+      echo -e "${GREEN}✓ Node.js is already at the latest LTS version: ${CURRENT_NODE_VERSION}${NC}"
+    fi
   else
-    echo -e "${RED}Unable to install npm automatically. Please install manually:${NC}"
-    echo "See https://nodejs.org/en/download/ for installation instructions."
+    echo -e "${YELLOW}NVM installation found but not working properly. Reinstalling...${NC}"
+    rm -rf "$NVM_DIR"
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash >/dev/null 2>&1
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    nvm install --lts >/dev/null 2>&1
+    nvm use --lts >/dev/null 2>&1
+    nvm alias default 'lts/*' >/dev/null 2>&1
+    NODE_VERSION=$(node -v 2>/dev/null || echo "unknown")
+    echo -e "${GREEN}✓ Node.js LTS version ${NODE_VERSION} installed and set as default${NC}"
   fi
 fi
 
@@ -277,8 +316,8 @@ if ! command -v uv >/dev/null 2>&1; then
   echo "Installing uv package manager..."
   curl -Ls https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
   # Check if PATH already contains the .local/bin entry before adding
-  if ! grep -q "export PATH=\"\\\$HOME/.local/bin:\\\$PATH\"" "$HOME/.bashrc"; then
-    echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$HOME/.bashrc"
+  if ! grep -q "export PATH=\"\\$HOME/.local/bin:\\$PATH\"" "$HOME/.bashrc"; then
+    echo "export PATH=\"$HOME/.local/bin:\$PATH\"" >> "$HOME/.bashrc"
   fi
   # Make uv available in the current shell
   export PATH="$HOME/.local/bin:$PATH"
