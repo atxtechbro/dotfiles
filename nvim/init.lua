@@ -99,6 +99,9 @@ require('packer').startup({
   -- Terminal
   use 'akinsho/toggleterm.nvim'
   
+  -- GitHub Copilot integration
+  use 'github/copilot.vim'
+  
   -- Automatically set up configuration after cloning packer.nvim
   if packer_bootstrap then
     require('packer').sync()
@@ -498,6 +501,12 @@ end)
 pcall(function()
   require('config.terminal')
   print("ToggleTerm terminal integration loaded from 'config.terminal'")
+end)
+
+-- Load GitHub Copilot configuration
+pcall(function()
+  require('plugins.copilot')
+  print("GitHub Copilot integration loaded from 'plugins.copilot'")
 end)
 
 -- Ensure cursor line is enabled
