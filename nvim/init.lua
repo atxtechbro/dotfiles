@@ -60,7 +60,7 @@ require('packer').startup(function(use)
   use 'rafamadriz/friendly-snippets'    -- Snippet collection
   
   -- LSP enhancements
-  use 'ray-x/lsp_signature.help'        -- Show function signature when typing
+  use 'ray-x/lsp_signature.nvim'        -- Show function signature when typing
   use 'folke/lsp-colors.nvim'           -- Better LSP colors
   
   use {
