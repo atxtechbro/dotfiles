@@ -1,0 +1,211 @@
+name: Claude Code PR Generator
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to process'
+        required: true
+        type: number
+  issues:
+    types: [labeled]
+
+jobs:
+  generate-pr:
+    if: ${{ github.event.label.name == 'ai-generate' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: read
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Get issue details
+        id: issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueNumber = context.payload.issue?.number || context.payload.inputs.issue_number;
+            if (!issueNumber) {
+              core.setFailed('No issue number provided');
+              return;
+            }
+            
+            const issue = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber
+            });
+            
+            const title = issue.data.title;
+            const body = issue.data.body;
+            
+            // Create a branch name from the issue title
+            const branchName = `ai-${issueNumber}-${title.toLowerCase()
+              .replace(/[^\w\s-]/g, '')
+              .replace(/[\s_-]+/g, '-')
+              .slice(0, 50)}`;
+            
+            core.setOutput('issue_number', issueNumber);
+            core.setOutput('issue_title', title);
+            core.setOutput('issue_body', body);
+            core.setOutput('branch_name', branchName);
+            
+            console.log(`Processing issue #${issueNumber}: ${title}`);
+            console.log(`Branch name: ${branchName}`);
+
+      - name: Create branch
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git checkout -b ${{ steps.issue.outputs.branch_name }}
+
+      - name: Prepare Claude Code MCP config
+        run: |
+          cat > mcp-config.json << EOL
+          {
+            "mcpServers": {
+              "filesystem": {
+                "command": "npx",
+                "args": [
+                  "-y",
+                  "@modelcontextprotocol/server-filesystem",
+                  "."
+                ]
+              },
+              "github": {
+                "command": "npx",
+                "args": ["-y", "@modelcontextprotocol/server-github"],
+                "env": {
+                  "GITHUB_TOKEN": "${{ github.token }}"
+                }
+              }
+            }
+          }
+          EOL
+
+      - name: Prepare Claude system prompt
+        run: |
+          if [ -f "AmazonQ.md" ]; then
+            cp AmazonQ.md CLAUDE.md
+          else
+            cat > CLAUDE.md << EOL
+          # Claude Code System Prompt
+          
+          You are an AI assistant helping to implement features for this repository.
+          Follow these guidelines:
+          
+          - Follow the repository's coding style and conventions
+          - Write clean, maintainable code with appropriate comments
+          - Include tests when appropriate
+          - Follow the "tracer bullet" development approach - implement core functionality first
+          EOL
+          fi
+
+      - name: Run Claude Code
+        id: claude
+        run: |
+          # Create a prompt from the issue
+          cat > prompt.txt << EOL
+          I need you to implement the feature described in this GitHub issue:
+          
+          Title: ${{ steps.issue.outputs.issue_title }}
+          
+          Description:
+          ${{ steps.issue.outputs.issue_body }}
+          
+          Please:
+          1. Analyze the repository structure to understand the codebase
+          2. Determine which files need to be created or modified
+          3. Implement the necessary changes
+          4. Explain your implementation approach
+          EOL
+          
+          # Run Claude Code with the prompt
+          claude -p "$(cat prompt.txt)" \
+            --mcp-config mcp-config.json \
+            --allowedTools "mcp__filesystem__*,mcp__github__*" \
+            --system-prompt "$(cat CLAUDE.md)" \
+            --output-format json > claude_response.json
+          
+          # Extract the response
+          RESPONSE=$(cat claude_response.json | jq -r '.result')
+          echo "CLAUDE_RESPONSE<<EOF" >> $GITHUB_ENV
+          echo "$RESPONSE" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Implement changes
+        run: |
+          # Extract file changes from Claude's response and implement them
+          # This is a simplified version - in practice, you'd need to parse the response
+          # and extract file paths and content
+          
+          # For demonstration, we'll create a README for the action
+          mkdir -p .github/workflows/docs
+          cat > .github/workflows/docs/claude-code-pr-generator.md << EOL
+          # Claude Code PR Generator
+          
+          This GitHub Action automatically generates pull requests from issues using Claude Code.
+          
+          ## Usage
+          
+          1. Create an issue describing the feature or change you want
+          2. Add the 'ai-generate' label to the issue
+          3. The action will create a PR with the implementation
+          
+          ## Manual Trigger
+          
+          You can also trigger this action manually from the Actions tab by providing an issue number.
+          EOL
+          
+          # Add any files that were created or modified
+          git add .
+          
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 1
+          fi
+          
+          git commit -m "feat: implement changes for issue #${{ steps.issue.outputs.issue_number }}"
+
+      - name: Push changes
+        run: git push origin ${{ steps.issue.outputs.branch_name }}
+
+      - name: Create Pull Request
+        id: create-pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const result = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `AI: ${process.env.ISSUE_TITLE}`,
+              body: `Resolves #${process.env.ISSUE_NUMBER}\n\n${process.env.CLAUDE_RESPONSE}`,
+              head: process.env.BRANCH_NAME,
+              base: 'main'
+            });
+            
+            console.log(`Pull request created: ${result.data.html_url}`);
+            
+            // Add a comment to the issue
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: process.env.ISSUE_NUMBER,
+              body: `I've created a pull request with an implementation: ${result.data.html_url}`
+            });
+          env:
+            ISSUE_NUMBER: ${{ steps.issue.outputs.issue_number }}
+            ISSUE_TITLE: ${{ steps.issue.outputs.issue_title }}
+            BRANCH_NAME: ${{ steps.issue.outputs.branch_name }}
