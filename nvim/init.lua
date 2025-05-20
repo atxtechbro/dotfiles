@@ -38,14 +38,25 @@ vim.cmd([[
 ]])
 
 -- Plugin definitions
-require('packer').startup(function(use)
-  -- Packer can manage itself
-  use 'wbthomason/packer.nvim'
+require('packer').startup({
+  function(use)
+    -- Packer can manage itself
+    use 'wbthomason/packer.nvim'
 
-  -- LSP and completion
-  use 'neovim/nvim-lspconfig'           -- LSP configuration
-  use 'williamboman/mason.nvim'         -- Package manager for LSP servers
-  use 'williamboman/mason-lspconfig.nvim' -- Integration with lspconfig
+    -- LSP and completion
+    use 'neovim/nvim-lspconfig'           -- LSP configuration
+    use {
+      'williamboman/mason.nvim',          -- Package manager for LSP servers
+      requires = {
+        'neovim/nvim-lspconfig',
+      }
+    }
+    use {
+      'williamboman/mason-lspconfig.nvim', -- Integration with lspconfig
+      requires = {
+        'williamboman/mason.nvim',
+      }
+    }
   
   -- Autocompletion
   use 'hrsh7th/nvim-cmp'                -- Completion engine
@@ -92,7 +103,19 @@ require('packer').startup(function(use)
   if packer_bootstrap then
     require('packer').sync()
   end
-end)
+end,
+config = {
+  -- Enhanced git clone options
+  git = {
+    clone_timeout = 180, -- Timeout in seconds
+  },
+  display = {
+    open_fn = function()
+      return require('packer.util').float({ border = 'rounded' })
+    end
+  }
+}
+})
 
 -- Keymaps
 local opts = { noremap = true, silent = true }
