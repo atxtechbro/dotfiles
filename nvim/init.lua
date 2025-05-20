@@ -44,8 +44,13 @@ require('packer').startup(function(use)
 
   -- LSP and completion
   use 'neovim/nvim-lspconfig'           -- LSP configuration
-  use 'williamboman/mason.nvim'         -- Package manager for LSP servers
-  use 'williamboman/mason-lspconfig.nvim' -- Integration with lspconfig
+  use {
+    'williamboman/mason.nvim',          -- Package manager for LSP servers
+  }
+  use {
+    'williamboman/mason-lspconfig.nvim', -- Integration with lspconfig
+    requires = {{'williamboman/mason.nvim'}, {'neovim/nvim-lspconfig'}}
+  }
   
   -- Autocompletion
   use 'hrsh7th/nvim-cmp'                -- Completion engine
