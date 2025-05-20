@@ -38,28 +38,29 @@ vim.cmd([[
 ]])
 
 -- Plugin definitions
-require('packer').startup(function(use)
-  -- Packer can manage itself
-  use 'wbthomason/packer.nvim'
+require('packer').startup({
+  function(use)
+    -- Packer can manage itself
+    use 'wbthomason/packer.nvim'
 
-  -- LSP and completion
-  use 'neovim/nvim-lspconfig'           -- LSP configuration
-  use {
-    'williamboman/mason.nvim',          -- Package manager for LSP servers
-    commit = 'main',                    -- Use main branch explicitly
-    config = function()
-      require('mason').setup()
-    end
-  }
-  use {
-    'williamboman/mason-lspconfig.nvim', -- Integration with lspconfig
-    commit = 'main',                     -- Use main branch explicitly
-    after = {'williamboman/mason.nvim', 'neovim/nvim-lspconfig'}, -- Load after dependencies
-    requires = {'williamboman/mason.nvim', 'neovim/nvim-lspconfig'}, -- Required dependencies
-    config = function()
-      require('mason-lspconfig').setup()
-    end
-  }
+    -- LSP and completion
+    use 'neovim/nvim-lspconfig'           -- LSP configuration
+    use {
+      'williamboman/mason.nvim',          -- Package manager for LSP servers
+      commit = 'main',                    -- Use main branch explicitly
+      config = function()
+        require('mason').setup()
+      end
+    }
+    use {
+      'williamboman/mason-lspconfig.nvim', -- Integration with lspconfig
+      commit = 'main',                     -- Use main branch explicitly
+      after = {'williamboman/mason.nvim', 'neovim/nvim-lspconfig'}, -- Load after dependencies
+      requires = {'williamboman/mason.nvim', 'neovim/nvim-lspconfig'}, -- Required dependencies
+      config = function()
+        require('mason-lspconfig').setup()
+      end
+    }
   
   -- Autocompletion
   use 'hrsh7th/nvim-cmp'                -- Completion engine
@@ -106,7 +107,29 @@ require('packer').startup(function(use)
   if packer_bootstrap then
     require('packer').sync()
   end
-end)
+end,
+config = {
+  -- Enhanced git clone options
+  git = {
+    clone_timeout = 300, -- Timeout in seconds
+    depth = 1, -- Clone with depth of 1 for faster downloads
+    -- Can increase if dependencies are needed
+  },
+  -- Maximum jobs to run simultaneously
+  max_jobs = 8,
+  -- Display options
+  display = {
+    open_fn = function()
+      return require('packer.util').float({ border = 'rounded' })
+    end,
+    working_sym = '⟳', -- Symbol shown while working
+    error_sym = '✗', -- Symbol shown on error
+    done_sym = '✓', -- Symbol shown when done
+    removed_sym = '-', -- Symbol shown when removed
+    moved_sym = '→', -- Symbol shown when moved
+  }
+}
+})
 
 -- Keymaps
 local opts = { noremap = true, silent = true }
