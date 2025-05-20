@@ -91,10 +91,25 @@ dap.configurations.python = {
     name = 'Launch file',
     program = '${file}',
     pythonPath = function()
-      local venv_path = vim.fn.getcwd() .. '/venv/bin/python'
+      -- Check for virtual environment in current directory
+      local venv_path = vim.fn.getcwd() .. '/.venv/bin/python'
       if vim.fn.executable(venv_path) == 1 then
         return venv_path
       end
+      
+      -- Check for virtual environment in parent directories
+      local cwd = vim.fn.getcwd()
+      local parent = vim.fn.fnamemodify(cwd, ':h')
+      while parent ~= cwd do
+        local parent_venv = parent .. '/.venv/bin/python'
+        if vim.fn.executable(parent_venv) == 1 then
+          return parent_venv
+        end
+        cwd = parent
+        parent = vim.fn.fnamemodify(cwd, ':h')
+      end
+      
+      -- Check for system Python
       return 'python'
     end,
   },

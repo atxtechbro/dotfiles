@@ -60,6 +60,22 @@ A quick reference guide for the Neovim configuration in this dotfiles repository
 | `<leader>dj` | Move down the call stack (older frames) |
 | `<leader>dk` | Move up the call stack (newer frames) |
 
+### Python Debugging Notes
+
+- The DAP configuration automatically detects Python virtual environments:
+  - Checks for `.venv/bin/python` in the current directory
+  - Recursively checks parent directories for `.venv/bin/python`
+  - Falls back to system Python if no virtual environment is found
+- If debugging fails with a "module not found" error for debugpy:
+  - Ensure you've run `~/dotfiles/nvim/scripts/python-debug-install.sh`
+  - For project-specific debugging, you can install debugpy in your virtual environment:
+    ```bash
+    # Activate your virtual environment
+    source .venv/bin/activate
+    # Install debugpy
+    pip install debugpy
+    ```
+
 ## LSP Features
 
 | Keybinding | Description |
