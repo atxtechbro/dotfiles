@@ -70,47 +70,10 @@ jobs:
           git config user.email "action@github.com"
           git checkout -b ${{ steps.issue.outputs.branch_name }}
 
-      - name: Prepare Claude Code MCP config
-        run: |
-          cat > mcp-config.json << EOL
-          {
-            "mcpServers": {
-              "filesystem": {
-                "command": "npx",
-                "args": [
-                  "-y",
-                  "@modelcontextprotocol/server-filesystem",
-                  "."
-                ]
-              },
-              "github": {
-                "command": "npx",
-                "args": ["-y", "@modelcontextprotocol/server-github"],
-                "env": {
-                  "GITHUB_TOKEN": "${{ github.token }}"
-                }
-              }
-            }
-          }
-          EOL
-
       - name: Prepare Claude system prompt
         run: |
-          if [ -f "AmazonQ.md" ]; then
-            cp AmazonQ.md CLAUDE.md
-          else
-            cat > CLAUDE.md << EOL
-          # Claude Code System Prompt
-          
-          You are an AI assistant helping to implement features for this repository.
-          Follow these guidelines:
-          
-          - Follow the repository's coding style and conventions
-          - Write clean, maintainable code with appropriate comments
-          - Include tests when appropriate
-          - Follow the "tracer bullet" development approach - implement core functionality first
-          EOL
-          fi
+          # Use existing AmazonQ.md file as the system prompt for Claude
+          cp AmazonQ.md CLAUDE.md
 
       - name: Run Claude Code
         id: claude
@@ -128,12 +91,10 @@ jobs:
           1. Analyze the repository structure to understand the codebase
           2. Determine which files need to be created or modified
           3. Implement the necessary changes
-          4. Explain your implementation approach
           EOL
           
           # Run Claude Code with the prompt
           claude -p "$(cat prompt.txt)" \
-            --mcp-config mcp-config.json \
             --allowedTools "mcp__filesystem__*,mcp__github__*" \
             --system-prompt "$(cat CLAUDE.md)" \
             --output-format json > claude_response.json
