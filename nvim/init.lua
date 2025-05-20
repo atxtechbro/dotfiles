@@ -46,10 +46,19 @@ require('packer').startup(function(use)
   use 'neovim/nvim-lspconfig'           -- LSP configuration
   use {
     'williamboman/mason.nvim',          -- Package manager for LSP servers
+    commit = 'main',                    -- Use main branch explicitly
+    config = function()
+      require('mason').setup()
+    end
   }
   use {
     'williamboman/mason-lspconfig.nvim', -- Integration with lspconfig
-    requires = {{'williamboman/mason.nvim'}, {'neovim/nvim-lspconfig'}}
+    commit = 'main',                     -- Use main branch explicitly
+    after = {'williamboman/mason.nvim', 'neovim/nvim-lspconfig'}, -- Load after dependencies
+    requires = {'williamboman/mason.nvim', 'neovim/nvim-lspconfig'}, -- Required dependencies
+    config = function()
+      require('mason-lspconfig').setup()
+    end
   }
   
   -- Autocompletion
