@@ -14,7 +14,7 @@ qsafe() {
     echo "/tools untrust fs_write execute_bash use_aws \
     git___git_commit git___git_reset\
     github___create_issue github___add_issue_comment github___push_files github___create_or_update_file github___create_repository \
-    github___fork_repository github___create_branch github___create_pull_request github___merge_pull_request github___add_pull_request_review_comment \
+    github___fork_repository github___create_branch github___create_pull_request github___merge_pull_request github___create_pull_request_review github___add_pull_request_review_comment \
     gitlab___push_files gitlab___create_or_update_file gitlab___create_repository \
     atlassian___jira_create_issue atlassian___jira_update_issue atlassian___jira_add_comment atlassian___jira_add_worklog \
     atlassian___jira_create_issue_link atlassian___confluence_create_page atlassian___confluence_update_page \
