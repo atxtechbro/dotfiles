@@ -324,9 +324,9 @@ install_or_update_gh_cli() {
         # Download and extract
         curl -Lo gh.tar.gz "https://github.com/cli/cli/releases/latest/download/gh_${VERSION}_linux_amd64.tar.gz"
         tar xzf gh.tar.gz
-        sudo install -o root -g root -m 0755 gh_${VERSION}_linux_amd64/bin/gh /usr/local/bin/gh
-        sudo cp -r gh_${VERSION}_linux_amd64/share/man/man1/* /usr/local/share/man/man1/ 2>/dev/null || true
-        rm -rf gh_${VERSION}_linux_amd64 gh.tar.gz
+        sudo install -o root -g root -m 0755 gh_"${VERSION}"_linux_amd64/bin/gh /usr/local/bin/gh
+        sudo cp -r gh_"${VERSION}"_linux_amd64/share/man/man1/* /usr/local/share/man/man1/ 2>/dev/null || true
+        rm -rf gh_"${VERSION}"_linux_amd64 gh.tar.gz
       ) || echo -e "${YELLOW}Failed to install/update GitHub CLI via binary. Continuing...${NC}"
     fi
   
@@ -409,21 +409,21 @@ else
     }
     (sudo systemctl enable docker) || echo "Failed to enable Docker service. Continuing..."
     (sudo systemctl start docker) || echo "Failed to start Docker service. Continuing..."
-    (sudo usermod -aG docker $USER) || echo "Failed to add user to Docker group. Continuing..."
+    (sudo usermod -aG docker "$USER") || echo "Failed to add user to Docker group. Continuing..."
     echo -e "${GREEN}✓ Docker installation attempted${NC}"
   elif command -v pacman &> /dev/null; then
     echo "Using pacman to install Docker..."
     (sudo pacman -Sy --noconfirm docker) || echo "Docker installation with pacman failed. Continuing..."
     (sudo systemctl enable docker) || echo "Failed to enable Docker service. Continuing..."
     (sudo systemctl start docker) || echo "Failed to start Docker service. Continuing..."
-    (sudo usermod -aG docker $USER) || echo "Failed to add user to Docker group. Continuing..."
+    (sudo usermod -aG docker "$USER") || echo "Failed to add user to Docker group. Continuing..."
     echo -e "${GREEN}✓ Docker installation attempted${NC}"
   elif command -v dnf &> /dev/null; then
     echo "Using dnf to install Docker..."
     (sudo dnf -y install docker) || echo "Docker installation with dnf failed. Continuing..."
     (sudo systemctl enable docker) || echo "Failed to enable Docker service. Continuing..."
     (sudo systemctl start docker) || echo "Failed to start Docker service. Continuing..."
-    (sudo usermod -aG docker $USER) || echo "Failed to add user to Docker group. Continuing..."
+    (sudo usermod -aG docker "$USER") || echo "Failed to add user to Docker group. Continuing..."
     echo -e "${GREEN}✓ Docker installation attempted${NC}"
   else
     echo -e "${RED}Unable to install Docker automatically.${NC}"
@@ -449,8 +449,7 @@ if command -v docker &> /dev/null; then
     echo -e "${GREEN}✓ Docker is working correctly${NC}"
     # Only run hello-world if Docker is working - with robust error handling
     echo "Running Docker hello-world test..."
-    (docker run --rm hello-world &>/dev/null)
-    if [ $? -eq 0 ]; then
+    if docker run --rm hello-world &>/dev/null; then
       echo -e "${GREEN}✓ Docker hello-world test passed${NC}"
     else
       echo -e "${YELLOW}Docker hello-world test failed. You may need to restart your system.${NC}"
