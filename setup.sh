@@ -348,17 +348,25 @@ if command -v gh &> /dev/null; then
   CURRENT_VERSION=$(gh --version | head -n 1 | cut -d' ' -f3)
   echo "Current GitHub CLI version: $CURRENT_VERSION"
   
-  # Always update to latest version
-  install_or_update_gh_cli
+  # Get the latest available version from GitHub
+  LATEST_VERSION=$(curl -s https://api.github.com/repos/cli/cli/releases/latest | grep -Po '"tag_name": "v\K[^"]*')
   
-  # Get new version
-  if command -v gh &> /dev/null; then
-    NEW_VERSION=$(gh --version | head -n 1 | cut -d' ' -f3)
-    if [[ "$CURRENT_VERSION" != "$NEW_VERSION" ]]; then
-      echo -e "${GREEN}✓ GitHub CLI updated from $CURRENT_VERSION to $NEW_VERSION${NC}"
-    else
-      echo -e "${GREEN}✓ GitHub CLI is already at the latest version ($CURRENT_VERSION)${NC}"
+  # Check if update is needed
+  if [[ -n "$LATEST_VERSION" && "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
+    echo "Newer version available: $LATEST_VERSION. Updating GitHub CLI..."
+    install_or_update_gh_cli
+    
+    # Verify update
+    if command -v gh &> /dev/null; then
+      NEW_VERSION=$(gh --version | head -n 1 | cut -d' ' -f3)
+      if [[ "$CURRENT_VERSION" != "$NEW_VERSION" ]]; then
+        echo -e "${GREEN}✓ GitHub CLI updated from $CURRENT_VERSION to $NEW_VERSION${NC}"
+      else
+        echo -e "${YELLOW}GitHub CLI update attempted but version remained at $CURRENT_VERSION${NC}"
+      fi
     fi
+  else
+    echo -e "${GREEN}✓ GitHub CLI is already at the latest version ($CURRENT_VERSION)${NC}"
   fi
 else
   echo "GitHub CLI not installed. Installing now..."
