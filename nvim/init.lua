@@ -2,7 +2,7 @@
 
 -- Basic settings
 vim.opt.number = true
-vim.opt.relativenumber = true
+vim.opt.relativenumber = false  -- Use absolute line numbers instead of relative
 vim.opt.termguicolors = true  -- Enable 24-bit RGB colors
 vim.opt.updatetime = 300      -- Faster completion
 vim.opt.timeoutlen = 500      -- By default timeoutlen is 1000 ms
