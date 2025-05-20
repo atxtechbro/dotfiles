@@ -47,19 +47,15 @@ require('packer').startup({
     use 'neovim/nvim-lspconfig'           -- LSP configuration
     use {
       'williamboman/mason.nvim',          -- Package manager for LSP servers
-      commit = 'main',                    -- Use main branch explicitly
-      config = function()
-        require('mason').setup()
-      end
+      requires = {
+        'neovim/nvim-lspconfig',
+      }
     }
     use {
       'williamboman/mason-lspconfig.nvim', -- Integration with lspconfig
-      commit = 'main',                     -- Use main branch explicitly
-      after = {'williamboman/mason.nvim', 'neovim/nvim-lspconfig'}, -- Load after dependencies
-      requires = {'williamboman/mason.nvim', 'neovim/nvim-lspconfig'}, -- Required dependencies
-      config = function()
-        require('mason-lspconfig').setup()
-      end
+      requires = {
+        'williamboman/mason.nvim',
+      }
     }
   
   -- Autocompletion
@@ -111,22 +107,12 @@ end,
 config = {
   -- Enhanced git clone options
   git = {
-    clone_timeout = 300, -- Timeout in seconds
-    depth = 1, -- Clone with depth of 1 for faster downloads
-    -- Can increase if dependencies are needed
+    clone_timeout = 180, -- Timeout in seconds
   },
-  -- Maximum jobs to run simultaneously
-  max_jobs = 8,
-  -- Display options
   display = {
     open_fn = function()
       return require('packer.util').float({ border = 'rounded' })
-    end,
-    working_sym = '⟳', -- Symbol shown while working
-    error_sym = '✗', -- Symbol shown on error
-    done_sym = '✓', -- Symbol shown when done
-    removed_sym = '-', -- Symbol shown when removed
-    moved_sym = '→', -- Symbol shown when moved
+    end
   }
 }
 })
