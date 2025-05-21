@@ -186,10 +186,51 @@ dap.configurations.cpp = {
 }
 dap.configurations.c = dap.configurations.cpp
 
+-- Bash/Shell debugging with bashdb
+dap.adapters.bashdb = {
+  type = 'executable',
+  command = 'bash-debug-adapter',
+  name = 'bashdb',
+}
+
+dap.configurations.sh = {
+  {
+    type = 'bashdb',
+    request = 'launch',
+    name = 'Debug current bash script',
+    program = "${file}",
+    args = {},
+    cwd = "${fileDirname}",
+    pathBashdb = vim.fn.stdpath("data") .. "/mason/packages/bash-debug-adapter/extension/bashdb_dir/bashdb",
+    pathBashdbLib = vim.fn.stdpath("data") .. "/mason/packages/bash-debug-adapter/extension/bashdb_dir",
+    pathBash = "/bin/bash",
+    pathCat = "/bin/cat",
+    pathMkfifo = "/usr/bin/mkfifo",
+    pathPkill = "/usr/bin/pkill",
+    env = {},
+    showDebugOutput = true,
+  }
+}
+
 -- Telescope DAP integration
 pcall(function()
   require('telescope').load_extension('dap')
 end)
+
+-- Configure netrw file explorer to use the appropriate debugger based on file type
+dap.configurations.netrw = {
+  {
+    type = 'bashdb',
+    request = 'launch',
+    name = 'Debug shell script from netrw',
+    program = "${file}",
+    cwd = "${fileDirname}",
+    pathBashdb = vim.fn.stdpath("data") .. "/mason/packages/bash-debug-adapter/extension/bashdb_dir/bashdb",
+    pathBashdbLib = vim.fn.stdpath("data") .. "/mason/packages/bash-debug-adapter/extension/bashdb_dir",
+    pathBash = "/bin/bash",
+    showDebugOutput = true,
+  }
+}
 
 -- DAP essential key mappings (F5, F9-F12)
 local opts = { noremap = true, silent = true }
