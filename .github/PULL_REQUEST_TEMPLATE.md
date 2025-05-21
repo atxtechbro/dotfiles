@@ -28,9 +28,6 @@ IMPORTANT:
 ## Testing Done
 <!-- Describe the testing you've done to verify your changes work properly -->
 
-## Screenshots (if applicable)
-<!-- Add screenshots to demonstrate the changes, if applicable -->
-
 ## Breaking Changes
 <!-- List any breaking changes and migration steps required, if applicable -->
 
