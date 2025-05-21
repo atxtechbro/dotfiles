@@ -22,7 +22,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js and Claude Code
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -30,8 +30,8 @@ jobs:
       - name: Install Claude Code
         run: npm install -g @anthropic-ai/claude-code
 
-      - name: Get issue details
-        id: issue
+      - name: Get issue and let Claude implement it
+        id: claude
         uses: actions/github-script@v7
         with:
           script: |
@@ -56,68 +56,39 @@ jobs:
               .replace(/[\s_-]+/g, '-')
               .slice(0, 50)}`;
             
-            core.setOutput('issue_number', issueNumber);
-            core.setOutput('issue_title', title);
-            core.setOutput('issue_body', body);
-            core.setOutput('branch_name', branchName);
-
-      - name: Create branch
-        run: |
-          git config user.name "GitHub Action"
-          git config user.email "action@github.com"
-          git checkout -b ${{ steps.issue.outputs.branch_name }}
-
-      - name: Run Claude Code
-        id: claude
-        run: |
-          # Simply pass the issue to Claude and let it figure out what to do
-          claude -p "Implement the feature described in issue #${{ steps.issue.outputs.issue_number }}: ${{ steps.issue.outputs.issue_title }}\n\n${{ steps.issue.outputs.issue_body }}" \
-            --allowedTools "mcp__filesystem__*,mcp__github__*" \
-            --system-prompt "$(cat AmazonQ.md)" \
-            --output-format json > claude_response.json
-          
-          # Extract the response
-          RESPONSE=$(cat claude_response.json | jq -r '.result')
-          echo "CLAUDE_RESPONSE<<EOF" >> $GITHUB_ENV
-          echo "$RESPONSE" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-      - name: Commit and push changes
-        run: |
-          # Add any files that were created or modified
-          git add .
-          
-          # Check if there are changes to commit
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-            exit 1
-          fi
-          
-          git commit -m "feat: implement changes for issue #${{ steps.issue.outputs.issue_number }}"
-          git push origin ${{ steps.issue.outputs.branch_name }}
-
-      - name: Create Pull Request
-        id: create-pr
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const result = await github.rest.pulls.create({
+            // Set up git for Claude
+            await exec.exec('git config user.name "GitHub Action"');
+            await exec.exec('git config user.email "action@github.com"');
+            await exec.exec(`git checkout -b ${branchName}`);
+            
+            // Let Claude handle everything
+            const { stdout } = await exec.getExecOutput(
+              'claude',
+              [
+                '-p',
+                `Implement issue #${issueNumber}: ${title}\n\n${body}`,
+                '--allowedTools', 'mcp__filesystem__*,mcp__github__*',
+                '--system-prompt', '$(cat AmazonQ.md)',
+                '--output-format', 'json'
+              ]
+            );
+            
+            const claudeResponse = JSON.parse(stdout).result;
+            
+            // Create PR
+            const pr = await github.rest.pulls.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `AI: ${process.env.ISSUE_TITLE}`,
-              body: `Resolves #${process.env.ISSUE_NUMBER}\n\n${process.env.CLAUDE_RESPONSE}`,
-              head: process.env.BRANCH_NAME,
+              title: `AI: ${title}`,
+              body: `Resolves #${issueNumber}\n\n${claudeResponse}`,
+              head: branchName,
               base: 'main'
             });
             
-            // Add a comment to the issue
+            // Comment on the issue
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: process.env.ISSUE_NUMBER,
-              body: `I've created a pull request with an implementation: ${result.data.html_url}`
+              issue_number: issueNumber,
+              body: `I've created a pull request with an implementation: ${pr.data.html_url}`
             });
-          env:
-            ISSUE_NUMBER: ${{ steps.issue.outputs.issue_number }}
-            ISSUE_TITLE: ${{ steps.issue.outputs.issue_title }}
-            BRANCH_NAME: ${{ steps.issue.outputs.branch_name }}
