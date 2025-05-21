@@ -21,15 +21,15 @@ else
 fi
 
 # Check if required environment variables are set
-if [ -z "$BRAVE_SEARCH_API_KEY" ]; then
-  echo "Error: Missing BRAVE_SEARCH_API_KEY in ~/.bash_secrets" >&2
+if [ -z "$BRAVE_API_KEY" ]; then
+  echo "Error: Missing BRAVE_API_KEY in ~/.bash_secrets" >&2
   echo "Please add the following variable to your ~/.bash_secrets file:" >&2
-  echo "  export BRAVE_SEARCH_API_KEY=\"your_api_key\"" >&2
+  echo "  export BRAVE_API_KEY=\"your_api_key\"" >&2
   exit 1
 fi
 
 # Run the Brave Search MCP server with credentials from environment variables
 exec docker run -i --rm \
-  -e BRAVE_SEARCH_API_KEY="$BRAVE_SEARCH_API_KEY" \
+  -e BRAVE_API_KEY="$BRAVE_API_KEY" \
   --network=host \
   mcp/brave-search
