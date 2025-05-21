@@ -31,10 +31,10 @@ build_mcp_docker_image "brave-search"
 # Update secrets template
 update_secrets_template \
   "$REPO_ROOT" \
-  "BRAVE_SEARCH_API_KEY" \
+  "BRAVE_API_KEY" \
   "BRAVE SEARCH API CREDENTIALS" \
   "Get API key from: https://brave.com/search/api/" \
-  "export BRAVE_SEARCH_API_KEY=\"your_api_key\""
+  "export BRAVE_API_KEY=\"your_api_key\""
 
 # Note: The mcp.json configuration is now managed directly in the repository
 # and doesn't need to be updated by this script
@@ -42,6 +42,6 @@ update_secrets_template \
 # Print setup completion message
 print_setup_complete \
   "Brave Search" \
-  "   export BRAVE_SEARCH_API_KEY=\"your_api_key\"" \
+  "   export BRAVE_API_KEY=\"your_api_key\"" \
   "- brave_search: Search the web using Brave Search
 - brave_suggest: Get search suggestions from Brave"
