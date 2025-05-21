@@ -22,19 +22,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js and Claude Code
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Claude Code
-        run: npm install -g @anthropic-ai/claude-code
-
-      - name: Get issue and let Claude implement it
-        id: claude
+      - name: Setup and run Claude Code
         uses: actions/github-script@v7
         with:
           script: |
+            // Install Claude Code
+            await exec.exec('npm install -g @anthropic-ai/claude-code');
+            
+            // Get issue details
             const issueNumber = context.payload.issue?.number || context.payload.inputs.issue_number;
             if (!issueNumber) {
               core.setFailed('No issue number provided');
@@ -47,26 +42,18 @@ jobs:
               issue_number: issueNumber
             });
             
-            const title = issue.data.title;
-            const body = issue.data.body;
-            
-            // Create a branch name from the issue title
-            const branchName = `ai-${issueNumber}-${title.toLowerCase()
-              .replace(/[^\w\s-]/g, '')
-              .replace(/[\s_-]+/g, '-')
-              .slice(0, 50)}`;
-            
-            // Set up git for Claude
+            // Create branch
+            const branchName = `ai-${issueNumber}`;
             await exec.exec('git config user.name "GitHub Action"');
             await exec.exec('git config user.email "action@github.com"');
             await exec.exec(`git checkout -b ${branchName}`);
             
-            // Let Claude handle everything
+            // Run Claude Code with minimal prompt
             const { stdout } = await exec.getExecOutput(
               'claude',
               [
                 '-p',
-                `Implement issue #${issueNumber}: ${title}\n\n${body}`,
+                `Issue #${issueNumber}: ${issue.data.title}\n\n${issue.data.body}`,
                 '--allowedTools', 'mcp__filesystem__*,mcp__github__*',
                 '--system-prompt', '$(cat AmazonQ.md)',
                 '--output-format', 'json'
@@ -79,8 +66,8 @@ jobs:
             const pr = await github.rest.pulls.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `AI: ${title}`,
-              body: `Resolves #${issueNumber}\n\n${claudeResponse}`,
+              title: `AI: ${issue.data.title}`,
+              body: `Resolves #${issueNumber}`,
               head: branchName,
               base: 'main'
             });
@@ -90,5 +77,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issueNumber,
-              body: `I've created a pull request with an implementation: ${pr.data.html_url}`
+              body: `Created PR: ${pr.data.html_url}`
             });
