@@ -263,8 +263,16 @@ if [ ! -d "$NVM_DIR" ]; then
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash >/dev/null 2>&1
   
   # Source NVM immediately after installation
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  if [ -d "$NVM_DIR" ]; then
+    if [ -s "$NVM_DIR/nvm.sh" ]; then
+      # shellcheck source=/dev/null
+      . "$NVM_DIR/nvm.sh"
+    fi
+    if [ -s "$NVM_DIR/bash_completion" ]; then
+      # shellcheck source=/dev/null
+      . "$NVM_DIR/bash_completion"
+    fi
+  fi
   
   # Install latest LTS version of Node.js and set as default
   nvm install --lts >/dev/null 2>&1
@@ -275,8 +283,16 @@ if [ ! -d "$NVM_DIR" ]; then
   echo -e "${GREEN}✓ Node.js LTS version ${NODE_VERSION} installed and set as default${NC}"
 else
   # Source NVM if it exists
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  if [ -d "$NVM_DIR" ]; then
+    if [ -s "$NVM_DIR/nvm.sh" ]; then
+      # shellcheck source=/dev/null
+      . "$NVM_DIR/nvm.sh"
+    fi
+    if [ -s "$NVM_DIR/bash_completion" ]; then
+      # shellcheck source=/dev/null
+      . "$NVM_DIR/bash_completion"
+    fi
+  fi
   
   # Check if NVM is available
   if command -v nvm >/dev/null 2>&1; then
@@ -302,7 +318,16 @@ else
     echo -e "${YELLOW}NVM installation found but not working properly. Reinstalling...${NC}"
     rm -rf "$NVM_DIR"
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash >/dev/null 2>&1
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    if [ -d "$NVM_DIR" ]; then
+      if [ -s "$NVM_DIR/nvm.sh" ]; then
+        # shellcheck source=/dev/null
+        . "$NVM_DIR/nvm.sh"
+      fi
+      if [ -s "$NVM_DIR/bash_completion" ]; then
+        # shellcheck source=/dev/null
+        . "$NVM_DIR/bash_completion"
+      fi
+    fi
     nvm install --lts >/dev/null 2>&1
     nvm use --lts >/dev/null 2>&1
     nvm alias default 'lts/*' >/dev/null 2>&1
