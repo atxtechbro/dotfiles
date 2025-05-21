@@ -14,6 +14,7 @@ jobs:
   generate-pr:
     if: ${{ github.event.label.name == 'ai-generate' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 3  # Shorter timeout for hello world test
     permissions:
       contents: write
       issues: read
@@ -22,124 +23,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Check for setup.sh
-        run: |
-          ls -la
-          if [ -f "setup.sh" ]; then
-            echo "Found setup.sh in root directory"
-            chmod +x setup.sh
-          else
-            echo "setup.sh not found in root directory"
-            echo "Creating minimal setup script"
-            cat > setup.sh << 'EOL'
-            #!/bin/bash
-            # Minimal setup script for GitHub Actions
-            echo "Setting up git configuration"
-            git config --global user.name "GitHub Action"
-            git config --global user.email "action@github.com"
-            EOL
-            chmod +x setup.sh
-          fi
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-      - name: Setup environment and run Claude Code
-        uses: actions/github-script@v7
+      - name: Install Claude Code
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          echo "Claude Code installed, checking version:"
+          claude --version || echo "Claude version command failed"
+
+      - name: Simple Claude Hello World Test
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           CLAUDE_AUTH_TOKEN: ${{ secrets.CLAUDE_AUTH_TOKEN }}
-        with:
-          script: |
-            // Verify we have authentication
-            if (!process.env.ANTHROPIC_API_KEY && !process.env.CLAUDE_AUTH_TOKEN) {
-              core.setFailed('Missing Claude authentication. Please set ANTHROPIC_API_KEY or CLAUDE_AUTH_TOKEN in GitHub Secrets');
-              return;
-            }
-            
-            // Get issue details
-            const issueNumber = context.payload.issue?.number || context.payload.inputs.issue_number;
-            if (!issueNumber) {
-              core.setFailed('No issue number provided');
-              return;
-            }
-            
-            // Verify this is a legitimate request from a repo collaborator
-            const issue = await github.rest.issues.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issueNumber
-            });
-            
-            // Check if the issue creator has write access to the repo
-            try {
-              const permission = await github.rest.repos.getCollaboratorPermissionLevel({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                username: issue.data.user.login
-              });
-              
-              const allowedPermissions = ['admin', 'write', 'maintain'];
-              if (!allowedPermissions.includes(permission.data.permission)) {
-                core.setFailed(`User ${issue.data.user.login} does not have sufficient permissions to trigger this action`);
-                return;
-              }
-            } catch (error) {
-              core.setFailed(`Failed to verify permissions: ${error.message}`);
-              return;
-            }
-            
-            // Install Claude Code
-            await exec.exec('npm install -g @anthropic-ai/claude-code');
-            
-            // Create branch
-            const branchName = `ai-${issueNumber}`;
-            await exec.exec(`git checkout -b ${branchName}`);
-            
-            // Check if AmazonQ.md exists
-            let systemPrompt = '';
-            try {
-              const amazonQContent = await github.rest.repos.getContent({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                path: 'AmazonQ.md'
-              });
-              
-              // Decode base64 content
-              systemPrompt = Buffer.from(amazonQContent.data.content, 'base64').toString();
-              console.log('Using AmazonQ.md as system prompt');
-            } catch (error) {
-              console.log('AmazonQ.md not found, using default system prompt');
-              systemPrompt = 'You are an AI assistant helping to implement features for this repository.';
-            }
-            
-            // Run Claude Code with minimal prompt
-            console.log('Running Claude Code...');
-            const claudeArgs = [
-              '-p',
-              `Issue #${issueNumber}: ${issue.data.title}\n\n${issue.data.body}`,
-              '--allowedTools', 'mcp__filesystem__*,mcp__github__*',
-              '--output-format', 'json'
-            ];
-            
-            // Write system prompt to temp file and use it
-            const fs = require('fs');
-            fs.writeFileSync('system_prompt.md', systemPrompt);
-            claudeArgs.push('--system-prompt', 'system_prompt.md');
-            
-            const { stdout } = await exec.getExecOutput('claude', claudeArgs, { env: process.env });
-            
-            // Create PR
-            const pr = await github.rest.pulls.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: `AI: ${issue.data.title}`,
-              body: `Resolves #${issueNumber}`,
-              head: branchName,
-              base: 'main'
-            });
-            
-            // Comment on the issue
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issueNumber,
-              body: `Created PR: ${pr.data.html_url}`
-            });
+        run: |
+          echo "Running simple Claude hello world test"
+          if [ -n "$ANTHROPIC_API_KEY" ] || [ -n "$CLAUDE_AUTH_TOKEN" ]; then
+            echo "Authentication environment variables found"
+          else
+            echo "Missing Claude authentication. Please set ANTHROPIC_API_KEY or CLAUDE_AUTH_TOKEN in GitHub Secrets"
+            exit 1
+          fi
+          
+          # Simple hello world test
+          echo "Running: claude -p \"Why is Austin such a great tech hub?\""
+          claude -p "Why is Austin such a great tech hub?" --output-format text
+          
+          echo "Hello world test completed successfully"
