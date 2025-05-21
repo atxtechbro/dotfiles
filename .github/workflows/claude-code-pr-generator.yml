@@ -14,6 +14,7 @@ jobs:
   generate-pr:
     if: ${{ github.event.label.name == 'ai-generate' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 5  # Add timeout to prevent indefinite hanging
     permissions:
       contents: write
       issues: read
@@ -39,7 +40,10 @@ jobs:
           node-version: '20'
 
       - name: Install Claude Code
-        run: npm install -g @anthropic-ai/claude-code
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          echo "Claude Code installed, checking version:"
+          claude --version || echo "Claude version command failed"
 
       - name: Run setup script
         run: |
@@ -57,6 +61,17 @@ jobs:
             // Verify we have authentication
             if (!process.env.ANTHROPIC_API_KEY && !process.env.CLAUDE_AUTH_TOKEN) {
               core.setFailed('Missing Claude authentication. Please set ANTHROPIC_API_KEY or CLAUDE_AUTH_TOKEN in GitHub Secrets');
+              return;
+            }
+            console.log('Authentication environment variables found (not printing values for security)');
+            
+            // Check if claude is available
+            try {
+              await exec.exec('which claude');
+              console.log('Claude binary found in PATH');
+            } catch (error) {
+              console.log('Claude binary not found in PATH');
+              core.setFailed('Claude binary not found in PATH');
               return;
             }
             
@@ -96,22 +111,30 @@ jobs:
             const branchName = `ai-${issueNumber}`;
             await exec.exec(`git checkout -b ${branchName}`);
             
-            // Use AmazonQ.md as system prompt
-            console.log('Using AmazonQ.md as system prompt');
-            
             // Run Claude Code with the issue content
             console.log(`Running Claude Code for issue #${issueNumber}...`);
-            const { stdout } = await exec.getExecOutput(
-              'claude',
-              [
-                '-p',
-                `Issue #${issueNumber}: ${issue.data.title}\n\n${issue.data.body}`,
-                '--allowedTools', 'mcp__filesystem__*,mcp__github__*',
-                '--system-prompt', 'AmazonQ.md',
-                '--output-format', 'json'
-              ],
-              { env: process.env }
-            );
+            try {
+              const { stdout, stderr } = await exec.getExecOutput(
+                'claude',
+                [
+                  '-p',
+                  `Issue #${issueNumber}: ${issue.data.title}\n\n${issue.data.body}`,
+                  '--allowedTools', 'mcp__filesystem__*,mcp__github__*',
+                  '--system-prompt', 'AmazonQ.md',
+                  '--output-format', 'json'
+                ],
+                { env: process.env }
+              );
+              console.log('Claude Code execution completed');
+              if (stderr) {
+                console.log('Claude stderr output:');
+                console.log(stderr);
+              }
+            } catch (error) {
+              console.log(`Claude execution error: ${error.message}`);
+              core.setFailed(`Claude Code execution failed: ${error.message}`);
+              return;
+            }
             
             // Create PR
             const pr = await github.rest.pulls.create({
