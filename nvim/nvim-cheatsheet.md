@@ -58,6 +58,7 @@ A quick reference guide for the Neovim configuration in this dotfiles repository
 | `<F12>` | Step out |
 | `<leader>du` | Toggle DAP UI (variables, stack, watches) |
 | `<leader>dt` | Terminate debug session |
+| `:qa!` | Emergency exit (force quit all windows without saving) |
 | `<leader>dj` | Move down the call stack (older frames) |
 | `<leader>dk` | Move up the call stack (newer frames) |
 
