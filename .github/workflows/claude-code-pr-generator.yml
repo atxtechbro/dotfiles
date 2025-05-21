@@ -60,9 +60,6 @@ jobs:
             core.setOutput('issue_title', title);
             core.setOutput('issue_body', body);
             core.setOutput('branch_name', branchName);
-            
-            console.log(`Processing issue #${issueNumber}: ${title}`);
-            console.log(`Branch name: ${branchName}`);
 
       - name: Create branch
         run: |
@@ -70,33 +67,13 @@ jobs:
           git config user.email "action@github.com"
           git checkout -b ${{ steps.issue.outputs.branch_name }}
 
-      - name: Prepare Claude system prompt
-        run: |
-          # Use existing AmazonQ.md file as the system prompt for Claude
-          cp AmazonQ.md CLAUDE.md
-
       - name: Run Claude Code
         id: claude
         run: |
-          # Create a prompt from the issue
-          cat > prompt.txt << EOL
-          I need you to implement the feature described in this GitHub issue:
-          
-          Title: ${{ steps.issue.outputs.issue_title }}
-          
-          Description:
-          ${{ steps.issue.outputs.issue_body }}
-          
-          Please:
-          1. Analyze the repository structure to understand the codebase
-          2. Determine which files need to be created or modified
-          3. Implement the necessary changes
-          EOL
-          
-          # Run Claude Code with the prompt
-          claude -p "$(cat prompt.txt)" \
+          # Simply pass the issue to Claude and let it figure out what to do
+          claude -p "Implement the feature described in issue #${{ steps.issue.outputs.issue_number }}: ${{ steps.issue.outputs.issue_title }}\n\n${{ steps.issue.outputs.issue_body }}" \
             --allowedTools "mcp__filesystem__*,mcp__github__*" \
-            --system-prompt "$(cat CLAUDE.md)" \
+            --system-prompt "$(cat AmazonQ.md)" \
             --output-format json > claude_response.json
           
           # Extract the response
@@ -105,30 +82,8 @@ jobs:
           echo "$RESPONSE" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-      - name: Implement changes
+      - name: Commit and push changes
         run: |
-          # Extract file changes from Claude's response and implement them
-          # This is a simplified version - in practice, you'd need to parse the response
-          # and extract file paths and content
-          
-          # For demonstration, we'll create a README for the action
-          mkdir -p .github/workflows/docs
-          cat > .github/workflows/docs/claude-code-pr-generator.md << EOL
-          # Claude Code PR Generator
-          
-          This GitHub Action automatically generates pull requests from issues using Claude Code.
-          
-          ## Usage
-          
-          1. Create an issue describing the feature or change you want
-          2. Add the 'ai-generate' label to the issue
-          3. The action will create a PR with the implementation
-          
-          ## Manual Trigger
-          
-          You can also trigger this action manually from the Actions tab by providing an issue number.
-          EOL
-          
           # Add any files that were created or modified
           git add .
           
@@ -139,9 +94,7 @@ jobs:
           fi
           
           git commit -m "feat: implement changes for issue #${{ steps.issue.outputs.issue_number }}"
-
-      - name: Push changes
-        run: git push origin ${{ steps.issue.outputs.branch_name }}
+          git push origin ${{ steps.issue.outputs.branch_name }}
 
       - name: Create Pull Request
         id: create-pr
@@ -156,8 +109,6 @@ jobs:
               head: process.env.BRANCH_NAME,
               base: 'main'
             });
-            
-            console.log(`Pull request created: ${result.data.html_url}`);
             
             // Add a comment to the issue
             await github.rest.issues.createComment({
