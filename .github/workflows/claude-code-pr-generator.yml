@@ -22,10 +22,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup and run Claude Code
+      - name: Setup environment and run Claude Code
         uses: actions/github-script@v7
         with:
           script: |
+            // Run setup.sh to configure the environment
+            await exec.exec('./setup.sh');
+            
             // Install Claude Code
             await exec.exec('npm install -g @anthropic-ai/claude-code');
             
@@ -42,10 +45,8 @@ jobs:
               issue_number: issueNumber
             });
             
-            // Create branch
+            // Create branch - git config will be from setup.sh
             const branchName = `ai-${issueNumber}`;
-            await exec.exec('git config user.name "GitHub Action"');
-            await exec.exec('git config user.email "action@github.com"');
             await exec.exec(`git checkout -b ${branchName}`);
             
             // Run Claude Code with minimal prompt
@@ -59,8 +60,6 @@ jobs:
                 '--output-format', 'json'
               ]
             );
-            
-            const claudeResponse = JSON.parse(stdout).result;
             
             // Create PR
             const pr = await github.rest.pulls.create({
