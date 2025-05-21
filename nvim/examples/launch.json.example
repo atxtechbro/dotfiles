@@ -1,0 +1,51 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "python",
+      "request": "launch",
+      "name": "Debug Current Python File",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "breakpoints": [
+        {
+          "path": "${workspaceFolder}/main.py",
+          "line": 10
+        },
+        {
+          "path": "${workspaceFolder}/utils.py",
+          "line": 15,
+          "condition": "x > 5"
+        },
+        {
+          "path": "${workspaceFolder}/api.py",
+          "line": 25,
+          "logMessage": "API request with data: {data}"
+        }
+      ]
+    },
+    {
+      "type": "python",
+      "request": "launch",
+      "name": "Debug Python Tests",
+      "module": "pytest",
+      "args": ["${file}"],
+      "justMyCode": false
+    },
+    {
+      "name": "Debug C/C++ Program",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/${fileBasenameNoExtension}",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "breakpoints": [
+        {
+          "path": "${workspaceFolder}/src/main.c",
+          "line": 15
+        }
+      ]
+    }
+  ]
+}

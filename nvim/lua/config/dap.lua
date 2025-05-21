@@ -7,6 +7,7 @@
          - <project-root>/launch.json
     • nvim-dap's `dap.ext.vscode` loader will register these on startup.
     • If no JSONC is found, fall back to the explicit Lua definitions below.
+    • Declarative breakpoints in launch.json will be automatically set when debugging starts.
 ]]
 -- Attempt to load VS Code launch.json configurations
 do
@@ -18,6 +19,33 @@ do
     local fallback = vim.fn.getcwd() .. '/launch.json'
     if vim.fn.filereadable(fallback) == 1 then
       pcall(vscode.load_launchjs, fallback)
+    end
+  end
+end
+
+-- Function to process and set declarative breakpoints from launch.json
+local function set_declarative_breakpoints(config, launched_session)
+  if config and config.breakpoints then
+    for _, bp in ipairs(config.breakpoints) do
+      -- Expand variables in path
+      local path = bp.path
+      if path:find("${workspaceFolder}") then
+        path = path:gsub("${workspaceFolder}", vim.fn.getcwd())
+      end
+      
+      -- Set the breakpoint
+      local opts = {}
+      if bp.condition then
+        opts.condition = bp.condition
+      end
+      if bp.hitCondition then
+        opts.hit_condition = bp.hitCondition
+      end
+      if bp.logMessage then
+        opts.log_message = bp.logMessage
+      end
+      
+      require('dap').set_breakpoint(bp.condition, bp.hitCondition, bp.logMessage, path, bp.line)
     end
   end
 end
@@ -155,6 +183,7 @@ vim.api.nvim_set_keymap('n', '<leader>bp', "<cmd>lua require('dap').toggle_break
 -- Additional UI-related keymaps
 vim.api.nvim_set_keymap('n', '<leader>du', "<cmd>lua require('dapui').toggle()<CR>", opts) -- Toggle UI
 vim.api.nvim_set_keymap('n', '<leader>dt', "<cmd>lua require('dap').terminate()<CR>", opts) -- Terminate debug session
+vim.api.nvim_set_keymap('n', '<leader>bc', "<cmd>lua require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>", opts) -- Conditional breakpoint
 
 -- Call stack navigation with automatic frame focus
 vim.api.nvim_set_keymap('n', '<leader>dj', "<cmd>lua require('dap').down()<CR>", opts) -- Move down the stack (older frames)
@@ -196,4 +225,9 @@ dap.listeners.after.scopes['dapui_frame_focus'] = function()
       end
     end
   end
+end
+
+-- Event handler to process declarative breakpoints defined in launch.json
+dap.listeners.before.launch['set_declarative_breakpoints'] = function(_, config)
+  set_declarative_breakpoints(config)
 end

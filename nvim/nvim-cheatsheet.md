@@ -52,6 +52,7 @@ A quick reference guide for the Neovim configuration in this dotfiles repository
 |------------|-------------|
 | `<F9>` | Toggle breakpoint (VS Code style) |
 | `<leader>bp` | Toggle breakpoint (alternative to F9) |
+| `<leader>bc` | Add conditional breakpoint with expression |
 | `<F5>` | Start/continue debugging |
 | `<F10>` | Step over |
 | `<F11>` | Step into |
@@ -76,6 +77,31 @@ A quick reference guide for the Neovim configuration in this dotfiles repository
     # Install debugpy
     pip install debugpy
     ```
+- Declarative breakpoints are supported in `launch.json`:
+  ```json
+  {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "python",
+        "request": "launch",
+        "name": "Debug Python File",
+        "program": "${file}",
+        "breakpoints": [
+          {
+            "path": "${workspaceFolder}/main.py",
+            "line": 10
+          },
+          {
+            "path": "${workspaceFolder}/utils.py",
+            "line": 15,
+            "condition": "x > 5"
+          }
+        ]
+      }
+    ]
+  }
+  ```
 
 ## LSP Features
 
