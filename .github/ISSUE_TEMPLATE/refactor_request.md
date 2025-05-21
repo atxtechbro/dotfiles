@@ -6,14 +6,7 @@ labels: refactor
 assignees: ''
 ---
 
-<!-- 
-IMPORTANT: 
-- Minimum length: 1 line (body optional)
-- If including body, must be either 3 or 5 lines exactly
-- Title format: refactor(scope): brief description
-  - scope: component affected (e.g., bash, tmux, git)
-  - description: concise summary of the refactoring needed
--->
+<!-- Use format refactor(scope): description where scope is the component affected (bash, tmux, etc) -->
 
 ## Current Implementation
 <!-- Describe the current implementation and its limitations -->
@@ -21,11 +14,10 @@ IMPORTANT:
 ## Proposed Refactoring
 <!-- Describe how the code should be restructured -->
 
+<!-- Optional sections below -->
+
 ## Benefits
-<!-- Explain the benefits of this refactoring (e.g., maintainability, performance) -->
+<!-- Optional: Explain the benefits of this refactoring (e.g., maintainability, performance) -->
 
 ## Scope of Changes
-<!-- Which files/components will be affected by this refactoring -->
-
-## Additional Context
-<!-- Any other relevant information about the refactoring request -->
+<!-- Optional: Which files/components will be affected by this refactoring -->

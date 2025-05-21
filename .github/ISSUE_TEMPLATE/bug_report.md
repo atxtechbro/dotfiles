@@ -6,37 +6,24 @@ labels: bug
 assignees: ''
 ---
 
-<!-- 
-IMPORTANT: 
-- Minimum length: 31 lines
-- Maximum length: 55 lines
-- Title format: bug(scope): brief description
-  - scope: component affected (e.g., bash, tmux, git)
-  - description: concise summary of the issue
-- Please provide complete information following the template below
--->
+<!-- Use format bug(scope): description where scope is the component affected (bash, tmux, etc) -->
 
 ## Bug Description
 <!-- A clear and concise description of the bug -->
 
 ## Steps to Reproduce
-1. <!-- First step -->
-2. <!-- Second step -->
-3. <!-- And so on... -->
+1. <!-- Describe how to reproduce the issue -->
 
-## Expected Behavior
-<!-- What you expected to happen -->
-
-## Actual Behavior
-<!-- What actually happened -->
+## Expected vs Actual Behavior
+<!-- What you expected to happen and what actually happened -->
 
 ## Environment
-- OS: <!-- e.g. Ubuntu 22.04, macOS 13.0, Windows 11 -->
-- Shell: <!-- e.g. Bash 5.1.16, Zsh 5.8 -->
-- Relevant tool versions: <!-- e.g. Git 2.39.0, Tmux 3.3a -->
+<!-- OS, shell version, and any relevant tool versions -->
+
+<!-- Optional sections below -->
 
 ## Additional Context
-<!-- Add any other context about the problem here, such as screenshots or error messages -->
+<!-- Optional: Screenshots, error messages, or other helpful information -->
 
 ## Possible Solution
-<!-- Optional: If you have suggestions on how to fix the bug -->
+<!-- Optional: Suggestions for fixing the bug -->
