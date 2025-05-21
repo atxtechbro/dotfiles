@@ -1,0 +1,109 @@
+name: Claude Code PR Generator
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to process'
+        required: true
+        type: number
+  issues:
+    types: [labeled]
+
+jobs:
+  generate-pr:
+    if: ${{ github.event.label.name == 'ai-generate' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: read
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup environment and run Claude Code
+        uses: actions/github-script@v7
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_AUTH_TOKEN: ${{ secrets.CLAUDE_AUTH_TOKEN }}
+        with:
+          script: |
+            // Verify we have authentication
+            if (!process.env.ANTHROPIC_API_KEY && !process.env.CLAUDE_AUTH_TOKEN) {
+              core.setFailed('Missing Claude authentication. Please set ANTHROPIC_API_KEY or CLAUDE_AUTH_TOKEN in GitHub Secrets');
+              return;
+            }
+            
+            // Run setup.sh to configure the environment
+            await exec.exec('./setup.sh');
+            
+            // Install Claude Code
+            await exec.exec('npm install -g @anthropic-ai/claude-code');
+            
+            // Get issue details
+            const issueNumber = context.payload.issue?.number || context.payload.inputs.issue_number;
+            if (!issueNumber) {
+              core.setFailed('No issue number provided');
+              return;
+            }
+            
+            // Verify this is a legitimate request from a repo collaborator
+            const issue = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber
+            });
+            
+            // Check if the issue creator has write access to the repo
+            try {
+              const permission = await github.rest.repos.getCollaboratorPermissionLevel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                username: issue.data.user.login
+              });
+              
+              const allowedPermissions = ['admin', 'write', 'maintain'];
+              if (!allowedPermissions.includes(permission.data.permission)) {
+                core.setFailed(`User ${issue.data.user.login} does not have sufficient permissions to trigger this action`);
+                return;
+              }
+            } catch (error) {
+              core.setFailed(`Failed to verify permissions: ${error.message}`);
+              return;
+            }
+            
+            // Create branch - git config will be from setup.sh
+            const branchName = `ai-${issueNumber}`;
+            await exec.exec(`git checkout -b ${branchName}`);
+            
+            // Run Claude Code with minimal prompt
+            const { stdout } = await exec.getExecOutput(
+              'claude',
+              [
+                '-p',
+                `Issue #${issueNumber}: ${issue.data.title}\n\n${issue.data.body}`,
+                '--allowedTools', 'mcp__filesystem__*,mcp__github__*',
+                '--system-prompt', '$(cat AmazonQ.md)',
+                '--output-format', 'json'
+              ],
+              { env: process.env } // Pass through environment variables including API keys
+            );
+            
+            // Create PR
+            const pr = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `AI: ${issue.data.title}`,
+              body: `Resolves #${issueNumber}`,
+              head: branchName,
+              base: 'main'
+            });
+            
+            // Comment on the issue
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: `Created PR: ${pr.data.html_url}`
+            });
