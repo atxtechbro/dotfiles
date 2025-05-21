@@ -27,6 +27,13 @@
 - Maintain a robust test suite – A comprehensive, well-maintained test suite is crucial for detecting issues early and verifying that the code base remains stable. Invest in test automation and prioritize fixing any failing tests
 - Proactively suggest git hook opportunities – During workflows, identify and suggest when a git hook implementation would be valuable. Since the driver is actively learning about git hooks, highlight potential use cases with high reward-to-effort ratios. Store these hooks in the dotfiles repository to maintain consistency across environments
 
+## File Operations Approach
+Use fs_read instead of GitHub MCP functions (like get_file_contents) for reading files
+Use fs_write instead of GitHub MCP functions (like create_or_update_file) for file edits
+Use git push instead of github mcp equivalent to push contents
+This makes it easier to see diffs and understand changes being made
+Assume we're working with the repository checked out locally (atxtechbro/dotfiles on GitHub)
+
 ## Debugging Amazon Q CLI
 - For definitive answers refer to the amazon-q-developer-cli source code at https://github.com/aws/amazon-q-developer-cli
 
