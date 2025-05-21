@@ -191,6 +191,16 @@ dap.adapters.bashdb = {
   type = 'executable',
   command = 'bash-debug-adapter',
   name = 'bashdb',
+  -- Add helper for error handling
+  on_stderr = function(_, data)
+    if data and #data > 0 then
+      if data[1]:match("not found") then
+        vim.notify("bash-debug-adapter error: " .. data[1] .. 
+        "\n\nEnsure bash-debug-adapter is installed: :MasonInstall bash-debug-adapter", 
+        vim.log.levels.ERROR)
+      end
+    end
+  end
 }
 
 dap.configurations.sh = {
@@ -204,7 +214,7 @@ dap.configurations.sh = {
     pathBashdb = vim.fn.stdpath("data") .. "/mason/packages/bash-debug-adapter/extension/bashdb_dir/bashdb",
     pathBashdbLib = vim.fn.stdpath("data") .. "/mason/packages/bash-debug-adapter/extension/bashdb_dir",
     pathBash = "/bin/bash",
-    pathCat = "/bin/cat",
+    pathCat = "/usr/bin/cat",
     pathMkfifo = "/usr/bin/mkfifo",
     pathPkill = "/usr/bin/pkill",
     env = {},
@@ -228,6 +238,9 @@ dap.configurations.netrw = {
     pathBashdb = vim.fn.stdpath("data") .. "/mason/packages/bash-debug-adapter/extension/bashdb_dir/bashdb",
     pathBashdbLib = vim.fn.stdpath("data") .. "/mason/packages/bash-debug-adapter/extension/bashdb_dir",
     pathBash = "/bin/bash",
+    pathCat = "/usr/bin/cat",
+    pathMkfifo = "/usr/bin/mkfifo",
+    pathPkill = "/usr/bin/pkill",
     showDebugOutput = true,
   }
 }
