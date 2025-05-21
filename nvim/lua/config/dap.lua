@@ -24,29 +24,51 @@ do
 end
 
 -- Function to process and set declarative breakpoints from launch.json
-local function set_declarative_breakpoints(config, launched_session)
-  if config and config.breakpoints then
-    for _, bp in ipairs(config.breakpoints) do
-      -- Expand variables in path
-      local path = bp.path
-      if path:find("${workspaceFolder}") then
-        path = path:gsub("${workspaceFolder}", vim.fn.getcwd())
-      end
-      
-      -- Set the breakpoint
-      local opts = {}
-      if bp.condition then
-        opts.condition = bp.condition
-      end
-      if bp.hitCondition then
-        opts.hit_condition = bp.hitCondition
-      end
-      if bp.logMessage then
-        opts.log_message = bp.logMessage
-      end
-      
-      require('dap').set_breakpoint(bp.condition, bp.hitCondition, bp.logMessage, path, bp.line)
+local function set_declarative_breakpoints(config)
+  if not config or not config.breakpoints then
+    return
+  end
+
+  -- Helper function to expand variables in path
+  local function expand_path_vars(path)
+    if type(path) ~= 'string' then
+      return path
     end
+    
+    -- Replace ${workspaceFolder} with current working directory
+    path = path:gsub("${workspaceFolder}", vim.fn.getcwd())
+    
+    -- Replace ${file} with current file if in a buffer
+    if vim.fn.expand('%') ~= '' then
+      path = path:gsub("${file}", vim.fn.expand('%:p'))
+      path = path:gsub("${fileDirname}", vim.fn.expand('%:p:h'))
+      path = path:gsub("${fileBasename}", vim.fn.expand('%:t'))
+      path = path:gsub("${fileBasenameNoExtension}", vim.fn.expand('%:t:r'))
+    end
+    
+    return path
+  end
+
+  for _, bp in ipairs(config.breakpoints) do
+    -- Skip if no path or line is provided
+    if not bp.path or not bp.line then
+      vim.notify("Skipping invalid breakpoint: missing path or line", vim.log.levels.WARN)
+      goto continue
+    end
+    
+    -- Expand variables in path
+    local path = expand_path_vars(bp.path)
+    
+    -- Verify the file exists
+    if vim.fn.filereadable(path) ~= 1 then
+      vim.notify("Breakpoint file not found: " .. path, vim.log.levels.WARN)
+      goto continue
+    end
+    
+    -- Set the breakpoint
+    require('dap').set_breakpoint(bp.condition, bp.hitCondition, bp.logMessage, path, bp.line)
+    
+    ::continue::
   end
 end
 local dap = require('dap')
@@ -229,5 +251,8 @@ end
 
 -- Event handler to process declarative breakpoints defined in launch.json
 dap.listeners.before.launch['set_declarative_breakpoints'] = function(_, config)
-  set_declarative_breakpoints(config)
+  if config and config.breakpoints and #config.breakpoints > 0 then
+    set_declarative_breakpoints(config)
+    vim.notify("Set " .. #config.breakpoints .. " declarative breakpoint(s) from launch.json", vim.log.levels.INFO)
+  end
 end
