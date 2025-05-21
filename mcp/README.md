@@ -80,6 +80,20 @@ Requirements:
 
 The `mcp.json` file contains the configuration for all MCP servers. This file is used by Amazon Q and other MCP clients to discover and connect to the servers.
 
+## Filesystem MCP Server Configuration
+
+The Filesystem MCP server requires at least one allowed directory to be specified. By default, it uses your home directory (`$HOME`).
+
+If you want to restrict filesystem access to specific directories:
+
+```bash
+# Set environment variable before starting Amazon Q
+export MCP_FILESYSTEM_RESTRICT_DIRS="/projects:/data:/tmp"
+q chat  # Start Amazon Q with restricted filesystem access
+```
+
+This allows you to control which directories the Filesystem MCP server can access.
+
 ## Troubleshooting
 
 If you encounter issues with an MCP integration:
