@@ -5,35 +5,27 @@
 # =========================================================
 # PURPOSE: Runtime wrapper that executes the Google Drive MCP server
 # This script is called by the MCP system during normal operation
-# It loads credentials from ~/.bash_secrets and passes them to the server
+# It mounts credentials from ~/tmp/gdrive-oath/credentials.json
 # 
 # RELATIONSHIP: This is the runtime component that gets executed by the
 # MCP system. The setup-gdrive-mcp.sh script is the one-time setup
 # script that prepares your environment for using this wrapper.
 # =========================================================
 
-# Source secrets file if it exists
-if [ -f ~/.bash_secrets ]; then
-  source ~/.bash_secrets
-else
-  echo "Error: ~/.bash_secrets file not found. Please create it using the template." >&2
+# Check if credentials file exists
+CREDENTIALS_PATH=~/tmp/gdrive-oath/credentials.json
+if [ ! -f "$CREDENTIALS_PATH" ]; then
+  echo "Error: Google Drive credentials file not found at $CREDENTIALS_PATH" >&2
+  echo "Please ensure the credentials.json file exists at this location" >&2
   exit 1
 fi
 
-# Check if required environment variables are set
-if [ -z "$GOOGLE_DRIVE_CLIENT_ID" ] || [ -z "$GOOGLE_DRIVE_CLIENT_SECRET" ] || [ -z "$GOOGLE_DRIVE_REFRESH_TOKEN" ]; then
-  echo "Error: Missing Google Drive credentials in ~/.bash_secrets" >&2
-  echo "Please add the following variables to your ~/.bash_secrets file:" >&2
-  echo "  export GOOGLE_DRIVE_CLIENT_ID=\"your_client_id\"" >&2
-  echo "  export GOOGLE_DRIVE_CLIENT_SECRET=\"your_client_secret\"" >&2
-  echo "  export GOOGLE_DRIVE_REFRESH_TOKEN=\"your_refresh_token\"" >&2
-  exit 1
-fi
+# Create directory for mounting if it doesn't exist
+mkdir -p $(dirname "$CREDENTIALS_PATH")
 
-# Run the Google Drive MCP server with credentials from environment variables
+# Run the Google Drive MCP server with mounted credentials
 exec docker run -i --rm \
-  -e GOOGLE_DRIVE_CLIENT_ID="$GOOGLE_DRIVE_CLIENT_ID" \
-  -e GOOGLE_DRIVE_CLIENT_SECRET="$GOOGLE_DRIVE_CLIENT_SECRET" \
-  -e GOOGLE_DRIVE_REFRESH_TOKEN="$GOOGLE_DRIVE_REFRESH_TOKEN" \
-  --network=host \
+  -v mcp-gdrive:/gdrive-server \
+  -v "$CREDENTIALS_PATH":/gdrive-server/credentials.json \
+  -e GDRIVE_CREDENTIALS_PATH=/gdrive-server/credentials.json \
   mcp/gdrive
