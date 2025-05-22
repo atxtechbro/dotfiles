@@ -150,6 +150,8 @@ brew install git gh jq tmux curl wget
 ```
 </details>
 
+*Note:* Google Cloud CLI installation is automatically handled by the setup script.
+
 ## Applications
 
 ### Google Chrome
@@ -265,6 +267,27 @@ During first-time setup, you'll need to authenticate with either:
 For SSO, the URL typically follows this format:
 ```bash
 https://d-XXXXXXXXXX.awsapps.com/start/#/console?account_id=XXXXXXXXXXXX&role_name=YOUR_ROLE_NAME
+```
+
+### Google Cloud CLI
+*Note:* Google Cloud CLI installation and updates are automatically handled by the setup script.
+
+Telemetry collection is automatically disabled during setup for privacy.
+
+After installation, you'll need to authenticate:
+```bash
+gcloud auth login
+```
+
+For organization-specific configurations, set your default project:
+```bash
+gcloud config set project YOUR_PROJECT_ID
+```
+
+The setup includes useful aliases that can be accessed via:
+```bash
+# List all Google Cloud CLI aliases
+alias | grep "alias gc"
 ```
 
 ## WSL Tips
