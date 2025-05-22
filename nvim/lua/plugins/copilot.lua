@@ -4,11 +4,11 @@
 -- Provides key mappings and toggle functionality
 -- Assumption: copilot.vim is installed via Packer
 
--- Disable tab mapping to avoid conflicts with other completion plugins
+-- Disable default tab mapping but we'll define our own
 vim.g.copilot_no_tab_map = true
 
 -- Define mappings for suggestion acceptance and navigation
-vim.api.nvim_set_keymap('i', '<C-J>', 'copilot#Accept("<CR>")', { expr = true, silent = true })
+vim.api.nvim_set_keymap('i', '<Tab>', 'copilot#Accept("<CR>")', { expr = true, silent = true })
 vim.api.nvim_set_keymap('i', '<C-]>', 'copilot#Next()', { expr = true, silent = true })
 vim.api.nvim_set_keymap('i', '<C-[>', 'copilot#Previous()', { expr = true, silent = true })
 
