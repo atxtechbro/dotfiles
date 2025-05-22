@@ -109,6 +109,17 @@ A quick reference guide for the Neovim configuration in this dotfiles repository
 | `<C-b>` | Scroll docs up |
 | `<C-f>` | Scroll docs down |
 
+## AI Assistance
+
+| Keybinding | Description |
+|------------|-------------|
+| `<C-J>` | Accept Copilot suggestion |
+| `<C-]>` | Next Copilot suggestion |
+| `<C-[>` | Previous Copilot suggestion |
+| `<leader>tc` | Toggle Copilot on/off |
+
+For more details, see the [Copilot Cheatsheet](./copilot-cheatsheet.md).
+
 ## Telescope (Fuzzy Finder)
 
 | Keybinding | Description |
