@@ -59,6 +59,7 @@ A quick reference guide for the Neovim configuration in this dotfiles repository
 | `<F12>` | Step out |
 | `<leader>du` | Toggle DAP UI (variables, stack, watches) |
 | `<leader>dt` | Terminate debug session |
+| `:qa!` | Emergency exit (force quit all windows without saving) |
 | `<leader>dj` | Move down the call stack (older frames) |
 | `<leader>dk` | Move up the call stack (newer frames) |
 
@@ -133,6 +134,17 @@ A quick reference guide for the Neovim configuration in this dotfiles repository
 | `<CR>` | Confirm selection |
 | `<C-b>` | Scroll docs up |
 | `<C-f>` | Scroll docs down |
+
+## AI Assistance
+
+| Keybinding | Description |
+|------------|-------------|
+| `<C-J>` | Accept Copilot suggestion |
+| `<C-]>` | Next Copilot suggestion |
+| `<C-[>` | Previous Copilot suggestion |
+| `<leader>tc` | Toggle Copilot on/off |
+
+For more details, see the [Copilot Cheatsheet](./copilot-cheatsheet.md).
 
 ## Telescope (Fuzzy Finder)
 

@@ -17,16 +17,16 @@ This standardized approach makes it easy to add more MCP servers in the future f
 
 ## Available MCP Integrations
 
-| Integration | Description | Authentication Method | Installation Method |
-|-------------|-------------|----------------------|---------------------|
-| AWS Labs | AWS documentation, diagrams, CDK | None required | PyPI packages via UVX |
-| GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script |
-| Atlassian | Jira and Confluence integration | API tokens from `.bash_secrets` | Custom setup script |
-| Google Maps | Google Maps API integration | API key from `.bash_secrets` | Docker container |
-| Brave Search | Web search via Brave | API key from `.bash_secrets` | Docker container |
-| Filesystem | Local filesystem operations | None required | Docker container |
-| Google Drive | Google Drive file operations | OAuth credentials from `.bash_secrets` | Docker container |
-| Slack | Slack messaging and search | Bot token from `.bash_secrets` | Docker container |
+| Integration | Description | Authentication Method | Installation Method | Documentation |
+|-------------|-------------|----------------------|---------------------|---------------|
+| AWS Labs | AWS documentation, diagrams, CDK | None required | PyPI packages via UVX | - |
+| GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script | - |
+| Atlassian | Jira and Confluence integration | API tokens from `.bash_secrets` | Custom setup script | - |
+| Google Maps | Google Maps API integration | API key from `.bash_secrets` | Docker container | - |
+| Brave Search | Web search via Brave | API key from `.bash_secrets` | Docker container | - |
+| Filesystem | Local filesystem operations | None required | Docker container | - |
+| Google Drive | Google Drive file operations | OAuth credentials from `.bash_secrets` | Docker container | [Official Docs](https://github.com/modelcontextprotocol/servers/tree/main/src/gdrive#authentication) |
+| Slack | Slack messaging and search | Bot token from `.bash_secrets` | Docker container | - |
 
 ## Setup Instructions
 
