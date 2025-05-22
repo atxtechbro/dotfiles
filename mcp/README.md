@@ -25,7 +25,7 @@ This standardized approach makes it easy to add more MCP servers in the future f
 | Google Maps | Google Maps API integration | API key from `.bash_secrets` | Docker container | - |
 | Brave Search | Web search via Brave | API key from `.bash_secrets` | Docker container | - |
 | Filesystem | Local filesystem operations | None required | Docker container | - |
-| Google Drive | Google Drive file operations | OAuth credentials from `.bash_secrets` | Docker container | [Auth Guide](docs/gdrive-auth.md) |
+| Google Drive | Google Drive file operations | OAuth credentials from `.bash_secrets` | Docker container | [Official Docs](https://github.com/modelcontextprotocol/servers/tree/main/src/gdrive#authentication) |
 | Slack | Slack messaging and search | Bot token from `.bash_secrets` | Docker container | - |
 
 ## Setup Instructions
