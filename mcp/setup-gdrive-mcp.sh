@@ -60,4 +60,4 @@ print_setup_complete \
 - gdrive_search: Search for files in Google Drive"
 
 echo -e "\nFor detailed instructions on setting up Google Drive OAuth authentication, see:"
-echo -e "  \033[1mdocs/gdrive-auth.md\033[0m\n"
+echo -e "  \033[1mhttps://github.com/modelcontextprotocol/servers/tree/main/src/gdrive#authentication\033[0m\n"
