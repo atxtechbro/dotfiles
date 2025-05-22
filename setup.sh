@@ -456,6 +456,111 @@ else
   echo "To use GitHub MCP features, install GitHub CLI and run: export GITHUB_TOKEN=\$(gh auth token)"
 fi
 
+# Google Cloud CLI setup and update
+echo -e "${DIVIDER}"
+echo "Checking Google Cloud CLI..."
+
+install_or_update_gcloud() {
+  echo "Installing/updating Google Cloud CLI using official method..."
+  
+  # Determine OS type for installation
+  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # For Debian/Ubuntu-based systems
+    if command -v apt &> /dev/null; then
+      echo "Using apt-based installation..."
+      (
+        echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list > /dev/null
+        curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - 2>/dev/null
+        sudo apt-get update 2>/dev/null && sudo apt-get install -y google-cloud-sdk 2>/dev/null
+      ) || echo -e "${YELLOW}Failed to install/update Google Cloud CLI via apt. Continuing...${NC}"
+    
+    # For Arch-based systems
+    elif command -v pacman &> /dev/null; then
+      echo "Using pacman installation..."
+      (sudo pacman -Sy --noconfirm google-cloud-sdk) || echo -e "${YELLOW}Failed to install/update Google Cloud CLI via pacman. Continuing...${NC}"
+    
+    # For Fedora/RHEL-based systems
+    elif command -v dnf &> /dev/null; then
+      echo "Using dnf installation..."
+      (
+        sudo tee -a /etc/yum.repos.d/google-cloud-sdk.repo << EOM
+[google-cloud-cli]
+name=Google Cloud CLI
+baseurl=https://packages.cloud.google.com/yum/repos/cloud-sdk-el8-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOM
+        sudo dnf install -y google-cloud-cli
+      ) || echo -e "${YELLOW}Failed to install/update Google Cloud CLI via dnf. Continuing...${NC}"
+    
+    # Fallback to direct installation using curl
+    else
+      echo "Using direct installation script..."
+      (
+        curl https://sdk.cloud.google.com > /tmp/install.sh
+        bash /tmp/install.sh --disable-prompts --install-dir="$HOME" >/dev/null 2>&1
+        rm -f /tmp/install.sh
+      ) || echo -e "${YELLOW}Failed to install/update Google Cloud CLI via direct script. Continuing...${NC}"
+    fi
+  
+  # For macOS
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+    if command -v brew &> /dev/null; then
+      echo "Using Homebrew installation..."
+      (brew install --cask google-cloud-sdk || brew upgrade google-cloud-sdk) || echo -e "${YELLOW}Failed to install/update Google Cloud CLI via Homebrew. Continuing...${NC}"
+    else
+      echo -e "${YELLOW}Homebrew not found. Using direct installation script...${NC}"
+      (
+        curl https://sdk.cloud.google.com > /tmp/install.sh
+        bash /tmp/install.sh --disable-prompts --install-dir="$HOME" >/dev/null 2>&1
+        rm -f /tmp/install.sh
+      ) || echo -e "${YELLOW}Failed to install/update Google Cloud CLI via direct script. Continuing...${NC}"
+    fi
+  else
+    echo -e "${YELLOW}Unsupported OS: $OSTYPE. Please install Google Cloud CLI manually.${NC}"
+  fi
+}
+
+# Check if Google Cloud CLI is installed
+if command -v gcloud &> /dev/null; then
+  CURRENT_VERSION=$(gcloud version | head -n 1 | awk '{print $4}')
+  echo "Current Google Cloud CLI version: $CURRENT_VERSION"
+  
+  echo "Updating Google Cloud CLI..."
+  install_or_update_gcloud
+  
+  # Verify update
+  if command -v gcloud &> /dev/null; then
+    NEW_VERSION=$(gcloud version | head -n 1 | awk '{print $4}')
+    if [[ "$CURRENT_VERSION" != "$NEW_VERSION" ]]; then
+      echo -e "${GREEN}✓ Google Cloud CLI updated from $CURRENT_VERSION to $NEW_VERSION${NC}"
+    else
+      echo -e "${GREEN}✓ Google Cloud CLI is up to date (version $CURRENT_VERSION)${NC}"
+    fi
+  fi
+else
+  echo "Google Cloud CLI not installed. Installing now..."
+  install_or_update_gcloud
+  
+  # Verify installation
+  if command -v gcloud &> /dev/null; then
+    INSTALLED_VERSION=$(gcloud version | head -n 1 | awk '{print $4}')
+    echo -e "${GREEN}✓ Google Cloud CLI installed successfully (version $INSTALLED_VERSION)${NC}"
+  else
+    echo -e "${RED}Google Cloud CLI installation failed.${NC}"
+  fi
+fi
+
+# Disable telemetry if installed
+if command -v gcloud &> /dev/null; then
+  echo "Checking Google Cloud CLI telemetry settings..."
+  # Disable usage reporting (telemetry)
+  gcloud config set disable_usage_reporting true >/dev/null 2>&1
+  echo -e "${GREEN}✓ Google Cloud CLI telemetry disabled${NC}"
+fi
+
 # Docker setup
 echo -e "${DIVIDER}"
 echo "Checking Docker setup..."
