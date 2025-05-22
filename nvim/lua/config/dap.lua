@@ -7,6 +7,7 @@
          - <project-root>/launch.json
     • nvim-dap's `dap.ext.vscode` loader will register these on startup.
     • If no JSONC is found, fall back to the explicit Lua definitions below.
+    • Declarative breakpoints in launch.json will be automatically set when debugging starts.
 ]]
 -- Attempt to load VS Code launch.json configurations
 do
@@ -19,6 +20,55 @@ do
     if vim.fn.filereadable(fallback) == 1 then
       pcall(vscode.load_launchjs, fallback)
     end
+  end
+end
+
+-- Function to process and set declarative breakpoints from launch.json
+local function set_declarative_breakpoints(config)
+  if not config or not config.breakpoints then
+    return
+  end
+
+  -- Helper function to expand variables in path
+  local function expand_path_vars(path)
+    if type(path) ~= 'string' then
+      return path
+    end
+    
+    -- Replace ${workspaceFolder} with current working directory
+    path = path:gsub("${workspaceFolder}", vim.fn.getcwd())
+    
+    -- Replace ${file} with current file if in a buffer
+    if vim.fn.expand('%') ~= '' then
+      path = path:gsub("${file}", vim.fn.expand('%:p'))
+      path = path:gsub("${fileDirname}", vim.fn.expand('%:p:h'))
+      path = path:gsub("${fileBasename}", vim.fn.expand('%:t'))
+      path = path:gsub("${fileBasenameNoExtension}", vim.fn.expand('%:t:r'))
+    end
+    
+    return path
+  end
+
+  for _, bp in ipairs(config.breakpoints) do
+    -- Skip if no path or line is provided
+    if not bp.path or not bp.line then
+      vim.notify("Skipping invalid breakpoint: missing path or line", vim.log.levels.WARN)
+      goto continue
+    end
+    
+    -- Expand variables in path
+    local path = expand_path_vars(bp.path)
+    
+    -- Verify the file exists
+    if vim.fn.filereadable(path) ~= 1 then
+      vim.notify("Breakpoint file not found: " .. path, vim.log.levels.WARN)
+      goto continue
+    end
+    
+    -- Set the breakpoint
+    require('dap').set_breakpoint(bp.condition, bp.hitCondition, bp.logMessage, path, bp.line)
+    
+    ::continue::
   end
 end
 local dap = require('dap')
@@ -136,10 +186,64 @@ dap.configurations.cpp = {
 }
 dap.configurations.c = dap.configurations.cpp
 
+-- Bash/Shell debugging with bashdb
+dap.adapters.bashdb = {
+  type = 'executable',
+  command = 'bash-debug-adapter',
+  name = 'bashdb',
+  -- Add helper for error handling
+  on_stderr = function(_, data)
+    if data and #data > 0 then
+      if data[1]:match("not found") then
+        vim.notify("bash-debug-adapter error: " .. data[1] .. 
+        "\n\nEnsure bash-debug-adapter is installed: :MasonInstall bash-debug-adapter", 
+        vim.log.levels.ERROR)
+      end
+    end
+  end
+}
+
+dap.configurations.sh = {
+  {
+    type = 'bashdb',
+    request = 'launch',
+    name = 'Debug current bash script',
+    program = "${file}",
+    args = {},
+    cwd = "${fileDirname}",
+    pathBashdb = vim.fn.stdpath("data") .. "/mason/packages/bash-debug-adapter/extension/bashdb_dir/bashdb",
+    pathBashdbLib = vim.fn.stdpath("data") .. "/mason/packages/bash-debug-adapter/extension/bashdb_dir",
+    pathBash = "/bin/bash",
+    pathCat = "/usr/bin/cat",
+    pathMkfifo = "/usr/bin/mkfifo",
+    pathPkill = "/usr/bin/pkill",
+    env = {},
+    showDebugOutput = true,
+  }
+}
+
 -- Telescope DAP integration
 pcall(function()
   require('telescope').load_extension('dap')
 end)
+
+-- Configure netrw file explorer to use the appropriate debugger based on file type
+dap.configurations.netrw = {
+  {
+    type = 'bashdb',
+    request = 'launch',
+    name = 'Debug shell script from netrw',
+    program = "${file}",
+    cwd = "${fileDirname}",
+    pathBashdb = vim.fn.stdpath("data") .. "/mason/packages/bash-debug-adapter/extension/bashdb_dir/bashdb",
+    pathBashdbLib = vim.fn.stdpath("data") .. "/mason/packages/bash-debug-adapter/extension/bashdb_dir",
+    pathBash = "/bin/bash",
+    pathCat = "/usr/bin/cat",
+    pathMkfifo = "/usr/bin/mkfifo",
+    pathPkill = "/usr/bin/pkill",
+    showDebugOutput = true,
+  }
+}
 
 -- DAP essential key mappings (F5, F9-F12)
 local opts = { noremap = true, silent = true }
@@ -155,6 +259,7 @@ vim.api.nvim_set_keymap('n', '<leader>bp', "<cmd>lua require('dap').toggle_break
 -- Additional UI-related keymaps
 vim.api.nvim_set_keymap('n', '<leader>du', "<cmd>lua require('dapui').toggle()<CR>", opts) -- Toggle UI
 vim.api.nvim_set_keymap('n', '<leader>dt', "<cmd>lua require('dap').terminate()<CR>", opts) -- Terminate debug session
+vim.api.nvim_set_keymap('n', '<leader>bc', "<cmd>lua require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>", opts) -- Conditional breakpoint
 
 -- Call stack navigation with automatic frame focus
 vim.api.nvim_set_keymap('n', '<leader>dj', "<cmd>lua require('dap').down()<CR>", opts) -- Move down the stack (older frames)
@@ -195,5 +300,13 @@ dap.listeners.after.scopes['dapui_frame_focus'] = function()
         end, 1500)
       end
     end
+  end
+end
+
+-- Event handler to process declarative breakpoints defined in launch.json
+dap.listeners.before.launch['set_declarative_breakpoints'] = function(_, config)
+  if config and config.breakpoints and #config.breakpoints > 0 then
+    set_declarative_breakpoints(config)
+    vim.notify("Set " .. #config.breakpoints .. " declarative breakpoint(s) from launch.json", vim.log.levels.INFO)
   end
 end

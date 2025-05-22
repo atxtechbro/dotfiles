@@ -1,0 +1,80 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "bashdb",
+      "request": "launch",
+      "name": "Debug setup.sh with declarative breakpoints",
+      "program": "${workspaceFolder}/setup.sh",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "breakpoints": [
+        {
+          "path": "${workspaceFolder}/setup.sh",
+          "line": 121
+        },
+        {
+          "path": "${workspaceFolder}/setup.sh",
+          "line": 138,
+          "logMessage": "Creating symlinks for config files..."
+        },
+        {
+          "path": "${workspaceFolder}/setup.sh",
+          "line": 159,
+          "condition": "dotfiles_gitconfig != \"$DOT_DEN/.gitconfig\""
+        },
+        {
+          "path": "${workspaceFolder}/setup.sh",
+          "line": 55,
+          "hitCondition": "1"
+        }
+      ]
+    },
+    {
+      "type": "python",
+      "request": "launch",
+      "name": "Debug Current Python File",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "breakpoints": [
+        {
+          "path": "${workspaceFolder}/main.py",
+          "line": 10
+        },
+        {
+          "path": "${workspaceFolder}/utils.py",
+          "line": 15,
+          "condition": "x > 5"
+        },
+        {
+          "path": "${workspaceFolder}/api.py",
+          "line": 25,
+          "logMessage": "API request with data: {data}"
+        }
+      ]
+    },
+    {
+      "type": "python",
+      "request": "launch",
+      "name": "Debug Python Tests",
+      "module": "pytest",
+      "args": ["${file}"],
+      "justMyCode": false
+    },
+    {
+      "name": "Debug C/C++ Program",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/${fileBasenameNoExtension}",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "breakpoints": [
+        {
+          "path": "${workspaceFolder}/src/main.c",
+          "line": 15
+        }
+      ]
+    }
+  ]
+}
