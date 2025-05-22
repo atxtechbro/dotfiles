@@ -10,14 +10,16 @@ This document provides test prompts for verifying the Google Drive MCP server in
    ./setup-gdrive-mcp.sh
    ```
 
-2. Add your Google Drive API credentials to `~/.bash_secrets`:
+2. Follow the [Google Drive Authentication Guide](../docs/gdrive-auth.md) to set up OAuth credentials and get a refresh token.
+
+3. Add your Google Drive API credentials to `~/.bash_secrets`:
    ```bash
    export GOOGLE_DRIVE_CLIENT_ID="your_client_id"
    export GOOGLE_DRIVE_CLIENT_SECRET="your_client_secret"
    export GOOGLE_DRIVE_REFRESH_TOKEN="your_refresh_token"
    ```
 
-3. Restart your Amazon Q CLI or other MCP client.
+4. Restart your Amazon Q CLI or other MCP client.
 
 ## Test Prompts
 
