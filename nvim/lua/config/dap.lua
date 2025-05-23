@@ -141,7 +141,7 @@ pcall(function()
   require('telescope').load_extension('dap')
 end)
 
--- DAP essential key mappings (F5, F9-F12)
+-- DAP essential key mappings (F5, F6, F9, F10, F12)
 local opts = { noremap = true, silent = true }
 vim.api.nvim_set_keymap('n', '<F5>', "<cmd>lua require('dap').continue()<CR>", opts)
 vim.api.nvim_set_keymap('n', '<F10>', "<cmd>lua require('dap').step_over()<CR>", opts)
@@ -150,6 +150,8 @@ vim.api.nvim_set_keymap('n', '<F10>', "<cmd>lua require('dap').step_over()<CR>",
 vim.api.nvim_set_keymap('n', '<Leader>si', "<cmd>lua require('dap').step_into()<CR>", opts)
 -- Keep F11 mapping for non-WSL environments
 vim.api.nvim_set_keymap('n', '<F11>', "<cmd>lua require('dap').step_into()<CR>", opts)
+vim.api.nvim_set_keymap('n', '<F11>', "<cmd>lua require('dap').step_into()<CR>", opts)
+vim.api.nvim_set_keymap('n', '<F6>', "<cmd>lua require('dap').step_into()<CR>", opts)  -- Changed from F11 to F6
 vim.api.nvim_set_keymap('n', '<F12>', "<cmd>lua require('dap').step_out()<CR>", opts)
 vim.api.nvim_set_keymap('n', '<F9>', "<cmd>lua require('dap').toggle_breakpoint()<CR>", opts)  -- VS Code style
 
