@@ -10,10 +10,17 @@ if [ -z "$TOKEN" ]; then
 fi
 
 # Export the token as an environment variable
-export GITHUB_TOKEN="$TOKEN"
+export GITHUB_PERSONAL_ACCESS_TOKEN="$TOKEN"
+
+# Path to the GitHub MCP server binary
+GITHUB_BINARY_PATH="$(dirname "$0")/servers/github"
+
+# Check if the binary exists and is executable
+if [ ! -x "$GITHUB_BINARY_PATH" ]; then
+  echo "Error: GitHub MCP server binary not found or not executable at $GITHUB_BINARY_PATH" >&2
+  echo "Please run setup-github-mcp.sh first to build the binary" >&2
+  exit 1
+fi
 
 # Run the GitHub MCP server with the token
-exec docker run -i --rm \
-  -e GITHUB_PERSONAL_ACCESS_TOKEN="$GITHUB_TOKEN" \
-  --network=host \
-  ghcr.io/github/github-mcp-server
+exec "$GITHUB_BINARY_PATH" stdio
