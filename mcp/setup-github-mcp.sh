@@ -25,7 +25,7 @@ fi
 
 # Build the GitHub MCP server
 echo "Building GitHub MCP server from source..."
-cd "$CURRENT_SCRIPT_DIRECTORY/servers/github-mcp-server"
+cd "$CURRENT_SCRIPT_DIRECTORY/servers/github-mcp-server/cmd/github-mcp-server"
 go build -o "$CURRENT_SCRIPT_DIRECTORY/servers/github"
 
 # Check if build was successful
