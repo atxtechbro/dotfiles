@@ -49,10 +49,6 @@ fi
 chmod +x "$CURRENT_SCRIPT_DIRECTORY/servers/github"
 echo "Made binary executable"
 
-# Make the wrapper script executable
-chmod +x "$CURRENT_SCRIPT_DIRECTORY/github-mcp-wrapper.sh"
-echo "Made wrapper script executable"
-
 echo "GitHub MCP server setup complete!"
 echo "The server will use your GitHub CLI authentication token."
 echo "Make sure you're logged in with 'gh auth login' before using the GitHub MCP server."
