@@ -6,6 +6,9 @@
 # PURPOSE: Sets up the Filesystem MCP server from source
 # This allows customization of the server code to fix issues
 # =========================================================
+# IMPORTANT: This script assumes you've already forked the
+# modelcontextprotocol/servers repository to your GitHub account
+# =========================================================
 
 # Get the directory where this setup script is located
 CURRENT_SCRIPT_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -32,12 +35,15 @@ fi
 # Create servers directory if it doesn't exist
 mkdir -p "$CURRENT_SCRIPT_DIRECTORY/servers"
 
-# Clone the forked MCP servers repository if it doesn't exist
+# Clone your existing fork of the MCP servers repository if it doesn't exist locally
+# Note: This assumes you've already forked https://github.com/modelcontextprotocol/servers to
+# https://github.com/atxtechbro/mcp-servers on GitHub
 if [ ! -d "$CURRENT_SCRIPT_DIRECTORY/servers/mcp-servers" ]; then
-    echo "Cloning forked MCP servers repository..."
+    echo "Cloning your existing fork of the MCP servers repository..."
+    echo "Note: This does NOT create a new fork on GitHub, just clones your existing one"
     git clone https://github.com/atxtechbro/mcp-servers.git "$CURRENT_SCRIPT_DIRECTORY/servers/mcp-servers"
 else
-    echo "MCP servers repository already exists, updating..."
+    echo "Your forked MCP servers repository already exists locally, updating..."
     cd "$CURRENT_SCRIPT_DIRECTORY/servers/mcp-servers"
     git pull
 fi
