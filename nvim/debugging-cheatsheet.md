@@ -9,7 +9,8 @@ A comprehensive guide for debugging in Neovim with DAP (Debug Adapter Protocol) 
 | `<F5>` | Start/continue debugging |
 | `<F9>` | Toggle breakpoint (VS Code style) |
 | `<F10>` | Step over |
-| `<F11>` | Step into |
+| `<F11>` | Step into (may conflict with Windows fullscreen in WSL) |
+| `<leader>si` | Step into (WSL-compatible alternative) |
 | `<F12>` | Step out |
 | `<leader>bp` | Toggle breakpoint (alternative to F9) |
 | `<leader>du` | Toggle DAP UI (variables, stack, watches) |
