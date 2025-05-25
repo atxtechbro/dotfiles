@@ -16,7 +16,6 @@
         "BEDROCK_KB_RERANKING_ENABLED": "false"
       }
     },
-
     "awslabs.cdk-mcp-server": {
       "command": "uvx",
       "args": ["awslabs.cdk-mcp-server@latest"],
@@ -38,7 +37,6 @@
         "FASTMCP_LOG_LEVEL": "ERROR"
       }
     },
-
     "github": {
       "command": "github-mcp-wrapper.sh",
       "args": [],
@@ -74,13 +72,6 @@
     },
     "gdrive": {
       "command": "gdrive-mcp-wrapper.sh",
-      "args": [],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
-    "slack": {
-      "command": "slack-mcp-wrapper.sh",
       "args": [],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
