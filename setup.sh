@@ -209,46 +209,18 @@ fi
 echo -e "${DIVIDER}"
 echo "Setting up development tools..."
 
-# Amazon Q setup and management
-if command -v q >/dev/null 2>&1; then
-  echo "Checking Amazon Q..."
-  
-  # Check if update is available
-  UPDATE_CHECK=$(q update 2>&1 | grep "A new version of q is available:" || echo "")
-  
-  if [ -n "$UPDATE_CHECK" ]; then
-    echo "Amazon Q update available. Installing..."
-    
-    # Determine architecture
-    ARCH=$(uname -m)
-    if [ "$ARCH" = "x86_64" ]; then
-      curl --proto '=https' --tlsv1.2 -sSf "https://desktop-release.codewhisperer.us-east-1.amazonaws.com/latest/q-x86_64-linux.zip" -o "q.zip" 2>/dev/null
-    elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
-      curl --proto '=https' --tlsv1.2 -sSf "https://desktop-release.codewhisperer.us-east-1.amazonaws.com/latest/q-aarch64-linux.zip" -o "q.zip" 2>/dev/null
-    else
-      echo -e "${RED}Unsupported architecture: $ARCH. Cannot update Amazon Q automatically${NC}"
-    fi
-    
-    # Install if zip was downloaded
-    if [ -f "q.zip" ]; then
-      unzip -o q.zip >/dev/null 2>&1
-      ./q/install.sh >/dev/null 2>&1
-      rm -rf q.zip q/ >/dev/null 2>&1
-      echo -e "${GREEN}✓ Amazon Q updated${NC}"
-    fi
-  else
-    echo -e "${GREEN}✓ Amazon Q is up to date${NC}"
-  fi
-  
-  # Disable telemetry if not already disabled
-  TELEMETRY_STATUS=$(q telemetry status 2>/dev/null | grep -i "disabled" || echo "")
-  if [ -z "$TELEMETRY_STATUS" ]; then
-    echo "Disabling Amazon Q telemetry..."
-    q telemetry disable >/dev/null 2>&1
-    echo -e "${GREEN}✓ Amazon Q telemetry disabled${NC}"
-  else
-    echo "Amazon Q telemetry already disabled"
-  fi
+# Amazon Q CLI setup
+echo -e "${DIVIDER}"
+echo "Setting up Amazon Q CLI..."
+
+# Check if Amazon Q CLI is installed
+if ! command -v q &> /dev/null; then
+  echo "Amazon Q CLI not found. Setting up build environment..."
+  source "$DOT_DEN/scripts/setup-amazon-q-build-env.sh"
+  source "$DOT_DEN/scripts/build-amazon-q-from-source.sh"
+else
+  echo -e "${GREEN}✓ Amazon Q CLI is already installed${NC}"
+  echo "To rebuild from source, run: source $DOT_DEN/scripts/build-amazon-q-from-source.sh --force"
 fi
   
 # Node.js setup with NVM
