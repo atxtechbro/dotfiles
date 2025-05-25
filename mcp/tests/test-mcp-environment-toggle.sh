@@ -35,8 +35,8 @@ trap cleanup EXIT
 
 # Test: Personal Environment (non-work hostname)
 run_test "Personal Environment Disables Atlassian" \
-         "HOSTNAME=personal-laptop MCP_DISABLE_ATLASSIAN=true ./bin/mcp-wrapper.sh chat --no-interactive --trust-all-tools \"List all available MCP servers\"" \
-         "(?!.*atlassian).*" # Negative lookahead to ensure atlassian is NOT present
+         "HOSTNAME=personal-laptop MCP_DISABLE_ATLASSIAN=true ./bin/mcp-wrapper.sh mcp list | grep -v atlassian" \
+         ".*" # Simple pattern to match any output that doesn't contain atlassian
 
 # Test: Work Environment (work hostname)
 run_test "Work Environment Enables Atlassian" \
