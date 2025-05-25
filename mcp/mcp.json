@@ -16,13 +16,7 @@
         "BEDROCK_KB_RERANKING_ENABLED": "false"
       }
     },
-    "awslabs.aws-diagram-mcp-server": {
-      "command": "uvx",
-      "args": ["awslabs.aws-diagram-mcp-server"],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
+
     "awslabs.cdk-mcp-server": {
       "command": "uvx",
       "args": ["awslabs.cdk-mcp-server@latest"],
@@ -44,17 +38,7 @@
         "FASTMCP_LOG_LEVEL": "ERROR"
       }
     },
-    "gitlab": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-gitlab"
-      ],
-      "env": {
-        "GITLAB_PERSONAL_ACCESS_TOKEN": "<YOUR_TOKEN>",
-        "GITLAB_API_URL": "https://gitlab.com/api/v4"
-      }
-    },
+
     "github": {
       "command": "github-mcp-wrapper.sh",
       "args": [],
