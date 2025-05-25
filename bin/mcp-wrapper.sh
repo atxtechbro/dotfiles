@@ -56,7 +56,12 @@ fi
 
 # Use the modified config for the MCP client
 if command -v q &>/dev/null; then
-  q chat --mcp-config "$MCP_CONFIG_TEMP" "$@"
+  # Check if the first argument is 'chat' or not
+  if [[ "$1" == "chat" ]]; then
+    q chat --mcp-config "$MCP_CONFIG_TEMP" "${@:2}"
+  else
+    q --mcp-config "$MCP_CONFIG_TEMP" "$@"
+  fi
   EXIT_CODE=$?
 else
   echo "Error: Amazon Q CLI not found" >&2
