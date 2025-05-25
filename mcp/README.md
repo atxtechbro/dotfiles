@@ -25,6 +25,7 @@ This standardized approach makes it easy to add more MCP servers in the future f
 | Google Maps | Google Maps API integration | API key from `.bash_secrets` | Docker container | - |
 | Brave Search | Web search via Brave | API key from `.bash_secrets` | Docker container | - |
 | Filesystem | Local filesystem operations | None required | Built from source | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/filesystem#filesystem-mcp-server) |
+| Git | Git repository operations | None required | Built from source | [Original Repo](https://github.com/cyanheads/git-mcp-server#git-mcp-server) |
 | Google Drive | Google Drive file operations | OAuth credentials from `.bash_secrets` | Docker container | [Official Docs](https://github.com/modelcontextprotocol/servers/tree/main/src/gdrive#authentication) |
 | Slack | Slack messaging and search | Bot token from `.bash_secrets` | Docker container | - |
 
@@ -39,6 +40,7 @@ Each MCP integration has its own setup method:
 - `setup-filesystem-mcp.sh` - Sets up Filesystem integration from source (allows customization)
 - `setup-gdrive-mcp.sh` - Sets up Google Drive integration
 - `setup-github-mcp.sh` - Sets up GitHub integration from source
+- `setup-git-mcp.sh` - Sets up Git integration from source
 - `setup-slack-mcp.sh` - Sets up Slack integration
 
 For custom integrations, run the appropriate setup script:

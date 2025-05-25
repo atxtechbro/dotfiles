@@ -38,8 +38,8 @@
       }
     },
     "git": {
-      "command": "uvx",
-      "args": ["kzms-mcp-server-git@latest"],
+      "command": "git-mcp-wrapper.sh",
+      "args": [],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
       }
