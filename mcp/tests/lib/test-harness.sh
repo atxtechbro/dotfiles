@@ -66,6 +66,13 @@ run_test() {
     echo "Result excerpt (first 500 chars):"
     echo "${full_result:0:500}"
     FAILED=$((FAILED+1))
+    
+    # Exit immediately on first failure if EXIT_ON_FIRST_FAILURE is set
+    if [[ "$EXIT_ON_FIRST_FAILURE" == "true" ]]; then
+      echo -e "${RED}Exiting on first failure as requested${NC}"
+      print_summary
+      exit 1
+    fi
   fi
   echo "----------------------------------------"
 }

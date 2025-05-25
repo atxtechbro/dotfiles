@@ -3,6 +3,9 @@
 # Enable debug mode to see all commands as they're executed
 set -x
 
+# Add early exit on first failure
+set -e
+
 # =========================================================
 # TEST HARNESS FOR MCP ENVIRONMENT TOGGLE
 # =========================================================
@@ -10,6 +13,9 @@ set -x
 # Import the test harness library
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/test-harness.sh"
+
+# Enable exit on first failure
+export EXIT_ON_FIRST_FAILURE=true
 
 # Initialize test suite
 init_test_suite "MCP ENVIRONMENT TOGGLE" "Environment"
@@ -29,7 +35,7 @@ trap cleanup EXIT
 
 # Test: Personal Environment (non-work hostname)
 run_test "Personal Environment Disables Atlassian" \
-         "HOSTNAME=personal-laptop $TEST_MODEL chat --no-interactive --trust-all-tools \"List all available MCP servers\"" \
+         "HOSTNAME=personal-laptop MCP_DISABLE_ATLASSIAN=true ./bin/mcp-wrapper.sh chat --no-interactive --trust-all-tools \"List all available MCP servers\"" \
          "(?!.*atlassian).*" # Negative lookahead to ensure atlassian is NOT present
 
 # Test: Work Environment (work hostname)
