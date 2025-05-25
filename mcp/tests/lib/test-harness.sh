@@ -23,6 +23,9 @@ export SKIPPED=0
 # Default model to use for testing
 export TEST_MODEL=${TEST_MODEL:-"q"}
 
+# Default timeout for commands (in milliseconds)
+export TEST_TIMEOUT=${TEST_TIMEOUT:-30000}
+
 # Function to run a test
 run_test() {
   local test_name="$1"
@@ -38,11 +41,12 @@ run_test() {
   
   case "$TEST_MODEL" in
     q)
-      result=$($TEST_MODEL chat --no-interactive "$command" 2>/dev/null)
+      # Use trust-all-tools to avoid interactive prompts
+      full_result=$($TEST_MODEL chat --no-interactive --trust-all-tools "$command" 2>/dev/null)
       ;;
     claude)
       # Assuming claude CLI has similar interface
-      result=$($TEST_MODEL chat --no-interactive "$command" 2>/dev/null)
+      full_result=$($TEST_MODEL chat --no-interactive --trust-all-tools "$command" 2>/dev/null)
       ;;
     *)
       echo -e "${RED}Error: Unknown model $TEST_MODEL${NC}"
@@ -52,13 +56,15 @@ run_test() {
   esac
   
   # Check if the result contains the expected pattern
-  if echo "$result" | grep -q -E "$expected_pattern"; then
+  # Search through the entire output, regardless of initialization messages
+  if echo "$full_result" | grep -q -E "$expected_pattern"; then
     echo -e "${GREEN}✓ PASSED${NC}: Output contains expected pattern"
     PASSED=$((PASSED+1))
   else
     echo -e "${RED}✗ FAILED${NC}: Expected pattern not found"
     echo "Expected pattern: $expected_pattern"
-    echo "Result excerpt: ${result:0:200}..."
+    echo "Result excerpt (first 500 chars):"
+    echo "${full_result:0:500}"
     FAILED=$((FAILED+1))
   fi
   echo "----------------------------------------"
@@ -92,6 +98,7 @@ print_summary() {
 # Function to initialize test suite
 init_test_suite() {
   local suite_name="$1"
+  local server_name="$2"
   
   echo "=========================================="
   echo "RUNNING $suite_name TESTS"
@@ -100,6 +107,10 @@ init_test_suite() {
   echo "Working directory: $(pwd)"
   echo "Model: $TEST_MODEL"
   echo "=========================================="
+  
+  # Give servers time to load
+  echo -e "${YELLOW}Waiting for MCP servers to load...${NC}"
+  sleep 5
 }
 
 # Export functions
