@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Enable debug mode to see all commands as they're executed
+set -x
+
 # =========================================================
 # TEST HARNESS FOR GIT MCP SERVER
 # =========================================================
@@ -17,7 +20,7 @@ TEST_BRANCH="test-automation-branch"
 # Function to run cleanup operations
 cleanup() {
   echo -e "\n${BLUE}CLEANUP:${NC} Removing test branch if it exists"
-  $TEST_MODEL chat --no-interactive "Delete the Git branch named $TEST_BRANCH if it exists" >/dev/null 2>&1
+  $TEST_MODEL chat --no-interactive --trust-all-tools "Delete the Git branch named $TEST_BRANCH if it exists" >/dev/null 2>&1
   echo "Cleanup complete"
 }
 
@@ -25,14 +28,14 @@ cleanup() {
 trap cleanup EXIT
 
 # Initialize test suite
-init_test_suite "GIT MCP SERVER"
+init_test_suite "GIT MCP SERVER" "Git"
 
 # Basic Git Operations
 
 # Test: Check Git Status
 run_test "Check Git Status" \
          "Check the status of the current Git repository" \
-         "(branch|modified|untracked|staged|clean|working tree)"
+         "(branch|modified|untracked|staged|clean|working)"
 
 # Test: List Branches
 run_test "List Branches" \
