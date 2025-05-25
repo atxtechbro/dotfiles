@@ -12,4 +12,4 @@ fi
 # export MCP_DISABLE_ATLASSIAN=false # Uncomment to override
 
 # Alias for Amazon Q with environment-aware MCP configuration
-alias q="$HOME/dotfiles/bin/mcp-wrapper.sh"
+alias q="$HOME/ppv/pillars/dotfiles/bin/mcp-wrapper.sh"

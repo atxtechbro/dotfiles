@@ -11,9 +11,18 @@ This feature adds environment-based toggling for MCP servers, allowing you to au
 
 ## Setup
 
-1. Add the `shell/mcp-env.sh` content to your `.bashrc` or `.zshrc`
-2. Make sure the `bin/mcp-wrapper.sh` script is executable
-3. Use the `q` command as usual - the environment detection happens automatically
+Simply run the dotfiles setup script:
+
+```bash
+source setup.sh
+```
+
+This will:
+1. Install the MCP wrapper script to your dotfiles/bin directory
+2. Make the script executable
+3. Add the environment detection logic to your .bashrc
+4. Set up the alias to use the wrapper script
+5. Install jq if it's not already installed (required for the wrapper)
 
 ## Configuration
 
@@ -28,3 +37,11 @@ export MCP_DISABLE_SLACK=true
 ```
 
 These are automatically set based on hostname detection, but you can override them manually if needed.
+
+## Spilled Coffee Principle
+
+This feature follows the "spilled coffee" principle:
+- All configuration is handled by the setup script
+- No manual steps required after running setup.sh
+- Environment detection is automatic based on hostname
+- Dependencies are checked and installed if missing

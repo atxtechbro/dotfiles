@@ -171,6 +171,51 @@ if [[ -f "$DOT_DEN/.bash_secrets.example" && ! -f ~/.bash_secrets ]]; then
     echo "Created ~/.bash_secrets from template. Please edit to add your secrets."
 fi
 
+# MCP Environment Toggle Setup
+echo -e "${DIVIDER}"
+echo "Setting up MCP environment toggle..."
+
+# Create bin directory if it doesn't exist
+mkdir -p "$DOT_DEN/bin"
+
+# Copy the MCP wrapper script to the bin directory
+cp "$DOT_DEN/bin/mcp-wrapper.sh" "$DOT_DEN/bin/"
+chmod +x "$DOT_DEN/bin/mcp-wrapper.sh"
+
+# Check if the MCP environment detection is already in .bashrc
+if ! grep -q "MCP Server Environment Controls" ~/.bashrc; then
+  echo "Adding MCP environment detection to .bashrc..."
+  cat "$DOT_DEN/shell/mcp-env.sh" >> ~/.bashrc
+  echo -e "${GREEN}✓ MCP environment detection added to .bashrc${NC}"
+else
+  echo -e "${GREEN}✓ MCP environment detection already in .bashrc${NC}"
+fi
+
+# Check if jq is installed (required for the MCP wrapper)
+if ! command -v jq &> /dev/null; then
+  echo -e "${YELLOW}jq is required for MCP environment toggle but not installed.${NC}"
+  echo "Installing jq..."
+  
+  if command -v apt &> /dev/null; then
+    sudo apt-get update && sudo apt-get install -y jq
+  elif command -v pacman &> /dev/null; then
+    sudo pacman -Sy --noconfirm jq
+  elif command -v dnf &> /dev/null; then
+    sudo dnf install -y jq
+  elif command -v brew &> /dev/null; then
+    brew install jq
+  else
+    echo -e "${RED}Could not install jq automatically. Please install it manually.${NC}"
+    echo "The MCP environment toggle requires jq to function properly."
+  fi
+  
+  if command -v jq &> /dev/null; then
+    echo -e "${GREEN}✓ jq installed successfully${NC}"
+  fi
+fi
+
+echo -e "${GREEN}✓ MCP environment toggle setup complete${NC}"
+
 # Configuration files setup complete
 echo -e "${GREEN}✓ Configuration files setup complete${NC}"
 

@@ -5,8 +5,11 @@
 MCP_CONFIG="$HOME/.config/mcp/mcp.json"
 MCP_CONFIG_TEMP="$HOME/.config/mcp/mcp.json.temp"
 
+# Ensure MCP config directory exists
+mkdir -p "$(dirname "$MCP_CONFIG")"
+
 # Make a copy of the original config
-cp "$MCP_CONFIG" "$MCP_CONFIG_TEMP"
+cp "$MCP_CONFIG" "$MCP_CONFIG_TEMP" 2>/dev/null || echo "{}" > "$MCP_CONFIG_TEMP"
 
 # Process environment variables to disable specific servers
 if [[ "$MCP_DISABLE_ATLASSIAN" == "true" ]]; then
