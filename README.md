@@ -256,7 +256,20 @@ claude
 ```
 
 ### Amazon Q CLI
-*Note:* Amazon Q installation and updates are automatically handled by the setup script.
+Amazon Q CLI can be installed in two ways:
+
+1. **Automatic installation**: The setup script will automatically build Amazon Q CLI from source if it's not already installed.
+
+2. **Manual build from source**: You can manually build Amazon Q CLI from source using:
+   ```bash
+   source ~/ppv/pillars/dotfiles/scripts/build-amazon-q-from-source.sh --force
+   ```
+
+Building from source gives you:
+- Full control over the code
+- Ability to customize functionality
+- Better understanding of how the tool works
+- Opportunity to contribute improvements
 
 During first-time setup, you'll need to authenticate with either:
 - AWS Builder ID (personal use)
