@@ -82,25 +82,44 @@ The `mcp.json` file contains the configuration for all MCP servers. This file is
 
 ## Environment-Based MCP Server Toggle
 
-You can automatically disable specific MCP servers based on your environment:
+The dotfiles repository includes an automatic environment-based MCP server toggle system that follows the "spilled coffee" principle:
+
+- **Automatic Environment Detection**: Automatically detects work vs. personal environments based on hostname
+- **Zero Configuration**: Works out of the box with sensible defaults
+- **Transparent Operation**: Silently disables irrelevant MCP servers based on your environment
+- **Easy Override**: Simple commands to override the automatic behavior when needed
+
+### How It Works
+
+1. During setup, the system automatically:
+   - Detects your environment (work vs. personal) based on hostname
+   - Sets appropriate environment variables to enable/disable specific MCP servers
+   - Creates necessary aliases and helper functions
+   - Adds the configuration to your shell startup files
+
+2. On personal machines:
+   - Work-specific MCP servers (like Atlassian) are automatically disabled
+   - You'll see a notification during setup about this behavior
+   - The standard `q` command is automatically configured to use the environment-aware wrapper
+
+3. On work machines:
+   - All MCP servers are enabled by default
+   - The system still provides helper functions to disable specific servers if needed
+
+### Helper Commands
 
 ```bash
-# In .bashrc or .zshrc
-if [[ "$(hostname)" != *"work"* ]]; then
-  # On personal computer, disable work-specific MCP servers
-  export MCP_DISABLE_ATLASSIAN=true
-  # Add other servers to disable as needed
-fi
+# Check current MCP server status
+mcp-status
+
+# Enable a specific MCP server
+mcp-toggle atlassian on
+
+# Disable a specific MCP server
+mcp-toggle atlassian off
 ```
 
-Then use the wrapper script to apply these settings:
-
-```bash
-# Alias for Amazon Q with environment-aware MCP configuration
-alias q="$HOME/dotfiles/bin/mcp-wrapper.sh"
-```
-
-This allows you to have different MCP server configurations on different machines without maintaining separate configuration files.
+These settings persist across shell sessions and system restarts, adhering to the "spilled coffee" principle of reproducible configuration.
 
 ## Filesystem MCP Server Configuration
 
