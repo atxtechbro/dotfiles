@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Enable debug mode to see all commands as they're executed
+set -x
+
 # =========================================================
 # TEST HARNESS FOR MCP ENVIRONMENT TOGGLE
 # =========================================================
