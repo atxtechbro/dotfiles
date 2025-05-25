@@ -526,6 +526,67 @@ if command -v docker &> /dev/null; then
   fi
 fi
 
+# Set up MCP environment controls
+echo -e "${DIVIDER}"
+echo "Setting up MCP environment controls..."
+
+# Check if jq is installed (required for MCP wrapper)
+if ! command -v jq &> /dev/null; then
+  echo -e "${YELLOW}jq is not installed. Installing now...${NC}"
+  if command -v apt &> /dev/null; then
+    sudo apt-get update && sudo apt-get install -y jq
+  elif command -v pacman &> /dev/null; then
+    sudo pacman -Sy --noconfirm jq
+  elif command -v dnf &> /dev/null; then
+    sudo dnf install -y jq
+  elif command -v brew &> /dev/null; then
+    brew install jq
+  else
+    echo -e "${RED}Could not install jq. Please install it manually.${NC}"
+    echo "MCP environment controls will have limited functionality without jq."
+  fi
+fi
+
+# Make the MCP wrapper script executable
+chmod +x "$DOT_DEN/bin/mcp-wrapper.sh" 2>/dev/null || true
+
+# Create bin directory if it doesn't exist
+mkdir -p "$HOME/.local/bin" 2>/dev/null || true
+
+# Create symlink to the MCP wrapper script in user's bin directory
+ln -sf "$DOT_DEN/bin/mcp-wrapper.sh" "$HOME/.local/bin/q-env" 2>/dev/null || true
+
+# Source the MCP environment script to set up environment variables and aliases
+if [[ -f "$DOT_DEN/shell/mcp-env.sh" ]]; then
+  source "$DOT_DEN/shell/mcp-env.sh"
+  
+  # Add the MCP environment script to .bashrc if not already there
+  if ! grep -q "source.*shell/mcp-env.sh" "$HOME/.bashrc"; then
+    echo "" >> "$HOME/.bashrc"
+    echo "# Load MCP environment controls" >> "$HOME/.bashrc"
+    echo "if [[ -f \"$DOT_DEN/shell/mcp-env.sh\" ]]; then" >> "$HOME/.bashrc"
+    echo "  source \"$DOT_DEN/shell/mcp-env.sh\"" >> "$HOME/.bashrc"
+    echo "fi" >> "$HOME/.bashrc"
+    echo -e "${GREEN}✓ Added MCP environment controls to .bashrc${NC}"
+  fi
+  
+  # Detect environment and set up appropriate MCP configuration
+  if [[ "$(hostname)" != *"work"* ]] && [[ "$(hostname)" != *"corp"* ]]; then
+    echo -e "${BLUE}Detected personal environment. Work-specific MCP servers will be disabled by default.${NC}"
+    echo -e "${BLUE}Use 'mcp-toggle atlassian on' to enable them if needed.${NC}"
+  else
+    echo -e "${BLUE}Detected work environment. All MCP servers will be enabled by default.${NC}"
+    echo -e "${BLUE}Use 'mcp-toggle atlassian off' to disable specific servers if needed.${NC}"
+  fi
+  
+  echo -e "${GREEN}✓ MCP environment controls set up successfully${NC}"
+  echo -e "${BLUE}Use 'mcp-status' to see current MCP server status${NC}"
+  echo -e "${BLUE}Use 'mcp-toggle <server> <on|off>' to enable/disable specific servers${NC}"
+else
+  echo -e "${RED}MCP environment script not found at $DOT_DEN/shell/mcp-env.sh${NC}"
+  echo "MCP environment controls will not be available."
+fi
+
 echo -e "${DIVIDER}"
 echo -e "${GREEN}✅ Dotfiles setup complete!${NC}"
 echo "Your development environment is now configured and ready to use."
