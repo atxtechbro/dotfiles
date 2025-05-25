@@ -11,7 +11,6 @@ Current servers from this source:
 - Brave Search
 - Filesystem
 - Google Drive
-- Slack
 
 This standardized approach makes it easy to add more MCP servers in the future from this abundant collection.
 
@@ -19,14 +18,14 @@ This standardized approach makes it easy to add more MCP servers in the future f
 
 | Integration | Description | Authentication Method | Installation Method | Documentation |
 |-------------|-------------|----------------------|---------------------|---------------|
-| AWS Labs | AWS documentation, diagrams, CDK | None required | PyPI packages via UVX | - |
-| GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script | - |
+| AWS Labs | AWS documentation, CDK | None required | PyPI packages via UVX | - |
+| GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script | [Our Fork](https://github.com/atxtechbro/github-mcp-server?tab=readme-ov-file#github-mcp-server) |
 | Atlassian | Jira and Confluence integration | API tokens from `.bash_secrets` | Custom setup script | - |
 | Google Maps | Google Maps API integration | API key from `.bash_secrets` | Docker container | - |
 | Brave Search | Web search via Brave | API key from `.bash_secrets` | Docker container | - |
-| Filesystem | Local filesystem operations | None required | Docker container | - |
+| Filesystem | Local filesystem operations | None required | Built from source | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/filesystem#filesystem-mcp-server) |
+| Git | Git repository operations | None required | Built from source | [Original Repo](https://github.com/cyanheads/git-mcp-server#git-mcp-server) |
 | Google Drive | Google Drive file operations | OAuth credentials from `.bash_secrets` | Docker container | [Official Docs](https://github.com/modelcontextprotocol/servers/tree/main/src/gdrive#authentication) |
-| Slack | Slack messaging and search | Bot token from `.bash_secrets` | Docker container | - |
 
 ## Setup Instructions
 
@@ -36,9 +35,10 @@ Each MCP integration has its own setup method:
 - `setup-atlassian-mcp.sh` - Sets up Atlassian (Jira/Confluence) integration
 - `setup-google-maps-mcp.sh` - Sets up Google Maps integration
 - `setup-brave-search-mcp.sh` - Sets up Brave Search integration
-- `setup-filesystem-mcp.sh` - Sets up Filesystem integration
+- `setup-filesystem-mcp.sh` - Sets up Filesystem integration from source (allows customization)
 - `setup-gdrive-mcp.sh` - Sets up Google Drive integration
-- `setup-slack-mcp.sh` - Sets up Slack integration
+- `setup-github-mcp.sh` - Sets up GitHub integration from source
+- `setup-git-mcp.sh` - Sets up Git integration from source
 
 For custom integrations, run the appropriate setup script:
 

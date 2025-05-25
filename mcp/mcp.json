@@ -16,13 +16,6 @@
         "BEDROCK_KB_RERANKING_ENABLED": "false"
       }
     },
-    "awslabs.aws-diagram-mcp-server": {
-      "command": "uvx",
-      "args": ["awslabs.aws-diagram-mcp-server"],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
     "awslabs.cdk-mcp-server": {
       "command": "uvx",
       "args": ["awslabs.cdk-mcp-server@latest"],
@@ -38,21 +31,10 @@
       }
     },
     "git": {
-      "command": "uvx",
-      "args": ["kzms-mcp-server-git@latest"],
+      "command": "git-mcp-wrapper.sh",
+      "args": [],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
-    "gitlab": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-gitlab"
-      ],
-      "env": {
-        "GITLAB_PERSONAL_ACCESS_TOKEN": "<YOUR_TOKEN>",
-        "GITLAB_API_URL": "https://gitlab.com/api/v4"
       }
     },
     "github": {
@@ -90,13 +72,6 @@
     },
     "gdrive": {
       "command": "gdrive-mcp-wrapper.sh",
-      "args": [],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
-    "slack": {
-      "command": "slack-mcp-wrapper.sh",
       "args": [],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"

@@ -36,7 +36,7 @@ get_repo_root() {
 
 # Clone or update the MCP servers repository
 setup_mcp_servers_repo() {
-  local repo_url="${1:-https://github.com/modelcontextprotocol/servers.git}"
+  local repo_url="${1:-https://github.com/atxtechbro/mcp-servers.git}"
   local repo_dir="${2:-/tmp/mcp-servers}"
   
   if [ ! -d "$repo_dir" ]; then

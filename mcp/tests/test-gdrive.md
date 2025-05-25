@@ -1,55 +1,87 @@
 # Google Drive MCP Server Test
 
-This document provides test prompts for verifying the Google Drive MCP server integration.
+This document provides instructions for testing the Google Drive MCP server integration.
 
 ## Prerequisites
 
-1. Complete the setup by running:
+Before testing, ensure you have:
+
+1. Completed the Google Drive MCP setup by running `./setup-gdrive-mcp.sh`
+2. Successfully authenticated with Google Drive during the setup process
+3. Confirmed that the token file exists at `~/tmp/gdrive-oath/token.json`
+
+## Testing with Amazon Q
+
+1. Start Amazon Q:
    ```bash
-   cd ~/ppv/pillars/dotfiles/mcp
+   q chat
+   ```
+
+2. Test searching for files in Google Drive:
+   ```
+   Search for PDF files in my Google Drive
+   ```
+
+3. Expected behavior:
+   - Amazon Q should use the Google Drive MCP server to search for files
+   - Results should include file names and types matching your query
+
+## Manual Testing
+
+You can also test the Google Drive MCP server directly:
+
+1. Test the wrapper script:
+   ```bash
+   ./gdrive-mcp-wrapper.sh
+   ```
+   
+   This should start the server without errors.
+
+2. In another terminal, you can send a test query:
+   ```bash
+   echo '{"jsonrpc":"2.0","id":1,"method":"callTool","params":{"name":"search","arguments":{"query":"test"}}}' | nc -N localhost 3000
+   ```
+
+## Troubleshooting
+
+If the Google Drive MCP server is not working:
+
+1. Check that the token file exists:
+   ```bash
+   ls -la ~/tmp/gdrive-oath/token.json
+   ```
+
+2. Verify Docker is running (needed for authentication):
+   ```bash
+   docker ps
+   ```
+
+3. Try re-running the setup script:
+   ```bash
    ./setup-gdrive-mcp.sh
    ```
 
-2. Follow the [Google Drive Authentication Guide](../docs/gdrive-auth.md) to set up OAuth credentials and get a refresh token.
+4. If authentication fails, you may need to:
+   - Delete the existing token file: `rm ~/tmp/gdrive-oath/token.json`
+   - Ensure your credentials.json is valid
+   - Run the setup script again
 
-3. Add your Google Drive API credentials to `~/.bash_secrets`:
+5. Check for TypeScript installation:
    ```bash
-   export GOOGLE_DRIVE_CLIENT_ID="your_client_id"
-   export GOOGLE_DRIVE_CLIENT_SECRET="your_client_secret"
-   export GOOGLE_DRIVE_REFRESH_TOKEN="your_refresh_token"
+   tsc --version
    ```
+   
+   If not installed, run: `npm install -g typescript`
 
-4. Restart your Amazon Q CLI or other MCP client.
+## Expected Output
 
-## Test Prompts
-
-### List Files
-
-```
-List my recent Google Drive files
-```
-
-### Search for Files
+When working correctly, the Google Drive MCP server should return results like:
 
 ```
-Search my Google Drive for documents containing "project plan"
+Found 3 files:
+Document.pdf (application/pdf)
+Spreadsheet.xlsx (application/vnd.openxmlformats-officedocument.spreadsheetml.sheet)
+Presentation.pptx (application/vnd.openxmlformats-officedocument.presentationml.presentation)
 ```
 
-### Create a Document
-
-```
-Create a new text file in my Google Drive called "notes.txt" with the content "These are test notes created via the MCP server"
-```
-
-### Get File Details
-
-```
-Get details about my most recent Google Drive spreadsheet
-```
-
-## Expected Behavior
-
-- The MCP client should invoke the Google Drive MCP server
-- Results should include your actual Google Drive files and folders
-- Operations should modify your Google Drive as requested
-- No errors should be displayed in the client output
+The actual results will depend on the files in your Google Drive account.
