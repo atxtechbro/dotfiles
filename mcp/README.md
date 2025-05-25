@@ -80,6 +80,28 @@ Requirements:
 
 The `mcp.json` file contains the configuration for all MCP servers. This file is used by Amazon Q and other MCP clients to discover and connect to the servers.
 
+## Environment-Based MCP Server Toggle
+
+You can automatically disable specific MCP servers based on your environment:
+
+```bash
+# In .bashrc or .zshrc
+if [[ "$(hostname)" != *"work"* ]]; then
+  # On personal computer, disable work-specific MCP servers
+  export MCP_DISABLE_ATLASSIAN=true
+  # Add other servers to disable as needed
+fi
+```
+
+Then use the wrapper script to apply these settings:
+
+```bash
+# Alias for Amazon Q with environment-aware MCP configuration
+alias q="$HOME/dotfiles/bin/mcp-wrapper.sh"
+```
+
+This allows you to have different MCP server configurations on different machines without maintaining separate configuration files.
+
 ## Filesystem MCP Server Configuration
 
 The Filesystem MCP server requires at least one allowed directory to be specified. By default, it uses your home directory (`$HOME`).
@@ -102,6 +124,7 @@ If you encounter issues with an MCP integration:
 2. Verify that the wrapper script has execute permissions (`chmod +x wrapper-script.sh`)
 3. For Docker-based integrations, ensure Docker is running (`docker ps`)
 4. Check the logs from the MCP server for more detailed error messages
+
 ## Adding New MCP Servers
 
 Based on our current experience, here's a working procedure for adding new MCP servers (subject to improvement as we learn more):
@@ -125,6 +148,7 @@ Based on our current experience, here's a working procedure for adding new MCP s
    - Create test documentation in `tests/test-<server-name>.md`
 
 This workflow represents our current understanding and approach, which we expect to refine as we gain more experience with different types of MCP servers and discover better patterns for integration.
+
 ## Utility Functions
 
 To reduce code duplication and ensure consistent behavior across setup scripts, we use shared utility functions in the `utils/` directory:
