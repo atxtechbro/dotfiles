@@ -114,7 +114,7 @@ if [[ ! -d "$DOT_DEN" && "$IS_WSL" == false ]]; then
     echo -e "${GREEN}✓ Repository cloned successfully${NC}"
 elif [[ -d "$DOT_DEN" ]]; then
     echo "Dotfiles repository already exists at $DOT_DEN"
-    cd "$DOT_DEN" 2>/dev/null
+    # Removed cd command to prevent changing user's directory when sourced
 fi
 
 # Neovim configuration setup
