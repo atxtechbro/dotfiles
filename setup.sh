@@ -138,6 +138,7 @@ fi
 echo "Creating symlinks for config files..."
 ln -sf "$DOT_DEN/.bashrc" ~/.bashrc
 ln -sf "$DOT_DEN/.bash_aliases" ~/.bash_aliases
+ln -sf "$DOT_DEN/.bash_profile" ~/.bash_profile
 # Create directory for modular aliases if it doesn't exist
 mkdir -p ~/.bash_aliases.d
 # Copy the contents instead of creating a symlink to avoid recursive symlink issues
