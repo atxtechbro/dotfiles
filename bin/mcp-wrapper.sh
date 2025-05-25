@@ -7,7 +7,7 @@ if [[ ! -x "$0" ]]; then
   chmod +x "$0"
 fi
 
-# Path to the original MCP config
+# Path to the original MCP config - UPDATED to use the correct path
 MCP_CONFIG="$HOME/.aws/amazonq/mcp.json"
 MCP_CONFIG_TEMP="$HOME/.aws/amazonq/mcp.json.temp"
 
