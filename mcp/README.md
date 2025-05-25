@@ -80,6 +80,28 @@ Requirements:
 
 The `mcp.json` file contains the configuration for all MCP servers. This file is used by Amazon Q and other MCP clients to discover and connect to the servers.
 
+## Environment-Based MCP Server Toggle
+
+You can automatically disable specific MCP servers based on your environment:
+
+```bash
+# In .bashrc or .zshrc
+if [[ "$(hostname)" != *"work"* ]]; then
+  # On personal computer, disable work-specific MCP servers
+  export MCP_DISABLE_ATLASSIAN=true
+  # Add other servers to disable as needed
+fi
+```
+
+Then use the wrapper script to apply these settings:
+
+```bash
+# Alias for Amazon Q with environment-aware MCP configuration
+alias q="$HOME/dotfiles/bin/mcp-wrapper.sh"
+```
+
+This allows you to have different MCP server configurations on different machines without maintaining separate configuration files.
+
 ## Filesystem MCP Server Configuration
 
 The Filesystem MCP server requires at least one allowed directory to be specified. By default, it uses your home directory (`$HOME`).
