@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# GitHub MCP Server aliases and functions
+
+# Function to update GitHub MCP Server
+update_github_mcp() {
+  echo "Updating GitHub MCP Server..."
+  cd ~/ppv/pillars/dotfiles/github-mcp-server || return
+  git pull
+  go build -o github-mcp-server ./cmd/github-mcp-server
+  echo "GitHub MCP Server updated successfully!"
+}
+
+# Function to check GitHub MCP Server status
+check_github_mcp() {
+  if [ -f ~/ppv/pillars/dotfiles/github-mcp-server/github-mcp-server ]; then
+    echo "GitHub MCP Server is installed."
+    echo "Binary location: ~/ppv/pillars/dotfiles/github-mcp-server/github-mcp-server"
+    echo "Config location: ~/.config/q/mcp/github.json"
+    
+    # Check if token is set
+    if grep -q "GITHUB_PERSONAL_ACCESS_TOKEN" ~/.bash_secrets 2>/dev/null; then
+      echo "GitHub token is configured in ~/.bash_secrets"
+    else
+      echo "WARNING: GitHub token not found in ~/.bash_secrets"
+      echo "Please add 'export GITHUB_PERSONAL_ACCESS_TOKEN=your_token' to your ~/.bash_secrets file"
+    fi
+  else
+    echo "GitHub MCP Server is not installed."
+  fi
+}
+
+# Alias for quick access
+alias github-mcp-update="update_github_mcp"
+alias github-mcp-status="check_github_mcp"

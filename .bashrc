@@ -136,9 +136,6 @@ parse_git_branch() {
   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
 
-# Set prompt to show current directory and git branch
-PS1='\W\[\033[32m\]$(parse_git_branch)\[\033[00m\] \$ '
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
@@ -154,14 +151,6 @@ fi
 # Load secrets file if it exists
 if [ -f ~/.bash_secrets ]; then
     . ~/.bash_secrets
-fi
-
-# Load Philips Hue smart home lighting automation system
-# Only load in interactive shells and suppress the loading message when sourcing from .bashrc
-if [[ -f "$HOME/ppv/pipelines/hue_minimal/hue_control.sh" && $- == *i* ]]; then
-    export HUE_QUIET_LOAD=true
-    source "$HOME/ppv/pipelines/hue_minimal/hue_control.sh"
-    unset HUE_QUIET_LOAD
 fi
 
 DOT_DEN="$HOME/ppv/pillars/dotfiles"
@@ -186,7 +175,9 @@ else
     fi
 
     # Auto-start tmux with a unique session name based on timestamp
-    if [ -z "$TMUX" ] && [[ "$-" == *i* ]] && command -v tmux >/dev/null 2>&1; then
+    # Skip auto-start if we're running from the setup script
+    # Also skip if we're running a navigation alias (to prevent session termination)
+    if [ -z "$TMUX" ] && [[ "$-" == *i* ]] && command -v tmux >/dev/null 2>&1 && [ -z "$SETUP_SCRIPT_RUNNING" ] && [ -z "$NAVIGATION_ALIAS_RUNNING" ]; then
         # Create a new session with a unique name (terminal-TIMESTAMP)
         SESSION_NAME="terminal-$(date +%s)"
         exec tmux new-session -s "$SESSION_NAME"
@@ -200,3 +191,8 @@ tmux source-file ~/.tmux.conf >/dev/null 2>&1 || true
 # Amazon Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash"
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/uv-tools/bin:$PATH"
+
+# Set prompt to show current directory and git branch (placed at the end to ensure it's not overridden)
+PS1='\W\[\033[32m\]$(parse_git_branch)\[\033[00m\] \$ '
+

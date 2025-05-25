@@ -1,0 +1,2 @@
+#!/bin/bash
+export Q_LOG_LEVEL=trace && export TMPDIR="/tmp/q-logs" && mkdir -p "$TMPDIR" && echo "Amazon Q logging enabled. Logs at: $TMPDIR/qlog"

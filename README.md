@@ -2,6 +2,24 @@
 
 A collection of configuration files for a consistent development environment across different machines.
 
+## Modular Shell Configuration
+
+This repository uses a modular approach to shell configuration:
+
+```bash
+# Source modular alias files
+for alias_file in ~/ppv/pillars/dotfiles/.bash_aliases.*; do
+  [ -f "$alias_file" ] && source "$alias_file"
+done
+```
+
+This pattern provides:
+- **Separation of concerns** – Each file focuses on a specific tool
+- **Lazy loading** – Files sourced only when they exist
+- **Namespace hygiene** – Avoids cluttering global namespace
+
+Modules follow the naming convention `.bash_aliases.<tool-name>` and are automatically loaded when present.
+
 ## P.P.V System: Pillars, Pipelines, and Vaults
 
 This repository is part of the P.P.V system, a holistic approach to organizing knowledge work and digital assets:
@@ -248,20 +266,6 @@ For SSO, the URL typically follows this format:
 ```bash
 https://d-XXXXXXXXXX.awsapps.com/start/#/console?account_id=XXXXXXXXXXXX&role_name=YOUR_ROLE_NAME
 ```
-
-### Tmux Config Comparison
-
-To compare different tmux configurations (like at an optometrist):
-
-```bash
-# Switch to main branch config
-tmux-main
-
-# Switch to PR branch config
-tmux-pr
-```
-
-This is useful when testing different tmux configurations to see which one you prefer. You can quickly toggle between them like at the optometrist ("which is better, 1 or 2?").
 
 ## WSL Tips
 - **Distraction-Free Mode**: Press `Alt+Enter` in Windows Terminal to toggle full-screen and hide the taskbar.

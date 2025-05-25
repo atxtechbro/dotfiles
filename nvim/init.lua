@@ -2,7 +2,7 @@
 
 -- Basic settings
 vim.opt.number = true
-vim.opt.relativenumber = true
+vim.opt.relativenumber = false  -- Use absolute line numbers instead of relative
 vim.opt.termguicolors = true  -- Enable 24-bit RGB colors
 vim.opt.updatetime = 300      -- Faster completion
 vim.opt.timeoutlen = 500      -- By default timeoutlen is 1000 ms
@@ -38,14 +38,25 @@ vim.cmd([[
 ]])
 
 -- Plugin definitions
-require('packer').startup(function(use)
-  -- Packer can manage itself
-  use 'wbthomason/packer.nvim'
+require('packer').startup({
+  function(use)
+    -- Packer can manage itself
+    use 'wbthomason/packer.nvim'
 
-  -- LSP and completion
-  use 'neovim/nvim-lspconfig'           -- LSP configuration
-  use 'williamboman/mason.nvim'         -- Package manager for LSP servers
-  use 'williamboman/mason-lspconfig.nvim' -- Integration with lspconfig
+    -- LSP and completion
+    use 'neovim/nvim-lspconfig'           -- LSP configuration
+    use {
+      'williamboman/mason.nvim',          -- Package manager for LSP servers
+      requires = {
+        'neovim/nvim-lspconfig',
+      }
+    }
+    use {
+      'williamboman/mason-lspconfig.nvim', -- Integration with lspconfig
+      requires = {
+        'williamboman/mason.nvim',
+      }
+    }
   
   -- Autocompletion
   use 'hrsh7th/nvim-cmp'                -- Completion engine
@@ -60,7 +71,7 @@ require('packer').startup(function(use)
   use 'rafamadriz/friendly-snippets'    -- Snippet collection
   
   -- LSP enhancements
-  use 'ray-x/lsp_signature.help'        -- Show function signature when typing
+  use 'ray-x/lsp_signature.nvim'        -- Show function signature when typing
   use 'folke/lsp-colors.nvim'           -- Better LSP colors
   
   use {
@@ -77,11 +88,37 @@ require('packer').startup(function(use)
     'lewis6991/gitsigns.nvim',
     requires = {'nvim-lua/plenary.nvim'}
   }
+  
+  -- Debugging with full UI
+  use 'mfussenegger/nvim-dap'
+  use 'nvim-neotest/nvim-nio'  -- Required dependency for nvim-dap-ui
+  use { 'rcarriga/nvim-dap-ui', requires = {'mfussenegger/nvim-dap', 'nvim-neotest/nvim-nio'} }
+  use 'theHamsta/nvim-dap-virtual-text'
+  use 'nvim-telescope/telescope-dap.nvim'
+  
+  -- Terminal
+  use 'akinsho/toggleterm.nvim'
+  
+  -- GitHub Copilot integration
+  use 'github/copilot.vim'
+  
   -- Automatically set up configuration after cloning packer.nvim
   if packer_bootstrap then
     require('packer').sync()
   end
-end)
+end,
+config = {
+  -- Enhanced git clone options
+  git = {
+    clone_timeout = 180, -- Timeout in seconds
+  },
+  display = {
+    open_fn = function()
+      return require('packer.util').float({ border = 'rounded' })
+    end
+  }
+}
+})
 
 -- Keymaps
 local opts = { noremap = true, silent = true }
@@ -90,8 +127,6 @@ vim.keymap.set('n', '<leader>ff', '<cmd>Telescope find_files<cr>', opts)
 vim.keymap.set('n', '<leader>fg', '<cmd>Telescope live_grep<cr>', opts)
 vim.keymap.set('n', '<leader>fb', '<cmd>Telescope buffers<cr>', opts)
 vim.keymap.set('n', '<leader>fh', '<cmd>Telescope help_tags<cr>', opts)
-vim.keymap.set('n', '<leader>t', ':split | terminal<CR>', { silent = true })
-vim.keymap.set('n', '<leader>vt', ':vsplit | terminal<CR>', { silent = true })
 vim.keymap.set('i', 'jk', '<Esc>')
 
 -- TreeSitter Configuration
@@ -100,7 +135,7 @@ local treesitter_config = function()
     -- A list of parser names, or "all" (parsers with maintainers)
     ensure_installed = {
       "lua", "vim", "vimdoc", "python",
-      "html", "css", "json", "bash", "markdown"
+      "html", "css", "json", "xml", "bash", "markdown"
     },
     modules = {},
     ignore_install = {},
@@ -168,6 +203,7 @@ local mason_setup = function()
       'jsonls',      -- JSON
       'bashls',      -- Bash
       'marksman',    -- Markdown
+      'lemminx',     -- XML
     }
   })
 end
@@ -391,6 +427,10 @@ local setup_language_servers = function()
   lspconfig.marksman.setup({
     capabilities = capabilities
   })
+  -- XML LSP (Lemminx)
+  lspconfig.lemminx.setup({
+    capabilities = capabilities
+  })
   
   -- Set diagnostic signs
   local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
@@ -451,6 +491,32 @@ pcall(function()
   }
 end)
 
+-- Load Debug Adapter Protocol (DAP) configuration
+pcall(function()
+  require('config.dap')
+  print("Debug Adapter Protocol (DAP) configuration loaded from 'config.dap'")
+end)
+
+-- Load ToggleTerm terminal integration configuration
+pcall(function()
+  require('config.terminal')
+  print("ToggleTerm terminal integration loaded from 'config.terminal'")
+end)
+
+-- Load GitHub Copilot configuration
+pcall(function()
+  require('plugins.copilot')
+  print("GitHub Copilot integration loaded from 'plugins.copilot'")
+end)
+
+-- Ensure cursor line is enabled
+vim.cmd([[
+  augroup CursorLineHighlight
+    autocmd!
+    autocmd VimEnter,ColorScheme * highlight CursorLine guibg=#1A7A5A blend=40
+  augroup END
+]])
+
 print("Neovim configuration loaded")
 
 -- Add mappings to copy filename or full path to clipboard
@@ -467,3 +533,24 @@ vim.keymap.set('n', '<leader>cp', function()
   vim.fn.setreg('+', fullpath)
   print('Full path copied to clipboard: ' .. fullpath)
 end, { desc = 'Copy full path to clipboard' })
+-- TODO: XML editing settings (remove when comfortable)
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'xml',
+  callback = function()
+    -- Basic XML editing preferences
+    local opt = vim.opt_local
+    opt.expandtab = true         -- Use spaces instead of tabs
+    opt.shiftwidth = 2           -- Indent by 2 spaces
+    opt.tabstop = 2                  -- Number of spaces per Tab character
+    opt.softtabstop = 2              -- Number of spaces a Tab counts for while editing
+    opt.autoindent = true            -- Copy indent from current line on new lines
+    opt.cindent = false              -- Disable C-style automatic indentation
+    -- Folding using Treesitter
+    opt.foldmethod = 'expr'           -- Use expression-based folding
+    opt.foldexpr = 'nvim_treesitter#foldexpr()'  -- Use Treesitter for folding expressions
+    opt.foldenable = false            -- Keep folds closed by default
+    opt.foldlevel = 99                -- Open most folds by default (up to level 99)
+    -- Pretty-print XML via xmllint (<leader>f)
+    vim.keymap.set('n', '<leader>f', ':%!xmllint --format -<CR>', { buffer = true, silent = true, desc = 'Pretty print XML' })
+  end
+})

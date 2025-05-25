@@ -22,15 +22,32 @@ id_ed25519
 
 # Logs
 *.log
+logs/
+logs*/
+mcp_test_*
 
 # Temporary files
 *.tmp
 *.temp
 *~
+tmp.txt
 
 # OS specific files
 .DS_Store
 Thumbs.db
 
 # Documentation
-tmux-cheatsheet.md
+nvim/lua/config/dap.lua.backup
+
+# GitHub MCP Server
+github-mcp-server/
+
+# Amazon Q Developer CLI
+amazon-q-developer-cli/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+mcp/servers/aws-docs/venv/
