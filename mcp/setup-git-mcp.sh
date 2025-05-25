@@ -74,4 +74,4 @@ chmod +x "$CURRENT_SCRIPT_DIRECTORY/servers/git-mcp-server/dist/index.js"
 echo "Made entry point executable"
 
 echo "Git MCP server setup complete!"
-echo "The wrapper script will now use the built version with fallback to the original implementation if needed."
+echo "The wrapper script will now use the built version exclusively (ride or die)."
