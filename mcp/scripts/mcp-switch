@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# MCP Implementation Switcher
+# Switches between different implementations of the same MCP server type
+
+SERVER=$1
+IMPLEMENTATION=$2
+
+if [ -z "$SERVER" ] || [ -z "$IMPLEMENTATION" ]; then
+  echo "Usage: mcp-switch <server> <implementation>"
+  echo "Example: mcp-switch git kzms"
+  exit 1
+fi
+
+# Create directory if it doesn't exist
+mkdir -p ~/.config/mcp/active-implementations
+
+# Set the active implementation
+echo "$IMPLEMENTATION" > ~/.config/mcp/active-implementations/$SERVER
+
+echo "Switched $SERVER MCP server to $IMPLEMENTATION implementation"
