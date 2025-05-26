@@ -150,6 +150,24 @@ brew install git gh jq tmux curl wget
 ```
 </details>
 
+## MCP Configuration
+
+This repository uses a modular approach to MCP (Model Context Protocol) configuration:
+
+```bash
+# Switch between work and personal MCP configurations
+mcp-work    # Use work configuration with all MCP servers
+mcp-personal # Use personal configuration (no Atlassian server)
+mcp-status  # Check current configuration
+```
+
+This pattern provides:
+- **Environment-specific configurations** – Different MCP servers for work and personal use
+- **Easy switching** – Simple commands to switch between configurations
+- **Automatic setup** – Configurations created and managed by setup scripts
+
+The MCP configuration system follows the "spilled coffee principle" - everything is reproducible and automated.
+
 ## Applications
 
 ### Google Chrome
