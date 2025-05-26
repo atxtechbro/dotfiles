@@ -49,12 +49,45 @@ This document provides instructions for testing the Git MCP server integration.
    ```
    Expected: The file should be created, added, and committed successfully.
 
+### Git Worktree Operations
+
+1. **List Worktrees**
+   ```
+   List all Git worktrees in the current repository
+   ```
+   Expected: A list of worktrees in the repository.
+
+2. **Add a Worktree**
+   ```
+   Add a new Git worktree at "/tmp/test-worktree" using the "test-branch" branch
+   ```
+   Expected: A new worktree should be created at the specified path.
+
+3. **Move a Worktree**
+   ```
+   Move the Git worktree from "/tmp/test-worktree" to "/tmp/test-worktree-new"
+   ```
+   Expected: The worktree should be moved to the new location.
+
+4. **Remove a Worktree**
+   ```
+   Remove the Git worktree at "/tmp/test-worktree-new"
+   ```
+   Expected: The worktree should be removed.
+
+5. **Prune Worktrees**
+   ```
+   Prune all stale Git worktrees in the current repository
+   ```
+   Expected: Any stale worktrees should be pruned.
+
 ## Cleanup
 
-After testing, clean up the test branch:
+After testing, clean up the test branch and worktrees:
 
 ```
 Delete the "test-branch" branch
+Remove any remaining test worktrees
 ```
 
 ## Troubleshooting
@@ -79,6 +112,5 @@ If you find bugs or have suggestions for improvements, please create an issue in
 
 The following features are planned for future implementation:
 
-1. **Git Worktree Support**: Adding the ability to create, list, and manage Git worktrees
-2. **Custom Git Hooks Integration**: Improved support for Git hooks
-3. **Performance Optimizations**: Reducing response time for large repositories
+1. **Custom Git Hooks Integration**: Improved support for Git hooks
+2. **Performance Optimizations**: Reducing response time for large repositories
