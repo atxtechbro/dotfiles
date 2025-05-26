@@ -191,6 +191,27 @@ For company-specific secrets, consider maintaining a separate private repository
 
 ## CLI Tools
 
+### Go
+
+Go is a statically typed, compiled programming language designed at Google. It's used by many modern tools including the GitHub MCP server.
+
+```bash
+# Install Go automatically using our utility script
+./utils/install-go.sh
+
+# Verify installation
+go version
+```
+
+The installation script:
+- Detects your operating system and architecture
+- Attempts to install Go using your system's package manager
+- Falls back to manual installation from official binaries if needed
+- Sets up proper environment variables
+- Creates necessary workspace directories
+
+This script follows the "spilled coffee principle" - it ensures Go is available without manual intervention, making your environment fully operational after a fresh setup.
+
 ### tmux
 
 tmux is a terminal multiplexer that allows you to split your terminal into multiple panes and switch between them easily.

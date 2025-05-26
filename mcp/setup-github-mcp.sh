@@ -4,11 +4,17 @@
 CURRENT_SCRIPT_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$CURRENT_SCRIPT_DIRECTORY/utils/mcp-setup-utils.sh"
 
-# Check if Go is installed
-if ! command -v go &> /dev/null; then
-    echo "Error: Go is not installed. Please install Go first."
+# Source the Go installation script
+DOTFILES_ROOT="$(cd "$CURRENT_SCRIPT_DIRECTORY/.." && pwd)"
+source "$DOTFILES_ROOT/utils/install-go.sh"
+
+# Ensure Go is installed
+if ! ensure_go_installed; then
+    echo "Error: Go installation failed. Cannot continue with GitHub MCP server setup."
     exit 1
 fi
+
+echo "Go installation verified. Proceeding with GitHub MCP server setup..."
 
 # Create servers directory if it doesn't exist
 mkdir -p "$CURRENT_SCRIPT_DIRECTORY/servers"
