@@ -27,6 +27,7 @@ ln -sf ~/ppv/pillars/dotfiles/mcp/wrappers/git-mcp-wrapper.sh ~/ppv/pipelines/bi
 mkdir -p ~/ppv/pipelines/bin
 ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-switch ~/ppv/pipelines/bin/mcp-switch
 ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-setup-implementation ~/ppv/pipelines/bin/mcp-setup-implementation
+ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-remove-implementation ~/ppv/pipelines/bin/mcp-remove-implementation
 
 echo "MCP server infrastructure setup complete!"
 echo ""

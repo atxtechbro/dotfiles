@@ -20,6 +20,7 @@ mcp/
 │   └── git-wrapper.json    # Configuration using the wrapper script
 ├── scripts/                # Utility scripts
 │   ├── mcp-setup-implementation  # Script to set up a new implementation
+│   ├── mcp-remove-implementation # Script to remove an implementation
 │   └── mcp-switch          # Script to switch between implementations
 ├── setup-mcp.sh            # Setup script for MCP infrastructure
 └── wrappers/               # Wrapper scripts for MCP servers
@@ -54,6 +55,13 @@ mcp-switch git kzms
 
 # Switch to the cyanheads implementation
 mcp-switch git cyanheads
+```
+
+### Removing an Implementation
+
+```bash
+# Remove the kzms implementation for the git MCP server
+mcp-remove-implementation git kzms
 ```
 
 ### Updating MCP Configuration

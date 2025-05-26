@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# MCP Implementation Removal
+# Removes an MCP server implementation and its virtual environment
+
+SERVER=$1
+IMPLEMENTATION=$2
+
+if [ -z "$SERVER" ] || [ -z "$IMPLEMENTATION" ]; then
+  echo "Usage: mcp-remove-implementation <server> <implementation>"
+  echo "Example: mcp-remove-implementation git kzms"
+  exit 1
+fi
+
+# Define paths
+SERVERS_DIR=~/.local/share/mcp-servers/python/$SERVER/$IMPLEMENTATION
+VENV_DIR=~/ppv/pipelines/venvs/mcp-servers/$SERVER-$IMPLEMENTATION
+ACTIVE_IMPL_FILE=~/.config/mcp/active-implementations/$SERVER
+
+# Check if implementation exists
+if [ ! -d "$SERVERS_DIR" ]; then
+  echo "Error: Implementation $IMPLEMENTATION for $SERVER does not exist at $SERVERS_DIR"
+  exit 1
+fi
+
+# Check if this is the active implementation
+if [ -f "$ACTIVE_IMPL_FILE" ] && [ "$(cat "$ACTIVE_IMPL_FILE")" = "$IMPLEMENTATION" ]; then
+  echo "Warning: Removing the active implementation for $SERVER"
+  echo "You will need to switch to another implementation after removal"
+fi
+
+# Confirm removal
+read -p "Are you sure you want to remove $IMPLEMENTATION implementation for $SERVER? (y/N) " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+  echo "Operation cancelled"
+  exit 0
+fi
+
+# Remove the implementation directory
+echo "Removing implementation directory at $SERVERS_DIR..."
+rm -rf "$SERVERS_DIR"
+
+# Remove the virtual environment if it exists
+if [ -d "$VENV_DIR" ]; then
+  echo "Removing virtual environment at $VENV_DIR..."
+  rm -rf "$VENV_DIR"
+fi
+
+# If this was the active implementation, suggest switching to another one
+if [ -f "$ACTIVE_IMPL_FILE" ] && [ "$(cat "$ACTIVE_IMPL_FILE")" = "$IMPLEMENTATION" ]; then
+  # Find other available implementations
+  OTHER_IMPLS=$(find ~/.local/share/mcp-servers/python/$SERVER -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null)
+  
+  if [ -n "$OTHER_IMPLS" ]; then
+    echo "Available implementations for $SERVER:"
+    echo "$OTHER_IMPLS"
+    echo "Please switch to another implementation using:"
+    echo "  mcp-switch $SERVER <implementation>"
+  else
+    echo "No other implementations found for $SERVER"
+    echo "You may need to set up a new implementation"
+  fi
+fi
+
+echo "Successfully removed $IMPLEMENTATION implementation for $SERVER"
