@@ -148,7 +148,9 @@ ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 
 # Set up MCP configurations
 echo "Setting up MCP configurations..."
-mkdir -p ~/.aws/amazonq
+mkdir -p ~/.aws/amazonq # Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
+# (as opposed to Workspace Configuration: .amazonq/mcp.json - Specific to the current workspace)
+
 # Set up environment-specific MCP configurations
 "$DOT_DEN/utils/mcp-setup.sh"
 # Default to personal configuration
