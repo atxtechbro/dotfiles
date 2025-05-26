@@ -145,10 +145,14 @@ mkdir -p ~/.bash_aliases.d
 cp -r "$DOT_DEN/.bash_aliases.d/"* ~/.bash_aliases.d/ 2>/dev/null || true
 ln -sf "$DOT_DEN/.bash_exports" ~/.bash_exports
 ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
-# Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
-# (as opposed to Workspace Configuration: .amazonq/mcp.json - Specific to the current workspace)
+
+# Set up MCP configurations
+echo "Setting up MCP configurations..."
 mkdir -p ~/.aws/amazonq
-ln -sf "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
+# Set up environment-specific MCP configurations
+"$DOT_DEN/utils/mcp-setup.sh"
+# Default to personal configuration
+"$DOT_DEN/utils/mcp-select.sh" personal
 
 # Claude Desktop MCP integration
 mkdir -p ~/.config/Claude
@@ -342,7 +346,7 @@ if ! command -v uv >/dev/null 2>&1; then
   echo "Installing uv package manager..."
   curl -Ls https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
   # Check if PATH already contains the .local/bin entry before adding
-  if ! grep -q "export PATH=\"\\$HOME/.local/bin:\\$PATH\"" "$HOME/.bashrc"; then
+  if ! grep -q "export PATH=\"\$HOME/.local/bin:\$PATH\"" "$HOME/.bashrc"; then
     echo "export PATH=\"$HOME/.local/bin:\$PATH\"" >> "$HOME/.bashrc"
   fi
   # Make uv available in the current shell

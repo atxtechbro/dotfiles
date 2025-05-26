@@ -1,0 +1,8 @@
+#!/bin/bash
+# ~/ppv/pillars/dotfiles/.bash_aliases.mcp
+# Aliases for MCP configuration management
+
+# Easy MCP environment switching
+alias mcp-work='~/ppv/pillars/dotfiles/utils/mcp-select.sh work'
+alias mcp-personal='~/ppv/pillars/dotfiles/utils/mcp-select.sh personal'
+alias mcp-status='~/ppv/pillars/dotfiles/utils/mcp-select.sh'
