@@ -29,6 +29,19 @@ else
     git pull
 fi
 
+# Fix potential go.mod issues
+GO_MOD_FILE="$CURRENT_SCRIPT_DIRECTORY/servers/github-mcp-server/go.mod"
+if [ -f "$GO_MOD_FILE" ]; then
+    echo "Checking go.mod file for potential issues..."
+    # Fix invalid Go version format (e.g., 1.23.7 -> 1.23)
+    if grep -q "^go [0-9]\+\.[0-9]\+\.[0-9]\+" "$GO_MOD_FILE"; then
+        echo "Found invalid Go version format in go.mod, fixing..."
+        # Extract major and minor version, discard patch version
+        sed -i 's/^go \([0-9]\+\.[0-9]\+\)\.[0-9]\+/go \1/' "$GO_MOD_FILE"
+        echo "Fixed go.mod file"
+    fi
+fi
+
 # Build the GitHub MCP server
 echo "Building GitHub MCP server from source..."
 cd "$CURRENT_SCRIPT_DIRECTORY/servers/github-mcp-server/cmd/github-mcp-server"
