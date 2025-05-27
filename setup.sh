@@ -153,6 +153,10 @@ ln -sf "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
 mkdir -p ~/.config/Claude
 cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json
 
+# VS Code/Cursor config setup
+source "$DOT_DEN/bin/setup-vscode.sh"
+setup_vscode_configs
+
 # Set up Git configuration
 echo "Setting up Git configuration..."
 gitconfig_path="$HOME/.gitconfig"

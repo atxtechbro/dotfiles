@@ -1,0 +1,27 @@
+[
+  // Telescope-like mappings
+  { "key": "space f f", "command": "workbench.action.quickOpen" },
+  { "key": "space f g", "command": "workbench.action.findInFiles" },
+  { "key": "space f b", "command": "workbench.action.showAllEditors" },
+  { "key": "space f h", "command": "workbench.action.openDocumentationUrl" },
+
+  // LSP-like mappings
+  { "key": "K", "command": "editor.action.showHover", "when": "editorTextFocus" },
+  { "key": "g d", "command": "editor.action.revealDefinition", "when": "editorTextFocus" },
+  { "key": "g D", "command": "editor.action.revealDeclaration", "when": "editorTextFocus" },
+  { "key": "g i", "command": "editor.action.goToImplementation", "when": "editorTextFocus" },
+  { "key": "g t", "command": "editor.action.goToTypeDefinition", "when": "editorTextFocus" },
+  { "key": "g r", "command": "editor.action.referenceSearch.trigger", "when": "editorTextFocus" },
+  { "key": "space r n", "command": "editor.action.rename", "when": "editorTextFocus" },
+  { "key": "space c a", "command": "editor.action.quickFix", "when": "editorTextFocus" },
+  { "key": "space e", "command": "workbench.action.problems.focus" },
+  { "key": "[ d", "command": "editor.action.marker.prev", "when": "editorTextFocus" },
+  { "key": "] d", "command": "editor.action.marker.next", "when": "editorTextFocus" },
+  { "key": "space f", "command": "editor.action.formatDocument", "when": "editorTextFocus" },
+
+  // Misc
+  { "key": "space d a", "command": "editor.action.selectAll" },
+  { "key": "space c f", "command": "workbench.action.files.copyPathOfActiveFile" },
+  { "key": "space c p", "command": "workbench.action.files.copyRelativePathOfActiveFile" },
+  { "key": "i j k", "command": "leaveSnippet" }
+] 
