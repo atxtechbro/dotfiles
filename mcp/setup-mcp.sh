@@ -28,19 +28,12 @@ mkdir -p ~/ppv/pipelines/bin
 ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-switch ~/ppv/pipelines/bin/mcp-switch
 ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-setup-implementation ~/ppv/pipelines/bin/mcp-setup-implementation
 ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-remove-implementation ~/ppv/pipelines/bin/mcp-remove-implementation
+ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-server ~/ppv/pipelines/bin/mcp-server
 
 echo "MCP server infrastructure setup complete!"
 echo ""
-echo "To set up the kzms Git MCP server implementation, run:"
-echo "  mcp-setup-implementation git kzms https://github.com/atxtechbro/kzms-mcp-server-git.git"
-echo ""
-echo "To update your MCP configuration, edit ~/ppv/pillars/dotfiles/mcp/mcp.json:"
-echo '{
-  "git": {
-    "command": "~/ppv/pipelines/bin/mcp-wrappers/git-mcp-wrapper.sh",
-    "args": [],
-    "env": {
-      "FASTMCP_LOG_LEVEL": "ERROR"
-    }
-  }
-}'
+echo "To manage your MCP servers, use the following commands:"
+echo "  mcp-server add git kzms https://github.com/atxtechbro/kzms-mcp-server-git.git"
+echo "  mcp-server remove git"
+echo "  mcp-server update git"
+echo "  mcp-server list"
