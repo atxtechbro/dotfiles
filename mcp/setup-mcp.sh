@@ -6,6 +6,14 @@
 
 set -e
 
+# Detect script location regardless of worktree
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+REPO_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
+
+# Detect if running in a worktree
+IS_WORKTREE=$(git rev-parse --is-inside-work-tree 2>/dev/null && echo "true" || echo "false")
+MAIN_REPO_PATH=$(git rev-parse --show-toplevel 2>/dev/null || echo "$HOME/ppv/pillars/dotfiles")
+
 echo "Setting up MCP server infrastructure..."
 
 # Create directories for MCP server implementations
@@ -21,17 +29,44 @@ mkdir -p ~/.config/mcp/active-implementations
 
 # Create symlinks for wrapper scripts
 mkdir -p ~/ppv/pipelines/bin/mcp-wrappers
-ln -sf ~/ppv/pillars/dotfiles/mcp/wrappers/git-mcp-wrapper.sh ~/ppv/pipelines/bin/mcp-wrappers/git-mcp-wrapper.sh
+
+# Use dynamic paths based on whether we're in a worktree
+if [[ "$IS_WORKTREE" == "true" && "$MAIN_REPO_PATH" != "$HOME/ppv/pillars/dotfiles" ]]; then
+  # In worktree - use current path for testing
+  ln -sf "$REPO_ROOT/mcp/wrappers/git-mcp-wrapper.sh" ~/ppv/pipelines/bin/mcp-wrappers/git-mcp-wrapper.sh
+else
+  # In main repo or production - use standard path
+  ln -sf ~/ppv/pillars/dotfiles/mcp/wrappers/git-mcp-wrapper.sh ~/ppv/pipelines/bin/mcp-wrappers/git-mcp-wrapper.sh
+fi
 
 # Create symlinks for utility scripts
 mkdir -p ~/ppv/pipelines/bin
-ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-switch ~/ppv/pipelines/bin/mcp-switch
-ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-setup-implementation ~/ppv/pipelines/bin/mcp-setup-implementation
-ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-remove-implementation ~/ppv/pipelines/bin/mcp-remove-implementation
-ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-server ~/ppv/pipelines/bin/mcp-server
+
+# Use dynamic paths based on whether we're in a worktree
+if [[ "$IS_WORKTREE" == "true" && "$MAIN_REPO_PATH" != "$HOME/ppv/pillars/dotfiles" ]]; then
+  # In worktree - use current path for testing
+  ln -sf "$REPO_ROOT/mcp/scripts/mcp-switch" ~/ppv/pipelines/bin/mcp-switch
+  ln -sf "$REPO_ROOT/mcp/scripts/mcp-setup-implementation" ~/ppv/pipelines/bin/mcp-setup-implementation
+  ln -sf "$REPO_ROOT/mcp/scripts/mcp-remove-implementation" ~/ppv/pipelines/bin/mcp-remove-implementation
+  ln -sf "$REPO_ROOT/mcp/scripts/mcp-server" ~/ppv/pipelines/bin/mcp-server
+else
+  # In main repo or production - use standard path
+  ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-switch ~/ppv/pipelines/bin/mcp-switch
+  ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-setup-implementation ~/ppv/pipelines/bin/mcp-setup-implementation
+  ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-remove-implementation ~/ppv/pipelines/bin/mcp-remove-implementation
+  ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-server ~/ppv/pipelines/bin/mcp-server
+fi
 
 echo "MCP server infrastructure setup complete!"
 echo ""
+
+# Display warning if in worktree mode
+if [[ "$IS_WORKTREE" == "true" && "$MAIN_REPO_PATH" != "$HOME/ppv/pillars/dotfiles" ]]; then
+  echo "⚠️  Running in worktree mode - symlinks point to this worktree"
+  echo "   These symlinks will need to be updated when merging to main"
+  echo ""
+fi
+
 echo "To manage your MCP servers, use the following commands:"
 echo "  mcp-server add git kzms https://github.com/atxtechbro/kzms-mcp-server-git.git"
 echo "  mcp-server remove git"
