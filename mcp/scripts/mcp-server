@@ -46,15 +46,27 @@ list_servers() {
   fi
   
   # Find all server types (python, typescript, binary)
-  for server_type in $(find "$SERVERS_BASE_DIR" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;); do
+  for server_type in $(find "$SERVERS_BASE_DIR" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null || echo ""); do
+    if [ -z "$server_type" ]; then
+      continue
+    fi
+    
     echo "[$server_type]"
     
     # Find all servers of this type
-    for server in $(find "$SERVERS_BASE_DIR/$server_type" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;); do
+    for server in $(find "$SERVERS_BASE_DIR/$server_type" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null || echo ""); do
+      if [ -z "$server" ]; then
+        continue
+      fi
+      
       echo "  $server:"
       
       # Find all implementations for this server
-      for impl in $(find "$SERVERS_BASE_DIR/$server_type/$server" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;); do
+      for impl in $(find "$SERVERS_BASE_DIR/$server_type/$server" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null || echo ""); do
+        if [ -z "$impl" ]; then
+          continue
+        fi
+        
         # Check if this is the active implementation
         if [ -f "$ACTIVE_IMPL_DIR/$server" ] && [ "$(cat "$ACTIVE_IMPL_DIR/$server")" = "$impl" ]; then
           echo "    * $impl (active)"
@@ -118,14 +130,18 @@ remove_server() {
     echo "Error: Missing server parameter"
     echo "Usage: mcp-server remove <server> [implementation]"
     exit 1
-  }
+  fi
   
   # If implementation is not specified, list available implementations
   if [ -z "$IMPLEMENTATION" ]; then
     echo "Available implementations for $SERVER:"
     for server_type in python typescript binary; do
       if [ -d "$SERVERS_BASE_DIR/$server_type/$SERVER" ]; then
-        for impl in $(find "$SERVERS_BASE_DIR/$server_type/$SERVER" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null); do
+        for impl in $(find "$SERVERS_BASE_DIR/$server_type/$SERVER" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null || echo ""); do
+          if [ -z "$impl" ]; then
+            continue
+          fi
+          
           if [ -f "$ACTIVE_IMPL_DIR/$SERVER" ] && [ "$(cat "$ACTIVE_IMPL_DIR/$SERVER")" = "$impl" ]; then
             echo "  * $impl (active)"
           else
@@ -188,7 +204,7 @@ remove_server() {
     OTHER_IMPLS=""
     for type in python typescript binary; do
       if [ -d "$SERVERS_BASE_DIR/$type/$SERVER" ]; then
-        FOUND_IMPLS=$(find "$SERVERS_BASE_DIR/$type/$SERVER" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null)
+        FOUND_IMPLS=$(find "$SERVERS_BASE_DIR/$type/$SERVER" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null || echo "")
         if [ -n "$FOUND_IMPLS" ]; then
           OTHER_IMPLS="$OTHER_IMPLS $FOUND_IMPLS"
         fi
@@ -215,14 +231,18 @@ update_server() {
     echo "Error: Missing server parameter"
     echo "Usage: mcp-server update <server> [implementation]"
     exit 1
-  }
+  fi
   
   # If implementation is not specified, list available implementations
   if [ -z "$IMPLEMENTATION" ]; then
     echo "Available implementations for $SERVER:"
     for server_type in python typescript binary; do
       if [ -d "$SERVERS_BASE_DIR/$server_type/$SERVER" ]; then
-        for impl in $(find "$SERVERS_BASE_DIR/$server_type/$SERVER" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null); do
+        for impl in $(find "$SERVERS_BASE_DIR/$server_type/$SERVER" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null || echo ""); do
+          if [ -z "$impl" ]; then
+            continue
+          fi
+          
           if [ -f "$ACTIVE_IMPL_DIR/$SERVER" ] && [ "$(cat "$ACTIVE_IMPL_DIR/$SERVER")" = "$impl" ]; then
             echo "  * $impl (active)"
           else
