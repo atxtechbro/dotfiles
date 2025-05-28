@@ -26,6 +26,7 @@ This standardized approach makes it easy to add more MCP servers in the future f
 | Filesystem | Local filesystem operations | None required | Built from source | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/filesystem#filesystem-mcp-server) |
 | Git | Git repository operations | None required | Built from source | [Original Repo](https://github.com/cyanheads/git-mcp-server#git-mcp-server) |
 | Google Drive | Google Drive file operations | OAuth credentials from `.bash_secrets` | Docker container | [Official Docs](https://github.com/modelcontextprotocol/servers/tree/main/src/gdrive#authentication) |
+| MCP Shell | Secure shell command execution | None required | Built from source | [Original Repo](https://github.com/sonirico/mcp-shell) |
 
 ## Setup Instructions
 
@@ -39,6 +40,7 @@ Each MCP integration has its own setup method:
 - `setup-gdrive-mcp.sh` - Sets up Google Drive integration
 - `setup-github-mcp.sh` - Sets up GitHub integration from source
 - `setup-git-mcp.sh` - Sets up Git integration from source
+- `setup-mcp-shell.sh` - Sets up MCP Shell integration with security controls
 
 For custom integrations, run the appropriate setup script:
 
@@ -93,6 +95,27 @@ q chat  # Start Amazon Q with restricted filesystem access
 ```
 
 This allows you to control which directories the Filesystem MCP server can access.
+
+## MCP Shell Server Configuration
+
+The MCP Shell server provides fine-grained security controls for shell commands executed through Amazon Q CLI. The security configuration is stored in `mcp/config/mcp-shell.yaml`.
+
+Key security features:
+- **Command Whitelisting/Blacklisting**: Control which commands can be executed
+- **Pattern Blocking**: Block dangerous command patterns (like `rm -rf /`)
+- **Execution Limits**: Set timeouts and output size limits
+- **Directory Restrictions**: Limit which directories commands can be executed in
+- **Audit Logging**: Keep track of all executed commands
+
+To install and set up the MCP Shell server:
+
+```bash
+# Install the MCP shell server
+./utils/install-mcp-shell.sh
+
+# Register it with Amazon Q CLI
+./mcp/setup-mcp-shell.sh
+```
 
 ## Troubleshooting
 
