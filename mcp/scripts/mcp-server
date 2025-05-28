@@ -9,7 +9,9 @@ set -e
 CONFIG_DIR=~/.config/mcp
 ACTIVE_IMPL_DIR="$CONFIG_DIR/active-implementations"
 SERVERS_BASE_DIR=~/.local/share/mcp-servers
+LOCAL_BUILDS_DIR=~/ppv/pillars/dotfiles/mcp/servers
 VENVS_BASE_DIR=~/ppv/pipelines/venvs/mcp-servers
+MCP_CONFIG_FILE=~/.aws/amazonq/mcp.json
 
 # Command and arguments
 COMMAND=$1
@@ -36,47 +38,103 @@ show_help() {
 
 # List all servers and implementations
 list_servers() {
-  echo "Available MCP servers and implementations:"
-  echo "----------------------------------------"
+  echo "Available MCP Servers:"
+  echo "======================"
   
-  # Check if any servers exist
-  if [ ! -d "$SERVERS_BASE_DIR" ]; then
+  # First, get all configured servers from mcp.json
+  if [ -f "$MCP_CONFIG_FILE" ]; then
+    # Extract server names from mcp.json using grep and sed
+    # This handles the case where jq might not be available
+    CONFIGURED_SERVERS=$(grep -o '"[^"]*": {' "$MCP_CONFIG_FILE" | sed 's/": {//g' | sed 's/"//g' | grep -v "env" | grep -v "mcpServers" | sort)
+  else
+    CONFIGURED_SERVERS=""
+    echo "Warning: MCP configuration file not found at $MCP_CONFIG_FILE"
+  fi
+  
+  # If no configured servers found, check if we have any local implementations
+  if [ -z "$CONFIGURED_SERVERS" ] && [ ! -d "$SERVERS_BASE_DIR" ] && [ ! -d "$LOCAL_BUILDS_DIR" ]; then
     echo "No MCP servers found."
     return
   fi
   
-  # Find all server types (python, typescript, binary)
-  for server_type in $(find "$SERVERS_BASE_DIR" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null || echo ""); do
-    if [ -z "$server_type" ]; then
-      continue
+  # Process each configured server
+  for server in $CONFIGURED_SERVERS; do
+    echo "• $server"
+    
+    # Check if we have local implementations for this server
+    FOUND_IMPLEMENTATIONS=false
+    
+    # Check for locally built implementations
+    if [ -d "$LOCAL_BUILDS_DIR/$server-mcp-server" ]; then
+      FOUND_IMPLEMENTATIONS=true
+      echo "  ✓ local-build - active"
     fi
     
-    echo "[$server_type]"
+    # Look for implementations across all server types
+    for server_type in python typescript binary; do
+      if [ -d "$SERVERS_BASE_DIR/$server_type/$server" ]; then
+        # Get all implementations for this server
+        for impl in $(find "$SERVERS_BASE_DIR/$server_type/$server" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null || echo ""); do
+          if [ -z "$impl" ]; then
+            continue
+          fi
+          
+          FOUND_IMPLEMENTATIONS=true
+          
+          # Check if this is the active implementation
+          if [ -f "$ACTIVE_IMPL_DIR/$server" ] && [ "$(cat "$ACTIVE_IMPL_DIR/$server")" = "$impl" ]; then
+            echo "  ✓ $impl ($server_type) - active"
+          else
+            echo "  - $impl ($server_type)"
+          fi
+        done
+      fi
+    done
     
-    # Find all servers of this type
-    for server in $(find "$SERVERS_BASE_DIR/$server_type" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null || echo ""); do
-      if [ -z "$server" ]; then
+    # If no implementations found, show a message
+    if [ "$FOUND_IMPLEMENTATIONS" = false ]; then
+      echo "  (No local implementations)"
+    fi
+    
+    echo ""
+  done
+  
+  # Now check for any local implementations that aren't in the configured servers
+  # This handles the case where someone has set up an implementation but not added it to mcp.json
+  if [ -d "$SERVERS_BASE_DIR" ]; then
+    for server_type in $(find "$SERVERS_BASE_DIR" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null || echo ""); do
+      if [ -z "$server_type" ]; then
         continue
       fi
       
-      echo "  $server:"
-      
-      # Find all implementations for this server
-      for impl in $(find "$SERVERS_BASE_DIR/$server_type/$server" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null || echo ""); do
-        if [ -z "$impl" ]; then
+      for server in $(find "$SERVERS_BASE_DIR/$server_type" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null || echo ""); do
+        if [ -z "$server" ]; then
           continue
         fi
         
-        # Check if this is the active implementation
-        if [ -f "$ACTIVE_IMPL_DIR/$server" ] && [ "$(cat "$ACTIVE_IMPL_DIR/$server")" = "$impl" ]; then
-          echo "    * $impl (active)"
-        else
-          echo "    - $impl"
+        # Check if this server is already in the configured servers
+        if ! echo "$CONFIGURED_SERVERS" | grep -q "^$server$"; then
+          echo "• $server (not configured in mcp.json)"
+          
+          # Get all implementations for this server
+          for impl in $(find "$SERVERS_BASE_DIR/$server_type/$server" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null || echo ""); do
+            if [ -z "$impl" ]; then
+              continue
+            fi
+            
+            # Check if this is the active implementation
+            if [ -f "$ACTIVE_IMPL_DIR/$server" ] && [ "$(cat "$ACTIVE_IMPL_DIR/$server")" = "$impl" ]; then
+              echo "  ✓ $impl ($server_type) - active"
+            else
+              echo "  - $impl ($server_type)"
+            fi
+          done
+          
+          echo ""
         fi
       done
     done
-    echo ""
-  done
+  fi
 }
 
 # Add a new server implementation
@@ -135,6 +193,8 @@ remove_server() {
   # If implementation is not specified, list available implementations
   if [ -z "$IMPLEMENTATION" ]; then
     echo "Available implementations for $SERVER:"
+    FOUND_IMPLEMENTATIONS=false
+    
     for server_type in python typescript binary; do
       if [ -d "$SERVERS_BASE_DIR/$server_type/$SERVER" ]; then
         for impl in $(find "$SERVERS_BASE_DIR/$server_type/$SERVER" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null || echo ""); do
@@ -142,14 +202,21 @@ remove_server() {
             continue
           fi
           
+          FOUND_IMPLEMENTATIONS=true
+          
           if [ -f "$ACTIVE_IMPL_DIR/$SERVER" ] && [ "$(cat "$ACTIVE_IMPL_DIR/$SERVER")" = "$impl" ]; then
-            echo "  * $impl (active)"
+            echo "  ✓ $impl ($server_type) - active"
           else
-            echo "  - $impl"
+            echo "  - $impl ($server_type)"
           fi
         done
       fi
     done
+    
+    if [ "$FOUND_IMPLEMENTATIONS" = false ]; then
+      echo "  No implementations found for $SERVER"
+    fi
+    
     echo "Please specify which implementation to remove:"
     echo "  mcp-server remove $SERVER <implementation>"
     exit 0
@@ -236,6 +303,8 @@ update_server() {
   # If implementation is not specified, list available implementations
   if [ -z "$IMPLEMENTATION" ]; then
     echo "Available implementations for $SERVER:"
+    FOUND_IMPLEMENTATIONS=false
+    
     for server_type in python typescript binary; do
       if [ -d "$SERVERS_BASE_DIR/$server_type/$SERVER" ]; then
         for impl in $(find "$SERVERS_BASE_DIR/$server_type/$SERVER" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null || echo ""); do
@@ -243,14 +312,21 @@ update_server() {
             continue
           fi
           
+          FOUND_IMPLEMENTATIONS=true
+          
           if [ -f "$ACTIVE_IMPL_DIR/$SERVER" ] && [ "$(cat "$ACTIVE_IMPL_DIR/$SERVER")" = "$impl" ]; then
-            echo "  * $impl (active)"
+            echo "  ✓ $impl ($server_type) - active"
           else
-            echo "  - $impl"
+            echo "  - $impl ($server_type)"
           fi
         done
       fi
     done
+    
+    if [ "$FOUND_IMPLEMENTATIONS" = false ]; then
+      echo "  No implementations found for $SERVER"
+    fi
+    
     echo "Please specify which implementation to update:"
     echo "  mcp-server update $SERVER <implementation>"
     exit 0
