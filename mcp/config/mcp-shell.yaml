@@ -119,9 +119,9 @@ security:
   # This allows operations in specific user directories while maintaining
   # security boundaries for system directories
   allowed_working_directories:
-    - /home/linuxmint-lp # User home directory
-    - /home/linuxmint-lp/.* # Dotfiles in home directory
-    - /home/linuxmint-lp/ppv/** # PPV directory structure
+    - $HOME # User home directory (environment variable)
+    - $HOME/.* # Dotfiles in home directory
+    - $HOME/ppv/** # PPV directory structure
     - /tmp
     - /var/tmp
     - /opt
