@@ -13,6 +13,7 @@ REPO_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
 # Detect if running in a worktree
 IS_WORKTREE=$(git rev-parse --is-inside-work-tree 2>/dev/null && echo "true" || echo "false")
 MAIN_REPO_PATH=$(git rev-parse --show-toplevel 2>/dev/null || echo "$HOME/ppv/pillars/dotfiles")
+IS_WORKTREE_PATH=$(echo "$MAIN_REPO_PATH" | grep -q "pr-" && echo "true" || echo "false")
 
 echo "Setting up MCP server infrastructure..."
 
@@ -31,7 +32,7 @@ mkdir -p ~/.config/mcp/active-implementations
 mkdir -p ~/ppv/pipelines/bin/mcp-wrappers
 
 # Use dynamic paths based on whether we're in a worktree
-if [[ "$IS_WORKTREE" == "true" && "$MAIN_REPO_PATH" != "$HOME/ppv/pillars/dotfiles" ]]; then
+if [[ "$IS_WORKTREE_PATH" == "true" ]]; then
   # In worktree - use current path for testing
   ln -sf "$REPO_ROOT/mcp/wrappers/git-mcp-wrapper.sh" ~/ppv/pipelines/bin/mcp-wrappers/git-mcp-wrapper.sh
 else
@@ -43,7 +44,7 @@ fi
 mkdir -p ~/ppv/pipelines/bin
 
 # Use dynamic paths based on whether we're in a worktree
-if [[ "$IS_WORKTREE" == "true" && "$MAIN_REPO_PATH" != "$HOME/ppv/pillars/dotfiles" ]]; then
+if [[ "$IS_WORKTREE_PATH" == "true" ]]; then
   # In worktree - use current path for testing
   ln -sf "$REPO_ROOT/mcp/scripts/mcp-switch" ~/ppv/pipelines/bin/mcp-switch
   ln -sf "$REPO_ROOT/mcp/scripts/mcp-setup-implementation" ~/ppv/pipelines/bin/mcp-setup-implementation
@@ -61,7 +62,7 @@ echo "MCP server infrastructure setup complete!"
 echo ""
 
 # Display warning if in worktree mode
-if [[ "$IS_WORKTREE" == "true" && "$MAIN_REPO_PATH" != "$HOME/ppv/pillars/dotfiles" ]]; then
+if [[ "$IS_WORKTREE_PATH" == "true" ]]; then
   echo "⚠️  Running in worktree mode - symlinks point to this worktree"
   echo "   These symlinks will need to be updated when merging to main"
   echo ""
