@@ -116,12 +116,12 @@ security:
   max_output_size: 5242880  # 5MB output limit
   
   # Working directory restrictions
-  # This allows operations in common user directories but prevents
-  # access to system directories
+  # This allows operations in specific user directories while maintaining
+  # security boundaries for system directories
   allowed_working_directories:
-    - /home
-    - /home/*/.* # All dotfiles in home directory
-    - /home/*/ppv/** # All files in ppv directory structure
+    - /home/linuxmint-lp # User home directory
+    - /home/linuxmint-lp/.* # Dotfiles in home directory
+    - /home/linuxmint-lp/ppv/** # PPV directory structure
     - /tmp
     - /var/tmp
     - /opt
