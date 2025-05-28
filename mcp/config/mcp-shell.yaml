@@ -120,6 +120,8 @@ security:
   # access to system directories
   allowed_working_directories:
     - /home
+    - /home/*/.* # All dotfiles in home directory
+    - /home/*/ppv/** # All files in ppv directory structure
     - /tmp
     - /var/tmp
     - /opt
