@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# MCP Implementation Setup
+# Sets up a new MCP server implementation with its own virtual environment
+
+SERVER=$1
+IMPLEMENTATION=$2
+REPO_URL=$3
+
+if [ -z "$SERVER" ] || [ -z "$IMPLEMENTATION" ] || [ -z "$REPO_URL" ]; then
+  echo "Usage: mcp-setup-implementation <server> <implementation> <repo-url>"
+  echo "Example: mcp-setup-implementation git kzms https://github.com/atxtechbro/kzms-mcp-server-git.git"
+  exit 1
+fi
+
+# Create directories
+SERVERS_DIR=~/.local/share/mcp-servers/python/$SERVER/$IMPLEMENTATION
+VENV_DIR=~/ppv/pipelines/venvs/mcp-servers/$SERVER-$IMPLEMENTATION
+
+mkdir -p "$SERVERS_DIR"
+mkdir -p "$(dirname "$VENV_DIR")"
+
+# Clone repository
+echo "Cloning $REPO_URL to $SERVERS_DIR..."
+git clone "$REPO_URL" "$SERVERS_DIR"
+
+# Create virtual environment
+echo "Creating virtual environment at $VENV_DIR..."
+uv venv "$VENV_DIR"
+
+# Install package
+echo "Installing package in development mode..."
+cd "$SERVERS_DIR"
+"$VENV_DIR/bin/uv" pip install -e .
+
+# Set as active implementation
+mkdir -p ~/.config/mcp/active-implementations
+echo "$IMPLEMENTATION" > ~/.config/mcp/active-implementations/$SERVER
+
+echo "Successfully set up $IMPLEMENTATION implementation for $SERVER MCP server"
+echo "To use it, make sure your mcp.json points to the wrapper script"

@@ -1,0 +1,9 @@
+{
+  "git": {
+    "command": "uvx",
+    "args": ["run", "mcp_server_git"],
+    "env": {
+      "FASTMCP_LOG_LEVEL": "ERROR"
+    }
+  }
+}

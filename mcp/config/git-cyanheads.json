@@ -1,0 +1,9 @@
+{
+  "git": {
+    "command": "npx",
+    "args": ["git-mcp-server"],
+    "env": {
+      "FASTMCP_LOG_LEVEL": "ERROR"
+    }
+  }
+}

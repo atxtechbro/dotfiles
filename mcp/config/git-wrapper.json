@@ -1,0 +1,9 @@
+{
+  "git": {
+    "command": "~/ppv/pipelines/bin/mcp-wrappers/git-mcp-wrapper.sh",
+    "args": [],
+    "env": {
+      "FASTMCP_LOG_LEVEL": "ERROR"
+    }
+  }
+}

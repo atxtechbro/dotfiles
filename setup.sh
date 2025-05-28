@@ -43,6 +43,8 @@ export DOT_DEN
 export PATH="$DOT_DEN/mcp:$PATH"
 # Add MCP servers directory to PATH
 export PATH="$DOT_DEN/mcp/servers:$PATH"
+# Add dotfiles bin directory to PATH
+export PATH="$DOT_DEN/bin:$PATH"
 
 # Export flag to tell subscripts we're running from the main setup
 export SETUP_SCRIPT_RUNNING=true
