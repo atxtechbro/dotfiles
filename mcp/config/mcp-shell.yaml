@@ -1,0 +1,132 @@
+# MCP Shell Security Configuration
+# This configuration provides a balanced approach to security while allowing
+# power users to perform common operations safely.
+
+security:
+  enabled: true
+  
+  # Commands explicitly allowed (whitelist approach)
+  allowed_commands:
+    # File operations
+    - ls
+    - cat
+    - grep
+    - find
+    - echo
+    - mkdir
+    - touch
+    - cp
+    - mv
+    - rm
+    - ln
+    - chmod
+    - chown
+    - tar
+    - zip
+    - unzip
+    - gzip
+    - gunzip
+    
+    # Navigation and information
+    - cd
+    - pwd
+    - df
+    - du
+    - free
+    - top
+    - ps
+    - kill
+    - which
+    - whereis
+    - type
+    
+    # Text processing
+    - head
+    - tail
+    - less
+    - more
+    - sort
+    - uniq
+    - wc
+    - sed
+    - awk
+    - cut
+    - tr
+    
+    # Network tools
+    - ping
+    - curl
+    - wget
+    - ssh
+    - scp
+    - netstat
+    - ifconfig
+    - ip
+    
+    # Development tools
+    - git
+    - npm
+    - node
+    - python
+    - pip
+    - go
+    - make
+    - gcc
+    - g++
+    
+    # Package management (distro-specific)
+    - apt
+    - apt-get
+    - yum
+    - dnf
+    - pacman
+    - brew
+    
+    # AWS CLI
+    - aws
+    
+    # Docker
+    - docker
+    - docker-compose
+    
+    # Kubernetes
+    - kubectl
+    - helm
+  
+  # Commands explicitly blocked (blacklist approach)
+  blocked_commands:
+    - rm -rf /
+    - rm -rf /*
+    - sudo rm -rf
+    - :(){ :|:& };:  # Fork bomb
+    - dd if=/dev/random
+    - chmod -R 777 /
+    - chown -R / 
+    - mkfs
+    
+  # Regex patterns to block potentially dangerous commands
+  blocked_patterns:
+    - 'rm\s+-rf\s+/(?!tmp|home)'  # Block rm -rf / but allow rm -rf /tmp
+    - '>\s+/dev/(sd|hd|nvme|xvd)'  # Block writing to block devices
+    - 'dd\s+.*if=/dev/(zero|random).*of=/dev/(sd|hd|nvme|xvd)'  # Block overwriting disks
+    - ':\(\)\s*{\s*:\s*\|\s*:\s*(&|;)\s*}\s*;:'  # Fork bomb pattern
+  
+  # Execution limits
+  max_execution_time: 60s  # Generous timeout for longer operations
+  max_output_size: 5242880  # 5MB output limit
+  
+  # Working directory restrictions
+  # This allows operations in specific user directories while maintaining
+  # security boundaries for system directories
+  allowed_working_directories:
+    - $HOME # User home directory (environment variable)
+    - $HOME/.* # Dotfiles in home directory
+    - $HOME/ppv/** # PPV directory structure
+    - /tmp
+    - /var/tmp
+    - /opt
+    - /usr/local
+  
+  # Security auditing
+  audit_log: true
+  audit_log_path: ~/.mcp-shell-audit.log
