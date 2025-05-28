@@ -29,33 +29,33 @@ mkdir -p ~/ppv/pipelines/venvs/mcp-servers
 mkdir -p ~/.config/mcp/active-implementations
 
 # Create symlinks for wrapper scripts
-mkdir -p ~/ppv/pipelines/bin/mcp-wrappers
+mkdir -p ~/ppv/pillars/dotfiles/bin/mcp-wrappers
 
 # Use dynamic paths based on whether we're in a worktree
 if [[ "$IS_WORKTREE_PATH" == "true" ]]; then
   # In worktree - use current path for testing
-  ln -sf "$REPO_ROOT/mcp/wrappers/git-mcp-wrapper.sh" ~/ppv/pipelines/bin/mcp-wrappers/git-mcp-wrapper.sh
+  ln -sf "$REPO_ROOT/mcp/wrappers/git-mcp-wrapper.sh" ~/ppv/pillars/dotfiles/bin/mcp-wrappers/git-mcp-wrapper.sh
 else
   # In main repo or production - use standard path
-  ln -sf ~/ppv/pillars/dotfiles/mcp/wrappers/git-mcp-wrapper.sh ~/ppv/pipelines/bin/mcp-wrappers/git-mcp-wrapper.sh
+  ln -sf ~/ppv/pillars/dotfiles/mcp/wrappers/git-mcp-wrapper.sh ~/ppv/pillars/dotfiles/bin/mcp-wrappers/git-mcp-wrapper.sh
 fi
 
 # Create symlinks for utility scripts
-mkdir -p ~/ppv/pipelines/bin
+mkdir -p ~/ppv/pillars/dotfiles/bin
 
 # Use dynamic paths based on whether we're in a worktree
 if [[ "$IS_WORKTREE_PATH" == "true" ]]; then
   # In worktree - use current path for testing
-  ln -sf "$REPO_ROOT/mcp/scripts/mcp-switch" ~/ppv/pipelines/bin/mcp-switch
-  ln -sf "$REPO_ROOT/mcp/scripts/mcp-setup-implementation" ~/ppv/pipelines/bin/mcp-setup-implementation
-  ln -sf "$REPO_ROOT/mcp/scripts/mcp-remove-implementation" ~/ppv/pipelines/bin/mcp-remove-implementation
-  ln -sf "$REPO_ROOT/mcp/scripts/mcp-server" ~/ppv/pipelines/bin/mcp-server
+  ln -sf "$REPO_ROOT/mcp/scripts/mcp-switch" ~/ppv/pillars/dotfiles/bin/mcp-switch
+  ln -sf "$REPO_ROOT/mcp/scripts/mcp-setup-implementation" ~/ppv/pillars/dotfiles/bin/mcp-setup-implementation
+  ln -sf "$REPO_ROOT/mcp/scripts/mcp-remove-implementation" ~/ppv/pillars/dotfiles/bin/mcp-remove-implementation
+  ln -sf "$REPO_ROOT/mcp/scripts/mcp-server" ~/ppv/pillars/dotfiles/bin/mcp-server
 else
   # In main repo or production - use standard path
-  ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-switch ~/ppv/pipelines/bin/mcp-switch
-  ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-setup-implementation ~/ppv/pipelines/bin/mcp-setup-implementation
-  ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-remove-implementation ~/ppv/pipelines/bin/mcp-remove-implementation
-  ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-server ~/ppv/pipelines/bin/mcp-server
+  ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-switch ~/ppv/pillars/dotfiles/bin/mcp-switch
+  ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-setup-implementation ~/ppv/pillars/dotfiles/bin/mcp-setup-implementation
+  ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-remove-implementation ~/ppv/pillars/dotfiles/bin/mcp-remove-implementation
+  ln -sf ~/ppv/pillars/dotfiles/mcp/scripts/mcp-server ~/ppv/pillars/dotfiles/bin/mcp-server
 fi
 
 echo "MCP server infrastructure setup complete!"
