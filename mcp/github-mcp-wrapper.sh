@@ -13,7 +13,8 @@ fi
 export GITHUB_PERSONAL_ACCESS_TOKEN="$TOKEN"
 
 # Path to the GitHub MCP server binary
-GITHUB_BINARY_PATH="$(dirname "$0")/servers/github"
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+GITHUB_BINARY_PATH="$SCRIPT_DIR/servers/github"
 
 # Check if the binary exists and is executable
 if [ ! -x "$GITHUB_BINARY_PATH" ]; then
