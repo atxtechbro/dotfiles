@@ -3,11 +3,9 @@
 # =========================================================
 # FILESYSTEM MCP SERVER SETUP SCRIPT
 # =========================================================
-# PURPOSE: Sets up the Filesystem MCP server from source
-# This allows customization of the server code to fix issues
-# =========================================================
-# IMPORTANT: This script assumes you've already forked the
-# modelcontextprotocol/servers repository to your GitHub account
+# PURPOSE: Sets up the custom Filesystem MCP server from source
+# This version modifies tool descriptions to de-emphasize
+# the edit and write functions
 # =========================================================
 
 # Get the directory where this setup script is located
@@ -35,22 +33,20 @@ fi
 # Create servers directory if it doesn't exist
 mkdir -p "$CURRENT_SCRIPT_DIRECTORY/servers"
 
-# Clone your existing fork of the MCP servers repository if it doesn't exist locally
-# Note: This assumes you've already forked https://github.com/modelcontextprotocol/servers to
-# https://github.com/atxtechbro/mcp-servers on GitHub
-if [ ! -d "$CURRENT_SCRIPT_DIRECTORY/servers/mcp-servers" ]; then
-    echo "Cloning your existing fork of the MCP servers repository..."
-    echo "Note: This does NOT create a new fork on GitHub, just clones your existing one"
-    git clone https://github.com/atxtechbro/mcp-servers.git "$CURRENT_SCRIPT_DIRECTORY/servers/mcp-servers"
+# Clone the dedicated filesystem-mcp-server repository
+if [ ! -d "$CURRENT_SCRIPT_DIRECTORY/servers/filesystem-mcp-server" ]; then
+    echo "Cloning the custom filesystem-mcp-server repository..."
+    git clone https://github.com/atxtechbro/filesystem-mcp-server.git "$CURRENT_SCRIPT_DIRECTORY/servers/filesystem-mcp-server"
 else
-    echo "Your forked MCP servers repository already exists locally, updating..."
-    cd "$CURRENT_SCRIPT_DIRECTORY/servers/mcp-servers"
-    git pull
+    echo "Custom filesystem-mcp-server repository already exists locally, updating..."
+    cd "$CURRENT_SCRIPT_DIRECTORY/servers/filesystem-mcp-server"
+    git checkout main
+    git pull origin main
 fi
 
 # Build the Filesystem MCP server
-echo "Building Filesystem MCP server from source..."
-cd "$CURRENT_SCRIPT_DIRECTORY/servers/mcp-servers/src/filesystem"
+echo "Building custom Filesystem MCP server from source..."
+cd "$CURRENT_SCRIPT_DIRECTORY/servers/filesystem-mcp-server"
 
 # Install dependencies
 echo "Installing dependencies..."
@@ -61,16 +57,17 @@ echo "Compiling TypeScript..."
 npm run build
 
 # Check if build was successful
-if [ ! -d "$CURRENT_SCRIPT_DIRECTORY/servers/mcp-servers/src/filesystem/dist" ]; then
+if [ ! -d "$CURRENT_SCRIPT_DIRECTORY/servers/filesystem-mcp-server/dist" ]; then
     echo "Error: Failed to build Filesystem MCP server"
     exit 1
 else
-    echo "Successfully built Filesystem MCP server"
+    echo "Successfully built custom Filesystem MCP server"
 fi
 
 # Make the entry point executable
-chmod +x "$CURRENT_SCRIPT_DIRECTORY/servers/mcp-servers/src/filesystem/dist/index.js"
+chmod +x "$CURRENT_SCRIPT_DIRECTORY/servers/filesystem-mcp-server/dist/index.js"
 echo "Made entry point executable"
 
-echo "Filesystem MCP server setup complete!"
+echo "Custom Filesystem MCP server setup complete!"
+echo "This version de-emphasizes the edit and write functions in favor of other tools."
 echo "The wrapper script will now use the built version with fallback to npx if needed."

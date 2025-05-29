@@ -1,21 +1,28 @@
 #!/bin/bash
 
 # =========================================================
-# FILESYSTEM MCP WRAPPER SCRIPT
+# FILESYSTEM MCP SERVER WRAPPER SCRIPT
 # =========================================================
-# PURPOSE: Runtime wrapper that executes the Filesystem MCP server
-# This script is called by the MCP system during normal operation
+# PURPOSE: Wrapper script for the Filesystem MCP server
+# This version uses our custom fork with modified tool descriptions
+# that de-emphasize the edit and write functions
 # =========================================================
 
-# Get the directory where this script is located
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get the directory where this wrapper script is located
+CURRENT_SCRIPT_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Check if the built version exists
-if [ -f "$SCRIPT_DIR/servers/mcp-servers/src/filesystem/dist/index.js" ]; then
-    # Use the built version
-    exec node "$SCRIPT_DIR/servers/mcp-servers/src/filesystem/dist/index.js" "$HOME"
+# Define the path to the built server
+BUILT_SERVER_PATH="$CURRENT_SCRIPT_DIRECTORY/servers/filesystem-mcp-server/dist/index.js"
+
+# Check if the built server exists
+if [ -f "$BUILT_SERVER_PATH" ]; then
+    echo "Using locally built custom Filesystem MCP server..."
+    # Pass all arguments to the built server
+    # The $HOME argument allows access to the home directory
+    node "$BUILT_SERVER_PATH" "$HOME" "$@"
 else
-    # Fallback to npx version if build doesn't exist
-    echo "Warning: Built version not found, falling back to npx version" >&2
-    exec npx -y @modelcontextprotocol/server-filesystem "$HOME"
+    echo "Built server not found, falling back to npx..."
+    echo "Warning: This will use the standard version without custom tool descriptions"
+    # Fall back to npx if the built server doesn't exist
+    npx @modelcontextprotocol/filesystem-server "$HOME" "$@"
 fi
