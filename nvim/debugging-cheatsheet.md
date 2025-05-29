@@ -15,6 +15,7 @@ A comprehensive guide for debugging in Neovim with DAP (Debug Adapter Protocol) 
 | `<leader>bp` | Toggle breakpoint (alternative to F9) |
 | `<leader>du` | Toggle DAP UI (variables, stack, watches) |
 | `<leader>dt` | Terminate debug session |
+| `<leader>dp` | Pause execution |
 | `<leader>dj` | Move down the call stack (older frames) |
 | `<leader>dk` | Move up the call stack (newer frames) |
 

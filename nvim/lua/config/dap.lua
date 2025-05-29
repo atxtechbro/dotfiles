@@ -161,6 +161,7 @@ vim.api.nvim_set_keymap('n', '<leader>bp', "<cmd>lua require('dap').toggle_break
 -- Additional UI-related keymaps
 vim.api.nvim_set_keymap('n', '<leader>du', "<cmd>lua require('dapui').toggle()<CR>", opts) -- Toggle UI
 vim.api.nvim_set_keymap('n', '<leader>dt', "<cmd>lua require('dap').terminate()<CR>", opts) -- Terminate debug session
+vim.api.nvim_set_keymap('n', '<leader>dp', "<cmd>lua require('dap').pause()<CR>", opts) -- Pause execution
 
 -- Call stack navigation with automatic frame focus
 vim.api.nvim_set_keymap('n', '<leader>dj', "<cmd>lua require('dap').down()<CR>", opts) -- Move down the stack (older frames)
