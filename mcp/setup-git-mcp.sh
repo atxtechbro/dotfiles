@@ -7,23 +7,22 @@
 # This allows customization of the server code to fix issues
 # and add features like git worktree support
 # =========================================================
-# IMPORTANT: This script assumes you've already forked the
-# cyanheads/git-mcp-server repository to your GitHub account
+# IMPORTANT: This script uses our own Python-based Git MCP server repository
 # =========================================================
 
 # Get the directory where this setup script is located
 CURRENT_SCRIPT_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$CURRENT_SCRIPT_DIRECTORY/utils/mcp-setup-utils.sh"
 
-# Check if Node.js is installed
-if ! command -v node &> /dev/null; then
-    echo "Error: Node.js is not installed. Please install Node.js first."
+# Check if Python is installed
+if ! command -v python3 &> /dev/null; then
+    echo "Error: Python 3 is not installed. Please install Python 3 first."
     exit 1
 fi
 
-# Check if npm is installed
-if ! command -v npm &> /dev/null; then
-    echo "Error: npm is not installed. Please install npm first."
+# Check if pip is installed
+if ! command -v pip3 &> /dev/null; then
+    echo "Error: pip3 is not installed. Please install pip3 first."
     exit 1
 fi
 
@@ -36,42 +35,52 @@ fi
 # Create servers directory if it doesn't exist
 mkdir -p "$CURRENT_SCRIPT_DIRECTORY/servers"
 
-# Clone your existing fork of the Git MCP server repository if it doesn't exist locally
-# Note: This assumes you've already forked https://github.com/cyanheads/git-mcp-server to
-# https://github.com/atxtechbro/git-mcp-server on GitHub
+# Clone our Git MCP server repository if it doesn't exist locally
 if [ ! -d "$CURRENT_SCRIPT_DIRECTORY/servers/git-mcp-server" ]; then
-    echo "Cloning your existing fork of the Git MCP server repository..."
-    echo "Note: This does NOT create a new fork on GitHub, just clones your existing one"
+    echo "Cloning our Python-based Git MCP server repository..."
     git clone https://github.com/atxtechbro/git-mcp-server.git "$CURRENT_SCRIPT_DIRECTORY/servers/git-mcp-server"
+    
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to clone the repository. Please check if the repository exists and is accessible."
+        exit 1
+    fi
 else
-    echo "Your forked Git MCP server repository already exists locally, updating..."
+    echo "Our Git MCP server repository already exists locally, updating..."
     cd "$CURRENT_SCRIPT_DIRECTORY/servers/git-mcp-server"
-    git pull
+    git pull || echo "Warning: Unable to pull updates, continuing with existing code"
 fi
 
-# Build the Git MCP server
-echo "Building Git MCP server from source..."
+# Set up the Python environment
+echo "Setting up Python environment for Git MCP server..."
 cd "$CURRENT_SCRIPT_DIRECTORY/servers/git-mcp-server"
 
-# Install dependencies
-echo "Installing dependencies..."
-npm install
-
-# Build the TypeScript code
-echo "Compiling TypeScript..."
-npm run build
-
-# Check if build was successful
-if [ ! -d "$CURRENT_SCRIPT_DIRECTORY/servers/git-mcp-server/dist" ]; then
-    echo "Error: Failed to build Git MCP server"
-    exit 1
+# Check if requirements.txt exists
+if [ -f "requirements.txt" ]; then
+    echo "Installing Python dependencies..."
+    pip3 install -r requirements.txt --user
 else
-    echo "Successfully built Git MCP server"
+    echo "Warning: No requirements.txt found. Skipping dependency installation."
 fi
 
-# Make the entry point executable
-chmod +x "$CURRENT_SCRIPT_DIRECTORY/servers/git-mcp-server/dist/index.js"
-echo "Made entry point executable"
+# Check if setup.py exists and install the package
+if [ -f "setup.py" ]; then
+    echo "Installing the Git MCP server package..."
+    pip3 install -e . --user
+fi
+
+# Make the entry point executable if it exists
+if [ -f "git_mcp_server.py" ]; then
+    chmod +x "git_mcp_server.py"
+    echo "Made entry point executable"
+elif [ -f "main.py" ]; then
+    chmod +x "main.py"
+    echo "Made entry point executable"
+elif [ -f "app.py" ]; then
+    chmod +x "app.py"
+    echo "Made entry point executable"
+else
+    echo "Warning: Could not identify the main Python script. Please check the repository structure."
+fi
 
 echo "Git MCP server setup complete!"
-echo "The wrapper script will now use the built version exclusively (ride or die)."
+echo "The wrapper script will now use the built version exclusively."
