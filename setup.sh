@@ -255,6 +255,11 @@ fi
 echo -e "${DIVIDER}"
 echo "Setting up Node.js with NVM..."
 
+# Fix npm prefix configuration conflict with nvm
+if [ -f "$DOT_DEN/utils/fix-npm-nvm-conflict.sh" ]; then
+  bash "$DOT_DEN/utils/fix-npm-nvm-conflict.sh"
+fi
+
 # Ensure NVM directory exists
 export NVM_DIR="$HOME/.nvm"
 
