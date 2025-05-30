@@ -292,12 +292,24 @@ dap.listeners.after.event_stopped['dapui_focus'] = function()
         -- Open file at location and center screen
         -- Use edit! to force buffer switch even with unsaved changes (VS Code-like behavior)
         vim.cmd("edit! " .. vim.fn.fnameescape(path))
-        vim.api.nvim_win_set_cursor(0, {session.current_frame.line, 0})
-        vim.cmd("normal! zz")
         
-        -- Highlight the current line with a more visible highlight
-        vim.cmd("hi CurrentDebugLine ctermbg=237 guibg=#3a3a3a")
-        vim.cmd("match CurrentDebugLine /\\%" .. session.current_frame.line .. "l/")
+        -- Before setting cursor position, check if the line exists in the buffer
+        local line_count = vim.api.nvim_buf_line_count(0)
+        if session.current_frame.line <= line_count then
+          vim.api.nvim_win_set_cursor(0, {session.current_frame.line, 0})
+          vim.cmd("normal! zz")
+          
+          -- Highlight the current line with a more visible highlight
+          vim.cmd("hi CurrentDebugLine ctermbg=237 guibg=#3a3a3a")
+          vim.cmd("match CurrentDebugLine /\\%" .. session.current_frame.line .. "l/")
+        else
+          -- Line doesn't exist, show a warning
+          vim.notify(
+            "Debug: Cannot set cursor to line " .. session.current_frame.line .. 
+            " (file has only " .. line_count .. " lines)",
+            vim.log.levels.WARN
+          )
+        end
         
         -- Focus on the scopes panel after a short delay
         vim.defer_fn(function()
@@ -334,12 +346,24 @@ dap.listeners.after.scopes['dapui_frame_focus'] = function()
         -- Open file at location and center screen
         -- Use edit! to force buffer switch even with unsaved changes (VS Code-like behavior)
         vim.cmd("edit! " .. vim.fn.fnameescape(path))
-        vim.api.nvim_win_set_cursor(0, {session.current_frame.line, 0})
-        vim.cmd("normal! zz")
         
-        -- Highlight the current line with a more visible highlight
-        vim.cmd("hi CurrentDebugLine ctermbg=237 guibg=#3a3a3a")
-        vim.cmd("match CurrentDebugLine /\\%" .. session.current_frame.line .. "l/")
+        -- Before setting cursor position, check if the line exists in the buffer
+        local line_count = vim.api.nvim_buf_line_count(0)
+        if session.current_frame.line <= line_count then
+          vim.api.nvim_win_set_cursor(0, {session.current_frame.line, 0})
+          vim.cmd("normal! zz")
+          
+          -- Highlight the current line with a more visible highlight
+          vim.cmd("hi CurrentDebugLine ctermbg=237 guibg=#3a3a3a")
+          vim.cmd("match CurrentDebugLine /\\%" .. session.current_frame.line .. "l/")
+        else
+          -- Line doesn't exist, show a warning
+          vim.notify(
+            "Debug: Cannot set cursor to line " .. session.current_frame.line .. 
+            " (file has only " .. line_count .. " lines)",
+            vim.log.levels.WARN
+          )
+        end
         
         -- Clear the highlight after a short delay
         vim.defer_fn(function()
