@@ -21,7 +21,6 @@
 - Keep changes small and frequent – Encourage developers to commit small, incremental changes or features
 - Use short-lived branches for complex tasks – For larger or more complex tasks, use short-lived branches
 - Maintain a robust test suite – A comprehensive, well-maintained test suite is crucial
-- Proactively suggest git hook opportunities – Store these hooks in the dotfiles repository to maintain consistency across environments
 - Do, don't explain – Execute tasks directly rather than describing how to do them
 
 ## Debugging Amazon Q CLI
