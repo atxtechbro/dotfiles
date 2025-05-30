@@ -22,6 +22,7 @@
 - Use short-lived branches for complex tasks – For larger or more complex tasks, use short-lived branches
 - Maintain a robust test suite – A comprehensive, well-maintained test suite is crucial
 - Proactively suggest git hook opportunities – Store these hooks in the dotfiles repository to maintain consistency across environments
+- Do, don't explain – Execute tasks directly rather than describing how to do them
 
 ## File Operations Approach
 Use fs_read instead of GitHub MCP functions (like get_file_contents) for reading files
