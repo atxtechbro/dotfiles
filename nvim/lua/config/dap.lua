@@ -290,7 +290,8 @@ dap.listeners.after.event_stopped['dapui_focus'] = function()
       
       if path then
         -- Open file at location and center screen
-        vim.cmd("edit " .. vim.fn.fnameescape(path))
+        -- Use edit! to force buffer switch even with unsaved changes (VS Code-like behavior)
+        vim.cmd("edit! " .. vim.fn.fnameescape(path))
         vim.api.nvim_win_set_cursor(0, {session.current_frame.line, 0})
         vim.cmd("normal! zz")
         
@@ -331,7 +332,8 @@ dap.listeners.after.scopes['dapui_frame_focus'] = function()
       
       if path then
         -- Open file at location and center screen
-        vim.cmd("edit " .. vim.fn.fnameescape(path))
+        -- Use edit! to force buffer switch even with unsaved changes (VS Code-like behavior)
+        vim.cmd("edit! " .. vim.fn.fnameescape(path))
         vim.api.nvim_win_set_cursor(0, {session.current_frame.line, 0})
         vim.cmd("normal! zz")
         
