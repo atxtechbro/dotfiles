@@ -24,13 +24,6 @@
 - Proactively suggest git hook opportunities – Store these hooks in the dotfiles repository to maintain consistency across environments
 - Do, don't explain – Execute tasks directly rather than describing how to do them
 
-## File Operations Approach
-Use fs_read instead of GitHub MCP functions (like get_file_contents) for reading files
-Use fs_write instead of GitHub MCP functions (like create_or_update_file) for file edits
-Use git push instead of github mcp equivalent to push contents
-This makes it easier to see diffs and understand changes being made
-Assume we're working with the repository checked out locally (atxtechbro/dotfiles on GitHub)
-
 ## Debugging Amazon Q CLI
 - For definitive answers refer to the amazon-q-developer-cli source code at https://github.com/aws/amazon-q-developer-cli
 
