@@ -2,6 +2,46 @@
 
 A collection of configuration files for a consistent development environment across different machines.
 
+## Dotfiles Philosophy
+
+Our dotfiles repository follows three core principles that guide our approach to configuration management:
+
+### The Spilled Coffee Principle
+
+The "spilled coffee principle" states that anyone should be able to destroy their machine and be fully operational again that afternoon. This principle emphasizes:
+
+- All configuration changes should be reproducible across machines
+- Setup scripts should handle file operations instead of manual commands
+- Installation scripts should detect and create required directories
+- Symlinks should be managed by setup scripts rather than manual linking
+- Dependencies and installation steps should be well-documented
+
+This principle ensures resilience and quick recovery from system failures or when setting up new environments.
+
+### The Snowball Method
+
+The "snowball method" focuses on continuous knowledge accumulation and compounding improvements. Like a snowball rolling downhill, gathering more snow and momentum, this principle emphasizes:
+
+- Persistent context: Each development session builds on accumulated knowledge from previous sessions
+- Virtuous cycle: Tools and systems become more effective the more they're used
+- Knowledge persistence: Documentation, configuration, and context are preserved and enhanced over time
+- Compounding returns: Small improvements accumulate and multiply rather than remaining isolated
+- Reduced cognitive load: Less need to "re-learn" or "re-discover" previous solutions
+
+This principle ensures that our development environment continuously improves over time.
+
+### The Versioning Mindset
+
+The "versioning mindset" is the principle that progress happens through iteration rather than reinvention, where small strategic changes compound over time through active feedback loops. It emphasizes:
+
+- Logging what worked and what didn't, then rolling forward with improvements
+- Creating feedback loops across domains so gains in one area reinforce others
+- Focusing on incremental improvements rather than complete rewrites
+- Building on previous knowledge rather than starting from scratch
+- Maintaining history and context to inform future decisions
+
+This principle ensures sustainable, continuous improvement across all aspects of our development environment.
+
 ## Modular Shell Configuration
 
 This repository uses a modular approach to shell configuration:
