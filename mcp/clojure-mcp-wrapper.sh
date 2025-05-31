@@ -57,4 +57,5 @@ log "Sent MCP initialization message"
 
 # Start the MCP server
 log "${GREEN}Starting Clojure MCP server...${NC}"
+log "Using port 7888 to connect to nREPL server"
 exec clojure -X:mcp 2>> "$LOG_FILE"
