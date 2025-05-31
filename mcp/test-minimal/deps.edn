@@ -1,15 +1,13 @@
 {:paths ["src"]
  :deps {}
  :aliases {
-   ;; nREPL server for AI to connect to
-   :nrepl {:extra-paths ["test"] 
-           :extra-deps {nrepl/nrepl {:mvn/version "1.3.1"}}
-           :jvm-opts ["-Djdk.attach.allowAttachSelf"]
-           :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]},
+   ;; nREPL server configuration
+   :nrepl {:extra-deps {nrepl/nrepl {:mvn/version "1.3.1"}}
+           :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]}
    
-   ;; MCP server for AI assistance
+   ;; MCP server configuration
    :mcp {:deps {org.slf4j/slf4j-nop {:mvn/version "2.0.16"}
                 com.bhauman/clojure-mcp {:git/url "https://github.com/bhauman/clojure-mcp.git"
                                          :git/sha "83627e7095f0ebab3d5503a5b2ee94aa6953cb0d"}}
          :exec-fn clojure-mcp.main/start-mcp-server
-         :exec-args {:port 7888}}}}
+         :exec-args {:port 7889}}}}
