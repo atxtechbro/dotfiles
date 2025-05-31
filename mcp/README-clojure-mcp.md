@@ -25,11 +25,7 @@ This will start an nREPL server on port 7888.
 
 ### Starting the Clojure MCP Server
 
-After the nREPL server is running, open a new terminal and start the Clojure MCP server:
-
-```bash
-clj-mcp-start
-```
+After the nREPL server is running, you can use the MCP server through Amazon Q or other MCP clients.
 
 ## Troubleshooting
 
@@ -39,4 +35,4 @@ Steps to resolve:
 
 1. Ensure you've started the nREPL server with `clojure -M:nrepl`
 2. Check that the nREPL server is running on port 7888
-3. Only then start the Clojure MCP server with `clj-mcp-start`
+3. Then try using the Clojure MCP tools through your MCP client
