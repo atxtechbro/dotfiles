@@ -10,12 +10,8 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-# Define paths
-DOTFILES_DIR="$HOME/ppv/pillars/dotfiles"
-CLOJURE_MCP_DIR="$DOTFILES_DIR/mcp/clojure-mcp"
-
 # Check if the server is already running
-if pgrep -f "clojure.*clojure-mcp" > /dev/null; then
+if pgrep -f "clojure.*:mcp" > /dev/null; then
   echo -e "${YELLOW}Clojure MCP server is already running${NC}"
   exit 0
 fi
@@ -29,5 +25,4 @@ fi
 
 # Start the server
 echo -e "${GREEN}Starting Clojure MCP server...${NC}"
-cd "$CLOJURE_MCP_DIR/clojure-mcp"
-exec clojure -M:dev
+exec clojure -X:mcp

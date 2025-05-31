@@ -1,5 +1,5 @@
-{:port 7777
+{:port 7888
  :host "localhost"
- :project-dirs ["~/projects"]
+ :project-dirs ["~/projects" "~/ppv"]
  :history-file "~/.clojure_mcp_history"
  :max-history-entries 1000}
