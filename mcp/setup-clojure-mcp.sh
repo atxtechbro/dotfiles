@@ -89,7 +89,14 @@ mkdir -p "$CONFIG_DIR"
 # Copy configuration template if it doesn't exist
 if [ ! -f "$CONFIG_DIR/config.edn" ]; then
   echo -e "${YELLOW}Creating default configuration...${NC}"
-  cp "$CLOJURE_MCP_DIR/clojure-mcp/config.example.edn" "$CONFIG_DIR/config.edn"
+  
+  # Check if the example config exists in the cloned repo
+  if [ -f "$CLOJURE_MCP_DIR/clojure-mcp/config.example.edn" ]; then
+    cp "$CLOJURE_MCP_DIR/clojure-mcp/config.example.edn" "$CONFIG_DIR/config.edn"
+  else
+    # Use our own example config if the repo doesn't have one
+    cp "$CLOJURE_MCP_DIR/config.example.edn" "$CONFIG_DIR/config.edn"
+  fi
   
   # Update the config with our customizations
   cat > "$CONFIG_DIR/config.edn" << EOF
