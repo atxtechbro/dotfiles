@@ -11,25 +11,35 @@ The Clojure MCP integration requires two separate processes:
 
 Both must be running for the integration to work properly.
 
-## Usage
+## Setup Instructions
 
-### Starting the nREPL Server
+### Step 1: Configure Your Project
 
-First, start an nREPL server in your project directory:
+Make sure your project has the nREPL configuration in `deps.edn`:
+
+```clojure
+{:aliases {
+  ;; nREPL server for AI to connect to
+  :nrepl {:extra-paths ["test"] 
+          :extra-deps {nrepl/nrepl {:mvn/version "1.3.1"}}
+          :jvm-opts ["-Djdk.attach.allowAttachSelf"]
+          :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]}}}
+```
+
+### Step 2: Start the nREPL Server
+
+Start an nREPL server in your project directory:
 
 ```bash
+cd /path/to/your/project
 clojure -M:nrepl
 ```
 
-This will start an nREPL server on port 7888.
+You should see: `nREPL server started on port 7888 on host localhost - nrepl://localhost:7888`
 
-### Starting the Clojure MCP Server
+### Step 3: Use Amazon Q with Clojure MCP
 
-After the nREPL server is running, open a new terminal and start the Clojure MCP server:
-
-```bash
-clj-mcp-start
-```
+After the nREPL server is running, you can use Amazon Q which will automatically connect to the Clojure MCP server.
 
 ## Troubleshooting
 
@@ -39,4 +49,8 @@ Steps to resolve:
 
 1. Ensure you've started the nREPL server with `clojure -M:nrepl`
 2. Check that the nREPL server is running on port 7888
-3. Only then start the Clojure MCP server with `clj-mcp-start`
+3. Then try using Amazon Q again
+
+## Advanced Configuration
+
+For advanced configuration options, see the [official Clojure MCP documentation](https://github.com/bhauman/clojure-mcp).
