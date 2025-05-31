@@ -44,41 +44,17 @@ check_dependency() {
         fi
         ;;
       "clojure")
-        echo -e "${YELLOW}Installing Clojure...${NC}"
-        
-        # Detect OS
-        if [ -f /etc/os-release ]; then
-          . /etc/os-release
-          OS=$NAME
+        if [ -f "$DOTFILES_DIR/utils/install-clojure.sh" ]; then
+          echo -e "${YELLOW}Installing Clojure using the automated script...${NC}"
+          bash "$DOTFILES_DIR/utils/install-clojure.sh"
+          # Check if installation was successful
+          if ! command -v clojure &> /dev/null; then
+            echo -e "${RED}Error: Clojure installation failed.${NC}"
+            exit 1
+          fi
         else
-          OS="Unknown"
-        fi
-        
-        if [[ "$OS" == *"Ubuntu"* ]] || [[ "$OS" == *"Debian"* ]] || [[ "$OS" == *"Mint"* ]]; then
-          # Install dependencies
-          sudo apt update
-          sudo apt install -y curl rlwrap
-          
-          # Install Clojure
-          curl -O https://download.clojure.org/install/linux-install-1.11.1.1273.sh
-          chmod +x linux-install-1.11.1.1273.sh
-          sudo ./linux-install-1.11.1.1273.sh
-          rm linux-install-1.11.1.1273.sh
-        elif [[ "$OS" == *"Fedora"* ]] || [[ "$OS" == *"CentOS"* ]] || [[ "$OS" == *"Red Hat"* ]]; then
-          sudo dnf install -y clojure
-        elif [[ "$OS" == *"Arch"* ]] || [[ "$OS" == *"Manjaro"* ]]; then
-          sudo pacman -S --noconfirm clojure
-        elif [[ "$OSTYPE" == "darwin"* ]]; then
-          brew install clojure/tools/clojure
-        else
-          echo -e "${RED}Error: Clojure installation not supported for your OS.${NC}"
-          echo -e "Please install Clojure manually."
-          exit 1
-        fi
-        
-        # Check if installation was successful
-        if ! command -v clojure &> /dev/null; then
-          echo -e "${RED}Error: Clojure installation failed.${NC}"
+          echo -e "${RED}Error: Clojure is required but not installed.${NC}"
+          echo -e "Please install Clojure first."
           exit 1
         fi
         ;;
