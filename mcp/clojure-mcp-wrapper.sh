@@ -25,4 +25,9 @@ fi
 
 # Start the server
 echo -e "${GREEN}Starting Clojure MCP server...${NC}"
+
+# Use the MCP protocol to communicate with the client
+echo '{"jsonrpc":"2.0","id":1,"method":"mcp.init","params":{"version":"0.1","capabilities":{}}}' >&2
+
+# Run the server with proper error handling
 exec clojure -X:mcp
