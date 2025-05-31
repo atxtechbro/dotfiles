@@ -51,13 +51,10 @@ if ! (echo > /dev/tcp/localhost/7888) 2>/dev/null; then
   exit 1
 fi
 
-# Log that we're starting the server
-log "${GREEN}Starting Clojure MCP server...${NC}"
-
 # Use the MCP protocol to communicate with the client
 echo '{"jsonrpc":"2.0","id":1,"method":"mcp.init","params":{"version":"0.1","capabilities":{}}}' >&2
 log "Sent MCP initialization message"
 
-# Run the server with proper error handling - use port 7889 for the MCP server
-log "Executing: clojure -X:mcp :port 7889"
-exec clojure -X:mcp :port 7889 2>> "$LOG_FILE"
+# Start the MCP server
+log "${GREEN}Starting Clojure MCP server...${NC}"
+exec clojure -X:mcp 2>> "$LOG_FILE"
