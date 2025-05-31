@@ -24,6 +24,21 @@ Features:
 - Offers optional Clojure installation
 - Provides educational information about the JVM
 
+### install-clojure.sh
+
+Installs Clojure and sets up the necessary environment.
+
+```bash
+./install-clojure.sh
+```
+
+Features:
+- Automatically checks for and installs Java dependency if needed
+- Detects operating system and uses appropriate installation method
+- Supports Debian, Fedora, Arch, and macOS
+- Falls back to manual installation for unsupported systems
+- Provides educational information about Clojure and REPL-driven development
+
 ### install-go.sh
 
 Installs Go and sets up the Go workspace.

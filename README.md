@@ -328,6 +328,60 @@ For SSO, the URL typically follows this format:
 https://d-XXXXXXXXXX.awsapps.com/start/#/console?account_id=XXXXXXXXXXXX&role_name=YOUR_ROLE_NAME
 ```
 
+### REPL-Based Development with MCP
+
+This repository includes support for REPL-based development workflows using the Model Context Protocol (MCP), which exemplifies our "Snowball Method" principle. This integration creates a virtuous cycle where each development session builds on the accumulated knowledge of previous sessions.
+
+#### Clojure MCP Integration
+
+The Clojure MCP integration allows you to leverage REPL-driven development with any MCP-compatible AI assistant:
+
+```bash
+# Install and set up Clojure MCP
+cd ~/ppv/pillars/dotfiles/mcp
+./setup-clojure-mcp.sh
+
+# Start the Clojure MCP server
+clj-mcp-start
+
+# In a new terminal, start a REPL session
+clj-mcp
+```
+
+Key features:
+- **Client-Agnostic**: Works with Amazon Q, Claude, GitHub Copilot, or any MCP-compatible client
+- **Persistent Context**: Maintains session history between development sessions
+- **Knowledge Accumulation**: Each session builds on previous ones, creating a snowball effect
+- **Project Summaries**: Generate documentation based on your development history
+
+For example, to create a new Clojure project with MCP integration:
+```bash
+clj-mcp-new-project my-project
+cd my-project
+clj-mcp
+```
+
+To save and load REPL sessions (preserving context):
+```bash
+# Save the current session
+clj-mcp-save-session my-session.edn
+
+# Load a previous session
+clj-mcp-load-session my-session.edn
+```
+
+To generate a project summary based on your REPL history:
+```bash
+clj-mcp-summarize
+```
+
+This implementation demonstrates the "Snowball Method" in action:
+1. **Persistent Context**: The REPL maintains state between evaluations
+2. **Virtuous Cycle**: The more you use it, the more effective it becomes
+3. **Knowledge Persistence**: Session history is preserved and enhanced over time
+4. **Compounding Returns**: Small improvements accumulate and multiply
+5. **Reduced Cognitive Load**: Less need to "re-learn" previous solutions
+
 ## WSL Tips
 - **Distraction-Free Mode**: Press `Alt+Enter` in Windows Terminal to toggle full-screen and hide the taskbar.
 
