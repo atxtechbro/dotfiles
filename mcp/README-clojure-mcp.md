@@ -2,55 +2,84 @@
 
 This directory contains the configuration and scripts for integrating Clojure with the Model Context Protocol (MCP).
 
-## Important: Two-Step Process
+## Overview
 
-The Clojure MCP integration requires two separate processes:
+The Clojure MCP integration allows you to use AI assistants like Amazon Q or Claude with your Clojure REPL environment. This follows the "Snowball Method" principle from our dotfiles philosophy, creating a virtuous cycle where each development session builds on the accumulated knowledge of previous sessions.
 
-1. **nREPL Server**: Provides the Clojure REPL environment
-2. **Clojure MCP Server**: Connects to the nREPL server and exposes MCP tools
+## How It Works
 
-Both must be running for the integration to work properly.
+The integration consists of two main components:
 
-## Setup Instructions
+1. **nREPL Server**: A Clojure REPL environment that runs on port 7888
+2. **Clojure MCP Server**: Connects to the nREPL server and exposes MCP tools to AI assistants
 
-### Step 1: Configure Your Project
+The wrapper script (`clojure-mcp-wrapper.sh`) handles both components automatically:
+- It checks if an nREPL server is running on port 7888
+- If no nREPL server is found, it starts one automatically
+- It then starts the Clojure MCP server that connects to the nREPL server
 
-Make sure your project has the nREPL configuration in `deps.edn`:
+## Usage
 
-```clojure
-{:aliases {
-  ;; nREPL server for AI to connect to
-  :nrepl {:extra-paths ["test"] 
-          :extra-deps {nrepl/nrepl {:mvn/version "1.3.1"}}
-          :jvm-opts ["-Djdk.attach.allowAttachSelf"]
-          :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]}}}
-```
+### Option 1: Using with Amazon Q or Claude Desktop
 
-### Step 2: Start the nREPL Server
+Simply start your AI assistant (Amazon Q or Claude Desktop) and it will automatically use the wrapper script to connect to the Clojure MCP server.
 
-Start an nREPL server in your project directory:
+### Option 2: Manual Usage
+
+You can also run the wrapper script manually:
 
 ```bash
-cd /path/to/your/project
-clojure -M:nrepl
+cd /home/linuxmint-lp/ppv/pillars/dotfiles
+./mcp/clojure-mcp-wrapper.sh
 ```
 
-You should see: `nREPL server started on port 7888 on host localhost - nrepl://localhost:7888`
+## Configuration
 
-### Step 3: Use Amazon Q with Clojure MCP
+The configuration is defined in the `deps.edn` file in the project root:
 
-After the nREPL server is running, you can use Amazon Q which will automatically connect to the Clojure MCP server.
+```clojure
+:aliases {
+  ;; nREPL server configuration
+  :nrepl {:extra-deps {nrepl/nrepl {:mvn/version "1.3.1"}}
+          :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]},
+  
+  ;; MCP server configuration
+  :mcp {:deps {org.slf4j/slf4j-nop {:mvn/version "2.0.16"}
+               com.bhauman/clojure-mcp {:git/url "https://github.com/bhauman/clojure-mcp.git"
+                                        :git/sha "83627e7095f0ebab3d5503a5b2ee94aa6953cb0d"}}
+        :exec-fn clojure-mcp.main/start-mcp-server
+        :exec-args {:port 7888
+                    :host "localhost"}}}
+```
 
 ## Troubleshooting
 
-If you encounter a "Connection refused" error when starting the Clojure MCP server, it means the nREPL server is not running or not accessible on port 7888.
+If you encounter issues with the Clojure MCP integration:
 
-Steps to resolve:
+1. Check if the nREPL server is running:
+   ```bash
+   nc -zv localhost 7888
+   ```
 
-1. Ensure you've started the nREPL server with `clojure -M:nrepl`
-2. Check that the nREPL server is running on port 7888
-3. Then try using Amazon Q again
+2. Check the debug log for any errors:
+   ```bash
+   cat /tmp/clojure-mcp-debug.log
+   ```
 
-## Advanced Configuration
+3. For Claude Desktop, check the MCP server logs:
+   ```bash
+   cat ~/.config/Claude/logs/mcp-server-clojure-mcp.log
+   ```
 
-For advanced configuration options, see the [official Clojure MCP documentation](https://github.com/bhauman/clojure-mcp).
+4. Try running the minimal test case:
+   ```bash
+   cd /home/linuxmint-lp/ppv/pillars/dotfiles/mcp/test-minimal
+   ./test-wrapper.sh
+   ```
+
+## Key Implementation Details
+
+- The wrapper script follows the "Spilled Coffee Principle" - it works regardless of where it's called from
+- The `host` parameter is explicitly set to "localhost" in the configuration to ensure proper connection
+- The script automatically starts the nREPL server if it's not already running
+- The script uses absolute paths to ensure consistency across different environments
