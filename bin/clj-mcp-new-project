@@ -1,0 +1,103 @@
+#!/bin/bash
+# clj-mcp-new-project - Create a new Clojure project with MCP integration
+# This script follows the "spilled coffee principle" - ensuring reproducible setup
+
+set -e
+
+# Define colors for output
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+# Check if a project name was provided
+if [ -z "$1" ]; then
+  echo -e "${RED}Error: No project name provided.${NC}"
+  echo -e "Usage: clj-mcp-new-project <project-name>"
+  exit 1
+fi
+
+PROJECT_NAME="$1"
+DOTFILES_DIR="$HOME/ppv/pillars/dotfiles"
+TEMPLATES_DIR="$DOTFILES_DIR/mcp/clojure-mcp/templates"
+
+echo -e "${YELLOW}Creating new Clojure project: $PROJECT_NAME${NC}"
+
+# Create the project directory
+mkdir -p "$PROJECT_NAME/src/${PROJECT_NAME//-/_}/core"
+mkdir -p "$PROJECT_NAME/test/${PROJECT_NAME//-/_}/core"
+
+# Check if the directories were created successfully
+if [ ! -d "$PROJECT_NAME" ]; then
+  echo -e "${RED}Error: Failed to create project directory.${NC}"
+  exit 1
+fi
+
+# Create the deps.edn file
+if [ -f "$TEMPLATES_DIR/deps.edn" ]; then
+  sed "s/{{project-name}}/${PROJECT_NAME//-/_}/g" "$TEMPLATES_DIR/deps.edn" > "$PROJECT_NAME/deps.edn"
+else
+  echo -e "${YELLOW}Template deps.edn not found, creating a basic one...${NC}"
+  cat > "$PROJECT_NAME/deps.edn" << EOL
+{:paths ["src"]
+ :deps {org.clojure/clojure {:mvn/version "1.11.1"}}
+ :aliases {
+   ;; nREPL server for AI to connect to
+   :nrepl {:extra-paths ["test"] 
+           :extra-deps {nrepl/nrepl {:mvn/version "1.3.1"}}
+           :jvm-opts ["-Djdk.attach.allowAttachSelf"]
+           :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]}}}
+EOL
+fi
+
+# Create a basic core.clj file
+cat > "$PROJECT_NAME/src/${PROJECT_NAME//-/_}/core.clj" << EOL
+(ns ${PROJECT_NAME//-/_}.core)
+
+(defn foo
+  "I don't do a whole lot."
+  [x]
+  (println x "Hello, World!"))
+EOL
+
+# Create a basic test file
+cat > "$PROJECT_NAME/test/${PROJECT_NAME//-/_}/core_test.clj" << EOL
+(ns ${PROJECT_NAME//-/_}.core-test
+  (:require [clojure.test :refer :all]
+            [${PROJECT_NAME//-/_}.core :refer :all]))
+
+(deftest a-test
+  (testing "FIXME, I fail."
+    (is (= 0 1))))
+EOL
+
+# Create a README.md file
+cat > "$PROJECT_NAME/README.md" << EOL
+# ${PROJECT_NAME}
+
+A Clojure project with MCP integration.
+
+## Usage
+
+### Start the nREPL server
+
+\`\`\`bash
+clojure -M:nrepl
+\`\`\`
+
+### In another terminal, start the Clojure MCP server
+
+\`\`\`bash
+clj-mcp-start
+\`\`\`
+
+## License
+
+Copyright © $(date +%Y)
+EOL
+
+echo -e "${GREEN}Successfully created new Clojure project: $PROJECT_NAME${NC}"
+echo -e "To start using it:"
+echo -e "1. ${YELLOW}cd $PROJECT_NAME${NC}"
+echo -e "2. Start the nREPL server: ${YELLOW}clojure -M:nrepl${NC}"
+echo -e "3. In another terminal, start the Clojure MCP server: ${YELLOW}clj-mcp-start${NC}"

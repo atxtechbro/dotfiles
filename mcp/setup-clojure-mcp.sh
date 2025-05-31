@@ -80,12 +80,12 @@ DEPS_FILE="$CONFIG_DIR/deps.edn"
 
 # Get the latest commit SHA from the clojure-mcp repository
 echo -e "${YELLOW}Fetching latest commit SHA from clojure-mcp repository...${NC}"
-LATEST_SHA=$(curl -s https://api.github.com/repos/bhauman/clojure-mcp/commits/main | grep -o '"sha": "[^"]*"' | head -1 | cut -d'"' -f4 | cut -c1-7)
+LATEST_SHA=$(curl -s https://api.github.com/repos/bhauman/clojure-mcp/commits/main | grep -o '"sha": "[^"]*"' | head -1 | cut -d'"' -f4)
 
 if [ -z "$LATEST_SHA" ]; then
   echo -e "${RED}Error: Could not fetch latest commit SHA.${NC}"
   echo -e "Using placeholder SHA. Please update manually."
-  LATEST_SHA="LATEST_SHA_HERE"
+  LATEST_SHA="83627e7095f0ebab3d5503a5b2ee94aa6953cb0d"
 fi
 
 # Check if deps.edn exists

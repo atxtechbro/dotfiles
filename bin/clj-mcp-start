@@ -1,6 +1,6 @@
 #!/bin/bash
-# clojure-mcp-wrapper.sh - Wrapper script for Clojure MCP server
-# This script follows the pattern of other MCP wrapper scripts in the repository
+# clj-mcp-start - Start the Clojure MCP server
+# This script follows the "spilled coffee principle" - ensuring reproducible setup
 
 set -e
 
@@ -14,13 +14,6 @@ NC='\033[0m' # No Color
 if pgrep -f "clojure.*:mcp" > /dev/null; then
   echo -e "${YELLOW}Clojure MCP server is already running${NC}"
   exit 0
-fi
-
-# Check for required dependencies
-if ! command -v clojure &> /dev/null; then
-  echo -e "${RED}Error: clojure is required but not installed.${NC}"
-  echo -e "Please install clojure first."
-  exit 1
 fi
 
 # Check if an nREPL server is running on port 7888
