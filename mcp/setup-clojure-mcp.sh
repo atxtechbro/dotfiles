@@ -17,15 +17,81 @@ CONFIG_DIR="$HOME/.clojure-mcp"
 
 echo -e "${GREEN}Setting up Clojure MCP server...${NC}"
 
-# Check for required dependencies
+# Check for required dependencies and install if possible
 check_dependency() {
   if ! command -v $1 &> /dev/null; then
-    echo -e "${RED}Error: $1 is required but not installed.${NC}"
-    echo -e "Please install $1 first."
-    exit 1
+    echo -e "${YELLOW}$1 is not installed. Attempting to install...${NC}"
+    
+    case "$1" in
+      "git")
+        echo -e "${RED}Error: git is required but not installed.${NC}"
+        echo -e "Please install git first."
+        exit 1
+        ;;
+      "java")
+        if [ -f "$DOTFILES_DIR/utils/install-java.sh" ]; then
+          echo -e "${YELLOW}Installing Java using the automated script...${NC}"
+          bash "$DOTFILES_DIR/utils/install-java.sh"
+          # Check if installation was successful
+          if ! command -v java &> /dev/null; then
+            echo -e "${RED}Error: Java installation failed.${NC}"
+            exit 1
+          fi
+        else
+          echo -e "${RED}Error: Java is required but not installed.${NC}"
+          echo -e "Please install Java first."
+          exit 1
+        fi
+        ;;
+      "clojure")
+        echo -e "${YELLOW}Installing Clojure...${NC}"
+        
+        # Detect OS
+        if [ -f /etc/os-release ]; then
+          . /etc/os-release
+          OS=$NAME
+        else
+          OS="Unknown"
+        fi
+        
+        if [[ "$OS" == *"Ubuntu"* ]] || [[ "$OS" == *"Debian"* ]] || [[ "$OS" == *"Mint"* ]]; then
+          # Install dependencies
+          sudo apt update
+          sudo apt install -y curl rlwrap
+          
+          # Install Clojure
+          curl -O https://download.clojure.org/install/linux-install-1.11.1.1273.sh
+          chmod +x linux-install-1.11.1.1273.sh
+          sudo ./linux-install-1.11.1.1273.sh
+          rm linux-install-1.11.1.1273.sh
+        elif [[ "$OS" == *"Fedora"* ]] || [[ "$OS" == *"CentOS"* ]] || [[ "$OS" == *"Red Hat"* ]]; then
+          sudo dnf install -y clojure
+        elif [[ "$OS" == *"Arch"* ]] || [[ "$OS" == *"Manjaro"* ]]; then
+          sudo pacman -S --noconfirm clojure
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+          brew install clojure/tools/clojure
+        else
+          echo -e "${RED}Error: Clojure installation not supported for your OS.${NC}"
+          echo -e "Please install Clojure manually."
+          exit 1
+        fi
+        
+        # Check if installation was successful
+        if ! command -v clojure &> /dev/null; then
+          echo -e "${RED}Error: Clojure installation failed.${NC}"
+          exit 1
+        fi
+        ;;
+      *)
+        echo -e "${RED}Error: $1 is required but not installed.${NC}"
+        echo -e "Please install $1 first."
+        exit 1
+        ;;
+    esac
   fi
 }
 
+# Check for required dependencies
 check_dependency "git"
 check_dependency "java"
 check_dependency "clojure"
