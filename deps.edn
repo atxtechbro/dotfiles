@@ -12,4 +12,5 @@
                 com.bhauman/clojure-mcp {:git/url "https://github.com/bhauman/clojure-mcp.git"
                                          :git/sha "83627e7095f0ebab3d5503a5b2ee94aa6953cb0d"}}
          :exec-fn clojure-mcp.main/start-mcp-server
-         :exec-args {:port 7888}}}}
+         :exec-args {:port 7888
+                     :host "localhost"}}}}
