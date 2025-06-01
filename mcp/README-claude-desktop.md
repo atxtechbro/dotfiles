@@ -2,6 +2,8 @@
 
 This document explains how to use Claude Desktop as your primary MCP client with Clojure MCP server integration.
 
+> **⚠️ IMPORTANT NOTICE**: The Claude Desktop Debian repository (https://github.com/aaddrick/claude-desktop-debian) was archived by the owner on May 16, 2025. The owner stated: "Sorry all, I no longer use Debian, so can't maintain this further. Please feel free to fork and continue developing." This means the repository is now read-only and will not receive updates or fixes. We should consider forking the repository or finding an alternative solution in the future.
+
 ## Why Claude Desktop?
 
 Claude Desktop offers several advantages as an MCP client:

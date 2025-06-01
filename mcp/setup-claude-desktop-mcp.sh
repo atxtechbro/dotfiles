@@ -1,6 +1,12 @@
 #!/bin/bash
 # setup-claude-desktop-mcp.sh - Install and configure Claude Desktop with Clojure MCP integration
 # This script follows the "spilled coffee principle" - ensuring reproducible setup
+#
+# ⚠️ IMPORTANT NOTICE: The Claude Desktop Debian repository (https://github.com/aaddrick/claude-desktop-debian)
+# was archived by the owner on May 16, 2025. The owner stated: "Sorry all, I no longer use Debian, so can't
+# maintain this further. Please feel free to fork and continue developing." This means the repository is now
+# read-only and will not receive updates or fixes. We should consider forking the repository or finding an
+# alternative solution in the future.
 
 set -e
 
@@ -70,14 +76,20 @@ echo -e "${YELLOW}Installing Claude Desktop for Debian...${NC}"
 CLAUDE_DESKTOP_DIR="$DOTFILES_DIR/mcp/claude-desktop-debian"
 
 # Clone or update the Claude Desktop Debian repository
+# Note: This repository was archived on May 16, 2025, so git pull may not work in the future
 if [ -d "$CLAUDE_DESKTOP_DIR" ]; then
   echo -e "${YELLOW}Updating existing Claude Desktop Debian repository...${NC}"
   cd "$CLAUDE_DESKTOP_DIR"
-  git pull
+  git pull || echo -e "${YELLOW}Warning: Unable to update repository. It may be archived.${NC}"
 else
   echo -e "${YELLOW}Cloning Claude Desktop Debian repository...${NC}"
+  echo -e "${YELLOW}Note: This repository has been archived by the owner and is read-only.${NC}"
   mkdir -p "$(dirname "$CLAUDE_DESKTOP_DIR")"
-  git clone https://github.com/aaddrick/claude-desktop-debian.git "$CLAUDE_DESKTOP_DIR"
+  git clone https://github.com/aaddrick/claude-desktop-debian.git "$CLAUDE_DESKTOP_DIR" || {
+    echo -e "${RED}Error: Failed to clone repository. It may be unavailable.${NC}"
+    echo -e "${YELLOW}Consider forking the repository or finding an alternative solution.${NC}"
+    exit 1
+  }
   cd "$CLAUDE_DESKTOP_DIR"
 fi
 
@@ -158,3 +170,6 @@ echo -e "1. You'll see a 'Claude for Windows' screen with a black 'Get Started' 
 echo -e "   (Note: Yes, it says 'Windows' even though you're on Linux)"
 echo -e "2. Click 'Get Started' to proceed to the email sign-in screen"
 echo -e "3. Sign in with the email associated with your Claude account"
+echo -e "\n${YELLOW}⚠️ IMPORTANT: The Claude Desktop Debian repository has been archived by the owner.${NC}"
+echo -e "${YELLOW}This means it will not receive updates or fixes. Consider forking the repository${NC}"
+echo -e "${YELLOW}or finding an alternative solution in the future.${NC}"
