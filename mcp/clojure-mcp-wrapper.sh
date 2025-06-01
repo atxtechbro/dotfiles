@@ -10,7 +10,9 @@ NC='\033[0m' # No Color
 
 # Get the absolute path of the script directory
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-PROJECT_DIR="$( cd "$SCRIPT_DIR/.." &> /dev/null && pwd )"
+# Use HOME environment variable if set, otherwise default to parent directory
+# This allows Clojure MCP to access files beyond the dotfiles repo
+PROJECT_DIR="${CLOJURE_MCP_PROJECT_DIR:-$HOME}"
 
 # Define log file
 LOG_FILE="/tmp/clojure-mcp-debug.log"
