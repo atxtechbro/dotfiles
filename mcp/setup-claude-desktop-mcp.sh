@@ -2,6 +2,9 @@
 # setup-claude-desktop-mcp.sh - Install and configure Claude Desktop with Clojure MCP integration
 # This script follows the "spilled coffee principle" - ensuring reproducible setup
 #
+# NOTE: This script is only needed for Linux users. Windows and macOS users can download
+# the official Claude Desktop app from https://claude.ai/download
+#
 # ⚠️ IMPORTANT NOTICE: The Claude Desktop Debian repository (https://github.com/aaddrick/claude-desktop-debian)
 # was archived by the owner on May 16, 2025. The owner stated: "Sorry all, I no longer use Debian, so can't
 # maintain this further. Please feel free to fork and continue developing." This means the repository is now
