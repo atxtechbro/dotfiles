@@ -85,6 +85,12 @@ else
   log "${GREEN}nREPL server already running on port 7888${NC}"
 fi
 
+# Add a startup delay to ensure the server is fully initialized before accepting connections
+STARTUP_DELAY=5
+log "${YELLOW}Adding a ${STARTUP_DELAY} second startup delay to ensure proper initialization...${NC}"
+sleep $STARTUP_DELAY
+log "${GREEN}Startup delay complete${NC}"
+
 # Use the MCP protocol to communicate with the client
 echo '{"jsonrpc":"2.0","id":1,"method":"mcp.init","params":{"version":"0.1","capabilities":{}}}' >&2
 log "Sent MCP initialization message"
