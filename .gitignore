@@ -62,3 +62,7 @@ mcp/servers/
 
 # Clojure cache
 .cpcache/
+
+# MCP client directories
+mcp/clients/
+.nrepl-port
