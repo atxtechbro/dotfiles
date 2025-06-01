@@ -151,8 +151,15 @@ mkdir -p ~/.aws/amazonq
 ln -sf "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
 
 # Claude Desktop MCP integration
-mkdir -p ~/.config/Claude
-cp "$DOT_DEN"/mcp/claude-desktop-mcp.json ~/.config/Claude/mcp.json
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  # macOS path
+  mkdir -p "$HOME/Library/Application Support/Claude"
+  cp "$DOT_DEN"/mcp/claude-desktop-mcp.json "$HOME/Library/Application Support/Claude/claude_desktop_config.json"
+else
+  # Windows and Linux path
+  mkdir -p ~/.config/Claude
+  cp "$DOT_DEN"/mcp/claude-desktop-mcp.json ~/.config/Claude/claude_desktop_config.json
+fi
 
 # Set up Git configuration
 echo "Setting up Git configuration..."
