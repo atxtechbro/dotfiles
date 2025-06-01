@@ -154,6 +154,20 @@ ln -sf "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
 mkdir -p ~/.config/Claude
 cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json
 
+# Clojure MCP home setup
+echo "Setting up Clojure MCP in home directory..."
+if [ -f "$DOT_DEN/deps.edn" ]; then
+  # Copy deps.edn to home directory for Clojure MCP
+  cp "$DOT_DEN/deps.edn" "$HOME/deps.edn"
+  echo "Copied deps.edn to home directory for Clojure MCP"
+  
+  # Create symlink for clojure-mcp-wrapper.sh in home directory
+  ln -sf "$DOT_DEN/mcp/clojure-mcp-wrapper.sh" "$HOME/clojure-mcp-wrapper.sh"
+  echo "Created symlink for clojure-mcp-wrapper.sh in home directory"
+else
+  echo "Warning: deps.edn not found in $DOT_DEN. Skipping Clojure MCP home setup."
+fi
+
 # Set up Git configuration
 echo "Setting up Git configuration..."
 gitconfig_path="$HOME/.gitconfig"
