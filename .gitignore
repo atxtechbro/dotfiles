@@ -51,3 +51,9 @@ venv/
 env/
 .env/
 mcp/servers/aws-docs/venv/
+
+# MCP servers Git repositories
+mcp/servers/*/.git/
+mcp/servers/*/node_modules/
+mcp/servers/*/.github/
+mcp/servers/*/.gitignore
