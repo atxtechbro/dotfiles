@@ -155,8 +155,12 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   # macOS path
   mkdir -p "$HOME/Library/Application Support/Claude"
   cp "$DOT_DEN"/mcp/claude-desktop-mcp.json "$HOME/Library/Application Support/Claude/claude_desktop_config.json"
+elif [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" || "$OSTYPE" == "cygwin" ]]; then
+  # Windows path
+  mkdir -p "$APPDATA/Claude"
+  cp "$DOT_DEN"/mcp/claude-desktop-mcp.json "$APPDATA/Claude/claude_desktop_config.json"
 else
-  # Windows and Linux path
+  # Linux path
   mkdir -p ~/.config/Claude
   cp "$DOT_DEN"/mcp/claude-desktop-mcp.json ~/.config/Claude/claude_desktop_config.json
 fi
