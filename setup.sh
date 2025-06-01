@@ -151,20 +151,17 @@ mkdir -p ~/.aws/amazonq
 ln -sf "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
 
 # Claude Desktop MCP integration
-mkdir -p ~/.config/Claude
-cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/mcp.json
-
-# Check if Claude Desktop MCP setup script exists and offer to run it
-if [[ -f "$DOT_DEN/mcp/setup-claude-desktop-mcp.sh" ]]; then
+# Check if Claude Desktop setup script exists and offer to run it
+if [[ -f "$DOT_DEN/mcp/setup-claude-desktop.sh" ]]; then
   echo -e "${YELLOW}Claude Desktop MCP integration is available.${NC}"
   echo -e "Would you like to set up Claude Desktop as your primary MCP client? (y/n)"
   read -r setup_claude
   if [[ "$setup_claude" =~ ^[Yy]$ ]]; then
     echo "Setting up Claude Desktop with Clojure MCP integration..."
-    bash "$DOT_DEN/mcp/setup-claude-desktop-mcp.sh"
+    bash "$DOT_DEN/mcp/setup-claude-desktop.sh"
   else
     echo "Skipping Claude Desktop setup. You can run it later with:"
-    echo -e "${GREEN}bash $DOT_DEN/mcp/setup-claude-desktop-mcp.sh${NC}"
+    echo -e "${GREEN}bash $DOT_DEN/mcp/setup-claude-desktop.sh${NC}"
   fi
 fi
 
