@@ -1,7 +1,7 @@
 #!/bin/bash
 # Setup script for Claude Desktop with MCP integration
-# This script follows the "spilled coffee principle" - ensuring reproducible setup
-# and the "versioning mindset" - building on previous work rather than reinventing
+# This script follows the "Spilled Coffee Principle" - ensuring reproducible setup
+# and the "Versioning Mindset" - building on previous work rather than reinventing
 #
 # NOTE: For Windows and macOS users, download the official Claude Desktop app from:
 # https://claude.ai/download
