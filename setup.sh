@@ -152,7 +152,7 @@ ln -sf "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
 
 # Claude Desktop MCP integration
 mkdir -p ~/.config/Claude
-cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json
+cp "$DOT_DEN"/mcp/claude-desktop-mcp.json ~/.config/Claude/mcp.json
 
 # Set up Git configuration
 echo "Setting up Git configuration..."

@@ -1,0 +1,9 @@
+{
+  "servers": [
+    {
+      "name": "clojure-mcp",
+      "url": "http://localhost:7777",
+      "enabled": true
+    }
+  ]
+}
