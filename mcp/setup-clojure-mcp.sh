@@ -85,26 +85,8 @@ else
   git clone https://github.com/bhauman/clojure-mcp.git "$CLOJURE_MCP_DIR/clojure-mcp"
 fi
 
-# Create configuration directory if it doesn't exist
-mkdir -p "$CONFIG_DIR"
-
-# Create project-specific configuration directory
-echo -e "${YELLOW}Creating project-specific configuration...${NC}"
-mkdir -p "$DOTFILES_DIR/.clojure-mcp"
-
-# Create project-specific configuration with broader access
-cat > "$DOTFILES_DIR/.clojure-mcp/config.edn" << EOF
-{:port 7777
- :host "localhost"
- :allowed-directories ["."
-                      ".."
-                      "../.."
-                      "../../.."
-                      "~/ppv"
-                      "~/ppv/pillars"
-                      "~/ppv/pillars/dotfiles"
-                      "~/ppv/pillars/Sertifi"]}
-EOF
+# Note: Project-specific configuration is stored directly in the repository
+# at $DOTFILES_DIR/.clojure-mcp/config.edn and doesn't need to be generated
 
 # Make the wrapper script executable
 chmod +x "$DOTFILES_DIR/mcp/clojure-mcp-wrapper.sh"
