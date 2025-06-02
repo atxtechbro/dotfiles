@@ -94,9 +94,10 @@ log "${GREEN}Starting Clojure MCP server...${NC}"
 log "Using port 7888 for MCP server and nREPL connection"
 log "Using deps.edn from: $PROJECT_DIR/deps.edn"
 
-# Change to home directory first to ensure consistent configuration loading
+# Change to home directory and execute from there to ensure configuration is shared across all directories
 cd "$HOME"
 log "Changed to home directory: $(pwd)"
 
-# Execute with full path to ensure consistency
-cd "$PROJECT_DIR" && exec clojure -X:mcp 2>> "$LOG_FILE"
+# Execute the MCP server from the home directory, but using the project's deps.edn
+log "Starting MCP server from home directory with project deps.edn"
+exec clojure -Sdeps "{:deps {org.slf4j/slf4j-nop {:mvn/version \"2.0.16\"} com.bhauman/clojure-mcp {:local/root \"$PROJECT_DIR\"}}}" -X clojure-mcp.main/start-mcp-server :port 7888 2>> "$LOG_FILE"
