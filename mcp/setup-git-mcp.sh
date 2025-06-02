@@ -20,11 +20,7 @@ if ! command -v python3 &> /dev/null; then
     exit 1
 fi
 
-# Check if pip is installed
-if ! command -v pip3 &> /dev/null; then
-    echo "Error: pip3 is not installed. Please install pip3 first."
-    exit 1
-fi
+# Using uv for package management
 
 # Check if Git is installed
 if ! command -v git &> /dev/null; then
@@ -54,32 +50,31 @@ fi
 echo "Setting up Python environment for Git MCP server..."
 cd "$CURRENT_SCRIPT_DIRECTORY/servers/git-mcp-server"
 
-# Check if requirements.txt exists
-if [ -f "requirements.txt" ]; then
-    echo "Installing Python dependencies..."
-    pip3 install -r requirements.txt --user
+# Install using pyproject.toml with uv
+if [ -f "pyproject.toml" ]; then
+    # Create and use a virtual environment
+    echo "Creating virtual environment..."
+    uv venv .venv
+    source .venv/bin/activate
+    
+    echo "Installing Python dependencies from pyproject.toml..."
+    uv pip install -e .
 else
-    echo "Warning: No requirements.txt found. Skipping dependency installation."
+    echo "Warning: No pyproject.toml found. Installation may be incomplete."
 fi
 
-# Check if setup.py exists and install the package
-if [ -f "setup.py" ]; then
-    echo "Installing the Git MCP server package..."
-    pip3 install -e . --user
-fi
-
-# Make the entry point executable if it exists
-if [ -f "git_mcp_server.py" ]; then
-    chmod +x "git_mcp_server.py"
-    echo "Made entry point executable"
-elif [ -f "main.py" ]; then
-    chmod +x "main.py"
-    echo "Made entry point executable"
-elif [ -f "app.py" ]; then
-    chmod +x "app.py"
-    echo "Made entry point executable"
+# Make the main module executable
+MAIN_MODULE_PATH="$CURRENT_SCRIPT_DIRECTORY/servers/git-mcp-server/src/mcp_server_git/__main__.py"
+if [ -f "$MAIN_MODULE_PATH" ]; then
+    chmod +x "$MAIN_MODULE_PATH"
+    echo "Made main module executable: $MAIN_MODULE_PATH"
+    
+    # Create a symlink to make it easier to run
+    ln -sf "$MAIN_MODULE_PATH" "$CURRENT_SCRIPT_DIRECTORY/servers/git-mcp-server/git_mcp_server.py"
+    chmod +x "$CURRENT_SCRIPT_DIRECTORY/servers/git-mcp-server/git_mcp_server.py"
+    echo "Created executable symlink: git_mcp_server.py"
 else
-    echo "Warning: Could not identify the main Python script. Please check the repository structure."
+    echo "Warning: Could not find the main module at $MAIN_MODULE_PATH"
 fi
 
 echo "Git MCP server setup complete!"

@@ -10,5 +10,9 @@
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# No fallback - ride or die with the built version
-exec node "$SCRIPT_DIR/servers/git-mcp-server/dist/index.js"
+# Path to the Git MCP server directory
+SERVER_DIR="$SCRIPT_DIR/servers/git-mcp-server"
+
+# Activate the virtual environment and run the Python module
+source "$SERVER_DIR/.venv/bin/activate"
+exec python -m mcp_server_git "$@"
