@@ -10,7 +10,7 @@ NC='\033[0m' # No Color
 
 # Get the absolute path of the script directory
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-PROJECT_DIR="$( cd "$SCRIPT_DIR/.." &> /dev/null && pwd )"
+PROJECT_DIR="$( cd "$SCRIPT_DIR/servers/clojure-mcp" &> /dev/null && pwd )"
 
 # Define log file
 LOG_FILE="/tmp/clojure-mcp-debug.log"

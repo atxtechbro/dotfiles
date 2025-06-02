@@ -26,6 +26,7 @@ This standardized approach makes it easy to add more MCP servers in the future f
 | Filesystem | Local filesystem operations | None required | Built from source | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/filesystem#filesystem-mcp-server) |
 | Git | Git repository operations | None required | Built from source | [Our Repository](https://github.com/atxtechbro/git-mcp-server#git-mcp-server) |
 | Google Drive | Google Drive file operations | OAuth credentials from `.bash_secrets` | Docker container | [Official Docs](https://github.com/modelcontextprotocol/servers/tree/main/src/gdrive#authentication) |
+| Clojure | REPL-driven development | None required | Cloned from source | [Official Repo](https://github.com/bhauman/clojure-mcp) |
 
 ## Setup Instructions
 
@@ -118,6 +119,7 @@ Based on our current experience, here's a working procedure for adding new MCP s
    - Create `setup-<server-name>-mcp.sh` for one-time setup tasks
    - For Docker-based servers, include image building steps
    - For package-based servers, document installation requirements
+   - Clone source repositories into the `servers/` subdirectory
 
 4. **Document the integration**:
    - Add an entry to the MCP Integrations table in the README

@@ -12,7 +12,7 @@ NC='\033[0m' # No Color
 
 # Define paths
 DOTFILES_DIR="$HOME/ppv/pillars/dotfiles"
-CLOJURE_MCP_DIR="$DOTFILES_DIR/mcp/clojure-mcp"
+CLOJURE_MCP_DIR="$DOTFILES_DIR/mcp/servers"
 CONFIG_DIR="$HOME/.clojure-mcp"
 
 echo -e "${GREEN}Setting up Clojure MCP server...${NC}"
@@ -72,6 +72,9 @@ check_dependency "git"
 check_dependency "java"
 check_dependency "clojure"
 
+# Create servers directory if it doesn't exist
+mkdir -p "$CLOJURE_MCP_DIR"
+
 # Clone or update the Clojure MCP repository
 if [ -d "$CLOJURE_MCP_DIR/clojure-mcp" ]; then
   echo -e "${YELLOW}Updating existing Clojure MCP repository...${NC}"
@@ -79,7 +82,6 @@ if [ -d "$CLOJURE_MCP_DIR/clojure-mcp" ]; then
   git pull
 else
   echo -e "${YELLOW}Cloning Clojure MCP repository...${NC}"
-  mkdir -p "$CLOJURE_MCP_DIR"
   git clone https://github.com/bhauman/clojure-mcp.git "$CLOJURE_MCP_DIR/clojure-mcp"
 fi
 
