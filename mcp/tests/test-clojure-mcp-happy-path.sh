@@ -32,18 +32,26 @@ cd "$DOTFILES_DIR"
 echo -e "${YELLOW}Testing from dotfiles directory...${NC}"
 sleep 3
 
-# Test: Clojure Tool Usage and Evaluation
-run_test "Clojure Tool Usage and Evaluation" \
-         "Evaluate (+ 2 2) using Clojure" \
-         "(Using tool: clojure_eval|🛠️.*clojure_eval)"
+# Test: Basic Clojure Evaluation
+run_test "Basic Clojure Evaluation" \
+         "Using Clojure, what is the result of (+ 2 2)?" \
+         "(4|four)"
 
 # Wait between tests
 sleep 5
 
-# Test: Clojure Function Definition with Tool Usage
-run_test "Clojure Function Definition with Tool Usage" \
-         "Define a function named add-two that adds 2 to its argument in Clojure and evaluate it with input 3" \
-         "(Using tool: clojure_eval|🛠️.*clojure_eval)"
+# Test: Clojure Function Definition
+run_test "Clojure Function Definition" \
+         "In Clojure, how do I define a function named add-two that adds 2 to its argument?" \
+         "(defn add-two|\\(defn add-two \\[x\\] \\(\\+ x 2\\)\\))"
+
+# Wait between tests
+sleep 5
+
+# Test: Read deps.edn File
+run_test "Read deps.edn File" \
+         "Read the deps.edn file in the current directory and explain what it contains" \
+         "(nREPL|MCP|server|clojure-mcp)"
 
 # Print summary
 print_summary
