@@ -104,9 +104,6 @@ if [ ! -f "$CONFIG_DIR/config.edn" ]; then
   cat > "$CONFIG_DIR/config.edn" << EOF
 {:port 7777
  :host "localhost"
- :project-dirs ["~/ppv"]
- :history-file "~/.clojure_mcp_history"
- :max-history-entries 1000
  :allowed-directories ["."
                       "~/ppv"
                       "~/ppv/pillars/dotfiles"]}
