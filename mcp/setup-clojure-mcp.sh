@@ -88,27 +88,17 @@ fi
 # Create configuration directory if it doesn't exist
 mkdir -p "$CONFIG_DIR"
 
-# Copy configuration template if it doesn't exist
-if [ ! -f "$CONFIG_DIR/config.edn" ]; then
-  echo -e "${YELLOW}Creating default configuration...${NC}"
-  
-  # Check if the example config exists in the cloned repo
-  if [ -f "$CLOJURE_MCP_DIR/clojure-mcp/config.example.edn" ]; then
-    cp "$CLOJURE_MCP_DIR/clojure-mcp/config.example.edn" "$CONFIG_DIR/config.edn"
-  else
-    # Use our own example config if the repo doesn't have one
-    cp "$CLOJURE_MCP_DIR/config.example.edn" "$CONFIG_DIR/config.edn"
-  fi
-  
-  # Update the config with our customizations
-  cat > "$CONFIG_DIR/config.edn" << EOF
+# Always create/update the configuration file to ensure it has the latest settings
+echo -e "${YELLOW}Creating/updating configuration...${NC}"
+
+# Write our configuration directly
+cat > "$CONFIG_DIR/config.edn" << EOF
 {:port 7777
  :host "localhost"
  :allowed-directories ["."
                       "~/ppv"
                       "~/ppv/pillars/dotfiles"]}
 EOF
-fi
 
 # Make the wrapper script executable
 chmod +x "$DOTFILES_DIR/mcp/clojure-mcp-wrapper.sh"
