@@ -88,16 +88,22 @@ fi
 # Create configuration directory if it doesn't exist
 mkdir -p "$CONFIG_DIR"
 
-# Always create/update the configuration file to ensure it has the latest settings
-echo -e "${YELLOW}Creating/updating configuration...${NC}"
+# Create project-specific configuration directory
+echo -e "${YELLOW}Creating project-specific configuration...${NC}"
+mkdir -p "$DOTFILES_DIR/.clojure-mcp"
 
-# Write our configuration directly
-cat > "$CONFIG_DIR/config.edn" << EOF
+# Create project-specific configuration with broader access
+cat > "$DOTFILES_DIR/.clojure-mcp/config.edn" << EOF
 {:port 7777
  :host "localhost"
  :allowed-directories ["."
+                      ".."
+                      "../.."
+                      "../../.."
                       "~/ppv"
-                      "~/ppv/pillars/dotfiles"]}
+                      "~/ppv/pillars"
+                      "~/ppv/pillars/dotfiles"
+                      "~/ppv/pillars/Sertifi"]}
 EOF
 
 # Make the wrapper script executable
