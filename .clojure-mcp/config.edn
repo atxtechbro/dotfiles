@@ -1,0 +1,8 @@
+{:allowed-directories ["."
+                       ".."
+                       "../.."
+                       "../../.."
+                       "~/ppv"
+                       "~/ppv/pillars"
+                       "~/ppv/pillars/dotfiles"
+                       "~/ppv/pillars/Sertifi"]}
