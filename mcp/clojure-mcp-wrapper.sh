@@ -94,5 +94,9 @@ log "${GREEN}Starting Clojure MCP server...${NC}"
 log "Using port 7888 for MCP server and nREPL connection"
 log "Using deps.edn from: $PROJECT_DIR/deps.edn"
 
+# Change to home directory first to ensure consistent configuration loading
+cd "$HOME"
+log "Changed to home directory: $(pwd)"
+
 # Execute with full path to ensure consistency
 cd "$PROJECT_DIR" && exec clojure -X:mcp 2>> "$LOG_FILE"
