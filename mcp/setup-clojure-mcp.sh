@@ -106,7 +106,11 @@ if [ ! -f "$CONFIG_DIR/config.edn" ]; then
  :host "localhost"
  :project-dirs ["~/projects" "~/ppv"]
  :history-file "~/.clojure_mcp_history"
- :max-history-entries 1000}
+ :max-history-entries 1000
+ :allowed-directories ["."
+                      "~/projects"
+                      "~/ppv"
+                      "~/ppv/pillars/dotfiles"]}
 EOF
 fi
 
