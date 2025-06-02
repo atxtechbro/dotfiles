@@ -75,14 +75,15 @@ check_dependency "clojure"
 # Create servers directory if it doesn't exist
 mkdir -p "$CLOJURE_MCP_DIR"
 
-# Clone or update the Clojure MCP repository
+# Clone or update the Clojure MCP repository (using atxtechbro's fork for better control)
 if [ -d "$CLOJURE_MCP_DIR/clojure-mcp" ]; then
   echo -e "${YELLOW}Updating existing Clojure MCP repository...${NC}"
   cd "$CLOJURE_MCP_DIR/clojure-mcp"
+  git remote set-url origin https://github.com/atxtechbro/clojure-mcp.git
   git pull
 else
-  echo -e "${YELLOW}Cloning Clojure MCP repository...${NC}"
-  git clone https://github.com/bhauman/clojure-mcp.git "$CLOJURE_MCP_DIR/clojure-mcp"
+  echo -e "${YELLOW}Cloning Clojure MCP repository (atxtechbro's fork)...${NC}"
+  git clone https://github.com/atxtechbro/clojure-mcp.git "$CLOJURE_MCP_DIR/clojure-mcp"
 fi
 
 # Note: Project-specific configuration is stored directly in the repository
