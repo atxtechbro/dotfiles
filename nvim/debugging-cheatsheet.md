@@ -7,12 +7,17 @@ A comprehensive guide for debugging in Neovim with DAP (Debug Adapter Protocol) 
 | Keybinding | Description |
 |------------|-------------|
 | `<F5>` | Start/continue debugging |
+| `<leader>dc` | Alternative continue (if F5 has issues) |
 | `<F9>` | Toggle breakpoint (VS Code style) |
-| `<F10>` | Step over |
-| `<F11>` | Step into (may conflict with Windows fullscreen in WSL) |
-| `<leader>si` | Step into (WSL-compatible alternative) |
-| `<F12>` | Step out |
 | `<leader>bp` | Toggle breakpoint (alternative to F9) |
+| `<F10>` | Step over |
+| `<leader>dso` | Step over (alternative to F10) |
+| `<F11>` | Step into (may conflict with Windows fullscreen in WSL) |
+| `<F6>` | Step into (alternative to F11) |
+| `<leader>si` | Step into (WSL-compatible alternative) |
+| `<leader>dsi` | Step into (another alternative) |
+| `<F12>` | Step out |
+| `<leader>dsx` | Step out (alternative to F12) |
 | `<leader>du` | Toggle DAP UI (variables, stack, watches) |
 | `<leader>dt` | Terminate debug session |
 | `<leader>dp` | Pause execution |
@@ -55,8 +60,8 @@ The UI opens automatically when a debugging session starts and closes when it en
 
 - The DAP configuration automatically detects Python virtual environments:
   - Checks for `.venv/bin/python` in the current directory
-  - Recursively checks parent directories for `.venv/bin/python`
   - Falls back to system Python if no virtual environment is found
+- Python debugging uses `justMyCode: true` by default to focus only on your code
 - If debugging fails with a "module not found" error for debugpy:
   - Ensure you've run `~/dotfiles/nvim/scripts/python-debug-install.sh`
   - For project-specific debugging, you can install debugpy in your virtual environment:
@@ -127,7 +132,16 @@ DAP integration with Telescope enables searching through:
 
 ### Common Issues
 
-1. **Debugger not stopping at breakpoints**:
+1. **Debugger not stopping at breakpoints or breakpoints not registered in DAP**:
+   - IMPORTANT: Make sure your virtual environment is activated and has debugpy installed:
+     ```bash
+     # Activate your virtual environment
+     source .venv/bin/activate
+     
+     # Install debugpy in the active environment
+     pip install debugpy
+     ```
+   - This is the most common cause of breakpoints showing visually but not working
    - Ensure the debugger is properly installed for your language
    - Check that source paths match between your code and the debugger's configuration
 
