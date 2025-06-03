@@ -23,10 +23,10 @@ dapui.setup({
   layouts = {
     {
       elements = {
-        { id = "scopes", size = 0.40 },
-        { id = "breakpoints", size = 0.20 },
-        { id = "stacks", size = 0.20 },
-        { id = "watches", size = 0.20 },
+        -- Display call stack and breakpoints for essential debugging information
+        -- while maintaining a cleaner interface
+        { id = "stacks", size = 0.6 },
+        { id = "breakpoints", size = 0.4 },
       },
       size = 40,
       position = "left",
