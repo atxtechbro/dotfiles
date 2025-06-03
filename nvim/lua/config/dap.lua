@@ -106,14 +106,14 @@ end)
 
 -- 1. Automatically load breakpoints from the session file
 dap.listeners.after.event_initialized['dap_load_breakpoints'] = function()
-  require('dap.session').load() -- Use .session and .load()
-  print("DAP session loaded.")
+  require('dap').load_breakpoints() -- Correct API call for loading breakpoints
+  print("DAP breakpoints loaded.")
 end
 
 -- 2. Automatically save breakpoints when you quit Neovim
 vim.api.nvim_create_autocmd("VimLeavePre", {
   callback = function()
-    require('dap.session').save() -- Use .session and .save()
+    require('dap').save_breakpoints() -- Correct API call for saving breakpoints
   end
 })
 
@@ -159,8 +159,8 @@ vim.keymap.set('n', '<leader>dt', function() require('dap').terminate() end, opt
 
 -- 3. Corrected keymap for manual saving
 vim.keymap.set('n', '<leader>dS', function() -- d(ap) S(ave)
-    require('dap.session').save() -- Use .session and .save()
-    print("DAP breakpoints saved to session file.")
+    require('dap').save_breakpoints() -- Correct API call for saving breakpoints
+    print("DAP breakpoints saved.")
 end, opts)
 
 print("Simplified DAP configuration loaded")
