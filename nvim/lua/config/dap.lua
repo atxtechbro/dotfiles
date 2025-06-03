@@ -33,8 +33,10 @@ dapui.setup({
     },
     {
       elements = {
-        { id = "repl", size = 0.5 },
-        { id = "console", size = 0.5 },
+        -- By removing the 'size' property, these will be rendered as tabs
+        -- instead of splits, allowing full-width display of each panel
+        { id = "repl" },
+        { id = "console" },
       },
       size = 0.25,
       position = "bottom",
