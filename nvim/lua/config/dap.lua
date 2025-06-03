@@ -23,10 +23,10 @@ dapui.setup({
   layouts = {
     {
       elements = {
-        { id = "scopes", size = 0.40 },
-        { id = "breakpoints", size = 0.20 },
-        { id = "stacks", size = 0.20 },
-        { id = "watches", size = 0.20 },
+        -- Display call stack and breakpoints for essential debugging information
+        -- while maintaining a cleaner interface
+        { id = "stacks", size = 0.6 },
+        { id = "breakpoints", size = 0.4 },
       },
       size = 40,
       position = "left",
@@ -104,6 +104,19 @@ pcall(function()
   require('dap.ext.vscode').load_launchjs(nil, { python = {'py'} })
 end)
 
+-- 1. Automatically load breakpoints from the session file
+dap.listeners.after.event_initialized['dap_load_breakpoints'] = function()
+  require('dap.session').load() -- Use .session and .load()
+  print("DAP session loaded.")
+end
+
+-- 2. Automatically save breakpoints when you quit Neovim
+vim.api.nvim_create_autocmd("VimLeavePre", {
+  callback = function()
+    require('dap.session').save() -- Use .session and .save()
+  end
+})
+
 -- Simple key mappings with direct function calls
 local opts = { noremap = true, silent = true }
 
@@ -143,5 +156,11 @@ vim.keymap.set('n', '<leader>db', function() require('dap').toggle_breakpoint() 
 -- UI controls
 vim.keymap.set('n', '<leader>du', function() require('dapui').toggle() end, opts)
 vim.keymap.set('n', '<leader>dt', function() require('dap').terminate() end, opts)
+
+-- 3. Corrected keymap for manual saving
+vim.keymap.set('n', '<leader>dS', function() -- d(ap) S(ave)
+    require('dap.session').save() -- Use .session and .save()
+    print("DAP breakpoints saved to session file.")
+end, opts)
 
 print("Simplified DAP configuration loaded")
