@@ -42,9 +42,25 @@ dapui.setup({
   },
 })
 
--- Simple breakpoint signs
-vim.fn.sign_define('DapBreakpoint', { text='●', texthl='Error' })
-vim.fn.sign_define('DapStopped', { text='→', texthl='WarningMsg' })
+-- First, define the colors for the signs to match the retro theme.
+-- This uses standard terminal highlight groups for broad compatibility.
+vim.api.nvim_set_hl(0, 'DapBreakpointSign', { fg = '#cc241d' }) -- Muted Red
+vim.api.nvim_set_hl(0, 'DapStoppedSign', { fg = '#fabd2f' }) -- Muted Yellow
+
+-- Now, define the signs using classic, professional symbols.
+vim.fn.sign_define('DapBreakpoint', {
+  text = '●',
+  texthl = 'DapBreakpointSign',
+  linehl = '',
+  numhl = ''
+})
+
+vim.fn.sign_define('DapStopped', {
+  text = '→',
+  texthl = 'DapStoppedSign',
+  linehl = '',
+  numhl = ''
+})
 
 -- Basic UI open/close
 dap.listeners.after.event_initialized['dapui_config'] = function() dapui.open() end
