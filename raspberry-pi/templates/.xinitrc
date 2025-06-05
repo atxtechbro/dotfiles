@@ -28,6 +28,9 @@ DISABLE_SCREENSAVER=true
 HIDE_CURSOR=true
 DISABLE_DPMS=true  # Display Power Management Signaling
 
+# GitHub Actions Runner path
+ACTIONS_RUNNER_PATH="$HOME/actions-runner"
+
 #-------------------------------------------------------------------------------
 # SETUP
 #-------------------------------------------------------------------------------
@@ -47,7 +50,25 @@ if [ "$DISABLE_DPMS" = true ]; then
     xset dpms 0 0 0
 fi
 
-# Sleep for a moment to ensure X is fully started
+#-------------------------------------------------------------------------------
+# START GITHUB ACTIONS RUNNER
+#-------------------------------------------------------------------------------
+
+# Start GitHub Actions Runner if the directory exists
+if [ -d "$ACTIONS_RUNNER_PATH" ] && [ -f "$ACTIONS_RUNNER_PATH/run.sh" ]; then
+    echo "Starting GitHub Actions Runner..." >> /tmp/kiosk.log
+    cd "$ACTIONS_RUNNER_PATH"
+    ./run.sh >> /tmp/actions-runner.log 2>&1 &
+    cd "$HOME"
+    echo "GitHub Actions Runner started with PID: $!" >> /tmp/kiosk.log
+else
+    echo "GitHub Actions Runner not found at $ACTIONS_RUNNER_PATH" >> /tmp/kiosk.log
+fi
+
+# Start a terminal for monitoring (small window in top-left corner)
+xterm -fn fixed -geometry 80x10+0+0 -title "Monitor - GitHub Actions Runner" -e "tail -f /tmp/actions-runner.log" &
+
+# Sleep for a moment to ensure everything is started
 sleep 2
 
 #-------------------------------------------------------------------------------
