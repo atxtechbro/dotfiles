@@ -65,8 +65,8 @@ else
     echo "GitHub Actions Runner not found at $ACTIONS_RUNNER_PATH" >> /tmp/kiosk.log
 fi
 
-# Start a terminal for monitoring (small window in top-left corner)
-xterm -fn fixed -geometry 80x10+0+0 -title "Monitor - GitHub Actions Runner" -e "tail -f /tmp/actions-runner.log" &
+# Start a terminal for monitoring (positioned on right side with dark theme)
+xterm -fn fixed -geometry 80x15-0+0 -bg black -fg lightgreen -title "GitHub Actions Runner" -e "tail -f /tmp/actions-runner.log" &
 
 # Sleep for a moment to ensure everything is started
 sleep 2
