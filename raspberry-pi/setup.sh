@@ -41,3 +41,24 @@ echo "3. Choose your specific use case: 04-choose-use-case.md"
 echo "4. For kiosk mode setup: 05-smart-tv-dashboard-kiosk.md"
 echo
 echo "For more information, see the README.md file."
+
+# Install AWS CLI
+echo "Installing AWS CLI..."
+if ! command -v aws &> /dev/null; then
+    echo "AWS CLI not found. Installing..."
+    # Install dependencies
+    sudo apt update && sudo apt install -y unzip curl python3-pip
+    
+    # Install AWS CLI v2 for ARM architecture
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"
+    unzip -q awscliv2.zip
+    sudo ./aws/install
+    rm -rf aws awscliv2.zip
+    
+    # Verify installation
+    aws --version
+    echo "AWS CLI installed successfully."
+else
+    echo "AWS CLI is already installed: $(aws --version)"
+fi
+echo
