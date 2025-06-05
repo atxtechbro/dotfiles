@@ -1,0 +1,13 @@
+# Work Git Configuration
+# This file should be included in your main .gitconfig using:
+#
+# [includeIf "gitdir:~/Flywire/"]
+#     path = ~/ppv/pillars/dotfiles/.gitconfig.work
+#
+# [includeIf "gitdir:~/Sertifi/"]
+#     path = ~/ppv/pillars/dotfiles/.gitconfig.work
+#
+# This follows the modular Git configuration approach described in the README.md
+
+[user]
+	email = morgan.joyce@flywire.com

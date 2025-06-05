@@ -164,6 +164,17 @@ rm -f "$gitconfig_path"
 cp "$dotfiles_gitconfig" "$gitconfig_path"
 echo -e "${GREEN}✓ Git configuration created${NC}"
 
+# Set up modular Git configurations
+echo "Setting up modular Git configurations..."
+
+# Work Git configuration
+work_gitconfig_source="$DOT_DEN/.gitconfig.work"
+work_gitconfig_target="$HOME/.gitconfig-work"
+if [[ -f "$work_gitconfig_source" ]]; then
+    ln -sf "$work_gitconfig_source" "$work_gitconfig_target"
+    echo -e "${GREEN}✓ Work Git configuration linked${NC}"
+fi
+
 # Create secrets file from template
 if [[ -f "$DOT_DEN/.bash_secrets.example" && ! -f ~/.bash_secrets ]]; then
     echo "Creating secrets file from template..."
