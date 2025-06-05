@@ -7,6 +7,15 @@ echo "Raspberry Pi Setup - Dotfiles Configuration"
 echo "=========================================="
 echo
 
+# Install xterm for emergency terminal access in kiosk mode
+echo "Installing xterm and required fonts for emergency terminal access..."
+sudo apt update && sudo apt install -y xterm xfonts-base xfonts-75dpi xfonts-100dpi lxterminal
+echo "xterm and lxterminal installed successfully."
+echo "To open a terminal in kiosk mode:"
+echo "  - From SSH: run 'DISPLAY=:0 lxterminal &' or 'DISPLAY=:0 xterm -fn fixed &'"
+echo "  - From keyboard: press Alt+F2 and type 'lxterminal' (if run dialog works)"
+echo
+
 # Check if running on a Raspberry Pi
 if ! grep -q "Raspberry Pi" /proc/cpuinfo &> /dev/null; then
     echo "Error: This script must be run on a Raspberry Pi."
@@ -42,11 +51,12 @@ echo "4. For kiosk mode setup: 05-smart-tv-dashboard-kiosk.md"
 echo
 echo "For more information, see the README.md file."
 
-curl --proto '=https' --tlsv1.2 -sSf "https://desktop-release.q.us-east-1.amazonaws.com/latest/q-aarch64-linux.zip" -o "q.zip"
-unzip q.zip
-./q/install.sh
-q telemetry disable
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to install Amazon Q. Please check the installation logs."
-    exit 1
-fi
+# Amazon Q installation temporarily commented out
+# curl --proto '=https' --tlsv1.2 -sSf "https://desktop-release.q.us-east-1.amazonaws.com/latest/q-aarch64-linux.zip" -o "q.zip"
+# unzip q.zip
+# ./q/install.sh
+# q telemetry disable
+# if [ $? -ne 0 ]; then
+#     echo "Error: Failed to install Amazon Q. Please check the installation logs."
+#     exit 1
+# fi
