@@ -78,8 +78,8 @@ if [ -f "/tmp/actions-runner.log" ]; then
     mv /tmp/actions-runner.log.tmp /tmp/actions-runner.log
 fi
 
-# Start a terminal for monitoring (positioned more centrally with dark theme)
-xterm -fn fixed -geometry 100x20-200+100 -bg black -fg lightgreen -title "GitHub Actions Runner" -e "tail -f /tmp/actions-runner.log" &
+# No terminal window - runner will operate silently in the background
+# Log file is still available at /tmp/actions-runner.log if needed
 
 # Sleep for a moment to ensure everything is started
 sleep 2
