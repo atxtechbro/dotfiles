@@ -14,7 +14,6 @@ qsafe() {
     echo "/tools untrust fs_write execute_bash use_aws report_issue\
     filesystem___create_directory\
     filesystem___move_file\
-    filesystem___write_file\
     github___create_issue\
     github___add_issue_comment\
     github___push_files\
@@ -24,10 +23,8 @@ qsafe() {
     github___create_branch\
     github___create_pull_request\
     github___merge_pull_request\
-    github___create_pull_request_review\
-    github___add_pull_request_review_comment \
     github___create_and_submit_pull_request_review\
-    github__assign_copilot_to_issue\
+    github___assign_copilot_to_issue\
     github___add_pull_request_review_comment_to_pending_review\
     github___create_and_submit_pull_request_review\
     github___create_pending_pull_request_review\
