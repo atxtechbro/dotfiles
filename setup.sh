@@ -543,6 +543,13 @@ if command -v docker &> /dev/null; then
   fi
 fi
 
+# Source bash aliases to make them immediately available
+echo "Loading bash aliases into current session..."
+if [[ -f ~/.bash_aliases ]]; then
+  source ~/.bash_aliases
+  echo -e "${GREEN}✓ Bash aliases loaded successfully${NC}"
+fi
+
 echo -e "${DIVIDER}"
 echo -e "${GREEN}✅ Dotfiles setup complete!${NC}"
 echo "Your development environment is now configured and ready to use."
