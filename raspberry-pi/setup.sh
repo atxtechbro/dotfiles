@@ -51,12 +51,23 @@ echo "4. For kiosk mode setup: 05-smart-tv-dashboard-kiosk.md"
 echo
 echo "For more information, see the README.md file."
 
-# Amazon Q installation temporarily commented out
-# curl --proto '=https' --tlsv1.2 -sSf "https://desktop-release.q.us-east-1.amazonaws.com/latest/q-aarch64-linux.zip" -o "q.zip"
-# unzip q.zip
-# ./q/install.sh
-# q telemetry disable
-# if [ $? -ne 0 ]; then
-#     echo "Error: Failed to install Amazon Q. Please check the installation logs."
-#     exit 1
-# fi
+# Install AWS CLI
+echo "Installing AWS CLI..."
+if ! command -v aws &> /dev/null; then
+    echo "AWS CLI not found. Installing..."
+    # Install dependencies
+    sudo apt update && sudo apt install -y unzip curl python3-pip
+    
+    # Install AWS CLI v2 for ARM architecture
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"
+    unzip -q awscliv2.zip
+    sudo ./aws/install
+    rm -rf aws awscliv2.zip
+    
+    # Verify installation
+    aws --version
+    echo "AWS CLI installed successfully."
+else
+    echo "AWS CLI is already installed: $(aws --version)"
+fi
+echo
