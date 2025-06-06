@@ -570,6 +570,7 @@ fi
 # Source bash aliases to make them immediately available
 echo "Loading bash aliases into current session..."
 if [[ -f ~/.bash_aliases ]]; then
+  # shellcheck disable=SC1090
   source ~/.bash_aliases
   echo -e "${GREEN}✓ Bash aliases loaded successfully${NC}"
 fi
