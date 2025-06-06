@@ -473,6 +473,30 @@ else
   echo "To use GitHub MCP features, install GitHub CLI and run: export GITHUB_TOKEN=\$(gh auth token)"
 fi
 
+# Git Delta setup
+echo -e "${DIVIDER}"
+echo "Checking Git Delta setup..."
+
+# Check if Git Delta is referenced in gitconfig
+if grep -q "delta" ~/.gitconfig 2>/dev/null; then
+  echo "Git Delta is referenced in your gitconfig."
+  
+  # Check if Git Delta is installed
+  if command -v delta &> /dev/null; then
+    echo -e "${GREEN}✓ Git Delta is already installed${NC}"
+  else
+    echo "Git Delta is not installed. Installing now..."
+    if [ -f "$DOT_DEN/utils/install-git-delta.sh" ]; then
+      bash "$DOT_DEN/utils/install-git-delta.sh"
+    else
+      echo -e "${RED}Git Delta installation script not found.${NC}"
+      echo "Please install Git Delta manually or your git diff commands may fail."
+    fi
+  fi
+else
+  echo "Git Delta is not referenced in your gitconfig. Skipping installation."
+fi
+
 # Docker setup
 echo -e "${DIVIDER}"
 echo "Checking Docker setup..."
