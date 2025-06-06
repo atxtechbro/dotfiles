@@ -22,6 +22,7 @@
 - Use short-lived branches for complex tasks – For larger or more complex tasks, use short-lived branches
 - Maintain a robust test suite – A comprehensive, well-maintained test suite is crucial
 - Do, don't explain – Execute tasks directly rather than describing how to do them
+- **Standard process**: 1) Start with clean working tree, 2) Create descriptive branch, 3) Make focused changes, 4) Commit and push, 5) Create PR with clear description
 
 ## Debugging Amazon Q CLI
 - For definitive answers refer to the amazon-q-developer-cli source code at https://github.com/aws/amazon-q-developer-cli
