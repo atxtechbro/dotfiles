@@ -260,6 +260,11 @@ if command -v q >/dev/null 2>&1; then
   else
     echo "Amazon Q telemetry already disabled"
   fi
+  
+  # Configure Amazon Q to use vi edit mode
+  echo "Setting Amazon Q chat edit mode to vi..."
+  q settings chat.editMode vi >/dev/null 2>&1
+  echo -e "${GREEN}✓ Amazon Q chat edit mode set to vi${NC}"
 fi
   
 # Node.js setup with NVM
