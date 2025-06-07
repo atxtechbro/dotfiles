@@ -172,8 +172,16 @@ fi
 # This ensures tmux always has the latest config when started
 tmux source-file ~/.tmux.conf >/dev/null 2>&1 || true
 
-# Amazon Q post block. Keep at the bottom of this file.
+# Source Q CLI specific aliases for all shell sessions
+# Hybrid Strategy: Load Q CLI aliases/functions before Amazon Q post integration
+[[ -f "${HOME}/ppv/pillars/dotfiles/.bash_aliases.d/q-cli.sh" ]] && source "${HOME}/ppv/pillars/dotfiles/.bash_aliases.d/q-cli.sh"
+
+# Export qsafe function so subshells (like ! commands) can recognize it
+export -f qsafe 2>/dev/null || true
+
+# Finish Amazon Q integration (post block)
 [[ -f "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash"
+
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.local/uv-tools/bin:$PATH"
 
