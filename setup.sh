@@ -266,13 +266,14 @@ if command -v q >/dev/null 2>&1; then
     echo -e "${GREEN}✓ Amazon Q is up to date${NC}"
   fi
   
-  # Configure Amazon Q settings
-  q telemetry disable
-  q settings chat.editMode vi
-  q settings chat.defaultModel claude-4-sonnet
-  q settings mcp.noInteractiveTimeout 5000
 fi
-  
+
+# Configure Amazon Q settings
+q telemetry disable
+q settings chat.editMode vi
+q settings chat.defaultModel claude-4-sonnet
+q settings mcp.noInteractiveTimeout 5000
+
 # Node.js setup with NVM
 echo -e "${DIVIDER}"
 echo "Setting up Node.js with NVM..."
