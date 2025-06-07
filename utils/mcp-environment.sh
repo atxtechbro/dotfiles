@@ -5,7 +5,8 @@
 
 # Default environment-specific server configurations
 # Format: Array of server names to disable in specific environments
-PERSONAL_DISABLED_SERVERS=("atlassian" "jira" "confluence")
+PERSONAL_DISABLED_SERVERS=("atlassian")
+WORK_DISABLED_SERVERS=("gdrive")
 DEVELOPMENT_DISABLED_SERVERS=()
 PRODUCTION_DISABLED_SERVERS=("experimental" "beta")
 
@@ -19,8 +20,8 @@ filter_mcp_config() {
   # Select the appropriate server list based on environment
   case "$environment" in
     "work")
-      # Work environment - no servers disabled by default
-      return 0
+      # Work environment - disable servers not needed in work context
+      disabled_servers=("${WORK_DISABLED_SERVERS[@]}")
       ;;
     "development")
       disabled_servers=("${DEVELOPMENT_DISABLED_SERVERS[@]}")
