@@ -1,28 +1,5 @@
 {
   "mcpServers": {
-    "awslabs.core-mcp-server": {
-      "command": "uvx",
-      "args": ["awslabs.core-mcp-server@latest"],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
-    "awslabs.bedrock-kb-retrieval-mcp-server": {
-      "command": "uvx",
-      "args": ["awslabs.bedrock-kb-retrieval-mcp-server@latest"],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR",
-        "AWS_REGION": "us-east-1",
-        "BEDROCK_KB_RERANKING_ENABLED": "false"
-      }
-    },
-    "awslabs.cdk-mcp-server": {
-      "command": "uvx",
-      "args": ["awslabs.cdk-mcp-server@latest"],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
     "awslabs.aws-documentation-mcp-server": {
       "command": "uvx",
       "args": ["awslabs.aws-documentation-mcp-server@latest"],
@@ -44,13 +21,6 @@
     },
     "atlassian": {
       "command": "atlassian-mcp-wrapper.sh",
-      "args": [],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
-    "google-maps": {
-      "command": "google-maps-mcp-wrapper.sh",
       "args": [],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
