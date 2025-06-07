@@ -266,15 +266,11 @@ if command -v q >/dev/null 2>&1; then
     echo -e "${GREEN}✓ Amazon Q is up to date${NC}"
   fi
   
-  # Disable telemetry if not already disabled
-  TELEMETRY_STATUS=$(q telemetry status 2>/dev/null | grep -i "disabled" || echo "")
-  if [ -z "$TELEMETRY_STATUS" ]; then
-    echo "Disabling Amazon Q telemetry..."
-    q telemetry disable >/dev/null 2>&1
-    echo -e "${GREEN}✓ Amazon Q telemetry disabled${NC}"
-  else
-    echo "Amazon Q telemetry already disabled"
-  fi
+  # Configure Amazon Q settings
+  q telemetry disable
+  q settings chat.editMode vi
+  q settings chat.defaultModel claude-4-sonnet
+  q settings mcp.noInteractiveTimeout 5000
 fi
   
 # Node.js setup with NVM
