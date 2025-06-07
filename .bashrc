@@ -188,6 +188,9 @@ fi
 # This ensures tmux always has the latest config when started
 tmux source-file ~/.tmux.conf >/dev/null 2>&1 || true
 
+# Source Q CLI specific aliases for all shell sessions
+[[ -f "${HOME}/ppv/pillars/dotfiles/.bash_aliases.d/q-cli.sh" ]] && source "${HOME}/ppv/pillars/dotfiles/.bash_aliases.d/q-cli.sh"
+
 # Amazon Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash"
 export PATH="$HOME/.local/bin:$PATH"
