@@ -590,6 +590,14 @@ if [[ -f ~/.bash_aliases ]]; then
   echo -e "${GREEN}✓ Bash aliases loaded successfully${NC}"
 fi
 
+# Source bash exports to make environment variables available
+echo "Loading environment variables from bash_exports..."
+if [[ -f ~/.bash_exports ]]; then
+  # shellcheck disable=SC1090
+  source ~/.bash_exports
+  echo -e "${GREEN}✓ Environment variables loaded successfully${NC}"
+fi
+
 echo -e "${DIVIDER}"
 echo -e "${GREEN}✅ Dotfiles setup complete!${NC}"
 echo "Your development environment is now configured and ready to use."
