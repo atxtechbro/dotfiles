@@ -20,6 +20,5 @@ qtrust() {
     q chat "$@" "/tools trustall"
 }
 
-# Resume last Amazon Q conversation
-alias qr='q chat --resume'
+
 
