@@ -148,11 +148,26 @@ ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 # Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
 # (as opposed to Workspace Configuration: .amazonq/mcp.json - Specific to the current workspace)
 mkdir -p ~/.aws/amazonq
-ln -sf "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
+cp "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
 
 # Claude Desktop MCP integration
 mkdir -p ~/.config/Claude
 cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json
+
+# Apply environment-specific MCP server configuration
+if [[ -f "$DOT_DEN/utils/mcp-environment.sh" ]]; then
+  # Source the MCP environment utility
+  # shellcheck disable=SC1090
+  source "$DOT_DEN/utils/mcp-environment.sh"
+  
+  # Detect current environment
+  CURRENT_ENV=$(detect_environment)
+  echo "Configuring MCP servers for $CURRENT_ENV environment..."
+  
+  # Apply environment-specific configuration to all MCP config files
+  filter_mcp_config ~/.aws/amazonq/mcp.json "$CURRENT_ENV"
+  filter_mcp_config ~/.config/Claude/claude_desktop_config.json "$CURRENT_ENV"
+fi
 
 # Set up Git configuration
 echo "Setting up Git configuration..."
@@ -251,22 +266,14 @@ if command -v q >/dev/null 2>&1; then
     echo -e "${GREEN}✓ Amazon Q is up to date${NC}"
   fi
   
-  # Disable telemetry if not already disabled
-  TELEMETRY_STATUS=$(q telemetry status 2>/dev/null | grep -i "disabled" || echo "")
-  if [ -z "$TELEMETRY_STATUS" ]; then
-    echo "Disabling Amazon Q telemetry..."
-    q telemetry disable >/dev/null 2>&1
-    echo -e "${GREEN}✓ Amazon Q telemetry disabled${NC}"
-  else
-    echo "Amazon Q telemetry already disabled"
-  fi
-  
-  # Configure Amazon Q to use vi edit mode
-  echo "Setting Amazon Q chat edit mode to vi..."
-  q settings chat.editMode vi >/dev/null 2>&1
-  echo -e "${GREEN}✓ Amazon Q chat edit mode set to vi${NC}"
 fi
-  
+
+# Configure Amazon Q settings
+q telemetry disable
+q settings chat.editMode vi
+q settings chat.defaultModel claude-4-sonnet
+q settings mcp.noInteractiveTimeout 5000
+
 # Node.js setup with NVM
 echo -e "${DIVIDER}"
 echo "Setting up Node.js with NVM..."
@@ -578,6 +585,14 @@ if [[ -f ~/.bash_aliases ]]; then
   # shellcheck disable=SC1090
   source ~/.bash_aliases
   echo -e "${GREEN}✓ Bash aliases loaded successfully${NC}"
+fi
+
+# Source bash exports to make environment variables available
+echo "Loading environment variables from bash_exports..."
+if [[ -f ~/.bash_exports ]]; then
+  # shellcheck disable=SC1090
+  source ~/.bash_exports
+  echo -e "${GREEN}✓ Environment variables loaded successfully${NC}"
 fi
 
 echo -e "${DIVIDER}"

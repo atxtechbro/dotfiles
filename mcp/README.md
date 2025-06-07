@@ -7,7 +7,6 @@ This directory contains wrapper scripts and configuration for MCP clients (Claud
 Many of our MCP servers are sourced from the official [Model Context Protocol servers repository](https://github.com/modelcontextprotocol/servers), which provides a standardized collection of vetted MCP servers. This repository appears to be maintained with oversight from Anthropic and offers a consistent framework for building and deploying MCP servers.
 
 Current servers from this source:
-- Google Maps
 - Brave Search
 - Filesystem
 - Google Drive
@@ -18,10 +17,9 @@ This standardized approach makes it easy to add more MCP servers in the future f
 
 | Integration | Description | Authentication Method | Installation Method | Documentation |
 |-------------|-------------|----------------------|---------------------|---------------|
-| AWS Labs | AWS documentation, CDK | None required | PyPI packages via UVX | - |
+| AWS Documentation | AWS documentation search | None required | PyPI packages via UVX | - |
 | GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script | [Our Fork](https://github.com/atxtechbro/github-mcp-server?tab=readme-ov-file#github-mcp-server) |
 | Atlassian | Jira and Confluence integration | API tokens from `.bash_secrets` | Custom setup script | - |
-| Google Maps | Google Maps API integration | API key from `.bash_secrets` | Docker container | - |
 | Brave Search | Web search via Brave | API key from `.bash_secrets` | Docker container | - |
 | Filesystem | Local filesystem operations | None required | Built from source | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/filesystem#filesystem-mcp-server) |
 | Git | Git repository operations | None required | Built from source | [Our Repository](https://github.com/atxtechbro/git-mcp-server#git-mcp-server) |
@@ -31,9 +29,8 @@ This standardized approach makes it easy to add more MCP servers in the future f
 
 Each MCP integration has its own setup method:
 
-- **AWS Labs MCP Servers**: No setup script needed - these are installed automatically via UVX package manager from PyPI, making integration straightforward
+- **AWS Documentation MCP Server**: No setup script needed - installed automatically via UVX package manager from PyPI
 - `setup-atlassian-mcp.sh` - Sets up Atlassian (Jira/Confluence) integration
-- `setup-google-maps-mcp.sh` - Sets up Google Maps integration
 - `setup-brave-search-mcp.sh` - Sets up Brave Search integration
 - `setup-filesystem-mcp.sh` - Sets up Filesystem integration from source (allows customization)
 - `setup-gdrive-mcp.sh` - Sets up Google Drive integration
@@ -43,8 +40,8 @@ Each MCP integration has its own setup method:
 For custom integrations, run the appropriate setup script:
 
 ```bash
-# Example: Set up Google Maps integration
-./setup-google-maps-mcp.sh
+# Example: Set up Brave Search integration
+./setup-brave-search-mcp.sh
 ```
 
 ## Secret Management
@@ -70,7 +67,7 @@ To add your secrets:
 
 ## Docker-based MCP Servers
 
-Some MCP servers (like Google Maps) use Docker for containerization. The setup scripts handle building the Docker images and configuring the wrapper scripts.
+Some MCP servers use Docker for containerization. The setup scripts handle building the Docker images and configuring the wrapper scripts.
 
 Requirements:
 - Docker installed and running
