@@ -148,11 +148,15 @@ ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 # Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
 # (as opposed to Workspace Configuration: .amazonq/mcp.json - Specific to the current workspace)
 mkdir -p ~/.aws/amazonq
-cp "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
+if [[ ! -f ~/.aws/amazonq/mcp.json ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json; then
+    cp "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
+fi
 
 # Claude Desktop MCP integration
 mkdir -p ~/.config/Claude
-cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json
+if [[ ! -f ~/.config/Claude/claude_desktop_config.json ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json; then
+    cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json
+fi
 
 # Apply environment-specific MCP server configuration
 if [[ -f "$DOT_DEN/utils/mcp-environment.sh" ]]; then
