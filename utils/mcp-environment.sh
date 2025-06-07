@@ -20,6 +20,7 @@ filter_mcp_config() {
   case "$environment" in
     "work")
       # Work environment - no servers disabled by default
+      return 0
       ;;
     "development")
       disabled_servers=("${DEVELOPMENT_DISABLED_SERVERS[@]}")
@@ -38,14 +39,18 @@ filter_mcp_config() {
     return 0
   fi
   
-  # Process each server in the disabled list
-  for server in "${disabled_servers[@]}"; do
-    # Remove the server block from the JSON
-    sed -i -E '/\{[[:space:]]*"name":[[:space:]]*"'"$server"'".*?\},?/s/\{[[:space:]]*"name":[[:space:]]*"'"$server"'".*?\},?//' "$config_file"
-  done
+  echo "Removing servers for $environment environment: ${disabled_servers[*]}"
   
-  # Clean up any potential JSON syntax issues (like trailing commas)
-  sed -i -E 's/,(\s*\])/\1/' "$config_file"
+  # Create a jq filter to remove the specified servers
+  local jq_filter=""
+  for server in "${disabled_servers[@]}"; do
+    jq_filter+="del(.mcpServers.\"$server\") | "
+  done
+  jq_filter="${jq_filter%| }"
+  
+  # Apply the filter
+  local temp_file="${config_file}.tmp"
+  jq "$jq_filter" "$config_file" > "$temp_file" && mv "$temp_file" "$config_file"
 }
 
 # Function to determine the current environment
