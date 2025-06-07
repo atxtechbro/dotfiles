@@ -148,11 +148,26 @@ ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 # Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
 # (as opposed to Workspace Configuration: .amazonq/mcp.json - Specific to the current workspace)
 mkdir -p ~/.aws/amazonq
-ln -sf "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
+cp "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
 
 # Claude Desktop MCP integration
 mkdir -p ~/.config/Claude
 cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json
+
+# Apply environment-specific MCP server configuration
+if [[ -f "$DOT_DEN/utils/mcp-environment.sh" ]]; then
+  # Source the MCP environment utility
+  # shellcheck disable=SC1090
+  source "$DOT_DEN/utils/mcp-environment.sh"
+  
+  # Detect current environment
+  CURRENT_ENV=$(detect_environment)
+  echo "Configuring MCP servers for $CURRENT_ENV environment..."
+  
+  # Apply environment-specific configuration to all MCP config files
+  filter_mcp_config ~/.aws/amazonq/mcp.json "$CURRENT_ENV"
+  filter_mcp_config ~/.config/Claude/claude_desktop_config.json "$CURRENT_ENV"
+fi
 
 # Set up Git configuration
 echo "Setting up Git configuration..."
