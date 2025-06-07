@@ -189,10 +189,13 @@ fi
 tmux source-file ~/.tmux.conf >/dev/null 2>&1 || true
 
 # Source Q CLI specific aliases for all shell sessions
+# Amazon Q post block - must run before loading our aliases
+[[ -f "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash"
+
+# Source Q CLI aliases after Amazon Q integration completes
+# This ensures aliases are available in Amazon Q's shell environment
 [[ -f "${HOME}/ppv/pillars/dotfiles/.bash_aliases.d/q-cli.sh" ]] && source "${HOME}/ppv/pillars/dotfiles/.bash_aliases.d/q-cli.sh"
 
-# Amazon Q post block. Keep at the bottom of this file.
-[[ -f "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.local/uv-tools/bin:$PATH"
 
