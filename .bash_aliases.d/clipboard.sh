@@ -37,6 +37,11 @@ qsafe() {
     github___update_issue\
     github___update_pull_request\
     github___update_pull_request_branch\
+    github___run_workflow\
+    github___rerun_workflow_run\
+    github___rerun_failed_jobs\
+    github___cancel_workflow_run\
+    github___delete_workflow_run_logs\
     atlassian___jira_create_issue\
     atlassian___jira_update_issue\
     atlassian___jira_add_comment\
