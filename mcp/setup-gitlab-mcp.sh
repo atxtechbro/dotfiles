@@ -81,5 +81,31 @@ fi
 
 echo "GitLab MCP server setup complete!"
 echo "The server will use your GitLab CLI authentication token."
-echo "Make sure you're logged in with 'glab auth login' before using the GitLab MCP server."
-echo "Alternatively, you can set GITLAB_PERSONAL_ACCESS_TOKEN in your ~/.bash_secrets file."
+echo ""
+echo "To authenticate with GitLab:"
+echo "1. Personal Access Token (recommended):"
+echo "   - Visit: https://gitlab.com/-/profile/personal_access_tokens"
+echo "   - Create token with 'api' scope"
+echo "   - Add to ~/.bash_secrets: export GITLAB_PERSONAL_ACCESS_TOKEN=\"your_token\""
+echo "   - Then run: glab auth login --hostname gitlab.com --token \$GITLAB_PERSONAL_ACCESS_TOKEN"
+echo "2. Interactive login: glab auth login --hostname gitlab.com"
+echo ""
+echo "For custom GitLab instances, replace gitlab.com with your hostname"
+echo "Verify authentication with: glab auth status"
+echo ""
+echo "GitLab CLI config file location: ~/.config/glab-cli/config.yml"
+echo "Edit this file to remove unwanted host configurations if needed"
+
+# Set telemetry to false in GitLab CLI config
+GLAB_CONFIG_DIR="$HOME/.config/glab-cli"
+GLAB_CONFIG_FILE="$GLAB_CONFIG_DIR/config.yml"
+
+if [ -f "$GLAB_CONFIG_FILE" ]; then
+    echo ""
+    echo "Setting GitLab CLI telemetry to false..."
+    sed -i 's/^telemetry: true$/telemetry: false/' "$GLAB_CONFIG_FILE"
+    echo "✓ Telemetry disabled in GitLab CLI configuration"
+else
+    echo ""
+    echo "GitLab CLI config file not found. Telemetry will be set to false on first run."
+fi

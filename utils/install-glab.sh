@@ -39,11 +39,11 @@ install_glab() {
     local TEMP_DIR=$(mktemp -d)
     cd "$TEMP_DIR"
     
-    # Get the latest release version
+    # Get the latest release version from GitLab API
     echo "Fetching latest GitLab CLI release..."
-    LATEST_VERSION=$(curl -s https://api.github.com/repos/gl-cli/glab/releases/latest | grep -Po '"tag_name": "v\K[^"]*')
+    LATEST_VERSION=$(curl -s https://gitlab.com/api/v4/projects/34675721/releases | jq -r '.[0].tag_name' | sed 's/^v//')
     
-    if [ -z "$LATEST_VERSION" ]; then
+    if [ -z "$LATEST_VERSION" ] || [ "$LATEST_VERSION" = "null" ]; then
         echo "Error: Failed to determine latest GitLab CLI version"
         rm -rf "$TEMP_DIR"
         return 1
@@ -54,52 +54,18 @@ install_glab() {
     # Download and install GitLab CLI based on OS
     case "$OS" in
         linux)
-            # Try package manager first
-            if command -v apt-get &> /dev/null; then
-                echo "Detected apt-based system, attempting to install GitLab CLI via apt..."
-                if ! command -v gpg &> /dev/null; then
-                    sudo apt-get update
-                    sudo apt-get install -y gpg
-                fi
-                
-                # Add GitLab CLI repository
-                curl -fsSL https://gitlab.com/gitlab-org/cli/-/raw/main/scripts/install.sh | sudo bash
-                
-                if command -v glab &> /dev/null; then
-                    echo "GitLab CLI installed successfully via apt"
-                    rm -rf "$TEMP_DIR"
-                    return 0
-                else
-                    echo "apt installation failed, falling back to manual installation..."
-                fi
-            elif command -v dnf &> /dev/null; then
-                echo "Detected dnf-based system, attempting to install GitLab CLI via dnf..."
-                sudo dnf install -y glab
-                if command -v glab &> /dev/null; then
-                    echo "GitLab CLI installed successfully via dnf"
-                    rm -rf "$TEMP_DIR"
-                    return 0
-                else
-                    echo "dnf installation failed, falling back to manual installation..."
-                fi
-            elif command -v pacman &> /dev/null; then
-                echo "Detected Arch-based system, attempting to install GitLab CLI via pacman..."
-                sudo pacman -Sy --noconfirm glab
-                if command -v glab &> /dev/null; then
-                    echo "GitLab CLI installed successfully via pacman"
-                    rm -rf "$TEMP_DIR"
-                    return 0
-                else
-                    echo "pacman installation failed, falling back to manual installation..."
-                fi
-            fi
-            
-            # Manual installation if package manager failed or isn't available
-            echo "Installing GitLab CLI manually from official distribution..."
-            DOWNLOAD_URL="https://github.com/gl-cli/glab/releases/download/v${LATEST_VERSION}/glab_${LATEST_VERSION}_${OS}_${ARCH}.tar.gz"
+            # Install directly from GitLab releases for latest version
+            echo "Installing GitLab CLI from official GitLab releases (ensures latest version)..."
+            DOWNLOAD_URL="https://gitlab.com/gitlab-org/cli/-/releases/v${LATEST_VERSION}/downloads/glab_${LATEST_VERSION}_${OS}_${ARCH}.tar.gz"
             echo "Downloading from: $DOWNLOAD_URL"
             
             curl -L "$DOWNLOAD_URL" -o "glab.tar.gz"
+            if [ $? -ne 0 ]; then
+                echo "Error: Failed to download GitLab CLI"
+                rm -rf "$TEMP_DIR"
+                return 1
+            fi
+            
             tar -xzf glab.tar.gz
             
             # Install the binary
@@ -117,25 +83,18 @@ install_glab() {
             ;;
             
         darwin)
-            # Try Homebrew first
-            if command -v brew &> /dev/null; then
-                echo "Detected macOS with Homebrew, installing GitLab CLI via brew..."
-                brew install glab
-                if command -v glab &> /dev/null; then
-                    echo "GitLab CLI installed successfully via Homebrew"
-                    rm -rf "$TEMP_DIR"
-                    return 0
-                else
-                    echo "Homebrew installation failed, falling back to manual installation..."
-                fi
-            fi
-            
-            # Manual installation if Homebrew failed or isn't available
-            echo "Installing GitLab CLI manually from official distribution..."
-            DOWNLOAD_URL="https://github.com/gl-cli/glab/releases/download/v${LATEST_VERSION}/glab_${LATEST_VERSION}_${OS}_${ARCH}.tar.gz"
+            # Install directly from GitLab releases for latest version (preferred over Homebrew)
+            echo "Installing GitLab CLI from official GitLab releases (ensures latest version)..."
+            DOWNLOAD_URL="https://gitlab.com/gitlab-org/cli/-/releases/v${LATEST_VERSION}/downloads/glab_${LATEST_VERSION}_${OS}_${ARCH}.tar.gz"
             echo "Downloading from: $DOWNLOAD_URL"
             
             curl -L "$DOWNLOAD_URL" -o "glab.tar.gz"
+            if [ $? -ne 0 ]; then
+                echo "Error: Failed to download GitLab CLI"
+                rm -rf "$TEMP_DIR"
+                return 1
+            fi
+            
             tar -xzf glab.tar.gz
             
             # Install the binary
@@ -184,12 +143,12 @@ update_glab() {
     echo "Checking for GitLab CLI updates..."
     
     # Get current version
-    CURRENT_VERSION=$(glab --version | head -n 1 | grep -oP 'glab version \K[0-9]+\.[0-9]+\.[0-9]+')
+    CURRENT_VERSION=$(glab --version | head -n 1 | grep -oP 'glab \K[0-9]+\.[0-9]+\.[0-9]+')
     
-    # Get latest version
-    LATEST_VERSION=$(curl -s https://api.github.com/repos/gl-cli/glab/releases/latest | grep -Po '"tag_name": "v\K[^"]*')
+    # Get latest version from GitLab API
+    LATEST_VERSION=$(curl -s https://gitlab.com/api/v4/projects/34675721/releases | jq -r '.[0].tag_name' | sed 's/^v//')
     
-    if [ -z "$LATEST_VERSION" ]; then
+    if [ -z "$LATEST_VERSION" ] || [ "$LATEST_VERSION" = "null" ]; then
         echo "Error: Failed to determine latest GitLab CLI version"
         return 1
     fi
