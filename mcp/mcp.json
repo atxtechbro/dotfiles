@@ -2,7 +2,9 @@
   "mcpServers": {
     "awslabs.aws-documentation-mcp-server": {
       "command": "uvx",
-      "args": ["awslabs.aws-documentation-mcp-server@latest"],
+      "args": [
+        "awslabs.aws-documentation-mcp-server@latest"
+      ],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
       }
@@ -15,8 +17,8 @@
       }
     },
     "gitlab": {
-      "command": "gitlab-mcp-wrapper.sh",
-      "args": [],
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-gitlab"],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
       }
@@ -42,13 +44,6 @@
     },
     "filesystem": {
       "command": "filesystem-mcp-wrapper.sh",
-      "args": [],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
-    "gdrive": {
-      "command": "gdrive-mcp-wrapper.sh",
       "args": [],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"

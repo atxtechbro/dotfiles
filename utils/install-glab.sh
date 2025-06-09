@@ -125,6 +125,19 @@ install_glab() {
     if command -v glab &> /dev/null; then
         echo "GitLab CLI installed successfully!"
         glab --version
+        
+        # Set telemetry to false in GitLab CLI config
+        GLAB_CONFIG_DIR="$HOME/.config/glab-cli"
+        GLAB_CONFIG_FILE="$GLAB_CONFIG_DIR/config.yml"
+        
+        if [ -f "$GLAB_CONFIG_FILE" ]; then
+            echo "Setting GitLab CLI telemetry to false..."
+            sed -i 's/^telemetry: true$/telemetry: false/' "$GLAB_CONFIG_FILE"
+            echo "✓ Telemetry disabled in GitLab CLI configuration"
+        else
+            echo "GitLab CLI config file not found. Telemetry will be set to false on first run."
+        fi
+        
         return 0
     else
         echo "Failed to install GitLab CLI. Please install it manually."

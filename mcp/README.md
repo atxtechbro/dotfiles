@@ -19,7 +19,7 @@ This standardized approach makes it easy to add more MCP servers in the future f
 |-------------|-------------|----------------------|---------------------|---------------|
 | AWS Documentation | AWS documentation search | None required | PyPI packages via UVX | - |
 | GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script | [Our Fork](https://github.com/atxtechbro/github-mcp-server?tab=readme-ov-file#github-mcp-server) |
-| GitLab | glab mcp server | PAT | npx | https://www.npmjs.com/package/@modelcontextprotocol/server-gitlab |
+| GitLab | GitLab API integration | PAT from `.bash_secrets` | Direct npx (no wrapper needed) | https://www.npmjs.com/package/@modelcontextprotocol/server-gitlab |
 | Atlassian | Jira and Confluence integration | API tokens from `.bash_secrets` | Custom setup script | - |
 | Brave Search | Web search via Brave | API key from `.bash_secrets` | Docker container | - |
 | Filesystem | Local filesystem operations | None required | Built from source | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/filesystem#filesystem-mcp-server) |
