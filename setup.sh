@@ -148,11 +148,30 @@ ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 # Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
 # (as opposed to Workspace Configuration: .amazonq/mcp.json - Specific to the current workspace)
 mkdir -p ~/.aws/amazonq
-ln -sf "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
+if [[ ! -f ~/.aws/amazonq/mcp.json ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json; then
+    cp "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
+fi
 
 # Claude Desktop MCP integration
 mkdir -p ~/.config/Claude
-cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json
+if [[ ! -f ~/.config/Claude/claude_desktop_config.json ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json; then
+    cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json
+fi
+
+# Apply environment-specific MCP server configuration
+if [[ -f "$DOT_DEN/utils/mcp-environment.sh" ]]; then
+  # Source the MCP environment utility
+  # shellcheck disable=SC1090
+  source "$DOT_DEN/utils/mcp-environment.sh"
+  
+  # Detect current environment
+  CURRENT_ENV=$(detect_environment)
+  echo "Configuring MCP servers for $CURRENT_ENV environment..."
+  
+  # Apply environment-specific configuration to all MCP config files
+  filter_mcp_config ~/.aws/amazonq/mcp.json "$CURRENT_ENV"
+  filter_mcp_config ~/.config/Claude/claude_desktop_config.json "$CURRENT_ENV"
+fi
 
 # Set up Git configuration
 echo "Setting up Git configuration..."
@@ -251,17 +270,14 @@ if command -v q >/dev/null 2>&1; then
     echo -e "${GREEN}✓ Amazon Q is up to date${NC}"
   fi
   
-  # Disable telemetry if not already disabled
-  TELEMETRY_STATUS=$(q telemetry status 2>/dev/null | grep -i "disabled" || echo "")
-  if [ -z "$TELEMETRY_STATUS" ]; then
-    echo "Disabling Amazon Q telemetry..."
-    q telemetry disable >/dev/null 2>&1
-    echo -e "${GREEN}✓ Amazon Q telemetry disabled${NC}"
-  else
-    echo "Amazon Q telemetry already disabled"
-  fi
 fi
-  
+
+# Configure Amazon Q settings
+q telemetry disable
+q settings chat.editMode vi
+q settings chat.defaultModel claude-4-sonnet
+q settings mcp.noInteractiveTimeout 5000
+
 # Node.js setup with NVM
 echo -e "${DIVIDER}"
 echo "Setting up Node.js with NVM..."
@@ -473,6 +489,30 @@ else
   echo "To use GitHub MCP features, install GitHub CLI and run: export GITHUB_TOKEN=\$(gh auth token)"
 fi
 
+# Git Delta setup
+echo -e "${DIVIDER}"
+echo "Checking Git Delta setup..."
+
+# Check if Git Delta is referenced in gitconfig
+if grep -q "delta" ~/.gitconfig 2>/dev/null; then
+  echo "Git Delta is referenced in your gitconfig."
+  
+  # Check if Git Delta is installed
+  if command -v delta &> /dev/null; then
+    echo -e "${GREEN}✓ Git Delta is already installed${NC}"
+  else
+    echo "Git Delta is not installed. Installing now..."
+    if [ -f "$DOT_DEN/utils/install-git-delta.sh" ]; then
+      bash "$DOT_DEN/utils/install-git-delta.sh"
+    else
+      echo -e "${RED}Git Delta installation script not found.${NC}"
+      echo "Please install Git Delta manually or your git diff commands may fail."
+    fi
+  fi
+else
+  echo "Git Delta is not referenced in your gitconfig. Skipping installation."
+fi
+
 # Docker setup
 echo -e "${DIVIDER}"
 echo "Checking Docker setup..."
@@ -546,8 +586,17 @@ fi
 # Source bash aliases to make them immediately available
 echo "Loading bash aliases into current session..."
 if [[ -f ~/.bash_aliases ]]; then
+  # shellcheck disable=SC1090
   source ~/.bash_aliases
   echo -e "${GREEN}✓ Bash aliases loaded successfully${NC}"
+fi
+
+# Source bash exports to make environment variables available
+echo "Loading environment variables from bash_exports..."
+if [[ -f ~/.bash_exports ]]; then
+  # shellcheck disable=SC1090
+  source ~/.bash_exports
+  echo -e "${GREEN}✓ Environment variables loaded successfully${NC}"
 fi
 
 echo -e "${DIVIDER}"
