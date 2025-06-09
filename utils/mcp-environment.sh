@@ -5,7 +5,7 @@
 
 # Default environment-specific server configurations
 # Format: Array of server names to disable in specific environments
-PERSONAL_DISABLED_SERVERS=("atlassian")
+PERSONAL_DISABLED_SERVERS=("atlassian" "gitlab")
 WORK_DISABLED_SERVERS=("gdrive")
 DEVELOPMENT_DISABLED_SERVERS=()
 PRODUCTION_DISABLED_SERVERS=("experimental" "beta")
