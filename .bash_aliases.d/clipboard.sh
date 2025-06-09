@@ -42,6 +42,13 @@ qsafe() {
     github___rerun_failed_jobs\
     github___cancel_workflow_run\
     github___delete_workflow_run_logs\
+    gitlab___create_branch\
+    gitlab___create_issue\
+    gitlab___create_merge_request\
+    gitlab___create_or_update_file\
+    gitlab___create_repository\
+    gitlab___fork_repository\
+    gitlab___push_files\
     atlassian___jira_create_issue\
     atlassian___jira_update_issue\
     atlassian___jira_add_comment\
