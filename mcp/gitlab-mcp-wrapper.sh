@@ -13,10 +13,5 @@ if [ -z "$GITLAB_PERSONAL_ACCESS_TOKEN" ]; then
   exit 1
 fi
 
-# Set GitLab API URL if not already set (defaults to gitlab.com)
-if [ -z "$GITLAB_API_URL" ]; then
-  export GITLAB_API_URL="https://gitlab.com/api/v4"
-fi
-
 # Run the GitLab MCP server
 exec npx -y @modelcontextprotocol/server-gitlab
