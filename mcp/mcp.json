@@ -49,9 +49,13 @@
     },
     "gitlab": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-gitlab"],
+      "args": ["-y", "@zereight/mcp-gitlab"],
       "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
+        "FASTMCP_LOG_LEVEL": "ERROR",
+        "GITLAB_READ_ONLY_MODE": "false",
+        "USE_GITLAB_WIKI": "true",
+        "USE_MILESTONE": "true",
+        "USE_PIPELINE": "true"
       }
     }
   }
