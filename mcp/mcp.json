@@ -23,6 +23,13 @@
         "FASTMCP_LOG_LEVEL": "ERROR"
       }
     },
+    "gdrive": {
+      "command": "gdrive-mcp-wrapper.sh",
+      "args": [],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      }
+    },
     "github": {
       "command": "github-mcp-wrapper.sh",
       "args": [],
