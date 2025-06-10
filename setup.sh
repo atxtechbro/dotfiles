@@ -536,46 +536,31 @@ echo "Checking Docker setup..."
 if command -v docker &> /dev/null; then
   echo -e "${GREEN}✓ Docker is already installed${NC}"
 else
-  echo -e "${YELLOW}Docker is not installed. Installing now...${NC}"
-  # Auto-install Docker based on available package manager
-  if command -v apt &> /dev/null; then
-    echo "Using apt to install Docker..."
-    (sudo apt-get update && sudo apt-get install -y docker.io) || {
-      echo -e "${YELLOW}Docker installation with apt failed. Continuing anyway...${NC}"
+  # Source and run Docker installation script
+  if [[ -f "$DOT_DEN/utils/install-docker.sh" ]]; then
+    source "$DOT_DEN/utils/install-docker.sh"
+    install_docker || {
+      echo -e "${RED}Docker installation failed.${NC}"
+      echo "Please try installing Docker manually for your system."
     }
-    (sudo systemctl enable docker) || echo "Failed to enable Docker service. Continuing..."
-    (sudo systemctl start docker) || echo "Failed to start Docker service. Continuing..."
-    (sudo usermod -aG docker "$USER") || echo "Failed to add user to Docker group. Continuing..."
-    echo -e "${GREEN}✓ Docker installation attempted${NC}"
-  elif command -v pacman &> /dev/null; then
-    echo "Using pacman to install Docker..."
-    (sudo pacman -Sy --noconfirm docker) || echo "Docker installation with pacman failed. Continuing..."
-    (sudo systemctl enable docker) || echo "Failed to enable Docker service. Continuing..."
-    (sudo systemctl start docker) || echo "Failed to start Docker service. Continuing..."
-    (sudo usermod -aG docker "$USER") || echo "Failed to add user to Docker group. Continuing..."
-    echo -e "${GREEN}✓ Docker installation attempted${NC}"
-  elif command -v dnf &> /dev/null; then
-    echo "Using dnf to install Docker..."
-    (sudo dnf -y install docker) || echo "Docker installation with dnf failed. Continuing..."
-    (sudo systemctl enable docker) || echo "Failed to enable Docker service. Continuing..."
-    (sudo systemctl start docker) || echo "Failed to start Docker service. Continuing..."
-    (sudo usermod -aG docker "$USER") || echo "Failed to add user to Docker group. Continuing..."
-    echo -e "${GREEN}✓ Docker installation attempted${NC}"
   else
-    echo -e "${RED}Unable to install Docker automatically.${NC}"
-    echo "Please install Docker manually for your distribution."
+    echo -e "${RED}Docker installation script not found at $DOT_DEN/utils/install-docker.sh${NC}"
+    echo "Please check your dotfiles installation."
   fi
-  echo "Note: You'll need to log out and back in for group changes to take effect."
 fi
 
-# Check if user is in docker group
-if groups | grep -q docker; then
-  echo -e "${GREEN}✓ User is in the docker group${NC}"
-else
-  echo -e "${YELLOW}User is not in the docker group.${NC}"
-  echo "To add yourself to the docker group, run:"
-  echo -e "${GREEN}sudo usermod -aG docker \$USER${NC}"
-  echo "Then log out and back in for changes to take effect."
+# Check if user is in docker group (Linux only)
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  if groups | grep -q docker; then
+    echo -e "${GREEN}✓ User is in the docker group${NC}"
+  else
+    echo -e "${YELLOW}User is not in the docker group.${NC}"
+    echo "To add yourself to the docker group, run:"
+    echo -e "${GREEN}sudo usermod -aG docker \$USER${NC}"
+    echo "Then log out and back in for changes to take effect."
+  fi
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  echo -e "${BLUE}Docker Desktop on macOS doesn't require group membership${NC}"
 fi
 
 # Test Docker if it's installed (without sudo)
