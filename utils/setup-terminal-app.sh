@@ -10,37 +10,20 @@ NC='\033[0m' # No Color
 setup_terminal_app() {
     echo "Configuring Terminal.app settings..."
     
-    # Create a new terminal profile called "Dotfiles"
-    PROFILE_NAME="Dotfiles"
+    # Set larger window size for new windows
+    defaults write com.apple.Terminal "NSWindow Frame NSFontPanel" -string "120 40"
     
-    # Set terminal window size (larger, like Linux)
-    defaults write com.apple.Terminal "Window Settings" -dict-add "$PROFILE_NAME" '{
-        "columnCount" = 120;
-        "rowCount" = 40;
-    }'
+    # Set larger font size (Monaco 16pt for better readability)
+    defaults write com.apple.Terminal "Default Window Settings" -string "Pro"
+    defaults write com.apple.Terminal "Startup Window Settings" -string "Pro"
     
-    # Set dark background and remove borders
-    defaults write com.apple.Terminal "Window Settings" -dict-add "$PROFILE_NAME" '{
-        "BackgroundColor" = "0.0 0.0 0.0 1.0";
-        "TextColor" = "1.0 1.0 1.0 1.0";
-        "CursorColor" = "1.0 1.0 1.0 1.0";
-        "SelectionColor" = "0.3 0.3 0.3 1.0";
-        "BackgroundBlur" = 0;
-        "BackgroundSettingsForInactiveWindows" = 0;
-    }'
+    # Configure the Pro profile (dark theme) with larger font
+    /usr/libexec/PlistBuddy -c "Set :'Window Settings':Pro:Font 'Monaco 16'" ~/Library/Preferences/com.apple.Terminal.plist 2>/dev/null || true
+    /usr/libexec/PlistBuddy -c "Set :'Window Settings':Pro:columnCount 120" ~/Library/Preferences/com.apple.Terminal.plist 2>/dev/null || true
+    /usr/libexec/PlistBuddy -c "Set :'Window Settings':Pro:rowCount 40" ~/Library/Preferences/com.apple.Terminal.plist 2>/dev/null || true
     
-    # Set font size (larger for better readability)
-    defaults write com.apple.Terminal "Window Settings" -dict-add "$PROFILE_NAME" '{
-        "Font" = "Monaco 14";
-    }'
-    
-    # Remove window decorations and set as default
-    defaults write com.apple.Terminal "Default Window Settings" "$PROFILE_NAME"
-    defaults write com.apple.Terminal "Startup Window Settings" "$PROFILE_NAME"
-    
-    echo -e "${GREEN}✓ Terminal.app configured with Dotfiles profile${NC}"
-    echo -e "${YELLOW}Note: You may need to restart Terminal.app for all changes to take effect${NC}"
-    echo -e "${YELLOW}Go to Terminal > Preferences > Profiles to select the 'Dotfiles' profile${NC}"
+    echo -e "${GREEN}✓ Terminal.app configured with larger window and font${NC}"
+    echo -e "${YELLOW}Note: Quit and restart Terminal.app (Cmd+Q then reopen) for changes to take effect${NC}"
 }
 
 # Main execution
