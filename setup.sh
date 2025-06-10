@@ -388,8 +388,7 @@ if [[ -f "$DOT_DEN/utils/install-gh-cli.sh" ]]; then
     }
 else
     echo -e "${RED}GitHub CLI installation script not found at $DOT_DEN/utils/install-gh-cli.sh${NC}"
-fi
-  echo "To use GitHub MCP features, install GitHub CLI and run: export GITHUB_TOKEN=\$(gh auth token)"
+    echo "To use GitHub MCP features, install GitHub CLI and run: export GITHUB_TOKEN=\$(gh auth token)"
 fi
 
 # Git Delta setup
