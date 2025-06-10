@@ -16,18 +16,15 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 install_amazon_q() {
-  echo -e "${YELLOW}Amazon Q CLI not found. Installing now...${NC}"
+  echo -e "${YELLOW}Amazon Q CLI not found. Installing minimal version (CLI + autocomplete, no GUI)...${NC}"
   
   # Determine architecture and OS
   local arch=$(uname -m)
-  local os_type=""
   
   if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    os_type="linux"
-    install_amazon_q_linux "$arch"
+    install_amazon_q_zip "linux" "$arch"
   elif [[ "$OSTYPE" == "darwin"* ]]; then
-    os_type="darwin"
-    install_amazon_q_macos
+    install_amazon_q_zip "darwin" "$arch"
   else
     echo -e "${RED}Unsupported OS: $OSTYPE. Please install Amazon Q CLI manually.${NC}"
     echo "Visit: https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/command-line-installing.html"
@@ -35,10 +32,11 @@ install_amazon_q() {
   fi
 }
 
-install_amazon_q_linux() {
-  local arch="$1"
+install_amazon_q_zip() {
+  local os_type="$1"
+  local arch="$2"
   
-  # Map architecture names for Linux
+  # Map architecture names
   local q_arch=""
   case "$arch" in
     "x86_64")
@@ -47,6 +45,10 @@ install_amazon_q_linux() {
     "aarch64")
       q_arch="aarch64"
       ;;
+    "arm64")
+      # macOS uses arm64, but Amazon Q might use aarch64 or arm64
+      q_arch="arm64"
+      ;;
     *)
       echo -e "${RED}Unsupported architecture: $arch${NC}"
       echo "Please install Amazon Q CLI manually for your architecture."
@@ -54,12 +56,13 @@ install_amazon_q_linux() {
       ;;
   esac
   
-  # Use the correct AWS download URL
+  # Construct download URL for minimal installation (zip file method)
   local base_url="https://desktop-release.q.us-east-1.amazonaws.com/latest"
-  local filename="q-${q_arch}-linux.zip"
+  local filename="q-${q_arch}-${os_type}.zip"
   local download_url="${base_url}/${filename}"
   
-  echo "Downloading Amazon Q CLI for Linux ${q_arch}..."
+  echo "Downloading Amazon Q CLI minimal installation for ${os_type} ${q_arch}..."
+  echo "This includes 'q' command and 'qterm' autocomplete without GUI."
   
   # Create temporary directory
   local temp_dir=$(mktemp -d)
@@ -70,57 +73,60 @@ install_amazon_q_linux() {
   
   # Download Amazon Q CLI
   if ! curl --proto '=https' --tlsv1.2 -sSf "$download_url" -o "q.zip"; then
-    echo -e "${RED}Failed to download Amazon Q CLI from $download_url${NC}"
-    echo "Please check your internet connection or install manually."
-    rm -rf "$temp_dir"
-    return 1
+    echo -e "${YELLOW}Failed to download from $download_url${NC}"
+    
+    # Try alternative architecture naming for macOS
+    if [[ "$os_type" == "darwin" && "$q_arch" == "arm64" ]]; then
+      echo "Trying alternative architecture naming (aarch64)..."
+      filename="q-aarch64-${os_type}.zip"
+      download_url="${base_url}/${filename}"
+      
+      if ! curl --proto '=https' --tlsv1.2 -sSf "$download_url" -o "q.zip"; then
+        echo -e "${RED}Failed to download Amazon Q CLI from both URLs${NC}"
+        echo "Please install manually or use Homebrew: brew install --cask amazon-q"
+        rm -rf "$temp_dir"
+        return 1
+      fi
+    else
+      echo -e "${RED}Failed to download Amazon Q CLI${NC}"
+      echo "Please check your internet connection or install manually."
+      rm -rf "$temp_dir"
+      return 1
+    fi
   fi
   
   # Extract and install
-  if unzip -q q.zip && [[ -f "q/install.sh" ]]; then
-    chmod +x q/install.sh
-    if ./q/install.sh; then
-      echo -e "${GREEN}✓ Amazon Q CLI installed successfully${NC}"
-      rm -rf "$temp_dir"
-      return 0
-    fi
-  fi
-  
-  echo -e "${RED}Amazon Q CLI installation failed${NC}"
-  rm -rf "$temp_dir"
-  return 1
-}
-
-install_amazon_q_macos() {
-  # Check if Homebrew is available
-  if ! command -v brew &> /dev/null; then
-    echo -e "${RED}Homebrew is required to install Amazon Q CLI on macOS.${NC}"
-    echo "Please ensure Homebrew is installed first."
-    return 1
-  fi
-  
-  echo "Installing Amazon Q CLI via Homebrew..."
-  
-  # Install Amazon Q CLI via Homebrew
-  if brew install --cask amazon-q; then
-    echo -e "${GREEN}✓ Amazon Q CLI installed successfully via Homebrew${NC}"
-    
-    # Verify installation
-    if command -v q >/dev/null 2>&1; then
-      local version=$(q --version 2>/dev/null | head -n 1 || echo "unknown")
-      echo -e "${GREEN}✓ Amazon Q CLI version: $version${NC}"
-      return 0
+  if unzip -q q.zip; then
+    if [[ -f "q/install.sh" ]]; then
+      chmod +x q/install.sh
+      echo "Running Amazon Q CLI installation..."
+      if ./q/install.sh; then
+        echo -e "${GREEN}✓ Amazon Q CLI minimal installation completed${NC}"
+        echo -e "${GREEN}✓ Installed: 'q' command for chat and 'qterm' for autocomplete${NC}"
+        
+        # Verify installation
+        rm -rf "$temp_dir"
+        
+        # Check if q command is available (may need PATH refresh)
+        if command -v q >/dev/null 2>&1; then
+          local version=$(q --version 2>/dev/null | head -n 1 || echo "installed")
+          echo -e "${GREEN}✓ Amazon Q CLI ready: $version${NC}"
+        else
+          echo -e "${YELLOW}Amazon Q CLI installed to ~/.local/bin${NC}"
+          echo -e "${YELLOW}You may need to restart your terminal or run: export PATH=\"\$HOME/.local/bin:\$PATH\"${NC}"
+        fi
+        
+        return 0
+      fi
     else
-      echo -e "${YELLOW}Amazon Q CLI installed but may need shell integration setup${NC}"
-      echo "Please open the Amazon Q application and enable shell integrations."
-      return 0
+      echo -e "${RED}Installation script not found in archive${NC}"
     fi
   else
-    echo -e "${RED}Failed to install Amazon Q CLI via Homebrew.${NC}"
-    echo "You can install manually by downloading from:"
-    echo "https://desktop-release.q.us-east-1.amazonaws.com/latest/Amazon%20Q.dmg"
-    return 1
+    echo -e "${RED}Failed to extract Amazon Q CLI archive${NC}"
   fi
+  
+  rm -rf "$temp_dir"
+  return 1
 }
 
 update_amazon_q() {
@@ -134,30 +140,51 @@ update_amazon_q() {
   local update_check=$(q update 2>&1 | grep "A new version of q is available:" || echo "")
   
   if [[ -n "$update_check" ]]; then
-    echo "Amazon Q update available. Installing..."
+    echo "Amazon Q update available. Installing via zip file method..."
     
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-      # On macOS, use Homebrew for updates
-      if command -v brew &> /dev/null; then
-        brew upgrade --cask amazon-q || echo -e "${YELLOW}Homebrew upgrade failed, continuing...${NC}"
-      else
-        echo -e "${YELLOW}Homebrew not available for updates. Please update manually.${NC}"
+    local arch=$(uname -m)
+    local os_type=""
+    local q_arch=""
+    
+    # Determine OS and architecture
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+      os_type="linux"
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+      os_type="darwin"
+    else
+      echo -e "${RED}Unsupported OS for automatic updates${NC}"
+      return 1
+    fi
+    
+    # Map architecture
+    case "$arch" in
+      "x86_64") q_arch="x86_64" ;;
+      "aarch64") q_arch="aarch64" ;;
+      "arm64") q_arch="arm64" ;;
+      *)
+        echo -e "${RED}Unsupported architecture: $arch${NC}"
+        return 1
+        ;;
+    esac
+    
+    local base_url="https://desktop-release.q.us-east-1.amazonaws.com/latest"
+    local filename="q-${q_arch}-${os_type}.zip"
+    local download_url="${base_url}/${filename}"
+    
+    local temp_dir=$(mktemp -d)
+    cd "$temp_dir" || return 1
+    
+    if curl --proto '=https' --tlsv1.2 -sSf "$download_url" -o "q.zip" 2>/dev/null; then
+      if unzip -q q.zip && [[ -f "q/install.sh" ]]; then
+        chmod +x q/install.sh
+        ./q/install.sh >/dev/null 2>&1
+        echo -e "${GREEN}✓ Amazon Q updated successfully${NC}"
       fi
-    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-      # On Linux, use the zip file method
-      local arch=$(uname -m)
-      local download_url=""
-      
-      if [[ "$arch" == "x86_64" ]]; then
-        download_url="https://desktop-release.q.us-east-1.amazonaws.com/latest/q-x86_64-linux.zip"
-      elif [[ "$arch" == "aarch64" ]]; then
-        download_url="https://desktop-release.q.us-east-1.amazonaws.com/latest/q-aarch64-linux.zip"
-      fi
-      
-      if [[ -n "$download_url" ]]; then
-        local temp_dir=$(mktemp -d)
-        cd "$temp_dir" || return 1
-        
+    else
+      # Try alternative architecture naming for macOS
+      if [[ "$os_type" == "darwin" && "$q_arch" == "arm64" ]]; then
+        filename="q-aarch64-${os_type}.zip"
+        download_url="${base_url}/${filename}"
         if curl --proto '=https' --tlsv1.2 -sSf "$download_url" -o "q.zip" 2>/dev/null; then
           if unzip -q q.zip && [[ -f "q/install.sh" ]]; then
             chmod +x q/install.sh
@@ -165,12 +192,10 @@ update_amazon_q() {
             echo -e "${GREEN}✓ Amazon Q updated successfully${NC}"
           fi
         fi
-        
-        rm -rf "$temp_dir"
-      else
-        echo -e "${RED}Unsupported architecture: $arch. Cannot update Amazon Q automatically${NC}"
       fi
     fi
+    
+    rm -rf "$temp_dir"
   else
     echo -e "${GREEN}✓ Amazon Q is up to date${NC}"
   fi
