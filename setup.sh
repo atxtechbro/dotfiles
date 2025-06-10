@@ -386,6 +386,19 @@ fi
 echo -e "${DIVIDER}"
 echo "Checking GitHub CLI..."
 
+# Ensure Homebrew is available on macOS before proceeding
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  # Source the Homebrew utility script
+  if [[ -f "$DOT_DEN/utils/ensure-homebrew.sh" ]]; then
+    source "$DOT_DEN/utils/ensure-homebrew.sh"
+    ensure_homebrew_on_macos || {
+      echo -e "${RED}Failed to ensure Homebrew is installed. GitHub CLI installation may fail.${NC}"
+    }
+  else
+    echo -e "${RED}Homebrew utility script not found at $DOT_DEN/utils/ensure-homebrew.sh${NC}"
+  fi
+fi
+
 install_or_update_gh_cli() {
   echo "Installing/updating GitHub CLI using official method..."
   
@@ -433,7 +446,9 @@ install_or_update_gh_cli() {
       echo "Using Homebrew installation..."
       (brew install gh || brew upgrade gh) || echo -e "${YELLOW}Failed to install/update GitHub CLI via Homebrew. Continuing...${NC}"
     else
-      echo -e "${YELLOW}Homebrew not found. Please install Homebrew first to install GitHub CLI on macOS.${NC}"
+      echo -e "${RED}Homebrew installation failed earlier. Cannot install GitHub CLI.${NC}"
+      echo "Please install Homebrew manually: https://brew.sh"
+      return 1
     fi
   else
     echo -e "${YELLOW}Unsupported OS: $OSTYPE. Please install GitHub CLI manually.${NC}"
