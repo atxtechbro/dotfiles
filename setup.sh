@@ -145,6 +145,13 @@ mkdir -p ~/.bash_aliases.d
 cp -r "$DOT_DEN/.bash_aliases.d/"* ~/.bash_aliases.d/ 2>/dev/null || true
 ln -sf "$DOT_DEN/.bash_exports" ~/.bash_exports
 ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
+
+# macOS-specific shell configuration
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "Setting up macOS shell configuration..."
+    ln -sf "$DOT_DEN/.zprofile" ~/.zprofile
+    echo -e "${GREEN}✓ zprofile linked for Homebrew environment setup${NC}"
+fi
 # Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
 # (as opposed to Workspace Configuration: .amazonq/mcp.json - Specific to the current workspace)
 mkdir -p ~/.aws/amazonq
