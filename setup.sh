@@ -429,7 +429,7 @@ install_or_update_gh_cli() {
       echo "Using direct binary installation..."
       (
         # Get latest version
-        VERSION=$(curl -s https://api.github.com/repos/cli/cli/releases/latest | grep -Po '"tag_name": "v\K[^"]*')
+        VERSION=$(curl -s https://api.github.com/repos/cli/cli/releases/latest | grep -o '"tag_name": "v[^"]*"' | cut -d'"' -f4 | sed 's/^v//')
         
         # Download and extract
         curl -Lo gh.tar.gz "https://github.com/cli/cli/releases/latest/download/gh_${VERSION}_linux_amd64.tar.gz"
@@ -461,7 +461,7 @@ if command -v gh &> /dev/null; then
   echo "Current GitHub CLI version: $CURRENT_VERSION"
   
   # Get the latest available version from GitHub
-  LATEST_VERSION=$(curl -s https://api.github.com/repos/cli/cli/releases/latest | grep -Po '"tag_name": "v\K[^"]*')
+  LATEST_VERSION=$(curl -s https://api.github.com/repos/cli/cli/releases/latest | grep -o '"tag_name": "v[^"]*"' | cut -d'"' -f4 | sed 's/^v//')
   
   # Check if update is needed
   if [[ -n "$LATEST_VERSION" && "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
