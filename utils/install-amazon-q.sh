@@ -66,7 +66,7 @@ install_amazon_q_linux() {
         if [[ -f "q/install.sh" ]]; then
             chmod +x q/install.sh
             echo "Running Amazon Q CLI installer..."
-            if ./q/install.sh; then
+            if ./q/install.sh --no-confirm; then
                 echo -e "${GREEN}✓ Amazon Q CLI minimal installation completed${NC}"
                 rm -rf "$temp_dir"
 
