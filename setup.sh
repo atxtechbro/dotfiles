@@ -150,7 +150,8 @@ ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Setting up macOS shell configuration..."
     ln -sf "$DOT_DEN/.zprofile" ~/.zprofile
-    echo -e "${GREEN}✓ zprofile linked for Homebrew environment setup${NC}"
+    ln -sf "$DOT_DEN/.zshrc" ~/.zshrc
+    echo -e "${GREEN}✓ zprofile and zshrc linked for macOS shell setup${NC}"
 fi
 # Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
 # (as opposed to Workspace Configuration: .amazonq/mcp.json - Specific to the current workspace)
