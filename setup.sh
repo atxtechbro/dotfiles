@@ -118,18 +118,14 @@ elif [[ -d "$DOT_DEN" ]]; then
 fi
 
 # Neovim configuration setup
-if command -v nvim &> /dev/null; then
-    echo -e "${YELLOW}Linking Neovim configuration...${NC}"
-    mkdir -p ~/.config
-    rm -rf ~/.config/nvim
-    ln -sfn "$DOT_DEN/nvim" ~/.config/nvim
-    
-    echo -e "${BLUE}Neovim configuration linked.${NC}"
-    echo -e "${BLUE}Note: LSP and debugging tools must be installed manually.${NC}"
-    echo -e "${BLUE}See $DOT_DEN/nvim/scripts/README.md for more information.${NC}"
+if [[ -f "$DOT_DEN/utils/install-neovim.sh" ]]; then
+    source "$DOT_DEN/utils/install-neovim.sh"
+    setup_neovim || {
+        echo -e "${YELLOW}Neovim setup encountered issues but continuing...${NC}"
+    }
 else
-    echo -e "${YELLOW}Neovim not installed. Skipping Neovim configuration.${NC}"
-    echo -e "${BLUE}To use Neovim configuration:${NC}"
+    echo -e "${YELLOW}Neovim installation script not found. Skipping Neovim setup.${NC}"
+    echo -e "${BLUE}To use Neovim configuration manually:${NC}"
     echo -e "${BLUE}1. Install Neovim${NC}"
     echo -e "${BLUE}2. Run: ln -sfn $DOT_DEN/nvim ~/.config/nvim${NC}"
 fi
