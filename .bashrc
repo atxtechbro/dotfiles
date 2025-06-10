@@ -132,8 +132,8 @@ export NVM_DIR="$HOME/.nvm"
 
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 
-# Bash-specific settings
-if [ -n "$BASH_VERSION" ]; then
+# Bash-specific settings (only in interactive shells)
+if [ -n "$BASH_VERSION" ] && [[ $- == *i* ]]; then
     bind 'set enable-bracketed-paste off'
 fi
 
@@ -193,9 +193,9 @@ fi
 
 export PATH="/Users/morgan.joyce/.local/bin:$PATH"
 
-# Auto-navigate to dotfiles directory on new shell
-if [[ -d "$HOME/ppv/pillars/dotfiles" && "$PWD" == "$HOME" ]]; then
-    cd "$HOME/ppv/pillars/dotfiles"
+# Auto-navigate to dotfiles directory on new shell (only in interactive shells)
+if [[ $- == *i* ]] && [[ -d "$HOME/ppv/pillars/dotfiles" && "$PWD" == "$HOME" ]]; then
+    cd "$HOME/ppv/pillars/dotfiles" || true
 fi
 
 # Amazon Q post block. Keep at the bottom of this file.
