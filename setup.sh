@@ -239,44 +239,20 @@ fi
 echo -e "${DIVIDER}"
 echo "Setting up development tools..."
 
-# Amazon Q setup and management
-if command -v q >/dev/null 2>&1; then
-  echo "Checking Amazon Q..."
-  
-  # Check if update is available
-  UPDATE_CHECK=$(q update 2>&1 | grep "A new version of q is available:" || echo "")
-  
-  if [ -n "$UPDATE_CHECK" ]; then
-    echo "Amazon Q update available. Installing..."
-    
-    # Determine architecture
-    ARCH=$(uname -m)
-    if [ "$ARCH" = "x86_64" ]; then
-      curl --proto '=https' --tlsv1.2 -sSf "https://desktop-release.codewhisperer.us-east-1.amazonaws.com/latest/q-x86_64-linux.zip" -o "q.zip" 2>/dev/null
-    elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
-      curl --proto '=https' --tlsv1.2 -sSf "https://desktop-release.codewhisperer.us-east-1.amazonaws.com/latest/q-aarch64-linux.zip" -o "q.zip" 2>/dev/null
-    else
-      echo -e "${RED}Unsupported architecture: $ARCH. Cannot update Amazon Q automatically${NC}"
-    fi
-    
-    # Install if zip was downloaded
-    if [ -f "q.zip" ]; then
-      unzip -o q.zip >/dev/null 2>&1
-      ./q/install.sh >/dev/null 2>&1
-      rm -rf q.zip q/ >/dev/null 2>&1
-      echo -e "${GREEN}✓ Amazon Q updated${NC}"
-    fi
-  else
-    echo -e "${GREEN}✓ Amazon Q is up to date${NC}"
-  fi
-  
-fi
+# Amazon Q CLI setup and management
+echo -e "${DIVIDER}"
+echo "Setting up Amazon Q CLI..."
 
-# Configure Amazon Q settings
-q telemetry disable
-q settings chat.editMode vi
-q settings chat.defaultModel claude-4-sonnet
-q settings mcp.noInteractiveTimeout 5000
+# Setup Amazon Q CLI (install, update, configure)
+if [[ -f "$DOT_DEN/utils/install-amazon-q.sh" ]]; then
+  source "$DOT_DEN/utils/install-amazon-q.sh"
+  setup_amazon_q || {
+    echo -e "${RED}Failed to setup Amazon Q CLI completely. Some features may not work.${NC}"
+    echo "You can install it manually later from: https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/command-line-getting-started-installing.html"
+  }
+else
+  echo -e "${RED}Amazon Q installation script not found at $DOT_DEN/utils/install-amazon-q.sh${NC}"
+fi
 
 # Node.js setup with NVM
 echo -e "${DIVIDER}"
