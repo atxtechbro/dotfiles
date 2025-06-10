@@ -151,7 +151,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Setting up macOS shell configuration..."
     ln -sf "$DOT_DEN/.zprofile" ~/.zprofile
     ln -sf "$DOT_DEN/.zshrc" ~/.zshrc
-    echo -e "${GREEN}✓ zprofile and zshrc linked for macOS shell setup${NC}"
+    ln -sf "$DOT_DEN/.zsh_prompt" ~/.zsh_prompt
+    echo -e "${GREEN}✓ zprofile, zshrc, and zsh_prompt linked for macOS shell setup${NC}"
 fi
 # Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
 # (as opposed to Workspace Configuration: .amazonq/mcp.json - Specific to the current workspace)

@@ -9,8 +9,13 @@ if [[ -f ~/.bashrc ]]; then
     source ~/.bashrc
 fi
 
+# Source zsh-specific prompt configuration
+if [[ -f ~/.zsh_prompt ]]; then
+    source ~/.zsh_prompt
+fi
+
 # Auto-start tmux if not already in a tmux session and in an interactive shell
-if command -v tmux &> /dev/null && [[ $- == *i* ]] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+if command -v tmux &> /dev/null && [[ -o interactive ]] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
     exec tmux new-session -A -s main
 fi
 

@@ -1,0 +1,13 @@
+# Git branch function for zsh prompt
+function git_branch_name() {
+    branch=$(git symbolic-ref HEAD 2> /dev/null | awk -F/ '{print $NF}')
+    if [[ $branch == "" ]]; then
+        :
+    else
+        echo " ($branch)"
+    fi
+}
+
+# Set up the prompt with colors and git branch
+setopt PROMPT_SUBST
+PROMPT='%1~ %F{green}$(git_branch_name)%f $ '

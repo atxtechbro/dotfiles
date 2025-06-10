@@ -186,8 +186,10 @@ tmux source-file ~/.tmux.conf >/dev/null 2>&1 || true
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.local/uv-tools/bin:$PATH"
 
-# Set prompt to show current directory and git branch (placed at the end to ensure it's not overridden)
-PS1='\W\[\033[32m\]$(parse_git_branch)\[\033[00m\] \$ '
+# Set prompt to show current directory and git branch (bash only)
+if [ -n "$BASH_VERSION" ]; then
+    PS1='\W\[\033[32m\]$(parse_git_branch)\[\033[00m\] \$ '
+fi
 
 export PATH="/Users/morgan.joyce/.local/bin:$PATH"
 
