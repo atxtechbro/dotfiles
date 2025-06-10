@@ -193,5 +193,10 @@ fi
 
 export PATH="/Users/morgan.joyce/.local/bin:$PATH"
 
+# Auto-navigate to dotfiles directory on new shell
+if [[ -d "$HOME/ppv/pillars/dotfiles" && "$PWD" == "$HOME" ]]; then
+    cd "$HOME/ppv/pillars/dotfiles"
+fi
+
 # Amazon Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/bashrc.post.bash"
