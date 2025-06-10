@@ -111,6 +111,10 @@ setup_gh_cli() {
     if [ -n "$TOKEN" ]; then
       export GITHUB_TOKEN="$TOKEN"
       echo -e "${GREEN}✓ GitHub token exported as GITHUB_TOKEN${NC}"
+      
+      # Configure Git to use GitHub CLI for authentication
+      gh auth setup-git
+      echo -e "${GREEN}✓ Git configured to use GitHub CLI for authentication${NC}"
     else
       echo -e "${YELLOW}No GitHub token found. Please run 'gh auth login' first.${NC}"
     fi
