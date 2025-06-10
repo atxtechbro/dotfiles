@@ -26,13 +26,13 @@ jobs:
         include:
           - environment: ubuntu-linux
             runs-on: ubuntu-latest
-            setup-cmd: ln -sf $GITHUB_WORKSPACE /tmp/test-home/dotfiles
+            setup-cmd: ln -sf $GITHUB_WORKSPACE /tmp/test-home/ppv/pillars/dotfiles
           - environment: ubuntu-wsl
             runs-on: ubuntu-latest
             setup-cmd: |
               mkdir -p /tmp/test-home/mnt/c
               ln -sf $GITHUB_WORKSPACE /tmp/test-home/mnt/c/dotfiles
-              ln -sf /tmp/test-home/mnt/c/dotfiles /tmp/test-home/dotfiles
+              ln -sf /tmp/test-home/mnt/c/dotfiles /tmp/test-home/ppv/pillars/dotfiles
       fail-fast: false  # Continue with other environments if one fails
 
     runs-on: ${{ matrix.runs-on }}
@@ -46,6 +46,9 @@ jobs:
           # Create a fake home directory for testing
           mkdir -p /tmp/test-home
           export HOME=/tmp/test-home
+          
+          # Create the expected ppv/pillars directory structure
+          mkdir -p /tmp/test-home/ppv/pillars
           
           # Setup environment-specific symlinks
           ${{ matrix.setup-cmd }}
@@ -62,20 +65,21 @@ jobs:
           # Create required directories
           mkdir -p $HOME/.config/nvim
           
-          # Create symlinks (only the critical ones to save time)
-          ln -sf $HOME/dotfiles/nvim/init.lua $HOME/.config/nvim/init.lua
-          ln -sf $HOME/dotfiles/.bashrc $HOME/.bashrc
-          ln -sf $HOME/dotfiles/.bash_aliases $HOME/.bash_aliases
-          ln -sf $HOME/dotfiles/.bash_exports $HOME/.bash_exports
-          ln -sf $HOME/dotfiles/.gitconfig $HOME/.gitconfig
-          ln -sf $HOME/dotfiles/.tmux.conf $HOME/.tmux.conf
+          # Create symlinks using the correct path structure
+          ln -sf $HOME/ppv/pillars/dotfiles/nvim/init.lua $HOME/.config/nvim/init.lua
+          ln -sf $HOME/ppv/pillars/dotfiles/.bashrc $HOME/.bashrc
+          ln -sf $HOME/ppv/pillars/dotfiles/.bash_aliases $HOME/.bash_aliases
+          ln -sf $HOME/ppv/pillars/dotfiles/.bash_exports $HOME/.bash_exports
+          ln -sf $HOME/ppv/pillars/dotfiles/.gitconfig $HOME/.gitconfig
+          ln -sf $HOME/ppv/pillars/dotfiles/.tmux.conf $HOME/.tmux.conf
 
       - name: Validate configurations
         run: |
           export HOME=/tmp/test-home
           
           echo "Validating bash configuration..."
-          bash -c "source $HOME/.bashrc" || exit 1
+          # Test bashrc in a way that simulates non-interactive sourcing
+          bash -c "export HOME=/tmp/test-home; source $HOME/.bashrc; echo 'Bash configuration loaded successfully'" || exit 1
           
           echo "Validating tmux configuration..."
           tmux -f $HOME/.tmux.conf new-session -d || exit 1

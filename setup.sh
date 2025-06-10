@@ -145,6 +145,25 @@ mkdir -p ~/.bash_aliases.d
 cp -r "$DOT_DEN/.bash_aliases.d/"* ~/.bash_aliases.d/ 2>/dev/null || true
 ln -sf "$DOT_DEN/.bash_exports" ~/.bash_exports
 ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
+
+# macOS-specific shell configuration
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "Setting up macOS shell configuration..."
+    ln -sf "$DOT_DEN/.zprofile" ~/.zprofile
+    ln -sf "$DOT_DEN/.zshrc" ~/.zshrc
+    ln -sf "$DOT_DEN/.zsh_prompt" ~/.zsh_prompt
+    echo -e "${GREEN}✓ zprofile, zshrc, and zsh_prompt linked for macOS shell setup${NC}"
+    
+    # Offer iTerm2 installation for better terminal experience
+    echo -e "${DIVIDER}"
+    echo "Terminal setup for macOS..."
+    if [[ -f "$DOT_DEN/utils/install-iterm2.sh" ]]; then
+        echo "iTerm2 provides a much better development experience than Terminal.app"
+        echo "It has better font rendering, larger default windows, and more features."
+        source "$DOT_DEN/utils/install-iterm2.sh"
+        install_and_configure_iterm2
+    fi
+fi
 # Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
 # (as opposed to Workspace Configuration: .amazonq/mcp.json - Specific to the current workspace)
 mkdir -p ~/.aws/amazonq
@@ -358,126 +377,18 @@ if ! command -v uv >/dev/null 2>&1; then
   echo -e "${GREEN}✓ uv package manager installed${NC}"
 fi
 
-# GitHub CLI setup and update
+# GitHub CLI setup
 echo -e "${DIVIDER}"
-echo "Checking GitHub CLI..."
-
-# Ensure Homebrew is available on macOS before proceeding
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  # Source the Homebrew utility script
-  if [[ -f "$DOT_DEN/utils/ensure-homebrew.sh" ]]; then
-    source "$DOT_DEN/utils/ensure-homebrew.sh"
-    ensure_homebrew_on_macos || {
-      echo -e "${RED}Failed to ensure Homebrew is installed. GitHub CLI installation may fail.${NC}"
+echo "Setting up GitHub CLI..."
+if [[ -f "$DOT_DEN/utils/install-gh-cli.sh" ]]; then
+    source "$DOT_DEN/utils/install-gh-cli.sh"
+    setup_gh_cli || {
+        echo -e "${RED}Failed to setup GitHub CLI completely. Some features may not work.${NC}"
+        echo "You can install it manually later or run the setup script again."
     }
-  else
-    echo -e "${RED}Homebrew utility script not found at $DOT_DEN/utils/ensure-homebrew.sh${NC}"
-  fi
-fi
-
-install_or_update_gh_cli() {
-  echo "Installing/updating GitHub CLI using official method..."
-  
-  # Determine OS type for installation
-  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    # For Debian/Ubuntu-based systems
-    if command -v apt &> /dev/null; then
-      echo "Using apt-based installation..."
-      (
-        curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg 2>/dev/null
-        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-        sudo apt update 2>/dev/null
-        sudo apt install -y gh
-      ) || echo -e "${YELLOW}Failed to install/update GitHub CLI via apt. Continuing...${NC}"
-    
-    # For Arch-based systems
-    elif command -v pacman &> /dev/null; then
-      echo "Using pacman installation..."
-      (sudo pacman -Sy --noconfirm github-cli) || echo -e "${YELLOW}Failed to install/update GitHub CLI via pacman. Continuing...${NC}"
-    
-    # For Fedora/RHEL-based systems
-    elif command -v dnf &> /dev/null; then
-      echo "Using dnf installation..."
-      (sudo dnf install -y gh) || echo -e "${YELLOW}Failed to install/update GitHub CLI via dnf. Continuing...${NC}"
-    
-    # Fallback to direct binary installation
-    else
-      echo "Using direct binary installation..."
-      (
-        # Get latest version
-        VERSION=$(curl -s https://api.github.com/repos/cli/cli/releases/latest | grep -o '"tag_name": "v[^"]*"' | cut -d'"' -f4 | sed 's/^v//')
-        
-        # Download and extract
-        curl -Lo gh.tar.gz "https://github.com/cli/cli/releases/latest/download/gh_${VERSION}_linux_amd64.tar.gz"
-        tar xzf gh.tar.gz
-        sudo install -o root -g root -m 0755 gh_"${VERSION}"_linux_amd64/bin/gh /usr/local/bin/gh
-        sudo cp -r gh_"${VERSION}"_linux_amd64/share/man/man1/* /usr/local/share/man/man1/ 2>/dev/null || true
-        rm -rf gh_"${VERSION}"_linux_amd64 gh.tar.gz
-      ) || echo -e "${YELLOW}Failed to install/update GitHub CLI via binary. Continuing...${NC}"
-    fi
-  
-  # For macOS
-  elif [[ "$OSTYPE" == "darwin"* ]]; then
-    if command -v brew &> /dev/null; then
-      echo "Using Homebrew installation..."
-      (brew install gh || brew upgrade gh) || echo -e "${YELLOW}Failed to install/update GitHub CLI via Homebrew. Continuing...${NC}"
-    else
-      echo -e "${RED}Homebrew installation failed earlier. Cannot install GitHub CLI.${NC}"
-      echo "Please install Homebrew manually: https://brew.sh"
-      return 1
-    fi
-  else
-    echo -e "${YELLOW}Unsupported OS: $OSTYPE. Please install GitHub CLI manually.${NC}"
-  fi
-}
-
-# Check if GitHub CLI is installed
-if command -v gh &> /dev/null; then
-  CURRENT_VERSION=$(gh --version | head -n 1 | cut -d' ' -f3)
-  echo "Current GitHub CLI version: $CURRENT_VERSION"
-  
-  # Get the latest available version from GitHub
-  LATEST_VERSION=$(curl -s https://api.github.com/repos/cli/cli/releases/latest | grep -o '"tag_name": "v[^"]*"' | cut -d'"' -f4 | sed 's/^v//')
-  
-  # Check if update is needed
-  if [[ -n "$LATEST_VERSION" && "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
-    echo "Newer version available: $LATEST_VERSION. Updating GitHub CLI..."
-    install_or_update_gh_cli
-    
-    # Verify update
-    if command -v gh &> /dev/null; then
-      NEW_VERSION=$(gh --version | head -n 1 | cut -d' ' -f3)
-      if [[ "$CURRENT_VERSION" != "$NEW_VERSION" ]]; then
-        echo -e "${GREEN}✓ GitHub CLI updated from $CURRENT_VERSION to $NEW_VERSION${NC}"
-      else
-        echo -e "${YELLOW}GitHub CLI update attempted but version remained at $CURRENT_VERSION${NC}"
-      fi
-    fi
-  else
-    echo -e "${GREEN}✓ GitHub CLI is already at the latest version ($CURRENT_VERSION)${NC}"
-  fi
 else
-  echo "GitHub CLI not installed. Installing now..."
-  install_or_update_gh_cli
-  
-  # Verify installation
-  if command -v gh &> /dev/null; then
-    INSTALLED_VERSION=$(gh --version | head -n 1 | cut -d' ' -f3)
-    echo -e "${GREEN}✓ GitHub CLI installed successfully (version $INSTALLED_VERSION)${NC}"
-  else
-    echo -e "${RED}GitHub CLI installation failed.${NC}"
-  fi
-fi
-
-# Export GitHub token for MCP
-if command -v gh &> /dev/null; then
-  echo "Exporting GitHub token for MCP..."
-  GITHUB_TOKEN=$(gh auth token)
-  export GITHUB_TOKEN
-  echo -e "${GREEN}✓ GitHub token exported as GITHUB_TOKEN${NC}"
-else
-  echo -e "${YELLOW}GitHub CLI not installed. Skipping GitHub token export.${NC}"
-  echo "To use GitHub MCP features, install GitHub CLI and run: export GITHUB_TOKEN=\$(gh auth token)"
+    echo -e "${RED}GitHub CLI installation script not found at $DOT_DEN/utils/install-gh-cli.sh${NC}"
+    echo "To use GitHub MCP features, install GitHub CLI and run: export GITHUB_TOKEN=\$(gh auth token)"
 fi
 
 # Git Delta setup
@@ -523,6 +434,19 @@ else
     echo -e "${RED}Docker installation script not found at $DOT_DEN/utils/install-docker.sh${NC}"
     echo "Please check your dotfiles installation."
   fi
+fi
+
+# tmux setup
+echo -e "${DIVIDER}"
+echo "Setting up tmux..."
+if [[ -f "$DOT_DEN/utils/install-tmux.sh" ]]; then
+    source "$DOT_DEN/utils/install-tmux.sh"
+    install_or_update_tmux || {
+        echo -e "${RED}Failed to setup tmux completely. Some features may not work.${NC}"
+        echo "You can install it manually later using your system's package manager."
+    }
+else
+    echo -e "${RED}tmux installation script not found at $DOT_DEN/utils/install-tmux.sh${NC}"
 fi
 
 # Check if user is in docker group (Linux only)
