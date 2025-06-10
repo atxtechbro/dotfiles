@@ -154,10 +154,14 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     ln -sf "$DOT_DEN/.zsh_prompt" ~/.zsh_prompt
     echo -e "${GREEN}✓ zprofile, zshrc, and zsh_prompt linked for macOS shell setup${NC}"
     
-    # Configure Terminal.app for better development experience
-    if [[ -f "$DOT_DEN/utils/setup-terminal-app.sh" ]]; then
-        source "$DOT_DEN/utils/setup-terminal-app.sh"
-        setup_terminal_app
+    # Offer iTerm2 installation for better terminal experience
+    echo -e "${DIVIDER}"
+    echo "Terminal setup for macOS..."
+    if [[ -f "$DOT_DEN/utils/install-iterm2.sh" ]]; then
+        echo "iTerm2 provides a much better development experience than Terminal.app"
+        echo "It has better font rendering, larger default windows, and more features."
+        source "$DOT_DEN/utils/install-iterm2.sh"
+        install_and_configure_iterm2
     fi
 fi
 # Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
