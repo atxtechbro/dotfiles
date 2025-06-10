@@ -160,9 +160,9 @@ fi
 
 # Apply environment-specific MCP server configuration
 if [[ -f "$DOT_DEN/utils/mcp-environment.sh" ]]; then
-  # Source the MCP environment utility
+  # Source the MCP environment utility silently
   # shellcheck disable=SC1090
-  source "$DOT_DEN/utils/mcp-environment.sh"
+  source "$DOT_DEN/utils/mcp-environment.sh" &>/dev/null
   
   # Detect current environment
   CURRENT_ENV=$(detect_environment)

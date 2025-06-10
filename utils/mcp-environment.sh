@@ -3,6 +3,10 @@
 # Provides functions for environment-aware MCP server configuration
 # Following the "Spilled Coffee Principle" - making setup reproducible across machines
 
+# Define colors for consistent output (fallback if not defined by calling script)
+BLUE=${BLUE:-'\033[0;34m'}
+NC=${NC:-'\033[0m'} # No Color
+
 # Default environment-specific server configurations
 # Format: Array of server names to disable in specific environments
 PERSONAL_DISABLED_SERVERS=("atlassian" "gitlab")
@@ -40,7 +44,14 @@ filter_mcp_config() {
     return 0
   fi
   
-  echo "Removing servers for $environment environment: ${disabled_servers[*]}"
+  # Only print if there are actually servers to remove
+  if [[ -n "${SETUP_SCRIPT_RUNNING:-}" ]]; then
+    # Use setup script's color formatting when called from setup
+    echo -e "${BLUE}Removing MCP servers for $environment environment: ${disabled_servers[*]}${NC}"
+  else
+    # Fallback for standalone usage
+    echo "Removing servers for $environment environment: ${disabled_servers[*]}"
+  fi
   
   # Create a jq filter to remove the specified servers
   local jq_filter=""
