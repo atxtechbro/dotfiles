@@ -534,6 +534,19 @@ else
   fi
 fi
 
+# tmux setup
+echo -e "${DIVIDER}"
+echo "Setting up tmux..."
+if [[ -f "$DOT_DEN/utils/install-tmux.sh" ]]; then
+    source "$DOT_DEN/utils/install-tmux.sh"
+    install_or_update_tmux || {
+        echo -e "${RED}Failed to setup tmux completely. Some features may not work.${NC}"
+        echo "You can install it manually later using your system's package manager."
+    }
+else
+    echo -e "${RED}tmux installation script not found at $DOT_DEN/utils/install-tmux.sh${NC}"
+fi
+
 # Check if user is in docker group (Linux only)
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   if groups | grep -q docker; then
