@@ -59,7 +59,7 @@ if [[ "$OS" == "linux" ]]; then
         esac
         
         # Get latest version
-        VERSION=$(curl -s https://api.github.com/repos/dandavison/delta/releases/latest | grep -Po '"tag_name": "\K[^"]*')
+        VERSION=$(curl -s https://api.github.com/repos/dandavison/delta/releases/latest | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
         
         # Download and install
         TEMP_DIR=$(mktemp -d)
