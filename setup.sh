@@ -217,6 +217,22 @@ if [[ -f "$DOT_DEN/.bash_secrets.example" && ! -f ~/.bash_secrets ]]; then
     echo "Created ~/.bash_secrets from template. Please edit to add your secrets."
 fi
 
+# Set up Amazon Q global rules
+echo "Setting up Amazon Q global rules..."
+amazonq_rules_source="$DOT_DEN/.amazonq/rules"
+amazonq_rules_target="$HOME/.amazonq/rules"
+
+if [[ -d "$amazonq_rules_source" ]]; then
+    # Create target directory if it doesn't exist
+    mkdir -p "$amazonq_rules_target"
+    
+    # Copy all rule files
+    cp -r "$amazonq_rules_source/"* "$amazonq_rules_target/"
+    echo -e "${GREEN}✓ Amazon Q global rules installed${NC}"
+else
+    echo -e "${YELLOW}No Amazon Q rules found in $amazonq_rules_source${NC}"
+fi
+
 # Configuration files setup complete
 echo -e "${GREEN}✓ Configuration files setup complete${NC}"
 
