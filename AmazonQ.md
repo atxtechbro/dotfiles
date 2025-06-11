@@ -1,7 +1,7 @@
 # Repository-Specific Amazon Q Context
 
 ## Dotfiles Philosophy
-- See README.md for our core principles: The Spilled Coffee Principle, The Snowball Method, and The Versioning Mindset
+- See README.md for our core principles: The Spilled Coffee Principle and The Snowball Method
 
 ## GitHub Workflow
 - Pull Request based workflow (GitHub)
