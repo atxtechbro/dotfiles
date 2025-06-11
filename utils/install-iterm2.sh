@@ -29,6 +29,12 @@ install_and_configure_iterm2() {
     # Configure iTerm2 preferences
     echo "Configuring iTerm2 preferences..."
     
+    # Configure Option key behavior for tmux navigation
+    # Set Left Option Key to Esc+ (Meta) for tmux pane navigation
+    defaults write com.googlecode.iterm2 "LeftOptionKey" -int 3
+    # Set Right Option Key to Esc+ (Meta) as well
+    defaults write com.googlecode.iterm2 "RightOptionKey" -int 3
+    
     # Set larger default window size
     defaults write com.googlecode.iterm2 "New Bookmarks" -array-add '{
         "Name" = "Dotfiles";
@@ -45,6 +51,7 @@ install_and_configure_iterm2() {
             "Green Component" = 1;
             "Blue Component" = 1;
         };
+        "Option Key Sends" = 2;
     }'
     
     # Set as default profile
@@ -53,6 +60,12 @@ install_and_configure_iterm2() {
     echo -e "${GREEN}✓ iTerm2 configured with developer-friendly settings${NC}"
     echo -e "${YELLOW}Note: Launch iTerm2 to use the new terminal with larger window and better font${NC}"
     echo -e "${YELLOW}You can set iTerm2 as your default terminal in System Preferences${NC}"
+    echo -e "${YELLOW}Option+h/j/k/l should now work for tmux pane navigation${NC}"
+    
+    # Apply settings immediately if iTerm2 is running
+    if pgrep -x "iTerm2" > /dev/null; then
+        echo -e "${YELLOW}iTerm2 is running - restart iTerm2 for Option key changes to take effect${NC}"
+    fi
     
     return 0
 }
