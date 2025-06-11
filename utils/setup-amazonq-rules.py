@@ -27,18 +27,19 @@ def setup_amazonq_rules():
     
     # Handle existing target
     if target_rules.exists() and not target_rules.is_symlink():
-        # Preserve existing rules as backup
+        # Preserve existing rules as backup outside auto-discovery path
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_dir = Path.home() / f".amazonq/rules.backup.{timestamp}"
+        backup_dir = Path.home() / f".amazonq/experimental-rules.backup.{timestamp}"
         
-        print(f"Preserving existing global rules to {backup_dir}")
+        print(f"Preserving existing experimental rules to {backup_dir}")
         shutil.move(str(target_rules), str(backup_dir))
         
         # List backup files for easy context addition
-        print("Backup files (most recent first):")
+        print("Experimental rules preserved (most recent first):")
         md_files = sorted(backup_dir.glob("**/*.md"), key=os.path.getmtime, reverse=True)
         for md_file in md_files[:5]:  # Show top 5 most recent
             print(f"  /context add {md_file}")
+        print("Consider making a PR to add useful rules officially to dotfiles repo")
             
     elif target_rules.is_symlink():
         # Remove existing symlink
@@ -53,7 +54,7 @@ def setup_amazonq_rules():
     
     # Validation: Assert file counts match
     source_files = list(source_rules.glob("**/*.md"))
-    target_files = list(Path.home().glob(".amazonq/**/*.md"))
+    target_files = list(target_rules.glob("**/*.md"))  # Now check the symlinked target
     
     print(f"\nValidation:")
     print(f"Source files: {len(source_files)}")
@@ -69,7 +70,7 @@ def setup_amazonq_rules():
             print(f"  {f.relative_to(source_rules)}")
         print("Target files:")
         for f in target_files:
-            print(f"  {f.relative_to(Path.home())}")
+            print(f"  {f.relative_to(target_rules)}")
         return False
 
 if __name__ == "__main__":
