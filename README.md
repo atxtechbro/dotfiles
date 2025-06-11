@@ -144,7 +144,7 @@ Get started with your personalized environment:
 # Clone the repository and run setup
 git clone https://github.com/atxtechbro/dotfiles.git ~/ppv/pillars/dotfiles
 cd ~/ppv/pillars/dotfiles
-./setup.sh
+source setup.sh
 ```
 
 The setup script will:
