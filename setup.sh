@@ -146,6 +146,11 @@ ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Setting up macOS shell configuration..."
     ln -sf "$DOT_DEN/.zprofile" ~/.zprofile
+    
+    # Configure iTerm2 as default terminal
+    echo "Configuring iTerm2 as default terminal..."
+    defaults write com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers -array-add '{LSHandlerContentType="public.unix-executable";LSHandlerRoleAll="com.googlecode.iterm2";}'
+    echo -e "${GREEN}✓ iTerm2 configured as default terminal${NC}"
     ln -sf "$DOT_DEN/.zshrc" ~/.zshrc
     ln -sf "$DOT_DEN/.zsh_prompt" ~/.zsh_prompt
     echo -e "${GREEN}✓ zprofile, zshrc, and zsh_prompt linked for macOS shell setup${NC}"
@@ -175,9 +180,9 @@ fi
 
 # Apply environment-specific MCP server configuration
 if [[ -f "$DOT_DEN/utils/mcp-environment.sh" ]]; then
-  # Source the MCP environment utility
+  # Source the MCP environment utility (suppress function definition output)
   # shellcheck disable=SC1090
-  source "$DOT_DEN/utils/mcp-environment.sh"
+  source "$DOT_DEN/utils/mcp-environment.sh" >/dev/null
   
   # Detect current environment
   CURRENT_ENV=$(detect_environment)
@@ -216,6 +221,9 @@ if [[ -f "$DOT_DEN/.bash_secrets.example" && ! -f ~/.bash_secrets ]]; then
     chmod 600 ~/.bash_secrets
     echo "Created ~/.bash_secrets from template. Please edit to add your secrets."
 fi
+
+# Set up Amazon Q global rules
+"$DOT_DEN/utils/setup-amazonq-rules.py"
 
 # Configuration files setup complete
 echo -e "${GREEN}✓ Configuration files setup complete${NC}"
@@ -499,6 +507,9 @@ echo -e "${DIVIDER}"
 echo -e "${GREEN}✅ Dotfiles setup complete!${NC}"
 echo "Your development environment is now configured and ready to use."
 echo -e "${DIVIDER}"
+
+# Clear the error trap to prevent it from persisting in the shell session
+trap - ERR
 
 # Final debug message
 echo "Debug: Setup script completed successfully"
