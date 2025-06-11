@@ -16,6 +16,20 @@ The "spilled coffee principle" states that anyone should be able to destroy thei
 - Symlinks should be managed by setup scripts rather than manual linking
 - Dependencies and installation steps should be well-documented
 
+**❌ Counterexample - What NOT to do:**
+```bash
+# Don't give one-off commands like this:
+defaults write com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers -array-add '{LSHandlerContentType="public.unix-executable";LSHandlerRoleAll="com.googlecode.iterm2";}'
+```
+
+**✅ Instead - Add to setup script:**
+```bash
+# Add to setup.sh so it's reproducible
+configure_iterm_as_default_terminal() {
+    defaults write com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers -array-add '{LSHandlerContentType="public.unix-executable";LSHandlerRoleAll="com.googlecode.iterm2";}'
+}
+```
+
 This principle ensures resilience and quick recovery from system failures or when setting up new environments.
 
 ### The Snowball Method

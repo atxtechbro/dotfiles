@@ -146,6 +146,11 @@ ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Setting up macOS shell configuration..."
     ln -sf "$DOT_DEN/.zprofile" ~/.zprofile
+    
+    # Configure iTerm2 as default terminal
+    echo "Configuring iTerm2 as default terminal..."
+    defaults write com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers -array-add '{LSHandlerContentType="public.unix-executable";LSHandlerRoleAll="com.googlecode.iterm2";}'
+    echo -e "${GREEN}✓ iTerm2 configured as default terminal${NC}"
     ln -sf "$DOT_DEN/.zshrc" ~/.zshrc
     ln -sf "$DOT_DEN/.zsh_prompt" ~/.zsh_prompt
     echo -e "${GREEN}✓ zprofile, zshrc, and zsh_prompt linked for macOS shell setup${NC}"
