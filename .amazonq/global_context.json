@@ -1,0 +1,8 @@
+{
+  "paths": [
+    "~/.amazonq/rules/**/*.md",
+    "README.md",
+    "AmazonQ.md"
+  ],
+  "hooks": {}
+}
