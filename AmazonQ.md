@@ -2,7 +2,11 @@
 
 ## Dotfiles Philosophy
 - See README.md for our core principles: The Spilled Coffee Principle, The Snowball Method, and The Versioning Mindset
-- Global git workflow rules are in `.amazonq/rules/git-workflow.md`
+
+## GitHub Workflow
+- Pull Request based workflow (GitHub)
+- Repository: atxtechbro/dotfiles
+- Username: atxtechbro
 
 ## Automation Principles
 - Avoid manual, one-off commands. Instead, commit to setup scripts and run them (automation mindset)
