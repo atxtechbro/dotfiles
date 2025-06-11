@@ -24,9 +24,6 @@
 - Check for platform-specific issues
 - Ensure proper error messages for common failures
 
-## Debugging Amazon Q CLI
-- For definitive answers refer to the amazon-q-developer-cli source code at https://github.com/aws/amazon-q-developer-cli
-
 ## Building from Source
 - Building from source allows us to add logging, debug issues, and make contributions
 - When working with these tools, cd into their respective directories to make changes and commit them
