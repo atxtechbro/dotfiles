@@ -500,5 +500,8 @@ echo -e "${GREEN}✅ Dotfiles setup complete!${NC}"
 echo "Your development environment is now configured and ready to use."
 echo -e "${DIVIDER}"
 
+# Clear the error trap to prevent it from persisting in the shell session
+trap - ERR
+
 # Final debug message
 echo "Debug: Setup script completed successfully"
