@@ -58,6 +58,15 @@ if [ -f "$CREDENTIALS_DIR/credentials.json" ]; then
   fi
 else
   echo -e "\n\033[1mGoogle Drive Authentication Required\033[0m"
+  echo -e "\n\033[1mRunning automated OAuth setup...\033[0m"
+  if [ -f "./setup-gdrive-oauth.sh" ]; then
+    ./setup-gdrive-oauth.sh
+    if [ -f "$CREDENTIALS_DIR/credentials.json" ]; then
+      echo -e "\n\033[32mOAuth setup complete! Restarting MCP setup...\033[0m"
+      exec "$0"
+    fi
+  fi
+  echo -e "\n\033[33mFallback to manual setup:\033[0m"
   echo "EXACTLY WHAT YOU NEED TO DO:"
   echo "1. Go to https://console.cloud.google.com/"
   echo "2. Create a new project or select an existing one"

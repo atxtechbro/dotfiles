@@ -14,8 +14,18 @@ check_docker_installed() {
     echo "Error: Docker is not installed. Please install Docker first." >&2
     exit 1
   fi
+  
+  # Ensure Docker is running
+  UTILS_DIR="$(dirname "$(dirname "$0")")/utils"
+  if [ -f "$UTILS_DIR/ensure-docker-running.sh" ]; then
+    source "$UTILS_DIR/ensure-docker-running.sh"
+  else
+    if ! docker info >/dev/null 2>&1; then
+      echo "Error: Docker is not running. Please start Docker and try again." >&2
+      exit 1
+    fi
+  fi
 }
-
 # Check if we're in the dotfiles repository
 check_dotfiles_repo() {
   if [ ! -d "$(dirname "$0")/../.git" ] && [ ! -d "$(dirname "$0")/../../.git" ]; then
