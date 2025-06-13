@@ -34,13 +34,15 @@ install_and_configure_iterm2() {
     defaults delete com.googlecode.iterm2 2>/dev/null || true
     
     # Create clean, declarative configuration
-    # Set reasonable default window size (120x40, not postage stamp)
+    # Set reasonable default window size and legible font
     defaults write com.googlecode.iterm2 "New Bookmarks" -array '{
         "Name" = "Default";
         "Guid" = "E621E1F8-C36C-495A-93FC-0C247A3E6E5F";
         "Columns" = 120;
         "Rows" = 40;
         "Default Bookmark" = "Yes";
+        "Normal Font" = "Monaco 14";
+        "Non Ascii Font" = "Monaco 14";
     }'
     
     # Set this as the default profile
@@ -76,14 +78,11 @@ install_and_configure_iterm2() {
     # Set as default profile
     defaults write com.googlecode.iterm2 "Default Bookmark Guid" -string "Dotfiles"
     
-    echo -e "${GREEN}✓ iTerm2 configured with developer-friendly settings${NC}"
-    echo -e "${YELLOW}Note: Launch iTerm2 to use the new terminal with larger window and better font${NC}"
-    echo -e "${YELLOW}You can set iTerm2 as your default terminal in System Preferences${NC}"
-    echo -e "${YELLOW}Option+h/j/k/l should now work for tmux pane navigation${NC}"
+    echo -e "${GREEN}✓ iTerm2 configured with 120x40 window and Monaco 14pt font${NC}"
     
-    # Apply settings immediately if iTerm2 is running
+    # Restart required for configuration changes
     if pgrep -x "iTerm2" > /dev/null; then
-        echo -e "${YELLOW}iTerm2 is running - restart iTerm2 for Option key changes to take effect${NC}"
+        echo -e "${YELLOW}iTerm2 restart required for changes to take effect${NC}"
     fi
     
     return 0
