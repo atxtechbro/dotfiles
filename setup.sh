@@ -170,7 +170,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         # Configure iTerm2 for tmux integration
         if [[ -f "$DOT_DEN/utils/configure-iterm2.sh" ]]; then
             source "$DOT_DEN/utils/configure-iterm2.sh"
-            configure_iterm2_for_tmux_workflow
+            configure_iterm2
         fi
     fi
 fi

@@ -14,7 +14,8 @@ ITERM2_TMUX_CONFIG='{
         "Default Bookmark": "Yes",
         "Normal Font": "Monaco 14",
         "Non Ascii Font": "Monaco 14",
-        "Scrollback Lines": 10000,
+        "Scrollback Lines": -1,
+        "Unlimited Scrollback": true,
         "Terminal Type": "xterm-256color"
     },
     "global": {
@@ -28,29 +29,30 @@ ITERM2_TMUX_CONFIG='{
     }
 }'
 
-configure_iterm2_for_tmux_workflow() {
+configure_iterm2() {
     echo "Configuring iTerm2 for tmux + Amazon Q CLI workflow..."
     
     echo "Resetting iTerm2 configuration for reproducibility..."
     defaults delete com.googlecode.iterm2 2>/dev/null || true
     
-    # Extract and apply profile configuration
-    PROFILE_CONFIG=$(echo "$ITERM2_TMUX_CONFIG" | jq -c '.profile')
-    defaults write com.googlecode.iterm2 "New Bookmarks" -array "$PROFILE_CONFIG"
+    defaults write com.googlecode.iterm2 "New Bookmarks" -array '{
+        "Name" = "TmuxDev";
+        "Guid" = "TMUX-DEV-WORKFLOW-2024";
+        "Columns" = 140;
+        "Rows" = 45;
+        "Default Bookmark" = "Yes";
+        "Normal Font" = "Monaco 14";
+        "Non Ascii Font" = "Monaco 14";
+        "Scrollback Lines" = -1;
+        "Unlimited Scrollback" = 1;
+        "Terminal Type" = "xterm-256color";
+    }'
     
-    # Apply global settings
-    echo "$ITERM2_TMUX_CONFIG" | jq -r '.global | to_entries[] | 
-        if .value == true then
-            "defaults write com.googlecode.iterm2 \"\(.key)\" -bool true"
-        elif .value == false then
-            "defaults write com.googlecode.iterm2 \"\(.key)\" -bool false"
-        elif (.value | type) == "number" then
-            "defaults write com.googlecode.iterm2 \"\(.key)\" -int \(.value)"
-        else
-            "defaults write com.googlecode.iterm2 \"\(.key)\" -string \"\(.value)\""
-        end' | while read -r cmd; do
-        eval "$cmd"
-    done
+    defaults write com.googlecode.iterm2 "Default Bookmark Guid" -string "TMUX-DEV-WORKFLOW-2024"
+    defaults write com.googlecode.iterm2 "LeftOptionKey" -int 2
+    defaults write com.googlecode.iterm2 "RightOptionKey" -int 2
+    defaults write com.googlecode.iterm2 "WindowStyle" -int 0
+    defaults write com.googlecode.iterm2 "UseBorder" -bool false
     
     echo -e "${GREEN}✓ iTerm2 configured for tmux workflow (140x45, Monaco 14pt)${NC}"
     
@@ -62,5 +64,5 @@ configure_iterm2_for_tmux_workflow() {
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    configure_iterm2_for_tmux_workflow
+    configure_iterm2
 fi
