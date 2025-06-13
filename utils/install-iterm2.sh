@@ -29,16 +29,21 @@ install_and_configure_iterm2() {
     # Configure iTerm2 preferences
     echo "Configuring iTerm2 preferences..."
     
-    # Set reasonable default window size (not postage stamp size)
+    # Set reasonable default window size - modify the first (default) profile directly
     defaults write com.googlecode.iterm2 "New Bookmarks" -array-add '{
+        "Name" = "Default";
+        "Guid" = "Default";
         "Columns" = 120;
         "Rows" = 40;
+        "Default Bookmark" = "Yes";
     }'
     
+    # Also set global window size preferences
+    defaults write com.googlecode.iterm2 "WindowStyle" -int 0
+    defaults write com.googlecode.iterm2 "UseBorder" -bool false
+    
     # Configure Option key behavior for tmux navigation
-    # Set Left Option Key to Esc+ (Meta) for tmux pane navigation
     defaults write com.googlecode.iterm2 "LeftOptionKey" -int 3
-    # Set Right Option Key to Esc+ (Meta) as well
     defaults write com.googlecode.iterm2 "RightOptionKey" -int 3
     
     # Set larger default window size
