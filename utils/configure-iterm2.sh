@@ -16,7 +16,27 @@ ITERM2_TMUX_CONFIG='{
         "Non Ascii Font": "Monaco 14",
         "Scrollback Lines": -1,
         "Unlimited Scrollback": true,
-        "Terminal Type": "xterm-256color"
+        "Terminal Type": "xterm-256color",
+        "Smart Selection Rules": [
+            {
+                "notes": "File paths",
+                "precision": "very_high",
+                "regex": "/?([a-zA-Z0-9._-]+/)*[a-zA-Z0-9._-]+\\.[a-zA-Z0-9]+",
+                "actions": [{"title": "Open", "action": 0}]
+            },
+            {
+                "notes": "URLs",
+                "precision": "very_high", 
+                "regex": "https?://[a-zA-Z0-9.-]+[a-zA-Z0-9/._-]*",
+                "actions": [{"title": "Open URL", "action": 0}]
+            },
+            {
+                "notes": "AWS Resource IDs",
+                "precision": "high",
+                "regex": "(arn:aws:|i-[0-9a-f]{8,17}|sg-[0-9a-f]{8,17}|vpc-[0-9a-f]{8,17}|subnet-[0-9a-f]{8,17})",
+                "actions": [{"title": "Copy", "action": 1}]
+            }
+        ]
     },
     "global": {
         "Default Bookmark Guid": "TMUX-DEV-WORKFLOW-2024",
@@ -46,6 +66,35 @@ configure_iterm2() {
         "Scrollback Lines" = -1;
         "Unlimited Scrollback" = 1;
         "Terminal Type" = "xterm-256color";
+        "Smart Selection Rules" = (
+            {
+                "notes" = "File paths";
+                "precision" = "very_high";
+                "regex" = "/?([a-zA-Z0-9._-]+/)*[a-zA-Z0-9._-]+\\.[a-zA-Z0-9]+";
+                "actions" = ({
+                    "title" = "Open";
+                    "action" = 0;
+                });
+            },
+            {
+                "notes" = "URLs";
+                "precision" = "very_high";
+                "regex" = "https?://[a-zA-Z0-9.-]+[a-zA-Z0-9/._-]*";
+                "actions" = ({
+                    "title" = "Open URL";
+                    "action" = 0;
+                });
+            },
+            {
+                "notes" = "AWS Resource IDs";
+                "precision" = "high";
+                "regex" = "(arn:aws:|i-[0-9a-f]{8,17}|sg-[0-9a-f]{8,17}|vpc-[0-9a-f]{8,17}|subnet-[0-9a-f]{8,17})";
+                "actions" = ({
+                    "title" = "Copy";
+                    "action" = 1;
+                });
+            }
+        );
     }'
     
     defaults write com.googlecode.iterm2 "Default Bookmark Guid" -string "TMUX-DEV-WORKFLOW-2024"
