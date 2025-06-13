@@ -29,6 +29,12 @@ install_and_configure_iterm2() {
     # Configure iTerm2 preferences
     echo "Configuring iTerm2 preferences..."
     
+    # Set reasonable default window size (not postage stamp size)
+    defaults write com.googlecode.iterm2 "New Bookmarks" -array-add '{
+        "Columns" = 120;
+        "Rows" = 40;
+    }'
+    
     # Configure Option key behavior for tmux navigation
     # Set Left Option Key to Esc+ (Meta) for tmux pane navigation
     defaults write com.googlecode.iterm2 "LeftOptionKey" -int 3
