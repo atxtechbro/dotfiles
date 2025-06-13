@@ -142,13 +142,6 @@ cp -r "$DOT_DEN/.bash_aliases.d/"* ~/.bash_aliases.d/ 2>/dev/null || true
 ln -sf "$DOT_DEN/.bash_exports" ~/.bash_exports
 ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 
-# Create tmux config directory and link modular configs
-mkdir -p ~/.tmux
-if [ -d "$DOT_DEN/.tmux" ]; then
-    ln -sf "$DOT_DEN/.tmux/"* ~/.tmux/ 2>/dev/null || true
-    echo -e "${GREEN}✓ tmux modular configuration linked${NC}"
-fi
-
 # macOS-specific shell configuration
 if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Setting up macOS shell configuration..."
