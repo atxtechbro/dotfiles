@@ -166,12 +166,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
             source "$DOT_DEN/utils/configure-iterm2.sh"
             configure_iterm2
         fi
-        
-        # Configure iTerm2 for tmux integration
-        if [[ -f "$DOT_DEN/utils/configure-iterm2.sh" ]]; then
-            source "$DOT_DEN/utils/configure-iterm2.sh"
-            configure_iterm2
-        fi
     fi
 fi
 # Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
