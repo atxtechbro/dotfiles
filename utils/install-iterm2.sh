@@ -29,22 +29,30 @@ install_and_configure_iterm2() {
     # Configure iTerm2 preferences
     echo "Configuring iTerm2 preferences..."
     
-    # Set reasonable default window size - modify the first (default) profile directly
-    defaults write com.googlecode.iterm2 "New Bookmarks" -array-add '{
+    # Enforce configuration as code - wipe existing config for idempotency
+    echo "Resetting iTerm2 configuration for reproducibility..."
+    defaults delete com.googlecode.iterm2 2>/dev/null || true
+    
+    # Create clean, declarative configuration
+    # Set reasonable default window size (120x40, not postage stamp)
+    defaults write com.googlecode.iterm2 "New Bookmarks" -array '{
         "Name" = "Default";
-        "Guid" = "Default";
+        "Guid" = "E621E1F8-C36C-495A-93FC-0C247A3E6E5F";
         "Columns" = 120;
         "Rows" = 40;
         "Default Bookmark" = "Yes";
     }'
     
-    # Also set global window size preferences
+    # Set this as the default profile
+    defaults write com.googlecode.iterm2 "Default Bookmark Guid" -string "E621E1F8-C36C-495A-93FC-0C247A3E6E5F"
+    
+    # Configure Option keys for tmux navigation (Esc+ sequences)
+    defaults write com.googlecode.iterm2 "LeftOptionKey" -int 2
+    defaults write com.googlecode.iterm2 "RightOptionKey" -int 2
+    
+    # Global window preferences
     defaults write com.googlecode.iterm2 "WindowStyle" -int 0
     defaults write com.googlecode.iterm2 "UseBorder" -bool false
-    
-    # Configure Option key behavior for tmux navigation
-    defaults write com.googlecode.iterm2 "LeftOptionKey" -int 3
-    defaults write com.googlecode.iterm2 "RightOptionKey" -int 3
     
     # Set larger default window size
     defaults write com.googlecode.iterm2 "New Bookmarks" -array-add '{
