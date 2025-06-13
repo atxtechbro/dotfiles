@@ -66,6 +66,8 @@ configure_iterm2() {
         "Scrollback Lines" = -1;
         "Unlimited Scrollback" = 1;
         "Terminal Type" = "xterm-256color";
+        "Option Key Sends" = 2;
+        "Right Option Key Sends" = 2;
         "Smart Selection Rules" = (
             {
                 "notes" = "File paths";
