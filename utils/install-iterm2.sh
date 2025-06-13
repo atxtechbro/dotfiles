@@ -1,17 +1,12 @@
 #!/bin/bash
-# iTerm2 Installation and Configuration Utility
-# Better terminal for macOS development
 
-# Colors for output
 GREEN='\033[0;32m'
 RED='\033[0;31m'
-YELLOW='\033[0;33m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-install_and_configure_iterm2() {
+install_iterm2() {
     echo "Setting up iTerm2..."
     
-    # Check if iTerm2 is already installed
     if [ -d "/Applications/iTerm.app" ]; then
         echo -e "${GREEN}✓ iTerm2 is already installed${NC}"
     else
@@ -26,69 +21,9 @@ install_and_configure_iterm2() {
         fi
     fi
     
-    # Configure iTerm2 preferences
-    echo "Configuring iTerm2 preferences..."
-    
-    # Enforce configuration as code - wipe existing config for idempotency
-    echo "Resetting iTerm2 configuration for reproducibility..."
-    defaults delete com.googlecode.iterm2 2>/dev/null || true
-    
-    # Create clean, declarative configuration
-    # Set reasonable default window size and legible font
-    defaults write com.googlecode.iterm2 "New Bookmarks" -array '{
-        "Name" = "Default";
-        "Guid" = "E621E1F8-C36C-495A-93FC-0C247A3E6E5F";
-        "Columns" = 120;
-        "Rows" = 40;
-        "Default Bookmark" = "Yes";
-        "Normal Font" = "Monaco 14";
-        "Non Ascii Font" = "Monaco 14";
-    }'
-    
-    # Set this as the default profile
-    defaults write com.googlecode.iterm2 "Default Bookmark Guid" -string "E621E1F8-C36C-495A-93FC-0C247A3E6E5F"
-    
-    # Configure Option keys for tmux navigation (Esc+ sequences)
-    defaults write com.googlecode.iterm2 "LeftOptionKey" -int 2
-    defaults write com.googlecode.iterm2 "RightOptionKey" -int 2
-    
-    # Global window preferences
-    defaults write com.googlecode.iterm2 "WindowStyle" -int 0
-    defaults write com.googlecode.iterm2 "UseBorder" -bool false
-    
-    # Set larger default window size
-    defaults write com.googlecode.iterm2 "New Bookmarks" -array-add '{
-        "Name" = "Dotfiles";
-        "Columns" = 120;
-        "Rows" = 40;
-        "Normal Font" = "Monaco 16";
-        "Background Color" = {
-            "Red Component" = 0.043137254901960784;
-            "Green Component" = 0.043137254901960784;
-            "Blue Component" = 0.043137254901960784;
-        };
-        "Foreground Color" = {
-            "Red Component" = 1;
-            "Green Component" = 1;
-            "Blue Component" = 1;
-        };
-        "Option Key Sends" = 2;
-    }'
-    
-    # Set as default profile
-    defaults write com.googlecode.iterm2 "Default Bookmark Guid" -string "Dotfiles"
-    
-    echo -e "${GREEN}✓ iTerm2 configured with 120x40 window and Monaco 14pt font${NC}"
-    
-    # Restart required for configuration changes
-    if pgrep -x "iTerm2" > /dev/null; then
-        echo -e "${YELLOW}iTerm2 restart required for changes to take effect${NC}"
-    fi
-    
     return 0
 }
 
-# Main execution
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    install_and_configure_iterm2
+    install_iterm2
 fi

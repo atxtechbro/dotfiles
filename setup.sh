@@ -166,10 +166,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     echo -e "${DIVIDER}"
     echo "Terminal setup for macOS..."
     if [[ -f "$DOT_DEN/utils/install-iterm2.sh" ]]; then
-        echo "iTerm2 provides a much better development experience than Terminal.app"
-        echo "It has better font rendering, larger default windows, and more features."
         source "$DOT_DEN/utils/install-iterm2.sh"
-        install_and_configure_iterm2
+        install_iterm2
+        
+        if [[ -f "$DOT_DEN/utils/configure-iterm2.sh" ]]; then
+            source "$DOT_DEN/utils/configure-iterm2.sh"
+            configure_iterm2
+        fi
         
         # Configure iTerm2 for tmux integration
         if [[ -f "$DOT_DEN/utils/configure-iterm2-tmux.sh" ]]; then
