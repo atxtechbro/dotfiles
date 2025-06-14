@@ -5,3 +5,8 @@ export RUST_BACKTRACE=full
 
 # Add MCP wrapper scripts to PATH for cross-machine portability
 export PATH="$PATH:$HOME/ppv/pillars/dotfiles/mcp"
+
+# Load machine-specific exports if they exist
+if [ -f ~/.bash_exports.local ]; then
+    . ~/.bash_exports.local
+fi

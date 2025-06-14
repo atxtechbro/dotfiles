@@ -12,7 +12,7 @@ The system allows you to automatically enable or disable certain MCP servers bas
 
 ## How It Works
 
-1. Set the `WORK_MACHINE` environment variable in your `~/.bash_secrets` file:
+1. Set the `WORK_MACHINE` environment variable in your `~/.bash_exports.local` file:
    ```bash
    # Set to "true" on work machines, "false" on personal machines
    export WORK_MACHINE="false"
