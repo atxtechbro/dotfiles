@@ -14,6 +14,9 @@
 *.keystore
 .bash_secrets
 
+# Machine-specific configuration
+.bash_exports.local
+
 # Private SSH keys
 id_rsa
 id_dsa

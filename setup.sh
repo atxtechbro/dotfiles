@@ -217,12 +217,27 @@ if [[ -f "$work_gitconfig_source" ]]; then
     echo -e "${GREEN}✓ Work Git configuration linked${NC}"
 fi
 
+# Create machine-specific exports file from template
+if [[ -f "$DOT_DEN/.bash_exports.local.example" && ! -f ~/.bash_exports.local ]]; then
+    echo "Creating machine-specific exports file from template..."
+    cp "$DOT_DEN/.bash_exports.local.example" ~/.bash_exports.local
+    echo "Created ~/.bash_exports.local from template. Please edit to configure your environment."
+fi
+
 # Create secrets file from template
 if [[ -f "$DOT_DEN/.bash_secrets.example" && ! -f ~/.bash_secrets ]]; then
     echo "Creating secrets file from template..."
     cp "$DOT_DEN/.bash_secrets.example" ~/.bash_secrets
     chmod 600 ~/.bash_secrets
     echo "Created ~/.bash_secrets from template. Please edit to add your secrets."
+fi
+
+# Source bash exports early to make environment variables available for MCP configuration
+echo "Loading environment variables from bash_exports..."
+if [[ -f ~/.bash_exports ]]; then
+  # shellcheck disable=SC1090
+  source ~/.bash_exports
+  echo -e "${GREEN}✓ Environment variables loaded successfully${NC}"
 fi
 
 # Set up Amazon Q global rules
@@ -496,14 +511,6 @@ if [[ -f ~/.bash_aliases ]]; then
   # shellcheck disable=SC1090
   source ~/.bash_aliases
   echo -e "${GREEN}✓ Bash aliases loaded successfully${NC}"
-fi
-
-# Source bash exports to make environment variables available
-echo "Loading environment variables from bash_exports..."
-if [[ -f ~/.bash_exports ]]; then
-  # shellcheck disable=SC1090
-  source ~/.bash_exports
-  echo -e "${GREEN}✓ Environment variables loaded successfully${NC}"
 fi
 
 echo -e "${DIVIDER}"
