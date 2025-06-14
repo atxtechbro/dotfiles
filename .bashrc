@@ -1,12 +1,6 @@
 # Amazon Q pre block. Keep at the top of this file.
-# Platform-specific Amazon Q paths
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS path
-    [[ -f "${HOME}/Library/Application Support/amazon-q/shell/bashrc.pre.bash" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/bashrc.pre.bash"
-else
-    # Linux path
-    [[ -f "${HOME}/.local/share/amazon-q/shell/bashrc.pre.bash" ]] && builtin source "${HOME}/.local/share/amazon-q/shell/bashrc.pre.bash"
-fi
+[[ -f "${HOME}/Library/Application Support/amazon-q/shell/bashrc.pre.bash" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/bashrc.pre.bash"
+[[ -f "${HOME}/.local/share/amazon-q/shell/bashrc.pre.bash" ]] && builtin source "${HOME}/.local/share/amazon-q/shell/bashrc.pre.bash"
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
@@ -197,10 +191,7 @@ if [ -n "$BASH_VERSION" ]; then
 fi
 
 # Platform-specific PATH additions
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS specific paths
-    export PATH="/Users/$(whoami)/.local/bin:$PATH"
-fi
+[[ "$OSTYPE" == "darwin"* ]] && export PATH="/Users/$(whoami)/.local/bin:$PATH"
 
 # Auto-navigate to dotfiles directory on new shell (only in interactive shells)
 if [[ $- == *i* ]] && [[ -d "$HOME/ppv/pillars/dotfiles" && "$PWD" == "$HOME" ]]; then
@@ -208,11 +199,5 @@ if [[ $- == *i* ]] && [[ -d "$HOME/ppv/pillars/dotfiles" && "$PWD" == "$HOME" ]]
 fi
 
 # Amazon Q post block. Keep at the bottom of this file.
-# Platform-specific Amazon Q paths
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS path
-    [[ -f "${HOME}/Library/Application Support/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/bashrc.post.bash"
-else
-    # Linux path  
-    [[ -f "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash"
-fi
+[[ -f "${HOME}/Library/Application Support/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/bashrc.post.bash"
+[[ -f "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash"
