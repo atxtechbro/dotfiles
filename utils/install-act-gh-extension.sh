@@ -34,26 +34,6 @@ install_act_gh_extension() {
     fi
 }
 
-configure_act_defaults() {
-    # Create act config directory
-    mkdir -p ~/.config/act
-    
-    # Set lightweight micro images by default (<200MB each)
-    cat > ~/.config/act/actrc << 'EOF'
--P ubuntu-latest=node:16-buster-slim
--P ubuntu-22.04=node:16-buster-slim
--P ubuntu-20.04=node:16-buster-slim
--P ubuntu-18.04=node:16-buster-slim
--P self-hosted=node:16-buster-slim
--P macos-latest=node:16-buster-slim
--P windows-latest=node:16-buster-slim
-EOF
-    
-    echo -e "${GREEN}✓ act configured with lightweight micro images (<200MB each)${NC}"
-    echo -e "${YELLOW}Note: These minimal images may not work with all actions${NC}"
-    echo -e "${YELLOW}For full compatibility, you can manually configure larger images later${NC}"
-}
-
 verify_act_gh_extension() {
     if gh extension list | grep -q "nektos/gh-act"; then
         # Test the extension
@@ -61,8 +41,9 @@ verify_act_gh_extension() {
             ACT_VERSION=$(gh act --version 2>/dev/null | head -n1 || echo "unknown")
             echo -e "${GREEN}✓ act GitHub CLI extension is working: ${ACT_VERSION}${NC}"
             
-            # Configure defaults
-            configure_act_defaults
+            # Configuration is managed via dotfiles
+            echo -e "${GREEN}✓ act configuration managed via dotfiles${NC}"
+            echo -e "${BLUE}Configuration file: ~/.config/act/actrc${NC}"
             
             # Check if Docker is available
             if command -v docker &> /dev/null; then
