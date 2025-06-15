@@ -99,6 +99,19 @@ verify_act_installation() {
         ACT_VERSION=$(act --version 2>/dev/null | head -n1 || echo "unknown")
         echo -e "${GREEN}✓ act is available: ${ACT_VERSION}${NC}"
         
+        # Configure defaults to prevent interactive prompts and handle self-hosted runners
+        mkdir -p ~/.config/act
+        cat > ~/.config/act/actrc << 'EOF'
+-P ubuntu-latest=catthehacker/ubuntu:act-latest
+-P ubuntu-22.04=catthehacker/ubuntu:act-22.04
+-P ubuntu-20.04=catthehacker/ubuntu:act-20.04
+-P ubuntu-18.04=catthehacker/ubuntu:act-18.04
+-P self-hosted=catthehacker/ubuntu:act-latest
+-P macos-latest=catthehacker/ubuntu:act-latest
+-P windows-latest=catthehacker/ubuntu:act-latest
+EOF
+        echo -e "${GREEN}✓ act configured with default images including self-hosted runner support${NC}"
+        
         # Check if Docker is available for act
         if command -v docker &> /dev/null; then
             echo -e "${GREEN}✓ act can use Docker for local GitHub Actions testing${NC}"
