@@ -19,22 +19,10 @@ install_act_extension() {
     if gh extension install https://github.com/nektos/gh-act &>/dev/null; then
         echo -e "${GREEN}✓ act GitHub CLI extension installed successfully${NC}"
         
-        # Configure lightweight defaults with persistent caching
-        mkdir -p ~/.config/act ~/.cache/act
-        cat > ~/.config/act/actrc << 'EOF'
--P ubuntu-latest=node:16-buster-slim
--P ubuntu-22.04=node:16-buster-slim
--P ubuntu-20.04=node:16-buster-slim
--P ubuntu-18.04=node:16-buster-slim
--P self-hosted=node:16-buster-slim
--P macos-latest=node:16-buster-slim
--P windows-latest=node:16-buster-slim
---action-cache-path ~/.cache/act
---use-new-action-cache
-EOF
-        echo -e "${GREEN}✓ act configured with lightweight micro images and persistent caching${NC}"
-        echo -e "${BLUE}Cache location: ~/.cache/act${NC}"
-        echo -e "${YELLOW}Note: These minimal images may not work with all actions${NC}"
+        # Configuration is managed via dotfiles .config/act/actrc
+        echo -e "${GREEN}✓ act configuration managed via dotfiles${NC}"
+        echo -e "${BLUE}Configuration file: ~/.config/act/actrc${NC}"
+        echo -e "${YELLOW}Note: Lightweight images may not work with all actions${NC}"
         
         return 0
     else

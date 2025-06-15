@@ -14,35 +14,14 @@ configure_act_cache() {
     # Create cache directories
     mkdir -p ~/.cache/act/actions ~/.cache/act/tools
     
-    # Create comprehensive actrc with caching enabled
-    cat > ~/.config/act/actrc << 'EOF'
-# Platform mappings - lightweight images
--P ubuntu-latest=node:16-buster-slim
--P ubuntu-22.04=node:16-buster-slim
--P ubuntu-20.04=node:16-buster-slim
--P ubuntu-18.04=node:16-buster-slim
--P self-hosted=node:16-buster-slim
--P macos-latest=node:16-buster-slim
--P windows-latest=node:16-buster-slim
-
-# Caching configuration
---action-cache-path ~/.cache/act
---use-new-action-cache
-
-# Offline mode - use cached actions when available
---action-offline-mode
-
-# Bind working directory for faster file access
---bind
-EOF
-    
-    echo -e "${GREEN}✓ act cache configuration created${NC}"
+    echo -e "${GREEN}✓ act cache directories created${NC}"
     echo -e "${BLUE}Cache location: ~/.cache/act${NC}"
     echo -e "${BLUE}Actions cache: ~/.cache/act/actions${NC}"
     echo -e "${BLUE}Tools cache: ~/.cache/act/tools${NC}"
     
-    # Pre-populate common actions cache if possible
-    echo -e "${YELLOW}Note: Actions and tools will be cached on first use${NC}"
+    # Note: Configuration is managed via dotfiles .config/act/actrc
+    echo -e "${YELLOW}Note: act configuration is managed via dotfiles in .config/act/actrc${NC}"
+    echo -e "${YELLOW}Actions and tools will be cached on first use${NC}"
     echo -e "${YELLOW}Common actions like setup-python, setup-node will be downloaded once${NC}"
     
     return 0
