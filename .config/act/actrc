@@ -1,0 +1,10 @@
+-P ubuntu-latest=node:16-buster-slim
+-P ubuntu-22.04=node:16-buster-slim
+-P ubuntu-20.04=node:16-buster-slim
+-P ubuntu-18.04=node:16-buster-slim
+-P self-hosted=node:16-buster-slim
+-P macos-latest=node:16-buster-slim
+-P windows-latest=node:16-buster-slim
+--action-cache-path ~/.cache/act
+--use-new-action-cache
+--action-offline-mode
