@@ -12,8 +12,5 @@
 - Use short-lived branches for complex tasks
 - Keep changes small and frequent
 
-## Development Approach
-- Do, don't explain – Execute tasks directly rather than describing how to do them
-
 ## Common Errors to Avoid
 - Don't thank self when closing your own PRs
