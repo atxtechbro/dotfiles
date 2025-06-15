@@ -155,8 +155,39 @@ The setup script automatically handles:
 - Setting up your secrets file from the template
 - Applying configurations immediately
 - Installing and configuring essential tools (tmux, Amazon Q CLI, GitHub CLI, etc.)
+- Installing act (GitHub Actions local testing) as a GitHub CLI extension
 
 Following the "Spilled Coffee Principle" - the setup script ensures you can be fully operational after running it once.
+
+## Local GitHub Actions Testing with Act
+
+Act is automatically installed as a GitHub CLI extension and configured for optimal performance:
+
+### Quick Start
+```bash
+# Run default workflow
+gh act
+
+# List available workflows
+gh act -l
+
+# Run specific workflow with inputs
+gh act workflow_dispatch -W .github/workflows/ci.yml --input key=value
+```
+
+### Key Features
+- **Lightweight Docker images** (<200MB) for fast startup
+- **Persistent caching** - actions and tools cached between runs
+- **Offline mode** - uses cached actions when available
+- **Self-hosted runner support** - handles various runner types
+
+### Documentation
+See [docs/act-usage.md](docs/act-usage.md) for comprehensive usage guide including:
+- Advanced workflows and debugging
+- Configuration options
+- Docker image management
+- Troubleshooting common issues
+- Best practices for local CI/CD testing
 
 ## Secret Management
 
