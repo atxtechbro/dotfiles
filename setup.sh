@@ -505,6 +505,19 @@ if command -v docker &> /dev/null; then
   fi
 fi
 
+# Act (GitHub Actions local testing) setup
+echo -e "${DIVIDER}"
+echo "Setting up act (GitHub Actions local testing tool)..."
+if [[ -f "$DOT_DEN/utils/install-act.sh" ]]; then
+    source "$DOT_DEN/utils/install-act.sh"
+    setup_act || {
+        echo -e "${RED}Failed to setup act completely. Local GitHub Actions testing may not work.${NC}"
+        echo "You can install it manually later from: https://github.com/nektos/act"
+    }
+else
+    echo -e "${RED}act installation script not found at $DOT_DEN/utils/install-act.sh${NC}"
+fi
+
 # Source bash aliases to make them immediately available
 echo "Loading bash aliases into current session..."
 if [[ -f ~/.bash_aliases ]]; then
