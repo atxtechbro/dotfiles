@@ -13,7 +13,7 @@
 - Keep changes small and frequent
 
 ## Development Approach
-- Do, don't explain – Execute tasks directly rather than describing how to do them
+- Follow the "Do, Don't Explain" principle (see principles/do-dont-explain.md)
 
 ## Common Errors to Avoid
 - Don't thank self when closing your own PRs
