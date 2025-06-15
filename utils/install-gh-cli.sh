@@ -124,6 +124,16 @@ setup_gh_cli() {
     return 1
   fi
   
+  # Install GitHub CLI extensions
+  if [[ -f "${DOT_DEN:-$HOME/ppv/pillars/dotfiles}/utils/install-gh-extensions.sh" ]]; then
+    source "${DOT_DEN:-$HOME/ppv/pillars/dotfiles}/utils/install-gh-extensions.sh"
+    setup_gh_extensions || {
+      echo -e "${YELLOW}Failed to setup some GitHub CLI extensions${NC}"
+    }
+  else
+    echo -e "${YELLOW}GitHub CLI extensions script not found${NC}"
+  fi
+  
   return 0
 }
 
