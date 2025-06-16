@@ -24,7 +24,7 @@ This standardized approach makes it easy to add more MCP servers in the future f
 | Brave Search | Web search via Brave | API key from `.bash_secrets` | Docker container | - |
 | Filesystem | Local filesystem operations | None required | Built from source | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/filesystem#filesystem-mcp-server) |
 | Git | Git repository operations | None required | Built from source | [Our Repository](https://github.com/atxtechbro/git-mcp-server#git-mcp-server) |
-| Google Drive | Google Drive file operations | OAuth credentials from `.bash_secrets` | Docker container | [Official Docs](https://github.com/modelcontextprotocol/servers/tree/main/src/gdrive#authentication) |
+| Google Drive | Google Drive file operations | OAuth credentials from `.bash_secrets` | Docker container | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/gdrive#authentication) |
 
 ## Setup Instructions
 
