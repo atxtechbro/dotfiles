@@ -18,7 +18,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Source MCP logging utilities
 source "$SCRIPT_DIR/utils/mcp-logging.sh"
 
-# Check if uvx is available
+# Check if uvx is available (required to run the mcp-atlassian Python package)
 mcp_check_command "ATLASSIAN" "uvx" "Install uv: curl -LsSf https://astral.sh/uv/install.sh | sh"
 
 # Source secrets file
