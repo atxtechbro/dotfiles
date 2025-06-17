@@ -96,10 +96,66 @@ This allows you to control which directories the Filesystem MCP server can acces
 
 If you encounter issues with an MCP integration:
 
-1. Check that the required secrets are properly set in `~/.bash_secrets`
-2. Verify that the wrapper script has execute permissions (`chmod +x wrapper-script.sh`)
-3. For Docker-based integrations, ensure Docker is running (`docker ps`)
-4. Check the logs from the MCP server for more detailed error messages
+1. **Check MCP error logs**: Run `check-mcp-errors` to see recent MCP server errors
+2. Check that the required secrets are properly set in `~/.bash_secrets`
+3. Verify that the wrapper script has execute permissions (`chmod +x wrapper-script.sh`)
+4. For Docker-based integrations, ensure Docker is running (`docker ps`)
+5. Check the logs from the MCP server for more detailed error messages
+
+### MCP Error Logging Framework
+
+**Fundamental Problem**: Most MCP clients (including Amazon Q CLI, Claude Desktop, etc.) provide weak or no logging, often suppressing or hiding MCP server errors entirely. This makes debugging MCP integration issues extremely difficult.
+
+**Setup vs Wrapper Scripts**:
+- **Setup scripts** run once manually with visible terminal feedback ✅
+- **Wrapper scripts** run many times daily behind the scenes with hidden output ❌
+
+All MCP wrapper scripts now implement enhanced error handling with:
+
+- **Error logging** to `~/mcp-errors.log` with timestamps and server identification
+- **Desktop notifications** on macOS for critical failures  
+- **Actionable error messages** with specific remediation steps
+- **Consistent error format**: `[SERVER] MCP ERROR: [description]`
+
+#### Using the Error Logging System
+
+Use the `check-mcp-errors` utility to:
+
+- `check-mcp-errors` - Show recent errors
+- `check-mcp-errors --tail` - Follow errors in real-time  
+- `check-mcp-errors --clear` - Clear the error log
+
+#### Adding Logging to New Wrapper Scripts
+
+When creating new MCP wrapper scripts:
+
+1. **Source the logging utilities**:
+   ```bash
+   SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+   source "$SCRIPT_DIR/utils/mcp-logging.sh"
+   ```
+
+2. **Use the logging functions**:
+   ```bash
+   # Check secrets file and source it
+   mcp_source_secrets "SERVER_NAME"
+   
+   # Check environment variables
+   mcp_check_env_var "SERVER_NAME" "API_KEY" "Add: export API_KEY=\"your_key\""
+   
+   # Check Docker (for Docker-based servers)
+   mcp_check_docker "SERVER_NAME"
+   
+   # Check commands
+   mcp_check_command "SERVER_NAME" "node" "Install Node.js: brew install node"
+   
+   # Custom error logging
+   mcp_log_error "SERVER_NAME" "Custom error message" "Optional remediation steps"
+   ```
+
+3. **Use consistent server names**: BRAVE, ATLASSIAN, GITHUB, GIT, FILESYSTEM, GDRIVE
+
+This framework bridges the visibility gap created by MCP clients that suppress wrapper script errors.
 ## Adding New MCP Servers
 
 Based on our current experience, here's a working procedure for adding new MCP servers (subject to improvement as we learn more):
