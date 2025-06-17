@@ -35,7 +35,7 @@ mcp_check_env_var "ATLASSIAN" "ATLASSIAN_JIRA_USERNAME" "Add: export ATLASSIAN_J
 mcp_check_env_var "ATLASSIAN" "ATLASSIAN_JIRA_API_TOKEN" "Add: export ATLASSIAN_JIRA_API_TOKEN=\"your_api_token\""
 
 # Run the MCP Atlassian server with credentials from environment variables
-exec uvx mcp-atlassian \
+mcp_exec_with_logging "ATLASSIAN" uvx mcp-atlassian \
   --confluence-url="$ATLASSIAN_CONFLUENCE_URL" \
   --confluence-username="$ATLASSIAN_CONFLUENCE_USERNAME" \
   --confluence-token="$ATLASSIAN_CONFLUENCE_API_TOKEN" \

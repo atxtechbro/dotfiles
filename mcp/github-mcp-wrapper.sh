@@ -39,4 +39,4 @@ if [[ ! -x "$GITHUB_BINARY_PATH" ]]; then
 fi
 
 # Run the GitHub MCP server with the token
-exec "$GITHUB_BINARY_PATH" stdio
+mcp_exec_with_logging "GITHUB" "$GITHUB_BINARY_PATH" stdio

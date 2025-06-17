@@ -34,7 +34,7 @@ if ! docker volume ls --format "table {{.Name}}" | grep -q "mcp-gdrive"; then
 fi
 
 # Run the Google Drive MCP server using Docker
-exec docker run -i --rm \
+mcp_exec_with_logging "GDRIVE" docker run -i --rm \
   -v mcp-gdrive:/gdrive-server \
   -e GDRIVE_CREDENTIALS_PATH=/gdrive-server/credentials.json \
   mcp/gdrive

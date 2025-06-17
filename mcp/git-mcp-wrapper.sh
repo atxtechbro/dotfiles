@@ -34,4 +34,4 @@ mcp_check_command "GIT" "git" "Install Git: brew install git"
 
 # Activate the virtual environment and run the Python module
 source "$SERVER_DIR/.venv/bin/activate"
-exec python -m mcp_server_git "$@"
+mcp_exec_with_logging "GIT" python -m mcp_server_git "$@"
