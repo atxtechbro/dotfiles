@@ -147,6 +147,17 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Setting up macOS shell configuration..."
     ln -sf "$DOT_DEN/.zprofile" ~/.zprofile
     
+    # Ensure Homebrew is installed
+    source "$DOT_DEN/utils/ensure-homebrew.sh"
+    ensure_homebrew_on_macos
+    
+    # Install coreutils for timeout command
+    if ! command -v timeout &> /dev/null && ! command -v gtimeout &> /dev/null; then
+        echo "Installing coreutils for timeout command..."
+        brew install coreutils
+        echo -e "${GREEN}✓ coreutils installed (timeout available as gtimeout)${NC}"
+    fi
+    
     # Configure iTerm2 as default terminal
     echo "Configuring iTerm2 as default terminal..."
     defaults write com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers -array-add '{LSHandlerContentType="public.unix-executable";LSHandlerRoleAll="com.googlecode.iterm2";}'
