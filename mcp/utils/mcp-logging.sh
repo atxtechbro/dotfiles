@@ -86,3 +86,39 @@ mcp_check_command() {
     exit 1
   fi
 }
+
+# Execute MCP server with runtime error capture
+# Usage: mcp_exec_with_logging "SERVER_NAME" command [args...]
+# This replaces the 'exec' pattern to capture runtime failures
+mcp_exec_with_logging() {
+  local server_name="$1"
+  shift  # Remove server_name from arguments
+  
+  # Create temporary file for stderr capture
+  local error_file=$(mktemp)
+  
+  # Execute the command, capturing stderr while preserving stdout for MCP protocol
+  "$@" 2>"$error_file"
+  local exit_code=$?
+  
+  # If command failed, log the error
+  if [[ $exit_code -ne 0 ]]; then
+    local error_output=""
+    if [[ -s "$error_file" ]]; then
+      # Read first few lines of error output for logging
+      error_output=$(head -10 "$error_file" | tr '\n' ' ' | sed 's/[[:space:]]\+/ /g')
+    fi
+    
+    if [[ -n "$error_output" ]]; then
+      mcp_log_error "$server_name" "Server process failed (exit $exit_code): $error_output" "Check server configuration and dependencies"
+    else
+      mcp_log_error "$server_name" "Server process failed with exit code $exit_code" "Check server configuration and dependencies"
+    fi
+  fi
+  
+  # Clean up temporary file
+  rm -f "$error_file"
+  
+  # Exit with the same code as the server process
+  exit $exit_code
+}

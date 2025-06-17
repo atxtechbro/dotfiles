@@ -32,7 +32,7 @@ mcp_check_env_var "BRAVE" "BRAVE_API_KEY" "Add: export BRAVE_API_KEY=\"your_api_
 mcp_check_docker "BRAVE"
 
 # Run the Brave Search MCP server with credentials from environment variables
-exec docker run -i --rm \
+mcp_exec_with_logging "BRAVE" docker run -i --rm \
   -e BRAVE_API_KEY="$BRAVE_API_KEY" \
   --network=host \
   mcp/brave-search

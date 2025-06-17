@@ -25,7 +25,7 @@ if [[ -f "$BUILT_SERVER_PATH" ]]; then
     echo "Using locally built custom Filesystem MCP server..."
     # Pass all arguments to the built server
     # The $HOME argument allows access to the home directory
-    node "$BUILT_SERVER_PATH" "$HOME" "$@"
+    mcp_exec_with_logging "FILESYSTEM" node "$BUILT_SERVER_PATH" "$HOME" "$@"
 else
     echo "Built server not found, falling back to npx..."
     echo "Warning: This will use the standard version without custom tool descriptions"
@@ -37,5 +37,5 @@ else
     fi
     
     # Fall back to npx if the built server doesn't exist
-    npx @modelcontextprotocol/filesystem-server "$HOME" "$@"
+    mcp_exec_with_logging "FILESYSTEM" npx @modelcontextprotocol/filesystem-server "$HOME" "$@"
 fi
