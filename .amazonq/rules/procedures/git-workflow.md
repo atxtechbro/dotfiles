@@ -4,6 +4,7 @@
 - **IMPORTANT: NEVER commit directly to the main branch**
 - Always use conventional commit syntax: `<type>[scope]: description` (scope optional but encouraged; use separate `-m` for trailers)
 - Good scope choices add context about what component is being modified (e.g., api, ui, auth, config, docs)
+- Use `Systems-Stewardship: true` trailer for systems improvement work
 - Commit early and often with meaningful changes
 
 ## Branch Management
