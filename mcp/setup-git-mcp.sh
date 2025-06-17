@@ -3,11 +3,9 @@
 # =========================================================
 # GIT MCP SERVER SETUP SCRIPT
 # =========================================================
-# PURPOSE: Sets up the Git MCP server from source
-# This allows customization of the server code to fix issues
-# and add features like git worktree support
-# =========================================================
-# IMPORTANT: This script uses our own Python-based Git MCP server repository
+# PURPOSE: Sets up the Git MCP server from local source
+# The git-mcp-server is now part of the dotfiles repository
+# for unified management and faster iteration
 # =========================================================
 
 # Get the directory where this setup script is located
@@ -20,30 +18,19 @@ if ! command -v python3 &> /dev/null; then
     exit 1
 fi
 
-# Using uv for package management
-
-# Check if Git is installed
-if ! command -v git &> /dev/null; then
-    echo "Error: Git is not installed. Please install Git first."
+# Check if uv is installed
+if ! command -v uv &> /dev/null; then
+    echo "Error: uv is not installed. Please install uv first."
     exit 1
 fi
 
-# Create servers directory if it doesn't exist
-mkdir -p "$CURRENT_SCRIPT_DIRECTORY/servers"
-
-# Clone our Git MCP server repository if it doesn't exist locally
+# Check if git-mcp-server directory exists (now part of dotfiles)
 if [ ! -d "$CURRENT_SCRIPT_DIRECTORY/servers/git-mcp-server" ]; then
-    echo "Cloning our Python-based Git MCP server repository..."
-    git clone https://github.com/atxtechbro/git-mcp-server.git "$CURRENT_SCRIPT_DIRECTORY/servers/git-mcp-server"
-    
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to clone the repository. Please check if the repository exists and is accessible."
-        exit 1
-    fi
+    echo "Error: git-mcp-server directory not found at $CURRENT_SCRIPT_DIRECTORY/servers/git-mcp-server"
+    echo "This should be part of the dotfiles repository now."
+    exit 1
 else
-    echo "Our Git MCP server repository already exists locally, updating..."
-    cd "$CURRENT_SCRIPT_DIRECTORY/servers/git-mcp-server"
-    git pull || echo "Warning: Unable to pull updates, continuing with existing code"
+    echo "Found git-mcp-server directory in dotfiles..."
 fi
 
 # Set up the Python environment
@@ -78,4 +65,4 @@ else
 fi
 
 echo "Git MCP server setup complete!"
-echo "The wrapper script will now use the built version exclusively."
+echo "The wrapper script will now use the local version exclusively."
