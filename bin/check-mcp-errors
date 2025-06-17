@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# =========================================================
+# CHECK MCP ERRORS UTILITY
+# =========================================================
+# PURPOSE: View and manage MCP server error logs
+# USAGE: 
+#   check-mcp-errors          - Show recent errors
+#   check-mcp-errors --tail   - Follow errors in real-time
+#   check-mcp-errors --clear  - Clear the error log
+# =========================================================
+
+MCP_ERROR_LOG="$HOME/mcp-errors.log"
+
+show_usage() {
+    echo "Usage: check-mcp-errors [--tail|--clear]"
+    echo ""
+    echo "Options:"
+    echo "  (no args)  Show recent MCP errors"
+    echo "  --tail     Follow errors in real-time"
+    echo "  --clear    Clear the error log"
+    echo ""
+    echo "Error log location: $MCP_ERROR_LOG"
+}
+
+case "${1:-}" in
+    --tail)
+        if [[ -f "$MCP_ERROR_LOG" ]]; then
+            echo "Following MCP errors in real-time (Ctrl+C to stop)..."
+            echo "Log file: $MCP_ERROR_LOG"
+            echo "----------------------------------------"
+            tail -f "$MCP_ERROR_LOG"
+        else
+            echo "No MCP error log found at: $MCP_ERROR_LOG"
+            echo "Errors will appear here when MCP servers encounter issues."
+        fi
+        ;;
+    --clear)
+        if [[ -f "$MCP_ERROR_LOG" ]]; then
+            > "$MCP_ERROR_LOG"
+            echo "MCP error log cleared: $MCP_ERROR_LOG"
+        else
+            echo "No MCP error log found to clear: $MCP_ERROR_LOG"
+        fi
+        ;;
+    --help|-h)
+        show_usage
+        ;;
+    "")
+        if [[ -f "$MCP_ERROR_LOG" ]]; then
+            echo "Recent MCP errors:"
+            echo "Log file: $MCP_ERROR_LOG"
+            echo "----------------------------------------"
+            # Show last 20 lines, or entire file if smaller
+            tail -20 "$MCP_ERROR_LOG"
+            echo "----------------------------------------"
+            echo "Use 'check-mcp-errors --tail' to follow in real-time"
+            echo "Use 'check-mcp-errors --clear' to clear the log"
+        else
+            echo "No MCP error log found at: $MCP_ERROR_LOG"
+            echo "This is normal if no MCP servers have encountered errors yet."
+            echo "Errors will be logged here when they occur."
+        fi
+        ;;
+    *)
+        echo "Unknown option: $1"
+        show_usage
+        exit 1
+        ;;
+esac
