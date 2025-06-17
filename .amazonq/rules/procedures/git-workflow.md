@@ -1,10 +1,9 @@
 # Git Workflow Rules
 
 ## Commit Standards
-- **IMPORTANT: NEVER commit directly to the main branch**
 - Always use conventional commit syntax: `<type>[scope]: description` (scope optional but encouraged; use separate `-m` for trailers)
 - Good scope choices add context about what component is being modified (e.g., api, ui, auth, config, docs)
-- Use `Systems-Stewardship: true` trailer for systems improvement work
+- Use `Principle: <slug>` trailer when work resonates with a specific principle (e.g., `Principle: subtraction-creates-value`, `Principle: versioning-mindset`, `Principle: systems-stewardship`)
 - Commit early and often with meaningful changes
 
 ## Branch Management
