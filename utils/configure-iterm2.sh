@@ -105,7 +105,13 @@ configure_iterm2() {
     defaults write com.googlecode.iterm2 "WindowStyle" -int 0
     defaults write com.googlecode.iterm2 "UseBorder" -bool false
     
-    echo -e "${GREEN}✓ iTerm2 configured for tmux workflow (140x45, Monaco 14pt)${NC}"
+    # Clipboard access settings - harden to prevent repeated prompts
+    defaults write com.googlecode.iterm2 "AllowClipboardAccess" -bool true
+    defaults write com.googlecode.iterm2 "SuppressRestartAnnouncement" -bool true
+    defaults write com.googlecode.iterm2 "NoSyncSuppressClipboardAccessDeniedWarning" -bool true
+    defaults write com.googlecode.iterm2 "NoSyncNeverRemindPrefsChangesLostForFile" -bool true
+    
+    echo -e "${GREEN}✓ iTerm2 configured for tmux workflow (140x45, Monaco 14pt, clipboard access hardened)${NC}"
     
     if pgrep -x "iTerm2" > /dev/null; then
         echo -e "${YELLOW}iTerm2 restart required for changes to take effect${NC}"
