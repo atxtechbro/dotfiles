@@ -15,16 +15,16 @@ This standardized approach makes it easy to add more MCP servers in the future f
 
 ## Available MCP Integrations
 
-| Integration | Description | Authentication Method | Installation Method | Documentation |
-|-------------|-------------|----------------------|---------------------|---------------|
-| AWS Documentation | AWS documentation search | None required | PyPI packages via UVX | - |
-| GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script | [Our Fork](https://github.com/atxtechbro/github-mcp-server?tab=readme-ov-file#github-mcp-server) |
-| GitLab | GitLab API integration | PAT from `.bash_secrets` | Direct npx (no wrapper needed) | https://github.com/zereight/gitlab-mcp |
-| Atlassian | Jira and Confluence integration | API tokens from `.bash_secrets` | Custom setup script | - |
-| Brave Search | Web search via Brave | API key from `.bash_secrets` | Docker container | - |
-| Filesystem | Local filesystem operations | None required | Built from source | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/filesystem#filesystem-mcp-server) |
-| Git | Git repository operations | None required | Built from source | [Our Repository](https://github.com/atxtechbro/git-mcp-server#git-mcp-server) |
-| Google Drive | Google Drive file operations | OAuth credentials from `.bash_secrets` | Docker container | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/gdrive#authentication) |
+| Integration | Description | Authentication Method | Installation Method | Documentation | Tool-Level Logging | Init-Level Logging |
+|-------------|-------------|----------------------|---------------------|---------------|-------------------|-------------------|
+| AWS Documentation | AWS documentation search | None required | PyPI packages via UVX | - | No | No |
+| GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script | [Our Fork](https://github.com/atxtechbro/github-mcp-server?tab=readme-ov-file#github-mcp-server) | No | Yes |
+| GitLab | GitLab API integration | PAT from `.bash_secrets` | Direct npx (no wrapper needed) | https://github.com/zereight/gitlab-mcp | No | No |
+| Atlassian | Jira and Confluence integration | API tokens from `.bash_secrets` | Custom setup script | - | No | Yes |
+| Brave Search | Web search via Brave | API key from `.bash_secrets` | Docker container | - | No | Yes |
+| Filesystem | Local filesystem operations | None required | Built from source | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/filesystem#filesystem-mcp-server) | No | Yes |
+| Git | Git repository operations | None required | Source lives in dotfiles | [README.md](servers/git-mcp-server/README.md) | Yes | Yes |
+| Google Drive | Google Drive file operations | OAuth credentials from `.bash_secrets` | Docker container | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/gdrive#authentication) | No | Yes |
 
 ## Setup Instructions
 
@@ -96,7 +96,7 @@ This allows you to control which directories the Filesystem MCP server can acces
 
 If you encounter issues with an MCP integration:
 
-1. **Check MCP error logs**: Run `check-mcp-errors` to see recent MCP server errors
+1. **Check MCP error logs**: Run `check-mcp-logs` to see recent MCP server errors and tool calls
 2. Check that the required secrets are properly set in `~/.bash_secrets`
 3. Verify that the wrapper script has execute permissions (`chmod +x wrapper-script.sh`)
 4. For Docker-based integrations, ensure Docker is running (`docker ps`)
@@ -113,17 +113,30 @@ If you encounter issues with an MCP integration:
 All MCP wrapper scripts now implement enhanced error handling with:
 
 - **Error logging** to `~/mcp-errors.log` with timestamps and server identification
+- **Tool-level logging** to `~/mcp-tool-calls.log` for individual MCP tool executions (where supported)
 - **Desktop notifications** on macOS for critical failures  
 - **Actionable error messages** with specific remediation steps
 - **Consistent error format**: `[SERVER] MCP ERROR: [description]`
 
 #### Using the Error Logging System
 
-Use the `check-mcp-errors` utility to:
+Use the `check-mcp-logs` utility to:
 
-- `check-mcp-errors` - Show recent errors
-- `check-mcp-errors --tail` - Follow errors in real-time  
-- `check-mcp-errors --clear` - Clear the error log
+- `check-mcp-logs` - Show recent errors and tool calls
+- `check-mcp-logs --errors` - Show only initialization/server errors
+- `check-mcp-logs --tools` - Show only tool call logs
+- `check-mcp-logs --follow` - Follow logs in real-time  
+- `check-mcp-logs --lines 50` - Show last 50 lines
+
+#### Tool-Level Logging
+
+For MCP servers with tool-level logging support (currently: Git), each tool call is logged with:
+- Timestamp and current git branch
+- Tool name and parameters passed
+- Success/failure status with error messages
+- Repository context and execution details
+
+This provides visibility into individual MCP operations that would otherwise be hidden by MCP clients.
 
 #### Adding Logging to New Wrapper Scripts
 

@@ -1,259 +1,121 @@
-# mcp-server-git: A git MCP server
+# atxtechbro Git MCP Server
+
+A personalized Git workflow MCP server integrated into dotfiles for faster iteration and command chaining experiments.
 
 ## Overview
 
-A Model Context Protocol server for Git repository interaction and automation. This server provides tools to read, search, and manipulate Git repositories via Large Language Models.
+This is a customized version of the git-mcp-server that has been migrated into the dotfiles repository as part of the P.P.V system (Pillars, Pipelines, Vaults). It serves as an experimental pillar for bringing MCP tools directly into dotfiles alongside other developer tooling.
 
-Please note that mcp-server-git is currently in early development. The functionality and available tools are subject to change and expansion as we continue to develop and improve the server.
+## Key Features
 
-### Tools
+- **Comprehensive Tool-Level Logging**: Every git operation is logged with detailed context
+- **Personalized for atxtechbro workflow**: Optimized for specific development patterns
+- **Integrated with dotfiles**: Lives alongside other development tools for unified management
+- **Fast feedback loops**: Designed to chain commands together and reduce AI response cycles
 
-1. `git_status`
-   - Shows the working tree status
-   - Input:
-     - `repo_path` (string): Path to Git repository
-   - Returns: Current status of working directory as text output
+## Available Git Tools
 
-2. `git_diff_unstaged`
-   - Shows changes in working directory not yet staged
-   - Input:
-     - `repo_path` (string): Path to Git repository
-   - Returns: Diff output of unstaged changes
+| Tool | Description | Logging |
+|------|-------------|---------|
+| `git_status` | Shows working tree status | ✅ |
+| `git_diff_unstaged` | Shows unstaged changes | ✅ |
+| `git_diff_staged` | Shows staged changes | ✅ |
+| `git_diff` | Shows differences between branches/commits | ✅ |
+| `git_commit` | Records changes to repository | ✅ |
+| `git_add` | Adds files to staging area | ✅ |
+| `git_reset` | Unstages all staged changes | ✅ |
+| `git_log` | Shows commit history | ✅ |
+| `git_create_branch` | Creates new branch | ✅ |
+| `git_checkout` | Switches branches | ✅ |
+| `git_show` | Shows commit contents | ✅ |
 
-3. `git_diff_staged`
-   - Shows changes that are staged for commit
-   - Input:
-     - `repo_path` (string): Path to Git repository
-   - Returns: Diff output of staged changes
+## Logging Implementation
 
-4. `git_diff`
-   - Shows differences between branches or commits
-   - Inputs:
-     - `repo_path` (string): Path to Git repository
-     - `target` (string): Target branch or commit to compare with
-   - Returns: Diff output comparing current state with target
+### Tool-Level Logging
+Each git tool call is logged to `~/mcp-tool-calls.log` with:
+- **Timestamp**: When the operation occurred
+- **Server**: atxtechbro-git-mcp-server
+- **Tool**: Specific git tool used
+- **Status**: SUCCESS or ERROR
+- **Branch**: Current git branch context
+- **Details**: Tool-specific operation details
+- **Parameters**: Full JSON of arguments passed
 
-5. `git_commit`
-   - Records changes to the repository
-   - Inputs:
-     - `repo_path` (string): Path to Git repository
-     - `message` (string): Commit message
-   - Returns: Confirmation with new commit hash
+### Example Log Entry
+```
+2025-06-18 12:58:30: [atxtechbro-git-mcp-server] TOOL_CALL: git_status | STATUS: SUCCESS | BRANCH: feature/migrate-mcp-servers-450 | DETAILS: Retrieved repository status | PARAMS: {"repo_path": "/Users/morgan.joyce/ppv/pillars/dotfiles"}
+```
 
-6. `git_add`
-   - Adds file contents to the staging area
-   - Inputs:
-     - `repo_path` (string): Path to Git repository
-     - `files` (string[]): Array of file paths to stage
-   - Returns: Confirmation of staged files
+### Viewing Logs
+Use the `check-mcp-logs` utility:
+```bash
+# Show all logs
+check-mcp-logs
 
-7. `git_reset`
-   - Unstages all staged changes
-   - Input:
-     - `repo_path` (string): Path to Git repository
-   - Returns: Confirmation of reset operation
+# Show only tool calls
+check-mcp-logs --tools
 
-8. `git_log`
-   - Shows the commit logs
-   - Inputs:
-     - `repo_path` (string): Path to Git repository
-     - `max_count` (number, optional): Maximum number of commits to show (default: 10)
-   - Returns: Array of commit entries with hash, author, date, and message
+# Follow logs in real-time
+check-mcp-logs --follow
 
-9. `git_create_branch`
-   - Creates a new branch
-   - Inputs:
-     - `repo_path` (string): Path to Git repository
-     - `branch_name` (string): Name of the new branch
-     - `start_point` (string, optional): Starting point for the new branch
-   - Returns: Confirmation of branch creation
-8. `git_checkout`
-   - Switches branches
-   - Inputs:
-     - `repo_path` (string): Path to Git repository
-     - `branch_name` (string): Name of branch to checkout
-   - Returns: Confirmation of branch switch
-9. `git_show`
-   - Shows the contents of a commit
-   - Inputs:
-     - `repo_path` (string): Path to Git repository
-     - `revision` (string): The revision (commit hash, branch name, tag) to show
-   - Returns: Contents of the specified commit
+# Show last 50 lines
+check-mcp-logs --lines 50
+```
 
 ## Installation
 
-### Using uv (recommended)
+The git-mcp-server is automatically set up via the setup script:
 
-When using [`uv`](https://docs.astral.sh/uv/) no specific installation is needed. We will
-use [`uvx`](https://docs.astral.sh/uv/guides/tools/) to directly run *mcp-server-git*.
-
-### Using PIP
-
-Alternatively you can install `mcp-server-git` via pip:
-
-```
-pip install mcp-server-git
+```bash
+cd ~/ppv/pillars/dotfiles/mcp
+bash setup-git-mcp.sh
 ```
 
-After installation, you can run it as a script using:
+This script:
+1. Creates a Python virtual environment
+2. Installs the personalized package (`atxtechbro-git-mcp-server`)
+3. Sets up executable permissions
+4. Creates necessary symlinks
+
+## Architecture
 
 ```
-python -m mcp_server_git
+mcp/servers/git-mcp-server/
+├── src/mcp_server_git/
+│   ├── __init__.py          # Entry point and CLI
+│   ├── __main__.py          # Main module runner
+│   ├── server.py            # Core MCP server with logging
+│   └── logging_utils.py     # Tool-level logging utilities
+├── pyproject.toml           # Personalized package metadata
+└── README.md               # This file
 ```
 
-## Configuration
+## Experimental Nature
 
-### Usage with Claude Desktop
+This implementation is experimental and designed for:
+- **Command chaining**: Combining multiple git operations in single AI interactions
+- **Faster iteration**: Reducing the need for multiple AI response cycles
+- **Enhanced debugging**: Comprehensive logging for troubleshooting
+- **Workflow optimization**: Tailored to specific development patterns
 
-Add this to your `claude_desktop_config.json`:
+The server may be removed in favor of direct bash commands if experiments prove unfruitful, following the principle that "bash by itself was actually outperforming this server as is."
 
-<details>
-<summary>Using uvx</summary>
+## Integration with Dotfiles
 
-```json
-"mcpServers": {
-  "git": {
-    "command": "uvx",
-    "args": ["mcp-server-git", "--repository", "path/to/git/repo"]
-  }
-}
-```
-</details>
+As part of the dotfiles pillar, this server:
+- Lives alongside other development tools
+- Shares the same logging infrastructure
+- Benefits from unified secret management
+- Follows the same setup and maintenance patterns
 
-<details>
-<summary>Using docker</summary>
-
-* Note: replace '/Users/username' with the a path that you want to be accessible by this tool
-
-```json
-"mcpServers": {
-  "git": {
-    "command": "docker",
-    "args": ["run", "--rm", "-i", "--mount", "type=bind,src=/Users/username,dst=/Users/username", "mcp/git"]
-  }
-}
-```
-</details>
-
-<details>
-<summary>Using pip installation</summary>
-
-```json
-"mcpServers": {
-  "git": {
-    "command": "python",
-    "args": ["-m", "mcp_server_git", "--repository", "path/to/git/repo"]
-  }
-}
-```
-</details>
-
-### Usage with [Zed](https://github.com/zed-industries/zed)
-
-Add to your Zed settings.json:
-
-<details>
-<summary>Using uvx</summary>
-
-```json
-"context_servers": [
-  "mcp-server-git": {
-    "command": {
-      "path": "uvx",
-      "args": ["mcp-server-git"]
-    }
-  }
-],
-```
-</details>
-
-<details>
-<summary>Using pip installation</summary>
-
-```json
-"context_servers": {
-  "mcp-server-git": {
-    "command": {
-      "path": "python",
-      "args": ["-m", "mcp_server_git"]
-    }
-  }
-},
-```
-</details>
-
-## Debugging
-
-You can use the MCP inspector to debug the server. For uvx installations:
-
-```
-npx @modelcontextprotocol/inspector uvx mcp-server-git
-```
-
-Or if you've installed the package in a specific directory or are developing on it:
-
-```
-cd path/to/servers/src/git
-npx @modelcontextprotocol/inspector uv run mcp-server-git
-```
-
-Running `tail -n 20 -f ~/Library/Logs/Claude/mcp*.log` will show the logs from the server and may
-help you debug any issues.
+This integration supports the "Snowball Method" of continuous knowledge accumulation and the "Spilled Coffee Principle" of reproducible environments.
 
 ## Development
 
-If you are doing local development, there are two ways to test your changes:
+To modify the server:
+1. Edit files in `src/mcp_server_git/`
+2. Reinstall with `bash setup-git-mcp.sh`
+3. Test changes and check logs with `check-mcp-logs --tools`
+4. Commit changes to the dotfiles repository
 
-1. Run the MCP inspector to test your changes. See [Debugging](#debugging) for run instructions.
-
-2. Test using the Claude desktop app. Add the following to your `claude_desktop_config.json`:
-
-### Docker
-
-```json
-{
-  "mcpServers": {
-    "git": {
-      "command": "docker",
-      "args": [
-        "run",
-        "--rm",
-        "-i",
-        "--mount", "type=bind,src=/Users/username/Desktop,dst=/projects/Desktop",
-        "--mount", "type=bind,src=/path/to/other/allowed/dir,dst=/projects/other/allowed/dir,ro",
-        "--mount", "type=bind,src=/path/to/file.txt,dst=/projects/path/to/file.txt",
-        "mcp/git"
-      ]
-    }
-  }
-}
-```
-
-### UVX
-```json
-{
-"mcpServers": {
-  "git": {
-    "command": "uv",
-    "args": [ 
-      "--directory",
-      "/<path to mcp-servers>/mcp-servers/src/git",
-      "run",
-      "mcp-server-git"
-    ]
-  }
-}
-```
-
-## Build
-
-Docker build:
-
-```bash
-cd src/git
-docker build -t mcp/git .
-```
-
-## License
-
-This MCP server is licensed under the MIT License. This means you are free to use, modify, and distribute the software, subject to the terms and conditions of the MIT License. For more details, please see the LICENSE file in the project repository.
+The source code is version controlled as part of the dotfiles repository, enabling rapid iteration and experimentation.
