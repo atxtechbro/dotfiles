@@ -3,12 +3,12 @@ MCP Tool Logging Utilities
 Provides logging functionality for individual MCP tool calls
 """
 
+import json
 import os
 import subprocess
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Any
-import json
+from typing import Any, Optional
 
 MCP_TOOL_LOG = os.path.expanduser("~/mcp-tool-calls.log")
 MCP_ERROR_LOG = os.path.expanduser("~/mcp-errors.log")

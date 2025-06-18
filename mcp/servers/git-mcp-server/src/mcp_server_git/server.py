@@ -1,20 +1,23 @@
 import logging
+from enum import Enum
 from pathlib import Path
 from typing import Sequence
+
+import git
+from pydantic import BaseModel
+
 from mcp.server import Server
 from mcp.server.session import ServerSession
 from mcp.server.stdio import stdio_server
 from mcp.types import (
     ClientCapabilities,
-    TextContent,
-    Tool,
     ListRootsResult,
     RootsCapability,
+    TextContent,
+    Tool,
 )
-from enum import Enum
-import git
-from pydantic import BaseModel
-from .logging_utils import log_tool_success, log_tool_error
+
+from .logging_utils import log_tool_error, log_tool_success
 
 class GitStatus(BaseModel):
     repo_path: str

@@ -1,7 +1,9 @@
-import click
-from pathlib import Path
 import logging
 import sys
+from pathlib import Path
+
+import click
+
 from .server import serve
 
 @click.command()
