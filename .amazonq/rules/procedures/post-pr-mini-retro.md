@@ -31,9 +31,9 @@ After submitting a pull request for feature-related workflows, conduct a mini re
 
 **Tool boundary clarity:**
 - Were there moments of uncertainty about which tool to use for a task?
-- What tool choices required careful consideration vs being obvious?
 - Which tool descriptions or boundaries could be clearer?
-- Were there near-misses where you almost chose a different tool, and why?
+- Which tools needed example usage, edge cases, or input format requirements to be more obvious?
+- What tool definitions felt like they needed "prompt engineering attention" to be clearer?
 
 **Principle tensions:**
 - Which principles came into tension during decision points?
