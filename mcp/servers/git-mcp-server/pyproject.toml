@@ -1,16 +1,16 @@
 [project]
-name = "kzms-mcp-server-git"
-version = "0.6.2"
-description = "A Model Context Protocol server providing tools to read, search, and manipulate Git repositories programmatically via LLMs"
+name = "atxtechbro-git-mcp-server"
+version = "0.1.0"
+description = "Personalized Git workflow MCP server integrated into dotfiles for faster iteration and command chaining experiments"
 readme = "README.md"
 requires-python = ">=3.10"
-authors = [{ name = "Anthropic, PBC." }]
-maintainers = [{ name = "David Soria Parra", email = "davidsp@anthropic.com" }]
-keywords = ["git", "mcp", "llm", "automation"]
+authors = [{ name = "atxtechbro", email = "morganj2k@gmail.com" }]
+maintainers = [{ name = "atxtechbro", email = "morganj2k@gmail.com" }]
+keywords = ["git", "mcp", "dotfiles", "workflow", "experimental"]
 license = { text = "MIT" }
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: End Users/Desktop",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
@@ -23,7 +23,7 @@ dependencies = [
 ]
 
 [project.scripts]
-kzms-mcp-server-git = "mcp_server_git:main"
+atxtechbro-git-mcp-server = "mcp_server_git:main"
 
 [build-system]
 requires = ["hatchling"]
