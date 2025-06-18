@@ -168,7 +168,61 @@ When creating new MCP wrapper scripts:
 
 3. **Use consistent server names**: BRAVE, ATLASSIAN, GITHUB, GIT, FILESYSTEM, GDRIVE
 
-This framework bridges the visibility gap created by MCP clients that suppress wrapper script errors.
+#### Adding Tool-Level Logging to MCP Servers
+
+For MCP servers implemented in Python (like git-mcp-server), add comprehensive tool-level logging:
+
+1. **Create logging utilities module** (`logging_utils.py`):
+   ```python
+   from datetime import datetime
+   from pathlib import Path
+   from typing import Optional
+   import json
+   import subprocess
+   
+   def log_tool_call(server_name: str, tool_name: str, status: str, 
+                     details: str, repo_path: Optional[Path] = None, 
+                     parameters: Optional[dict] = None) -> None:
+       # Implementation similar to git-mcp-server/src/mcp_server_git/logging_utils.py
+   ```
+
+2. **Import and wrap tool calls** in your server's `call_tool()` function:
+   ```python
+   from .logging_utils import log_tool_success, log_tool_error
+   
+   @server.call_tool()
+   async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+       try:
+           # Repository/context setup with error handling
+           repo_path = Path(arguments.get("repo_path", "."))
+           
+           match name:
+               case "your_tool":
+                   result = your_tool_function(arguments)
+                   log_tool_success("your-server-name", name, 
+                                  "Tool-specific success message", 
+                                  repo_path, arguments)
+                   return [TextContent(type="text", text=result)]
+                   
+       except Exception as e:
+           error_msg = f"Tool execution failed: {str(e)}"
+           log_tool_error("your-server-name", name, error_msg, 
+                         repo_path, arguments)
+           return [TextContent(type="text", text=f"Error: {error_msg}")]
+   ```
+
+3. **Log context for each tool**:
+   - **Success logs**: Tool name, operation details, parameters
+   - **Error logs**: Tool name, error message, parameters, context
+   - **Repository context**: Current branch, repo path (if applicable)
+   - **Timestamps**: Automatic via logging utilities
+
+4. **Update documentation**:
+   - Add "Yes" to Tool-Level Logging column in MCP integrations table
+   - Document tool-level logging in server's README
+   - Include examples of log output format
+
+This framework bridges the visibility gap created by MCP clients that suppress wrapper script errors and provides detailed insight into individual tool operations.
 ## Adding New MCP Servers
 
 Based on our current experience, here's a working procedure for adding new MCP servers (subject to improvement as we learn more):
