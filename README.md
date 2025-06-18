@@ -90,6 +90,15 @@ Key aspects:
 - **Company separation**: Each company gets its own folder under pillars for clear separation
 - **Principles first**: Core principles document guides all other decisions
 
+## The 80/20 Rule for Systems Work
+
+Following "Remember the Big Picture" from The Pragmatic Programmer - don't get so engrossed in system optimization details that you lose momentum on core work. In this dotfiles repo:
+
+- **80% work**: Integrating systems, automation (Spilled Coffee Principle), core global rules
+- **20% systems optimization**: Refining configurations, optimizing workflows, meta-work
+
+Avoid obsessing over obscure details like perfect neovim configs or tmux panel layouts. The goal is systems that enable work, not systems as an end in themselves.
+
 ## Repository Design Patterns
 
 This repository follows specific organizational patterns to maintain consistency and clarity:
