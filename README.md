@@ -90,6 +90,19 @@ Key aspects:
 - **Company separation**: Each company gets its own folder under pillars for clear separation
 - **Principles first**: Core principles document guides all other decisions
 
+## The 80/20 Rule for Systems Work
+
+Following "Remember the Big Picture" from The Pragmatic Programmer - don't get so engrossed in system optimization details that you lose momentum on core work. In this dotfiles repo:
+
+- **80% work**: Integrating systems, automation (Spilled Coffee Principle), core global rules
+- **20% systems optimization**: Refining configurations, optimizing workflows, meta-work
+
+Avoid obsessing over obscure details like perfect neovim configs or tmux panel layouts. The goal is systems that enable work, not systems as an end in themselves.
+
+At an even higher level, this is all about **creating value by serving others**. Systems optimization plants seeds for higher leverage to serve better, but must be balanced with actually delivering that service. The "up high and slightly elevated" manager's perspective maintains this balance - constantly checking: "Am I committing real value? Are deliverables moving forward?"
+
+This serving mindset acknowledges the tension as a pendulum rather than trying to eliminate it. Like Ecclesiastes 3:1 says, there's a season for everything - sometimes lean into systems work to build leverage, sometimes focus purely on delivery. The key is conscious awareness and feedback loops, always returning to: "How does this serve others better?"
+
 ## Repository Design Patterns
 
 This repository follows specific organizational patterns to maintain consistency and clarity:

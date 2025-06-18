@@ -18,4 +18,7 @@ You should copy this and paste it into your file.
 **Example of what TO do:**
 [Use fs_write tool to directly edit the file]
 
+**Exception: Post-PR Mini Retros**
+During retro procedures, prioritize transparency and detailed reflection over immediate action. Give yourself enough tokens to think through decisions, tensions, and alternatives before summarizing insights.
+
 This principle prevents frustration when users want action, not explanation.
