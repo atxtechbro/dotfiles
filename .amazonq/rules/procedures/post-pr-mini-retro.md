@@ -23,4 +23,10 @@ After submitting a pull request for feature-related workflows, conduct a mini re
 - What new procedures should be documented?
 - What tools or workflows could be enhanced?
 
+**Formatting overhead check:**
+- Did any requirements feel like unnecessary cognitive load or "formatting overhead"?
+- Were there moments where precision requirements (line counts, exact formatting, etc.) made tasks harder than needed?
+- What formatting or precision requirements could be relaxed to reduce friction?
+- Permission to flag when working harder/longer than necessary due to overly specific constraints
+
 This retro helps identify the 20% of systems work that enables the 80% of feature work to flow more smoothly.
