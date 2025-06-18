@@ -14,6 +14,7 @@ from mcp.types import (
 from enum import Enum
 import git
 from pydantic import BaseModel
+from .logging_utils import log_tool_success, log_tool_error
 
 class GitStatus(BaseModel):
     repo_path: str
@@ -241,92 +242,121 @@ async def serve(repository: Path | None) -> None:
     @server.call_tool()
     async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         repo_path = Path(arguments["repo_path"])
-        repo = git.Repo(repo_path)
+        
+        try:
+            repo = git.Repo(repo_path)
+        except git.InvalidGitRepositoryError as e:
+            error_msg = f"Invalid git repository: {repo_path}"
+            log_tool_error("atxtechbro-git-mcp-server", name, error_msg, repo_path, arguments)
+            return [TextContent(type="text", text=f"Error: {error_msg}")]
+        except Exception as e:
+            error_msg = f"Failed to access repository: {str(e)}"
+            log_tool_error("atxtechbro-git-mcp-server", name, error_msg, repo_path, arguments)
+            return [TextContent(type="text", text=f"Error: {error_msg}")]
 
-        match name:
-            case GitTools.STATUS:
-                status = git_status(repo)
-                return [TextContent(
-                    type="text",
-                    text=f"Repository status:\n{status}"
+        try:
+            match name:
+                case GitTools.STATUS:
+                    status = git_status(repo)
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Retrieved repository status", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=f"Repository status:\n{status}"
+                    )]
+
+                case GitTools.DIFF_UNSTAGED:
+                    diff = git_diff_unstaged(repo)
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Retrieved unstaged changes", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=f"Unstaged changes:\n{diff}"
+                    )]
+
+                case GitTools.DIFF_STAGED:
+                    diff = git_diff_staged(repo)
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Retrieved staged changes", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=f"Staged changes:\n{diff}"
+                    )]
+
+                case GitTools.DIFF:
+                    diff = git_diff(repo, arguments["target"])
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Retrieved diff with {arguments['target']}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=f"Diff with {arguments['target']}:\n{diff}"
+                    )]
+
+                case GitTools.COMMIT:
+                    result = git_commit(repo, arguments["message"])
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Committed with message: {arguments['message']}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
                 )]
 
-            case GitTools.DIFF_UNSTAGED:
-                diff = git_diff_unstaged(repo)
-                return [TextContent(
-                    type="text",
-                    text=f"Unstaged changes:\n{diff}"
-                )]
+                case GitTools.ADD:
+                    result = git_add(repo, arguments["files"])
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Added files: {arguments['files']}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
 
-            case GitTools.DIFF_STAGED:
-                diff = git_diff_staged(repo)
-                return [TextContent(
-                    type="text",
-                    text=f"Staged changes:\n{diff}"
-                )]
+                case GitTools.RESET:
+                    result = git_reset(repo)
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Reset staged changes", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
 
-            case GitTools.DIFF:
-                diff = git_diff(repo, arguments["target"])
-                return [TextContent(
-                    type="text",
-                    text=f"Diff with {arguments['target']}:\n{diff}"
-                )]
+                case GitTools.LOG:
+                    log = git_log(repo, arguments.get("max_count", 10))
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Retrieved {len(log)} commits", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text="Commit history:\n" + "\n".join(log)
+                    )]
 
-            case GitTools.COMMIT:
-                result = git_commit(repo, arguments["message"])
-                return [TextContent(
-                    type="text",
-                    text=result
-                )]
+                case GitTools.CREATE_BRANCH:
+                    result = git_create_branch(
+                        repo,
+                        arguments["branch_name"],
+                        arguments.get("base_branch")
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Created branch: {arguments['branch_name']}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
 
-            case GitTools.ADD:
-                result = git_add(repo, arguments["files"])
-                return [TextContent(
-                    type="text",
-                    text=result
-                )]
+                case GitTools.CHECKOUT:
+                    result = git_checkout(repo, arguments["branch_name"])
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Checked out branch: {arguments['branch_name']}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
 
-            case GitTools.RESET:
-                result = git_reset(repo)
-                return [TextContent(
-                    type="text",
-                    text=result
-                )]
+                case GitTools.SHOW:
+                    result = git_show(repo, arguments["revision"])
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Showed revision: {arguments['revision']}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
 
-            case GitTools.LOG:
-                log = git_log(repo, arguments.get("max_count", 10))
-                return [TextContent(
-                    type="text",
-                    text="Commit history:\n" + "\n".join(log)
-                )]
-
-            case GitTools.CREATE_BRANCH:
-                result = git_create_branch(
-                    repo,
-                    arguments["branch_name"],
-                    arguments.get("base_branch")
-                )
-                return [TextContent(
-                    type="text",
-                    text=result
-                )]
-
-            case GitTools.CHECKOUT:
-                result = git_checkout(repo, arguments["branch_name"])
-                return [TextContent(
-                    type="text",
-                    text=result
-                )]
-
-            case GitTools.SHOW:
-                result = git_show(repo, arguments["revision"])
-                return [TextContent(
-                    type="text",
-                    text=result
-                )]
-
-            case _:
-                raise ValueError(f"Unknown tool: {name}")
+                case _:
+                    error_msg = f"Unknown tool: {name}"
+                    log_tool_error("atxtechbro-git-mcp-server", name, error_msg, repo_path, arguments)
+                    raise ValueError(error_msg)
+                    
+        except Exception as e:
+            error_msg = f"Tool execution failed: {str(e)}"
+            log_tool_error("atxtechbro-git-mcp-server", name, error_msg, repo_path, arguments)
+            return [TextContent(type="text", text=f"Error: {error_msg}")]
 
     options = server.create_initialization_options()
     async with stdio_server() as (read_stream, write_stream):
