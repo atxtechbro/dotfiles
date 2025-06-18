@@ -29,4 +29,10 @@ After submitting a pull request for feature-related workflows, conduct a mini re
 - What formatting or precision requirements could be relaxed to reduce friction?
 - Permission to flag when working harder/longer than necessary due to overly specific constraints
 
+**Tool boundary clarity:**
+- Were there moments of uncertainty about which tool to use for a task?
+- What tool choices required careful consideration vs being obvious?
+- Which tool descriptions or boundaries could be clearer?
+- Were there near-misses where you almost chose a different tool, and why?
+
 This retro helps identify the 20% of systems work that enables the 80% of feature work to flow more smoothly.
