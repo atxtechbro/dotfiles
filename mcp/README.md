@@ -172,6 +172,24 @@ When creating new MCP wrapper scripts:
 
 For MCP servers implemented in Python (like git-mcp-server), add comprehensive tool-level logging:
 
+##### Log Entry Structure Taxonomy
+
+Each MCP tool call generates a single line with this structured format:
+
+**Dynamic Identifiers:**
+- Timestamp: `2025-06-18 13:04:33:` (when the call occurred)
+- Server name: `[atxtechbro-git-mcp-server]` (which MCP server handled it)
+- Tool name: `git_add` (specific tool invoked)
+
+**Structured Metadata Fields (UPPERCASE):**
+- `TOOL_CALL:` - Fixed label identifying this as a tool invocation
+- `STATUS:` - Success/failure indicator (SUCCESS/ERROR)
+- `BRANCH:` - Current git branch context (when applicable)
+- `DETAILS:` - Human-readable summary of what happened
+- `PARAMS:` - JSON parameters passed to the tool
+
+This taxonomy enables both human scanning and programmatic parsing. Dynamic identifiers provide context (what/when/where), while uppercase fields create consistent data categories across all MCP servers.
+
 1. **Create logging utilities module** (`logging_utils.py`):
    ```python
    from datetime import datetime
