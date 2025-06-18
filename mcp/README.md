@@ -15,16 +15,16 @@ This standardized approach makes it easy to add more MCP servers in the future f
 
 ## Available MCP Integrations
 
-| Integration | Description | Authentication Method | Installation Method | Documentation |
-|-------------|-------------|----------------------|---------------------|---------------|
-| AWS Documentation | AWS documentation search | None required | PyPI packages via UVX | - |
-| GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script | [Our Fork](https://github.com/atxtechbro/github-mcp-server?tab=readme-ov-file#github-mcp-server) |
-| GitLab | GitLab API integration | PAT from `.bash_secrets` | Direct npx (no wrapper needed) | https://github.com/zereight/gitlab-mcp |
-| Atlassian | Jira and Confluence integration | API tokens from `.bash_secrets` | Custom setup script | - |
-| Brave Search | Web search via Brave | API key from `.bash_secrets` | Docker container | - |
-| Filesystem | Local filesystem operations | None required | Built from source | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/filesystem#filesystem-mcp-server) |
-| Git | Git repository operations | None required | Built from source | [Our Repository](https://github.com/atxtechbro/git-mcp-server#git-mcp-server) |
-| Google Drive | Google Drive file operations | OAuth credentials from `.bash_secrets` | Docker container | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/gdrive#authentication) |
+| Integration | Description | Authentication Method | Installation Method | Documentation | Tool-Level Logging | Init-Level Logging |
+|-------------|-------------|----------------------|---------------------|---------------|-------------------|-------------------|
+| AWS Documentation | AWS documentation search | None required | PyPI packages via UVX | - | No | No |
+| GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script | [Our Fork](https://github.com/atxtechbro/github-mcp-server?tab=readme-ov-file#github-mcp-server) | No | Yes |
+| GitLab | GitLab API integration | PAT from `.bash_secrets` | Direct npx (no wrapper needed) | https://github.com/zereight/gitlab-mcp | No | No |
+| Atlassian | Jira and Confluence integration | API tokens from `.bash_secrets` | Custom setup script | - | No | Yes |
+| Brave Search | Web search via Brave | API key from `.bash_secrets` | Docker container | - | No | Yes |
+| Filesystem | Local filesystem operations | None required | Built from source | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/filesystem#filesystem-mcp-server) | No | Yes |
+| Git | Git repository operations | None required | Source lives in dotfiles | [README.md](servers/git-mcp-server/README.md) | Yes | Yes |
+| Google Drive | Google Drive file operations | OAuth credentials from `.bash_secrets` | Docker container | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/gdrive#authentication) | No | Yes |
 
 ## Setup Instructions
 
@@ -92,11 +92,33 @@ q chat  # Start Amazon Q with restricted filesystem access
 
 This allows you to control which directories the Filesystem MCP server can access.
 
+## Protocol Testing
+
+When modifying MCP servers, test the actual JSON-RPC protocol communication instead of just CLI help text.
+
+**Complete MCP handshake test:**
+```bash
+(echo '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {}, "clientInfo": {"name": "smoke-test", "version": "1.0.0"}}}'; echo '{"jsonrpc": "2.0", "method": "notifications/initialized"}'; echo '{"jsonrpc": "2.0", "id": 2, "method": "tools/list"}') | .venv/bin/python -m mcp_server_git -r .
+```
+
+**Expected success response:**
+- Initialize: Returns protocol version and server capabilities
+- tools/list: Returns actual tool definitions with JSON schemas
+- No error responses in the JSON-RPC output
+
+**Why this matters:** CLI testing (`--help`) only validates the command wrapper, not the MCP protocol that real clients use. This provides confidence that actual MCP clients can communicate with the server.
+
+**Use cases:**
+- After server modifications or cleanup
+- Before committing MCP server changes  
+- When debugging client integration issues
+- During subtraction/refactoring work
+
 ## Troubleshooting
 
 If you encounter issues with an MCP integration:
 
-1. **Check MCP error logs**: Run `check-mcp-errors` to see recent MCP server errors
+1. **Check MCP error logs**: Run `check-mcp-logs` to see recent MCP server errors and tool calls
 2. Check that the required secrets are properly set in `~/.bash_secrets`
 3. Verify that the wrapper script has execute permissions (`chmod +x wrapper-script.sh`)
 4. For Docker-based integrations, ensure Docker is running (`docker ps`)
@@ -113,17 +135,30 @@ If you encounter issues with an MCP integration:
 All MCP wrapper scripts now implement enhanced error handling with:
 
 - **Error logging** to `~/mcp-errors.log` with timestamps and server identification
+- **Tool-level logging** to `~/mcp-tool-calls.log` for individual MCP tool executions (where supported)
 - **Desktop notifications** on macOS for critical failures  
 - **Actionable error messages** with specific remediation steps
 - **Consistent error format**: `[SERVER] MCP ERROR: [description]`
 
 #### Using the Error Logging System
 
-Use the `check-mcp-errors` utility to:
+Use the `check-mcp-logs` utility to:
 
-- `check-mcp-errors` - Show recent errors
-- `check-mcp-errors --tail` - Follow errors in real-time  
-- `check-mcp-errors --clear` - Clear the error log
+- `check-mcp-logs` - Show recent errors and tool calls
+- `check-mcp-logs --errors` - Show only initialization/server errors
+- `check-mcp-logs --tools` - Show only tool call logs
+- `check-mcp-logs --follow` - Follow logs in real-time  
+- `check-mcp-logs --lines 50` - Show last 50 lines
+
+#### Tool-Level Logging
+
+For MCP servers with tool-level logging support (currently: Git), each tool call is logged with:
+- Timestamp and current git branch
+- Tool name and parameters passed
+- Success/failure status with error messages
+- Repository context and execution details
+
+This provides visibility into individual MCP operations that would otherwise be hidden by MCP clients.
 
 #### Adding Logging to New Wrapper Scripts
 
@@ -155,7 +190,79 @@ When creating new MCP wrapper scripts:
 
 3. **Use consistent server names**: BRAVE, ATLASSIAN, GITHUB, GIT, FILESYSTEM, GDRIVE
 
-This framework bridges the visibility gap created by MCP clients that suppress wrapper script errors.
+#### Adding Tool-Level Logging to MCP Servers
+
+For MCP servers implemented in Python (like git-mcp-server), add comprehensive tool-level logging:
+
+##### Log Entry Structure Taxonomy
+
+Each MCP tool call generates a single line with this structured format:
+
+**Dynamic Identifiers:**
+- Timestamp: `2025-06-18 13:04:33:` (when the call occurred)
+- Server name: `[atxtechbro-git-mcp-server]` (which MCP server handled it)
+- Tool name: `git_add` (specific tool invoked)
+
+**Structured Metadata Fields (UPPERCASE):**
+- `TOOL_CALL:` - Fixed label identifying this as a tool invocation
+- `STATUS:` - Success/failure indicator (SUCCESS/ERROR)
+- `BRANCH:` - Current git branch context (when applicable)
+- `DETAILS:` - Human-readable summary of what happened
+- `PARAMS:` - JSON parameters passed to the tool
+
+This taxonomy enables both human scanning and programmatic parsing. Dynamic identifiers provide context (what/when/where), while uppercase fields create consistent data categories across all MCP servers.
+
+1. **Create logging utilities module** (`logging_utils.py`):
+   ```python
+   from datetime import datetime
+   from pathlib import Path
+   from typing import Optional
+   import json
+   import subprocess
+   
+   def log_tool_call(server_name: str, tool_name: str, status: str, 
+                     details: str, repo_path: Optional[Path] = None, 
+                     parameters: Optional[dict] = None) -> None:
+       # Implementation similar to git-mcp-server/src/mcp_server_git/logging_utils.py
+   ```
+
+2. **Import and wrap tool calls** in your server's `call_tool()` function:
+   ```python
+   from .logging_utils import log_tool_success, log_tool_error
+   
+   @server.call_tool()
+   async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+       try:
+           # Repository/context setup with error handling
+           repo_path = Path(arguments.get("repo_path", "."))
+           
+           match name:
+               case "your_tool":
+                   result = your_tool_function(arguments)
+                   log_tool_success("your-server-name", name, 
+                                  "Tool-specific success message", 
+                                  repo_path, arguments)
+                   return [TextContent(type="text", text=result)]
+                   
+       except Exception as e:
+           error_msg = f"Tool execution failed: {str(e)}"
+           log_tool_error("your-server-name", name, error_msg, 
+                         repo_path, arguments)
+           return [TextContent(type="text", text=f"Error: {error_msg}")]
+   ```
+
+3. **Log context for each tool**:
+   - **Success logs**: Tool name, operation details, parameters
+   - **Error logs**: Tool name, error message, parameters, context
+   - **Repository context**: Current branch, repo path (if applicable)
+   - **Timestamps**: Automatic via logging utilities
+
+4. **Update documentation**:
+   - Add "Yes" to Tool-Level Logging column in MCP integrations table
+   - Document tool-level logging in server's README
+   - Include examples of log output format
+
+This framework bridges the visibility gap created by MCP clients that suppress wrapper script errors and provides detailed insight into individual tool operations.
 ## Adding New MCP Servers
 
 Based on our current experience, here's a working procedure for adding new MCP servers (subject to improvement as we learn more):

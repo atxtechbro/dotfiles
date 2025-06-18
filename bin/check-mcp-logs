@@ -1,0 +1,106 @@
+#!/bin/bash
+
+# =========================================================
+# MCP LOG CHECKER UTILITY
+# =========================================================
+# PURPOSE: View MCP server logs for debugging
+# Handles both server initialization logs and tool call logs
+# =========================================================
+
+MCP_ERROR_LOG="$HOME/mcp-errors.log"
+MCP_TOOL_LOG="$HOME/mcp-tool-calls.log"
+
+show_usage() {
+    echo "Usage: check-mcp-logs [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  -e, --errors     Show only error logs (server initialization)"
+    echo "  -t, --tools      Show only tool call logs"
+    echo "  -a, --all        Show all logs (default)"
+    echo "  -f, --follow     Follow logs in real-time (tail -f)"
+    echo "  -n, --lines NUM  Show last NUM lines (default: 20)"
+    echo "  -h, --help       Show this help message"
+    echo ""
+    echo "Examples:"
+    echo "  check-mcp-logs                    # Show last 20 lines of all logs"
+    echo "  check-mcp-logs -t -f             # Follow tool call logs"
+    echo "  check-mcp-logs -e -n 50          # Show last 50 error log lines"
+}
+
+# Default values
+SHOW_ERRORS=true
+SHOW_TOOLS=true
+FOLLOW=false
+LINES=20
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -e|--errors)
+            SHOW_ERRORS=true
+            SHOW_TOOLS=false
+            shift
+            ;;
+        -t|--tools)
+            SHOW_ERRORS=false
+            SHOW_TOOLS=true
+            shift
+            ;;
+        -a|--all)
+            SHOW_ERRORS=true
+            SHOW_TOOLS=true
+            shift
+            ;;
+        -f|--follow)
+            FOLLOW=true
+            shift
+            ;;
+        -n|--lines)
+            LINES="$2"
+            shift 2
+            ;;
+        -h|--help)
+            show_usage
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1"
+            show_usage
+            exit 1
+            ;;
+    esac
+done
+
+# Function to show logs
+show_logs() {
+    local log_file="$1"
+    local log_type="$2"
+    
+    if [[ ! -f "$log_file" ]]; then
+        echo "No $log_type logs found at: $log_file"
+        return
+    fi
+    
+    echo "=== $log_type LOGS ==="
+    if [[ "$FOLLOW" == "true" ]]; then
+        tail -f "$log_file"
+    else
+        tail -n "$LINES" "$log_file"
+    fi
+    echo ""
+}
+
+# Show requested logs
+if [[ "$SHOW_ERRORS" == "true" ]]; then
+    show_logs "$MCP_ERROR_LOG" "ERROR"
+fi
+
+if [[ "$SHOW_TOOLS" == "true" ]]; then
+    show_logs "$MCP_TOOL_LOG" "TOOL CALL"
+fi
+
+# If following logs, combine both files
+if [[ "$FOLLOW" == "true" && "$SHOW_ERRORS" == "true" && "$SHOW_TOOLS" == "true" ]]; then
+    echo "=== FOLLOWING ALL LOGS ==="
+    tail -f "$MCP_ERROR_LOG" "$MCP_TOOL_LOG" 2>/dev/null
+fi

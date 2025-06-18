@@ -55,14 +55,6 @@ env/
 .env/
 mcp/servers/aws-docs/venv/
 
-# MCP servers directory
-# We don't track this directory in git, as each server is cloned from its own repository:
-# - filesystem-mcp-server: https://github.com/atxtechbro/filesystem-mcp-server
-# - github-mcp-server: https://github.com/atxtechbro/github-mcp-server (upstream: github/github-mcp-server)
-# - git-mcp-server: https://github.com/atxtechbro/git-mcp-server
-# - mcp-servers: https://github.com/atxtechbro/mcp-servers
-mcp/servers/
-
 # Clojure cache
 .cpcache/
 

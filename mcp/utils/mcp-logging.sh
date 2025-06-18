@@ -9,6 +9,7 @@
 # =========================================================
 
 MCP_ERROR_LOG="$HOME/mcp-errors.log"
+MCP_TOOL_LOG="$HOME/mcp-tool-calls.log"
 
 # Log an MCP error with consistent formatting
 # Usage: mcp_log_error "SERVER_NAME" "Error message" "Optional remediation"
@@ -34,6 +35,34 @@ mcp_log_error() {
   if command -v osascript &>/dev/null; then
     local notification_msg="[$server_name] MCP ERROR: $error_msg"
     osascript -e "display notification \"$notification_msg\" with title \"MCP Server Error\"" 2>/dev/null || true
+  fi
+}
+
+# Log an MCP tool call with detailed context
+# Usage: mcp_log_tool_call "SERVER_NAME" "TOOL_NAME" "STATUS" "DETAILS" "REPO_PATH"
+mcp_log_tool_call() {
+  local server_name="$1"
+  local tool_name="$2"
+  local status="$3"  # SUCCESS or ERROR
+  local details="$4"
+  local repo_path="${5:-}"
+  
+  local timestamp=$(date)
+  local branch="unknown"
+  
+  # Try to get current git branch if repo_path is provided
+  if [[ -n "$repo_path" && -d "$repo_path/.git" ]]; then
+    branch=$(cd "$repo_path" && git branch --show-current 2>/dev/null || echo "unknown")
+  fi
+  
+  local formatted_msg="$timestamp: [$server_name] TOOL_CALL: $tool_name | STATUS: $status | BRANCH: $branch | DETAILS: $details"
+  
+  # Write to tool log
+  echo "$formatted_msg" >> "$MCP_TOOL_LOG"
+  
+  # If it's an error, also log to error log
+  if [[ "$status" == "ERROR" ]]; then
+    echo "$timestamp: [$server_name] TOOL ERROR: $tool_name failed - $details" >> "$MCP_ERROR_LOG"
   fi
 }
 
