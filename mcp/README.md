@@ -92,6 +92,28 @@ q chat  # Start Amazon Q with restricted filesystem access
 
 This allows you to control which directories the Filesystem MCP server can access.
 
+## Protocol Testing
+
+When modifying MCP servers, test the actual JSON-RPC protocol communication instead of just CLI help text.
+
+**Complete MCP handshake test:**
+```bash
+(echo '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {}, "clientInfo": {"name": "smoke-test", "version": "1.0.0"}}}'; echo '{"jsonrpc": "2.0", "method": "notifications/initialized"}'; echo '{"jsonrpc": "2.0", "id": 2, "method": "tools/list"}') | .venv/bin/python -m mcp_server_git -r .
+```
+
+**Expected success response:**
+- Initialize: Returns protocol version and server capabilities
+- tools/list: Returns actual tool definitions with JSON schemas
+- No error responses in the JSON-RPC output
+
+**Why this matters:** CLI testing (`--help`) only validates the command wrapper, not the MCP protocol that real clients use. This provides confidence that actual MCP clients can communicate with the server.
+
+**Use cases:**
+- After server modifications or cleanup
+- Before committing MCP server changes  
+- When debugging client integration issues
+- During subtraction/refactoring work
+
 ## Troubleshooting
 
 If you encounter issues with an MCP integration:
@@ -171,6 +193,24 @@ When creating new MCP wrapper scripts:
 #### Adding Tool-Level Logging to MCP Servers
 
 For MCP servers implemented in Python (like git-mcp-server), add comprehensive tool-level logging:
+
+##### Log Entry Structure Taxonomy
+
+Each MCP tool call generates a single line with this structured format:
+
+**Dynamic Identifiers:**
+- Timestamp: `2025-06-18 13:04:33:` (when the call occurred)
+- Server name: `[atxtechbro-git-mcp-server]` (which MCP server handled it)
+- Tool name: `git_add` (specific tool invoked)
+
+**Structured Metadata Fields (UPPERCASE):**
+- `TOOL_CALL:` - Fixed label identifying this as a tool invocation
+- `STATUS:` - Success/failure indicator (SUCCESS/ERROR)
+- `BRANCH:` - Current git branch context (when applicable)
+- `DETAILS:` - Human-readable summary of what happened
+- `PARAMS:` - JSON parameters passed to the tool
+
+This taxonomy enables both human scanning and programmatic parsing. Dynamic identifiers provide context (what/when/where), while uppercase fields create consistent data categories across all MCP servers.
 
 1. **Create logging utilities module** (`logging_utils.py`):
    ```python
