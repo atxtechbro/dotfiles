@@ -191,6 +191,7 @@ configure_amazon_q() {
     q settings chat.editMode vi >/dev/null 2>&1 || echo -e "${YELLOW}Could not set chat.editMode to vi${NC}"
     q settings chat.defaultModel claude-4-sonnet >/dev/null 2>&1 || echo -e "${YELLOW}Could not set default model${NC}"
     q settings mcp.noInteractiveTimeout 5000 >/dev/null 2>&1 || echo -e "${YELLOW}Could not set mcp.noInteractiveTimeout${NC}"
+    q settings chat.enableNotifications false >/dev/null 2>&1 || echo -e "${YELLOW}Could not set chat.enableNotifications${NC}"
 
     echo -e "${GREEN}✓ Amazon Q configuration complete${NC}"
 }
