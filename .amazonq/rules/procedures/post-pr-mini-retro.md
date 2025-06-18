@@ -35,4 +35,10 @@ After submitting a pull request for feature-related workflows, conduct a mini re
 - Which tool descriptions or boundaries could be clearer?
 - Were there near-misses where you almost chose a different tool, and why?
 
+**Principle tensions:**
+- Which principles came into tension during decision points?
+- Which principle did you lean on when there was conflict, and why?
+- How did choosing one principle over another create tension or trade-offs?
+- What decisions required balancing competing principles?
+
 This retro helps identify the 20% of systems work that enables the 80% of feature work to flow more smoothly.
