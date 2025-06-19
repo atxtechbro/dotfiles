@@ -223,16 +223,11 @@ async def serve(repository: Path | None) -> None:
         return [
             Prompt(
                 name="commit-message",
-                description="Generate conventional commit messages based on staged changes",
+                description="Analyze commit patterns against principles and identify procedural gaps",
                 arguments=[
                     PromptArgument(
-                        name="type",
-                        description="Commit type override (feat, fix, docs, etc.)",
-                        required=False
-                    ),
-                    PromptArgument(
-                        name="scope",
-                        description="Scope of the change",
+                        name="commit_count",
+                        description="Number of recent commits to analyze (default: 100)",
                         required=False
                     )
                 ]
@@ -291,48 +286,66 @@ async def serve(repository: Path | None) -> None:
             )
         
         if name == "commit-message":
-            # Get git context
-            status = git_status(repo)
-            staged_diff = git_diff_staged(repo)
+            # Get extended git log for pattern analysis
+            commit_count = int(arguments.get("commit_count", 100))
             
-            commit_type = arguments.get("type", "")
-            scope = arguments.get("scope", "")
+            try:
+                log = git_log(repo, commit_count)
+            except Exception as e:
+                log = ["Unable to get git log"]
             
-            prompt_text = f"""# Commit Message Generator
+            prompt_text = f"""# Commit Pattern Analysis Against Principles
 
-You are an expert at writing clear, conventional commit messages. Based on the staged changes shown below, generate a commit message that follows conventional commit format.
+You are an expert at analyzing development patterns and identifying gaps between stated principles and actual practice. Based on my recent commit history, help me understand what my work patterns reveal about my priorities and where my procedures might be failing me.
 
-## Guidelines
+## My Core Principles
 
-- Use conventional commit format: `type(scope): description`
-- Types: feat, fix, docs, style, refactor, test, chore
-- Keep description under 50 characters
-- Use imperative mood ("add" not "added")
-- Include body if changes are complex
+**Systems Stewardship**: Maintaining and improving systems through consistent patterns, documentation, and procedures that enable sustainable growth and knowledge transfer.
+
+**Versioning Mindset**: Progress through iteration rather than reinvention, where small strategic changes compound over time through active feedback loops.
+
+**Subtraction Creates Value**: Strategic removal often creates more value than addition.
+
+**Tracer Bullets**: Rapid feedback-driven development with ground truth at each step.
+
+**Invent and Simplify**: Emphasis on simplification, malleability, usefulness, and utilitarian design.
+
+**Do, Don't Explain**: Act like an agent, not a chatbot. Execute tasks directly rather than outputting walls of text.
+
+**Transparency in Agent Work**: Make agent reasoning visible, especially during post-feature review cycles.
 
 ## Context
 
-**Git Status:**
+**Recent Commits (last {commit_count} commits):**
 ```
-{status}
-```
-
-**Staged Changes:**
-```
-{staged_diff}
+{chr(10).join(log)}
 ```
 
-## Parameters
+## Analysis Questions
 
-- Type override: {commit_type}
-- Scope: {scope}
+1. **Principle Representation**: Which principles are over/under-represented in my commit patterns?
+
+2. **Tension Points**: What tensions between principles show up in my work? (e.g., Do, Don't Explain vs Transparency in Agent Work)
+
+3. **Procedural Gaps**: What procedures seem to be missing or not serving me well based on repeated patterns?
+
+4. **Systems Stewardship Health**: Am I building sustainable, transferable knowledge or creating tribal knowledge?
+
+5. **Iteration vs Reinvention**: Are my changes building on previous work or starting from scratch too often?
 
 ## Task
 
-Generate a conventional commit message for these staged changes. If the changes are complex, include a body explaining the reasoning."""
+Analyze my commit patterns and provide:
+
+1. **Principle Alignment**: Which principles are well-represented vs neglected in my actual work
+2. **Hidden Tensions**: What conflicts between principles are showing up in practice
+3. **Procedural Recommendations**: What new procedures or rule changes would serve me better
+4. **Pattern Insights**: What does my commit history reveal about my actual priorities vs stated ones
+
+Be direct and actionable. Focus on gaps between intention and execution."""
 
             return GetPromptResult(
-                description="Generate conventional commit messages based on staged changes",
+                description="Analyze commit patterns against principles and identify procedural gaps",
                 messages=[
                     PromptMessage(
                         role="user",
