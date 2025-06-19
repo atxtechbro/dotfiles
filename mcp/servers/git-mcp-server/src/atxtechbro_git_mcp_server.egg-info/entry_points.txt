@@ -1,0 +1,2 @@
+[console_scripts]
+atxtechbro-git-mcp-server = mcp_server_git:main

@@ -63,7 +63,7 @@ check_command() {
 }
 
 # Check for essential commands
-essential_commands=("git" "curl" "rg")
+essential_commands=("git" "curl")
 missing_commands=false
 
 for cmd in "${essential_commands[@]}"; do
@@ -147,6 +147,17 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Setting up macOS shell configuration..."
     ln -sf "$DOT_DEN/.zprofile" ~/.zprofile
     
+    # Ensure Homebrew is installed
+    source "$DOT_DEN/utils/ensure-homebrew.sh"
+    ensure_homebrew_on_macos
+    
+    # Install coreutils for timeout command
+    if ! command -v timeout &> /dev/null && ! command -v gtimeout &> /dev/null; then
+        echo "Installing coreutils for timeout command..."
+        brew install coreutils
+        echo -e "${GREEN}✓ coreutils installed (timeout available as gtimeout)${NC}"
+    fi
+    
     # Configure iTerm2 as default terminal
     echo "Configuring iTerm2 as default terminal..."
     defaults write com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers -array-add '{LSHandlerContentType="public.unix-executable";LSHandlerRoleAll="com.googlecode.iterm2";}'
@@ -175,12 +186,11 @@ if [[ ! -f ~/.aws/amazonq/mcp.json ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json ~/.aws
     cp "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
 fi
 
-# Claude Desktop MCP integration (commented out - not officially supported on Linux)
-# Uncomment below if you want to use Claude Desktop with MCP servers
-# mkdir -p ~/.config/Claude
-# if [[ ! -f ~/.config/Claude/claude_desktop_config.json ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json; then
-#     cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json
-# fi
+# Claude Desktop MCP integration
+mkdir -p ~/.config/Claude
+if [[ ! -f ~/.config/Claude/claude_desktop_config.json ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json; then
+    cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json
+fi
 
 # Apply environment-specific MCP server configuration
 if [[ -f "$DOT_DEN/utils/mcp-environment.sh" ]]; then
@@ -194,7 +204,6 @@ if [[ -f "$DOT_DEN/utils/mcp-environment.sh" ]]; then
   
   # Apply environment-specific configuration to all MCP config files
   filter_mcp_config ~/.aws/amazonq/mcp.json "$CURRENT_ENV"
-  # filter_mcp_config ~/.config/Claude/claude_desktop_config.json "$CURRENT_ENV"  # Uncomment if using Claude Desktop
   filter_mcp_config ~/.config/Claude/claude_desktop_config.json "$CURRENT_ENV"
 fi
 
