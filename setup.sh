@@ -175,11 +175,12 @@ if [[ ! -f ~/.aws/amazonq/mcp.json ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json ~/.aws
     cp "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
 fi
 
-# Claude Desktop MCP integration
-mkdir -p ~/.config/Claude
-if [[ ! -f ~/.config/Claude/claude_desktop_config.json ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json; then
-    cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json
-fi
+# Claude Desktop MCP integration (commented out - not officially supported on Linux)
+# Uncomment below if you want to use Claude Desktop with MCP servers
+# mkdir -p ~/.config/Claude
+# if [[ ! -f ~/.config/Claude/claude_desktop_config.json ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json; then
+#     cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json
+# fi
 
 # Apply environment-specific MCP server configuration
 if [[ -f "$DOT_DEN/utils/mcp-environment.sh" ]]; then
@@ -193,6 +194,7 @@ if [[ -f "$DOT_DEN/utils/mcp-environment.sh" ]]; then
   
   # Apply environment-specific configuration to all MCP config files
   filter_mcp_config ~/.aws/amazonq/mcp.json "$CURRENT_ENV"
+  # filter_mcp_config ~/.config/Claude/claude_desktop_config.json "$CURRENT_ENV"  # Uncomment if using Claude Desktop
   filter_mcp_config ~/.config/Claude/claude_desktop_config.json "$CURRENT_ENV"
 fi
 
