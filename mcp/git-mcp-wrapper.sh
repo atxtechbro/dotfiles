@@ -23,15 +23,8 @@ if [[ ! -d "$SERVER_DIR" ]]; then
   exit 1
 fi
 
-# Check if virtual environment exists
-if [[ ! -f "$SERVER_DIR/.venv/bin/activate" ]]; then
-  mcp_log_error "GIT" "Virtual environment not found" "Run setup-git-mcp.sh to set up the Git MCP server"
-  exit 1
-fi
-
 # Check if git command is available
 mcp_check_command "GIT" "git" "Install Git: brew install git"
 
-# Activate the virtual environment and run the Python module
-source "$SERVER_DIR/.venv/bin/activate"
-mcp_exec_with_logging "GIT" python -m mcp_server_git "$@"
+# Run the Python module directly from the venv
+mcp_exec_with_logging "GIT" "$SERVER_DIR/.venv/bin/python" -m mcp_server_git "$@"

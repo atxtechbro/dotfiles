@@ -15,6 +15,10 @@ from mcp.types import (
     RootsCapability,
     TextContent,
     Tool,
+    Prompt,
+    PromptArgument,
+    PromptMessage,
+    GetPromptResult,
 )
 
 from .logging_utils import log_tool_error, log_tool_success
@@ -212,6 +216,230 @@ async def serve(repository: Path | None) -> None:
                 inputSchema=GitShow.schema(),
             )
         ]
+
+    @server.list_prompts()
+    async def list_prompts() -> list[Prompt]:
+        """List available git-related prompts"""
+        return [
+            Prompt(
+                name="commit-message",
+                description="Analyze commit patterns against principles and identify procedural gaps",
+                arguments=[
+                    PromptArgument(
+                        name="commit_count",
+                        description="Number of recent commits to analyze (default: 100)",
+                        required=False
+                    )
+                ]
+            ),
+            Prompt(
+                name="pr-description", 
+                description="Generate comprehensive PR descriptions from git diff and commit history",
+                arguments=[
+                    PromptArgument(
+                        name="base_branch",
+                        description="Base branch for comparison (default: main)",
+                        required=False
+                    )
+                ]
+            )
+        ]
+
+    @server.get_prompt()
+    async def get_prompt(name: str, arguments: dict | None = None) -> GetPromptResult:
+        """Get a specific prompt with git context injected"""
+        if arguments is None:
+            arguments = {}
+            
+        # Get git context from available repositories
+        repos = await list_repos()
+        if not repos:
+            return GetPromptResult(
+                description=f"Prompt: {name}",
+                messages=[
+                    PromptMessage(
+                        role="user",
+                        content=TextContent(
+                            type="text",
+                            text="No git repository found. Please run this from a git repository."
+                        )
+                    )
+                ]
+            )
+        
+        # Use the first available repository
+        repo_path = repos[0]
+        try:
+            repo = git.Repo(repo_path)
+        except git.InvalidGitRepositoryError:
+            return GetPromptResult(
+                description=f"Prompt: {name}",
+                messages=[
+                    PromptMessage(
+                        role="user", 
+                        content=TextContent(
+                            type="text",
+                            text=f"Invalid git repository: {repo_path}"
+                        )
+                    )
+                ]
+            )
+        
+        if name == "commit-message":
+            # Get extended git log for pattern analysis
+            commit_count = int(arguments.get("commit_count", 100))
+            
+            try:
+                log = git_log(repo, commit_count)
+            except Exception as e:
+                log = ["Unable to get git log"]
+            
+            prompt_text = f"""# Commit Pattern Analysis Against Principles
+
+You are an expert at analyzing development patterns and identifying gaps between stated principles and actual practice. Based on my recent commit history, help me understand what my work patterns reveal about my priorities and where my procedures might be failing me.
+
+## My Core Principles
+
+**Systems Stewardship**: Maintaining and improving systems through consistent patterns, documentation, and procedures that enable sustainable growth and knowledge transfer.
+
+**Versioning Mindset**: Progress through iteration rather than reinvention, where small strategic changes compound over time through active feedback loops.
+
+**Subtraction Creates Value**: Strategic removal often creates more value than addition.
+
+**Tracer Bullets**: Rapid feedback-driven development with ground truth at each step.
+
+**Invent and Simplify**: Emphasis on simplification, malleability, usefulness, and utilitarian design.
+
+**Do, Don't Explain**: Act like an agent, not a chatbot. Execute tasks directly rather than outputting walls of text.
+
+**Transparency in Agent Work**: Make agent reasoning visible, especially during post-feature review cycles.
+
+## Context
+
+**Recent Commits (last {commit_count} commits):**
+```
+{chr(10).join(log)}
+```
+
+## Analysis Questions
+
+1. **Principle Representation**: Which principles are over/under-represented in my commit patterns?
+
+2. **Tension Points**: What tensions between principles show up in my work? (e.g., Do, Don't Explain vs Transparency in Agent Work)
+
+3. **Procedural Gaps**: What procedures seem to be missing or not serving me well based on repeated patterns?
+
+4. **Systems Stewardship Health**: Am I building sustainable, transferable knowledge or creating tribal knowledge?
+
+5. **Iteration vs Reinvention**: Are my changes building on previous work or starting from scratch too often?
+
+## Task
+
+Analyze my commit patterns and provide:
+
+1. **Principle Alignment**: Which principles are well-represented vs neglected in my actual work
+2. **Hidden Tensions**: What conflicts between principles are showing up in practice
+3. **Procedural Recommendations**: What new procedures or rule changes would serve me better
+4. **Pattern Insights**: What does my commit history reveal about my actual priorities vs stated ones
+
+Be direct and actionable. Focus on gaps between intention and execution."""
+
+            return GetPromptResult(
+                description="Analyze commit patterns against principles and identify procedural gaps",
+                messages=[
+                    PromptMessage(
+                        role="user",
+                        content=TextContent(type="text", text=prompt_text)
+                    )
+                ]
+            )
+            
+        elif name == "pr-description":
+            # Get git context
+            base_branch = arguments.get("base_branch", "main")
+            try:
+                log = git_log(repo, 10)
+                # Try to get diff from base branch, fallback to recent commits
+                try:
+                    diff_output = repo.git.diff(f"{base_branch}..HEAD")
+                except:
+                    diff_output = repo.git.diff("HEAD~5..HEAD")
+                status = git_status(repo)
+            except Exception as e:
+                log = ["Unable to get git log"]
+                diff_output = "Unable to get git diff"
+                status = "Unable to get git status"
+            
+            prompt_text = f"""# Pull Request Description Generator
+
+You are an expert at writing clear, comprehensive pull request descriptions. Based on the changes and commit history, generate a PR description that helps reviewers understand the changes.
+
+## Guidelines
+
+- Start with a clear summary of what this PR does
+- Include motivation/context for the changes
+- List key changes and their impact
+- Highlight any breaking changes
+- Include testing information
+- Add any relevant screenshots or examples
+
+## Context
+
+**Recent Commits:**
+```
+{chr(10).join(log)}
+```
+
+**All Changes:**
+```
+{diff_output}
+```
+
+**Current Status:**
+```
+{status}
+```
+
+## Parameters
+
+- Base branch: {base_branch}
+
+## Task
+
+Generate a comprehensive PR description that includes:
+
+1. **Summary**: What does this PR do?
+2. **Motivation**: Why are these changes needed?
+3. **Changes**: Key modifications made
+4. **Testing**: How were these changes tested?
+5. **Breaking Changes**: Any breaking changes (if applicable)
+6. **Additional Notes**: Anything else reviewers should know
+
+Format the output as markdown suitable for GitHub PR description."""
+
+            return GetPromptResult(
+                description="Generate comprehensive PR descriptions from git diff and commit history",
+                messages=[
+                    PromptMessage(
+                        role="user",
+                        content=TextContent(type="text", text=prompt_text)
+                    )
+                ]
+            )
+        
+        else:
+            return GetPromptResult(
+                description=f"Unknown prompt: {name}",
+                messages=[
+                    PromptMessage(
+                        role="user",
+                        content=TextContent(
+                            type="text",
+                            text=f"Unknown prompt: {name}. Available prompts: commit-message, pr-description"
+                        )
+                    )
+                ]
+            )
 
     async def list_repos() -> Sequence[str]:
         async def by_roots() -> Sequence[str]:
