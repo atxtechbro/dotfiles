@@ -63,7 +63,7 @@ check_command() {
 }
 
 # Check for essential commands
-essential_commands=("git" "curl")
+essential_commands=("git" "curl" "rg")
 missing_commands=false
 
 for cmd in "${essential_commands[@]}"; do
