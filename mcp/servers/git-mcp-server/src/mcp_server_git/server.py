@@ -15,6 +15,10 @@ from mcp.types import (
     RootsCapability,
     TextContent,
     Tool,
+    Prompt,
+    PromptArgument,
+    PromptMessage,
+    GetPromptResult,
 )
 
 from .logging_utils import log_tool_error, log_tool_success
@@ -212,6 +216,217 @@ async def serve(repository: Path | None) -> None:
                 inputSchema=GitShow.schema(),
             )
         ]
+
+    @server.list_prompts()
+    async def list_prompts() -> list[Prompt]:
+        """List available git-related prompts"""
+        return [
+            Prompt(
+                name="commit-message",
+                description="Generate conventional commit messages based on staged changes",
+                arguments=[
+                    PromptArgument(
+                        name="type",
+                        description="Commit type override (feat, fix, docs, etc.)",
+                        required=False
+                    ),
+                    PromptArgument(
+                        name="scope",
+                        description="Scope of the change",
+                        required=False
+                    )
+                ]
+            ),
+            Prompt(
+                name="pr-description", 
+                description="Generate comprehensive PR descriptions from git diff and commit history",
+                arguments=[
+                    PromptArgument(
+                        name="base_branch",
+                        description="Base branch for comparison (default: main)",
+                        required=False
+                    )
+                ]
+            )
+        ]
+
+    @server.get_prompt()
+    async def get_prompt(name: str, arguments: dict | None = None) -> GetPromptResult:
+        """Get a specific prompt with git context injected"""
+        if arguments is None:
+            arguments = {}
+            
+        # Get git context from available repositories
+        repos = await list_repos()
+        if not repos:
+            return GetPromptResult(
+                description=f"Prompt: {name}",
+                messages=[
+                    PromptMessage(
+                        role="user",
+                        content=TextContent(
+                            type="text",
+                            text="No git repository found. Please run this from a git repository."
+                        )
+                    )
+                ]
+            )
+        
+        # Use the first available repository
+        repo_path = repos[0]
+        try:
+            repo = git.Repo(repo_path)
+        except git.InvalidGitRepositoryError:
+            return GetPromptResult(
+                description=f"Prompt: {name}",
+                messages=[
+                    PromptMessage(
+                        role="user", 
+                        content=TextContent(
+                            type="text",
+                            text=f"Invalid git repository: {repo_path}"
+                        )
+                    )
+                ]
+            )
+        
+        if name == "commit-message":
+            # Get git context
+            status = git_status(repo)
+            staged_diff = git_diff_staged(repo)
+            
+            commit_type = arguments.get("type", "")
+            scope = arguments.get("scope", "")
+            
+            prompt_text = f"""# Commit Message Generator
+
+You are an expert at writing clear, conventional commit messages. Based on the staged changes shown below, generate a commit message that follows conventional commit format.
+
+## Guidelines
+
+- Use conventional commit format: `type(scope): description`
+- Types: feat, fix, docs, style, refactor, test, chore
+- Keep description under 50 characters
+- Use imperative mood ("add" not "added")
+- Include body if changes are complex
+
+## Context
+
+**Git Status:**
+```
+{status}
+```
+
+**Staged Changes:**
+```
+{staged_diff}
+```
+
+## Parameters
+
+- Type override: {commit_type}
+- Scope: {scope}
+
+## Task
+
+Generate a conventional commit message for these staged changes. If the changes are complex, include a body explaining the reasoning."""
+
+            return GetPromptResult(
+                description="Generate conventional commit messages based on staged changes",
+                messages=[
+                    PromptMessage(
+                        role="user",
+                        content=TextContent(type="text", text=prompt_text)
+                    )
+                ]
+            )
+            
+        elif name == "pr-description":
+            # Get git context
+            base_branch = arguments.get("base_branch", "main")
+            try:
+                log = git_log(repo, 10)
+                # Try to get diff from base branch, fallback to recent commits
+                try:
+                    diff_output = repo.git.diff(f"{base_branch}..HEAD")
+                except:
+                    diff_output = repo.git.diff("HEAD~5..HEAD")
+                status = git_status(repo)
+            except Exception as e:
+                log = ["Unable to get git log"]
+                diff_output = "Unable to get git diff"
+                status = "Unable to get git status"
+            
+            prompt_text = f"""# Pull Request Description Generator
+
+You are an expert at writing clear, comprehensive pull request descriptions. Based on the changes and commit history, generate a PR description that helps reviewers understand the changes.
+
+## Guidelines
+
+- Start with a clear summary of what this PR does
+- Include motivation/context for the changes
+- List key changes and their impact
+- Highlight any breaking changes
+- Include testing information
+- Add any relevant screenshots or examples
+
+## Context
+
+**Recent Commits:**
+```
+{chr(10).join(log)}
+```
+
+**All Changes:**
+```
+{diff_output}
+```
+
+**Current Status:**
+```
+{status}
+```
+
+## Parameters
+
+- Base branch: {base_branch}
+
+## Task
+
+Generate a comprehensive PR description that includes:
+
+1. **Summary**: What does this PR do?
+2. **Motivation**: Why are these changes needed?
+3. **Changes**: Key modifications made
+4. **Testing**: How were these changes tested?
+5. **Breaking Changes**: Any breaking changes (if applicable)
+6. **Additional Notes**: Anything else reviewers should know
+
+Format the output as markdown suitable for GitHub PR description."""
+
+            return GetPromptResult(
+                description="Generate comprehensive PR descriptions from git diff and commit history",
+                messages=[
+                    PromptMessage(
+                        role="user",
+                        content=TextContent(type="text", text=prompt_text)
+                    )
+                ]
+            )
+        
+        else:
+            return GetPromptResult(
+                description=f"Unknown prompt: {name}",
+                messages=[
+                    PromptMessage(
+                        role="user",
+                        content=TextContent(
+                            type="text",
+                            text=f"Unknown prompt: {name}. Available prompts: commit-message, pr-description"
+                        )
+                    )
+                ]
+            )
 
     async def list_repos() -> Sequence[str]:
         async def by_roots() -> Sequence[str]:
