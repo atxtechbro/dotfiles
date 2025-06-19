@@ -3,7 +3,7 @@
 # DEPENDENCIES: nodejs, npm, icoutils
 # Install with: sudo apt-get install -y nodejs npm icoutils
 # 
-# NOTE: This is commented out by default since Claude Desktop is not officially supported on Linux
+# NOTE: This is optional since Claude Desktop is not officially supported on Linux
 # and the original repository is no longer maintained. Use at your own risk.
 # To use: rename this file to setup-claude-desktop.sh and uncomment the Claude Desktop sections in setup.sh
 
