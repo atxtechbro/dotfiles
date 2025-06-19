@@ -205,45 +205,8 @@ setup_environment() {
   echo -e "${GREEN}Environment variables set up. JAVA_HOME=$JAVA_HOME${NC}"
 }
 
-# Install Clojure (optional)
-install_clojure() {
-  echo -e "${YELLOW}Would you like to install Clojure as well? (y/n)${NC}"
-  read -r install_clj
-  
-  if [[ "$install_clj" =~ ^[Yy]$ ]]; then
-    echo -e "${YELLOW}Installing Clojure...${NC}"
-    
-    # Detect OS
-    local os_type=$(detect_os)
-    
-    if [[ "$os_type" == "debian" ]]; then
-      # Install dependencies
-      sudo apt update
-      sudo apt install -y curl rlwrap
-      
-      # Install Clojure
-      curl -O https://download.clojure.org/install/linux-install-1.11.1.1273.sh
-      chmod +x linux-install-1.11.1.1273.sh
-      sudo ./linux-install-1.11.1.1273.sh
-      rm linux-install-1.11.1.1273.sh
-    elif [[ "$os_type" == "fedora" ]]; then
-      sudo dnf install -y clojure
-    elif [[ "$os_type" == "arch" ]]; then
-      sudo pacman -S --noconfirm clojure
-    elif [[ "$os_type" == "macos" ]]; then
-      brew install clojure/tools/clojure
-    else
-      echo -e "${RED}Clojure installation not supported for your OS${NC}"
-      return 1
-    fi
-    
-    # Verify installation
-    clojure --version
-    echo -e "${GREEN}Clojure installed successfully${NC}"
-  else
-    echo -e "${YELLOW}Skipping Clojure installation${NC}"
-  fi
-}
+# Note: Clojure installation functionality has been removed
+# as part of the subtraction creates value initiative (Issue #482)
 
 # Display JVM information
 show_jvm_info() {
@@ -289,8 +252,8 @@ main() {
   # Show JVM information
   show_jvm_info
   
-  # Offer to install Clojure
-  install_clojure
+  # Note: Clojure installation functionality has been removed
+  # as part of the subtraction creates value initiative (Issue #482)
   
   echo -e "\n${GREEN}Java installation and setup completed successfully!${NC}"
   echo -e "${YELLOW}You may need to restart your terminal for all changes to take effect.${NC}"
@@ -304,11 +267,10 @@ main() {
   echo -e "- Just-In-Time (JIT) compilation for performance optimization"
   echo -e "- Dynamic class loading for runtime code evaluation"
   echo -e "- Security features through the sandbox model"
-  echo -e "\nThese features make the JVM an excellent platform for languages like Clojure,"
+  echo -e "\nThese features make the JVM an excellent platform for many languages,"
   echo -e "which leverage its capabilities for REPL-driven development and interactive"
   echo -e "programming workflows."
-  echo -e "\nTo learn more about the JVM and Clojure, visit:"
-  echo -e "- https://clojure.org/reference/jvm_hosted"
+  echo -e "\nTo learn more about the JVM, visit:"
   echo -e "- https://blog.jamesdbloom.com/JVMInternals.html"
   echo -e "${BLUE}=================================================${NC}\n"
 }
