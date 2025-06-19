@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Minimal Docker startup utility
+# Usage: ensure-docker [service-name]
+
+if docker info >/dev/null 2>&1; then
+    exit 0  # Docker already running
+fi
+
+echo "Starting Docker for ${1:-MCP server}..."
+open -a Docker
+
+# Wait up to 30 seconds for Docker to start
+for i in {1..15}; do
+    sleep 2
+    if docker info >/dev/null 2>&1; then
+        echo "Docker started successfully"
+        exit 0
+    fi
+done
+
+echo "Error: Docker failed to start within 30 seconds"
+exit 1
