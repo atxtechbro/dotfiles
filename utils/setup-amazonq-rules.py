@@ -15,7 +15,7 @@ def setup_amazonq_rules():
     
     # Paths
     dotfiles_dir = Path.home() / "ppv" / "pillars" / "dotfiles"
-    source_rules = dotfiles_dir / ".amazonq" / "rules"
+    source_rules = dotfiles_dir / "knowledge"
     target_rules = Path.home() / ".amazonq" / "rules"
     source_global_config = dotfiles_dir / ".amazonq" / "global_context.json"
     target_global_config = Path.home() / ".aws" / "amazonq" / "global_context.json"
