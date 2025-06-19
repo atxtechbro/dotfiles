@@ -28,8 +28,8 @@ mcp_source_secrets "BRAVE"
 # Check if required environment variables are set
 mcp_check_env_var "BRAVE" "BRAVE_API_KEY" "Add: export BRAVE_API_KEY=\"your_api_key\""
 
-# Check if Docker daemon is running
-mcp_check_docker "BRAVE"
+# Ensure Docker is running
+ensure-docker "Brave Search MCP"
 
 # Run the Brave Search MCP server with credentials from environment variables
 mcp_exec_with_logging "BRAVE" docker run -i --rm \
