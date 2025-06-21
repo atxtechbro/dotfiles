@@ -39,6 +39,8 @@ You can manually add these to your allow list or choose to automatically add the
 3. Amazon Q bot will automatically comment on the issue confirming it's starting work and will open a pull request when complete
 4. Bot updates its comment when finished: "✅ I finished the proposed code changes, and the pull request is ready for review: #[PR-number]. Comment on the pull request to provide feedback and request a new iteration."
 
+There's also an **Amazon Q transform agent** label (🟣 Purple) for code transformation - officially described as upgrading "legacy codebases to the latest supported Java version" but presumably for refactoring-oriented fixes vs new features. Honestly, this whole thing is new and in Preview mode, so who knows what it actually does beyond Java. Seems less useful than the development agent for most use cases.
+
 ### Automatic Code Reviews
 Amazon Q Developer also automatically reviews pull requests (created by humans) for security vulnerabilities and code quality issues, commenting: "⏳ I'm reviewing this pull request..." followed by "✅ I finished the code review, and didn't find any security or code quality issues." Note: By default, it appears to review the initial PR but may not re-review after subsequent pushes. Code reviews can be disabled during the AWS registration process.
 
