@@ -40,4 +40,7 @@ You can manually add these to your allow list or choose to automatically add the
 4. Bot updates its comment when finished: "✅ I finished the proposed code changes, and the pull request is ready for review: #[PR-number]. Comment on the pull request to provide feedback and request a new iteration."
 
 ### Automatic Code Reviews
-Amazon Q Developer also automatically reviews pull requests (created by humans) for security vulnerabilities and code quality issues, commenting: "⏳ I'm reviewing this pull request..." followed by "✅ I finished the code review, and didn't find any security or code quality issues."
+Amazon Q Developer also automatically reviews pull requests (created by humans) for security vulnerabilities and code quality issues, commenting: "⏳ I'm reviewing this pull request..." followed by "✅ I finished the code review, and didn't find any security or code quality issues." Note: By default, it appears to review the initial PR but may not re-review after subsequent pushes. Code review settings can likely be configured somewhere in the GitHub app settings.
+
+## Optional Next Steps
+You can increase your free usage at any time by registering your Amazon Q Developer app installation with your AWS account.
