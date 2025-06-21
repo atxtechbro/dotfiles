@@ -10,7 +10,7 @@
 set -e
 
 # Clone this repository
-git clone https://github.com/aaddrick/claude-desktop-debian.git
+git clone https://github.com/atxtechbro/claude-desktop-debian.git
 cd claude-desktop-debian
 
 # Build the package (Defaults to .deb and cleans build files)
