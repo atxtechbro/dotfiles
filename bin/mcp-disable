@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# =========================================================
+# MCP SERVER DISABLER UTILITY
+# =========================================================
+# PURPOSE: Disable specific MCP servers by setting disabled=true
+# This script allows users to dynamically disable MCP servers
+# =========================================================
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Source MCP environment utilities
+source "$DOTFILES_DIR/utils/mcp-environment.sh"
+
+# Default MCP config file location
+MCP_CONFIG_FILE="$DOTFILES_DIR/mcp/mcp.json"
+
+# Show usage information
+show_usage() {
+  echo "Usage: mcp-disable <server1> [<server2> ...]"
+  echo ""
+  echo "Disable specific MCP servers by setting disabled=true"
+  echo ""
+  echo "Options:"
+  echo "  -h, --help     Show this help message"
+  echo "  -l, --list     List all available MCP servers with their status"
+  echo ""
+  echo "Examples:"
+  echo "  mcp-disable debug-server             # Disable a single server"
+  echo "  mcp-disable heavy-analysis-server    # Disable another server"
+  echo "  mcp-disable --list                   # List all servers and their status"
+}
+
+# List all MCP servers with their status
+list_servers() {
+  if [[ ! -f "$MCP_CONFIG_FILE" ]]; then
+    echo "Error: MCP configuration file not found at $MCP_CONFIG_FILE"
+    exit 1
+  fi
+  
+  echo "MCP Server Status:"
+  echo "-----------------"
+  
+  # Use jq to extract server names and disabled status
+  jq -r '.mcpServers | to_entries[] | "\(.key): \(if .value.disabled == true then "DISABLED" elif .value.disabled == false then "ENABLED" else "ENABLED (default)" end)"' "$MCP_CONFIG_FILE" | sort
+}
+
+# Parse command line arguments
+if [[ $# -eq 0 ]]; then
+  show_usage
+  exit 1
+fi
+
+case "$1" in
+  -h|--help)
+    show_usage
+    exit 0
+    ;;
+  -l|--list)
+    list_servers
+    exit 0
+    ;;
+esac
+
+# Check if MCP config file exists
+if [[ ! -f "$MCP_CONFIG_FILE" ]]; then
+  echo "Error: MCP configuration file not found at $MCP_CONFIG_FILE"
+  exit 1
+fi
+
+# Disable the specified servers
+disable_mcp_servers "$MCP_CONFIG_FILE" "$@"
+
+echo "MCP servers disabled: $*"
+echo "Restart Amazon Q for changes to take effect"

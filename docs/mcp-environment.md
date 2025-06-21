@@ -39,6 +39,68 @@ The implementation follows these principles:
 4. **Extensibility**: Easy to add new environments or servers
 5. **Maintainability**: Clear separation of concerns and well-documented code
 
+## Using the `disabled` Field
+
+With the new `disabled` field support in Amazon Q CLI, you have two options for managing environment-specific servers:
+
+### Option 1: Remove Servers (Original Method)
+
+This completely removes servers from the configuration:
+
+```bash
+# In utils/mcp-environment.sh
+filter_mcp_config "$MCP_CONFIG_FILE" "personal"
+```
+
+**Pros:**
+- Servers won't appear in listings
+- No chance of accidental connection attempts
+- Cleaner configuration file
+
+**Cons:**
+- Cannot be easily re-enabled without editing the configuration
+- Requires knowledge of the server configuration to add it back
+
+### Option 2: Disable Servers (New Method)
+
+This keeps servers in the configuration but marks them as disabled:
+
+```bash
+# In utils/mcp-environment.sh
+set_disabled_servers "$MCP_CONFIG_FILE" "personal"
+```
+
+**Pros:**
+- Servers can be easily enabled when needed using `mcp-enable`
+- Configuration remains intact for reference
+- Better visibility of available servers
+
+**Cons:**
+- Slightly larger configuration file
+- Servers still appear in listings (but marked as disabled)
+
+### Choosing the Right Approach
+
+- **Use removal** for servers that should never be used in a particular environment
+- **Use disabling** for servers that are occasionally needed but not by default
+
+### Dynamic Server Management
+
+You can now dynamically enable or disable servers based on context:
+
+```bash
+# Enable project-specific servers when entering a project directory
+cd_hook() {
+  if [[ -f "package.json" ]]; then
+    mcp-enable nodejs-server
+  fi
+  
+  if [[ -f "requirements.txt" ]]; then
+    mcp-enable python-server
+  fi
+}
+```
+
 ## Adding New Servers
 
 To add a new server to the disabled list for a specific environment:

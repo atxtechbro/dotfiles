@@ -78,6 +78,64 @@ Requirements:
 
 The `mcp.json` file contains the configuration for all MCP servers. This file is used by Amazon Q and other MCP clients to discover and connect to the servers.
 
+### Server Configuration Options
+
+Each server in the `mcp.json` file can have the following configuration options:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `command` | string | The command to execute to start the MCP server |
+| `args` | array | Command line arguments to pass to the server |
+| `env` | object | Environment variables to set when running the server |
+| `disabled` | boolean | Whether the server is disabled (won't be loaded) |
+
+#### The `disabled` Field
+
+Amazon Q CLI now properly supports the `disabled: true` field in MCP server configurations. This allows servers to be configured but not loaded until explicitly enabled.
+
+```json
+{
+  "mcpServers": {
+    "always-on-server": {
+      "command": "always-on-server.sh",
+      "args": []
+    },
+    "debug-server": {
+      "command": "debug-server.sh",
+      "args": [],
+      "disabled": true
+    }
+  }
+}
+```
+
+In this example:
+- `always-on-server` will be loaded normally
+- `debug-server` is configured but won't be loaded until explicitly enabled
+
+### Managing Disabled Servers
+
+We provide utility scripts to manage the disabled state of MCP servers:
+
+- `mcp-enable <server1> [<server2> ...]` - Enable specific MCP servers
+- `mcp-disable <server1> [<server2> ...]` - Disable specific MCP servers
+- `mcp-enable --list` or `mcp-disable --list` - List all servers with their status
+
+**Examples:**
+
+```bash
+# Enable a debug server when needed
+mcp-enable debug-server
+
+# Disable resource-intensive servers
+mcp-disable heavy-analysis-server
+
+# Check which servers are enabled/disabled
+mcp-enable --list
+```
+
+After enabling or disabling servers, you need to restart Amazon Q for the changes to take effect.
+
 ## Filesystem MCP Server Configuration
 
 The Filesystem MCP server requires at least one allowed directory to be specified. By default, it uses your home directory (`$HOME`).

@@ -57,6 +57,22 @@
         "USE_MILESTONE": "true",
         "USE_PIPELINE": "true"
       }
+    },
+    "debug-server": {
+      "command": "debug-mcp-wrapper.sh",
+      "args": [],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "DEBUG"
+      },
+      "disabled": true
+    },
+    "heavy-analysis-server": {
+      "command": "analysis-mcp-wrapper.sh",
+      "args": [],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": true
     }
   }
 }

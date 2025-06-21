@@ -54,6 +54,101 @@ filter_mcp_config() {
   jq "$jq_filter" "$config_file" > "$temp_file" && mv "$temp_file" "$config_file"
 }
 
+# Function to set disabled flag for MCP servers based on environment
+# Usage: set_disabled_servers <config_file> <environment>
+set_disabled_servers() {
+  local config_file="$1"
+  local environment="${2:-personal}"
+  local servers_to_disable=()
+  
+  # Select the appropriate server list based on environment
+  case "$environment" in
+    "work")
+      servers_to_disable=("${WORK_DISABLED_SERVERS[@]}")
+      ;;
+    "development")
+      servers_to_disable=("${DEVELOPMENT_DISABLED_SERVERS[@]}")
+      ;;
+    "production")
+      servers_to_disable=("${PRODUCTION_DISABLED_SERVERS[@]}")
+      ;;
+    *)
+      # Default to personal environment
+      servers_to_disable=("${PERSONAL_DISABLED_SERVERS[@]}")
+      ;;
+  esac
+  
+  # If no servers to disable, exit early
+  if [[ ${#servers_to_disable[@]} -eq 0 ]]; then
+    return 0
+  fi
+  
+  echo "Setting disabled=true for servers in $environment environment: ${servers_to_disable[*]}"
+  
+  # Create a jq filter to set disabled=true for the specified servers
+  local jq_filter=""
+  for server in "${servers_to_disable[@]}"; do
+    jq_filter+=".mcpServers.\"$server\".disabled = true | "
+  done
+  jq_filter="${jq_filter%| }"
+  
+  # Apply the filter
+  local temp_file="${config_file}.tmp"
+  jq "$jq_filter" "$config_file" > "$temp_file" && mv "$temp_file" "$config_file"
+}
+
+# Function to enable specific MCP servers by setting disabled=false
+# Usage: enable_mcp_servers <config_file> <server1> [<server2> ...]
+enable_mcp_servers() {
+  local config_file="$1"
+  shift
+  local servers_to_enable=("$@")
+  
+  # If no servers to enable, exit early
+  if [[ ${#servers_to_enable[@]} -eq 0 ]]; then
+    return 0
+  fi
+  
+  echo "Enabling servers: ${servers_to_enable[*]}"
+  
+  # Create a jq filter to set disabled=false for the specified servers
+  local jq_filter=""
+  for server in "${servers_to_enable[@]}"; do
+    jq_filter+=".mcpServers.\"$server\".disabled = false | "
+  done
+  jq_filter="${jq_filter%| }"
+  
+  # Apply the filter
+  local temp_file="${config_file}.tmp"
+  jq "$jq_filter" "$config_file" > "$temp_file" && mv "$temp_file" "$config_file"
+}
+
+# Function to disable specific MCP servers by setting disabled=true
+# Usage: disable_mcp_servers <config_file> <server1> [<server2> ...]
+disable_mcp_servers() {
+  local config_file="$1"
+  shift
+  local servers_to_disable=("$@")
+  
+  # If no servers to disable, exit early
+  if [[ ${#servers_to_disable[@]} -eq 0 ]]; then
+    return 0
+  fi
+  
+  echo "Disabling servers: ${servers_to_disable[*]}"
+  
+  # Create a jq filter to set disabled=true for the specified servers
+  local jq_filter=""
+  for server in "${servers_to_disable[@]}"; do
+    jq_filter+=".mcpServers.\"$server\".disabled = true | "
+  done
+  jq_filter="${jq_filter%| }"
+  
+  # Apply the filter
+  local temp_file="${config_file}.tmp"
+  jq "$jq_filter" "$config_file" > "$temp_file" && mv "$temp_file" "$config_file"
+}
+
 # Function to determine the current environment
 # Returns: Environment name (work, personal, development, production)
 detect_environment() {
@@ -84,5 +179,8 @@ detect_environment() {
 # If script is sourced, export the functions
 if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
   export -f filter_mcp_config
+  export -f set_disabled_servers
+  export -f enable_mcp_servers
+  export -f disable_mcp_servers
   export -f detect_environment
 fi
