@@ -142,30 +142,9 @@ cp -r "$DOT_DEN/.bash_aliases.d/"* ~/.bash_aliases.d/ 2>/dev/null || true
 ln -sf "$DOT_DEN/.bash_exports" ~/.bash_exports
 ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 
-# AI Provider Agnostic Setup - Link all AI provider files to central AI-RULES.md
-echo "Setting up AI provider agnostic context..."
-AI_PROVIDERS=(
-    "AmazonQ.md"
-    "CLAUDE.md" 
-    ".cursorrules"
-    "CODEX.md"
-)
-
-for provider_file in "${AI_PROVIDERS[@]}"; do
-    provider_path="$DOT_DEN/$provider_file"
-    
-    # Only create symlink if AI-RULES.md exists and provider file doesn't already exist as symlink
-    if [[ -f "$DOT_DEN/AI-RULES.md" ]] && [[ ! -L "$provider_path" ]]; then
-        # Remove existing file if it exists and isn't a symlink
-        [[ -f "$provider_path" ]] && rm "$provider_path"
-        
-        # Create symlink to AI-RULES.md
-        ln -sf AI-RULES.md "$provider_path"
-        echo -e "${GREEN}✓ Linked $provider_file -> AI-RULES.md${NC}"
-    elif [[ -L "$provider_path" ]]; then
-        echo -e "${BLUE}✓ $provider_file already linked${NC}"
-    fi
-done
+# AI Provider Agnostic Setup
+source "$DOT_DEN/utils/setup-ai-provider-agnostic.sh"
+setup_ai_provider_agnostic
 
 # macOS-specific shell configuration
 if [[ "$OSTYPE" == "darwin"* ]]; then
