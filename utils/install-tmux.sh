@@ -37,7 +37,13 @@ install_or_update_tmux() {
         elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
             # Linux - detect package manager
             if command -v apt &> /dev/null; then
-                sudo apt update && sudo apt install -y tmux
+                # Only upgrade if there's actually a newer version available
+                if apt list --upgradable 2>/dev/null | grep -q "^tmux/"; then
+                    echo "tmux update available, upgrading..."
+                    sudo apt update && sudo apt install -y tmux
+                else
+                    echo -e "${GREEN}✓ tmux is already up to date ($CURRENT_VERSION)${NC}"
+                fi
             elif command -v pacman &> /dev/null; then
                 sudo pacman -Sy --noconfirm tmux
             elif command -v dnf &> /dev/null; then
