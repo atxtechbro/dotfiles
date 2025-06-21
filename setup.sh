@@ -251,8 +251,8 @@ if [[ -f ~/.bash_exports ]]; then
   echo -e "${GREEN}✓ Environment variables loaded successfully${NC}"
 fi
 
-# Set up Amazon Q global rules
-"$DOT_DEN/utils/setup-amazonq-rules.py"
+# Set up AI provider global rules (Amazon Q + Claude Code)
+"$DOT_DEN/utils/setup-ai-provider-rules.py"
 
 # Configuration files setup complete
 echo -e "${GREEN}✓ Configuration files setup complete${NC}"

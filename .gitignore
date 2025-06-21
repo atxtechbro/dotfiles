@@ -17,6 +17,9 @@
 # Machine-specific configuration
 .bash_exports.local
 
+# Claude Code personal configuration
+CLAUDE.local.md
+
 # Private SSH keys
 id_rsa
 id_dsa

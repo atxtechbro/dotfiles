@@ -171,6 +171,15 @@ The setup script automatically handles:
 
 Following the "Spilled Coffee Principle" - the setup script ensures you can be fully operational after running it once.
 
+## AI Provider Agnostic Context
+
+This repository automatically configures global context for multiple AI coding assistants from a single source of truth:
+
+- **Amazon Q Developer CLI**: Uses symlinked rules directory (`~/.amazonq/rules/`)
+- **Claude Code**: Uses generated `CLAUDE.local.md` files with embedded context
+
+All context is sourced from the `knowledge/` directory and automatically configured by the setup script. See [AI Provider Agnostic Context](docs/ai-provider-agnostic-context.md) for details.
+
 ## Secret Management
 
 Sensitive information like API tokens are stored in `~/.bash_secrets` (not tracked in git).
