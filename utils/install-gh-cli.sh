@@ -64,8 +64,6 @@ install_or_update_gh_cli() {
 }
 
 setup_gh_cli() {
-  echo "Setting up GitHub CLI..."
-  
   # Check if GitHub CLI is installed
   if command -v gh &> /dev/null; then
     CURRENT_VERSION=$(gh --version | head -n 1 | cut -d' ' -f3)
