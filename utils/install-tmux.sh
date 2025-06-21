@@ -28,7 +28,7 @@ install_or_update_tmux() {
                 if [[ "$CURRENT_VERSION" != "$NEW_VERSION" ]]; then
                     echo -e "${GREEN}✓ tmux updated from $CURRENT_VERSION to $NEW_VERSION${NC}"
                 else
-                    echo -e "${GREEN}✓ tmux is already at the latest version ($CURRENT_VERSION)${NC}"
+                    echo -e "${GREEN}✓ tmux is already up to date ($CURRENT_VERSION)${NC}"
                 fi
             else
                 echo -e "${RED}Homebrew not available, cannot update tmux${NC}"

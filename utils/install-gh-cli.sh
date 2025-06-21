@@ -86,7 +86,7 @@ setup_gh_cli() {
         fi
       fi
     else
-      echo -e "${GREEN}✓ GitHub CLI is already at the latest version ($CURRENT_VERSION)${NC}"
+      echo -e "${GREEN}✓ GitHub CLI is already up to date ($CURRENT_VERSION)${NC}"
     fi
   else
     echo "GitHub CLI not installed. Installing now..."

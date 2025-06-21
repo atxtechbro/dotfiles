@@ -49,7 +49,7 @@ detect_os() {
 check_java() {
   if command -v java &> /dev/null; then
     local java_version=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2 | cut -d'.' -f1)
-    echo -e "${GREEN}Java is already installed (version $java_version)${NC}"
+    echo -e "${GREEN}✓ Java is already up to date ($java_version)${NC}"
     return 0
   else
     echo -e "${YELLOW}Java is not installed${NC}"

@@ -373,7 +373,7 @@ else
       NEW_VERSION=$(node -v)
       echo -e "${GREEN}✓ Node.js updated to latest LTS version: ${NEW_VERSION}${NC}"
     else
-      echo -e "${GREEN}✓ Node.js is already at the latest LTS version: ${CURRENT_NODE_VERSION}${NC}"
+      echo -e "${GREEN}✓ Node.js is already up to date (${CURRENT_NODE_VERSION})${NC}"
     fi
   else
     echo -e "${YELLOW}NVM installation found but not working properly. Reinstalling...${NC}"

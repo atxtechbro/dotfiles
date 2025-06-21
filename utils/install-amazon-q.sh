@@ -171,7 +171,7 @@ update_amazon_q() {
             install_amazon_q_linux "$arch"
         fi
     else
-        echo -e "${GREEN}✓ Amazon Q is up to date${NC}"
+        echo -e "${GREEN}✓ Amazon Q is already up to date${NC}"
     fi
 }
 
