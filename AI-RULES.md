@@ -1,7 +1,7 @@
 # Repository-Specific AI Context
 
 ## Token Economy Rule
-**CRITICAL**: Keep all knowledge directory files radically short to minimize token usage. If elaboration needed, link to subdirectory README.md files instead.
+**CRITICAL**: Keep all `~/ppv/pillars/dotfiles/knowledge/**/*.md` and knowledge directory files radically short to minimize token usage. If elaboration needed, link to subdirectory README.md files instead.
 
 ## Dotfiles Philosophy
 - See README.md for our core principles: The Spilled Coffee Principle and The Snowball Method
