@@ -46,20 +46,31 @@ install_or_update_tmux() {
                 fi
             elif command -v pacman &> /dev/null; then
                 sudo pacman -Sy --noconfirm tmux
+                NEW_VERSION=$(tmux -V | cut -d' ' -f2)
+                if [[ "$CURRENT_VERSION" != "$NEW_VERSION" ]]; then
+                    echo -e "${GREEN}✓ tmux updated from $CURRENT_VERSION to $NEW_VERSION${NC}"
+                else
+                    echo -e "${GREEN}✓ tmux is already up to date ($CURRENT_VERSION)${NC}"
+                fi
             elif command -v dnf &> /dev/null; then
                 sudo dnf install -y tmux
+                NEW_VERSION=$(tmux -V | cut -d' ' -f2)
+                if [[ "$CURRENT_VERSION" != "$NEW_VERSION" ]]; then
+                    echo -e "${GREEN}✓ tmux updated from $CURRENT_VERSION to $NEW_VERSION${NC}"
+                else
+                    echo -e "${GREEN}✓ tmux is already up to date ($CURRENT_VERSION)${NC}"
+                fi
             elif command -v yum &> /dev/null; then
                 sudo yum install -y tmux
+                NEW_VERSION=$(tmux -V | cut -d' ' -f2)
+                if [[ "$CURRENT_VERSION" != "$NEW_VERSION" ]]; then
+                    echo -e "${GREEN}✓ tmux updated from $CURRENT_VERSION to $NEW_VERSION${NC}"
+                else
+                    echo -e "${GREEN}✓ tmux is already up to date ($CURRENT_VERSION)${NC}"
+                fi
             else
                 echo -e "${RED}No supported package manager found for tmux installation${NC}"
                 return 1
-            fi
-            
-            NEW_VERSION=$(tmux -V | cut -d' ' -f2)
-            if [[ "$CURRENT_VERSION" != "$NEW_VERSION" ]]; then
-                echo -e "${GREEN}✓ tmux updated from $CURRENT_VERSION to $NEW_VERSION${NC}"
-            else
-                echo -e "${GREEN}✓ tmux is already up to date ($CURRENT_VERSION)${NC}"
             fi
         else
             echo -e "${YELLOW}Unsupported OS: $OSTYPE. Cannot update tmux automatically.${NC}"
