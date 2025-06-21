@@ -481,6 +481,7 @@ if [[ -f "$DOT_DEN/utils/install-tmux.sh" ]]; then
 else
     echo -e "${RED}tmux installation script not found at $DOT_DEN/utils/install-tmux.sh${NC}"
 fi
+echo -e "${DIVIDER}"
 
 # Check if user is in docker group (Linux only)
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
