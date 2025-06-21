@@ -142,10 +142,6 @@ cp -r "$DOT_DEN/.bash_aliases.d/"* ~/.bash_aliases.d/ 2>/dev/null || true
 ln -sf "$DOT_DEN/.bash_exports" ~/.bash_exports
 ln -sf "$DOT_DEN/.tmux.conf" ~/.tmux.conf
 
-# AI Provider Agnostic Setup
-source "$DOT_DEN/utils/setup-ai-provider-agnostic.sh"
-setup_ai_provider_agnostic
-
 # macOS-specific shell configuration
 if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Setting up macOS shell configuration..."
