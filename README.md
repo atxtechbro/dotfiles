@@ -103,51 +103,33 @@ At an even higher level, this is all about **creating value by serving others**.
 
 This serving mindset acknowledges the tension as a pendulum rather than trying to eliminate it. Like Ecclesiastes 3:1 says, there's a season for everything - sometimes lean into systems work to build leverage, sometimes focus purely on delivery. The key is conscious awareness and feedback loops, always returning to: "How does this serve others better?"
 
-## Repository Design Patterns
+## Tool Choices and Trade-offs
 
-This repository follows specific organizational patterns to maintain consistency and clarity:
+### Amazon Q CLI as Primary MCP Client
 
-### Platform-Based Organization (Top Level)
+I use Amazon Q CLI ($20/month) as my **MCP client** - not just an AI interface, but the hub of my development workflow. This choice reflects my AI-first development philosophy:
 
-At the root level, configurations are organized by platform or environment:
+**Why Amazon Q CLI as MCP Client:**
+- **True agentic capability**: Executes ambiguous searches, resolves GitHub issues - not some cheap plugin
+- **MCP ecosystem hub**: Native client for my entire MCP server infrastructure (git, filesystem, brave search, etc.)
+- **Economic efficiency**: Nearly unlimited queries vs. expensive per-token models
+- **Work/personal separation**: Separate accounts for clean context boundaries and quota management
+- **CLI-first integration**: Perfect fit for tmux/nvim terminal-based workflow
+- **200k context window**: Enables deep, persistent conversations following the Snowball Method
 
-- `arch-linux/` - Configurations specific to Arch Linux systems
-- `raspberry-pi/` - Configurations for Raspberry Pi devices
-- `nvim/` - Neovim-specific configurations
-- etc.
+**AI-First Development Philosophy:**
+As an AI-first developer, I see little need for traditional IDEs. Modern IDEs with "AI bolted on" are ill-equipped for chat-based coding and tracer bullets development. My command line is more truly "integrated" than any so-called Integrated Development Environment. I don't optimize for writing out code - I optimize for AI collaboration and rapid iteration.
 
-This structural organization makes it clear which files apply to which environments.
+**Trade-offs accepted:**
+- Frequent reauthentication (annoying bright white browser screen)
+- Less scriptable than Claude Code
+- More complex initial setup than alternatives
+- Less gamified/polished interface
 
-### Hybrid Organization (Within Platforms)
+**Philosophy alignment:**
+The tool's serious, less-gamified nature reinforces the 80/20 rule - focusing on substance over polish. While authentication friction seems to violate "Keep joy in the loop," it actually serves the broader principle by maintaining focus on delivery rather than aesthetic minutiae.
 
-Within each platform directory, we use a hybrid approach combining categories and specific use cases:
-
-```
-raspberry-pi/
-├── home/                  # Home use cases
-│   ├── home-assistant/    # Smart home hub
-│   └── media-server/      # Media streaming
-├── development/           # Development use cases
-│   └── ci-runner/         # Self-hosted CI/CD
-└── networking/            # Networking use cases
-    └── network-monitor/   # Traffic analysis
-```
-
-This approach:
-- Organizes by general categories for maintainability
-- Provides concrete examples for clarity
-- Allows users to find configurations based on their intended use case
-
-### Feature-Based Implementation
-
-The actual implementation of features follows these principles:
-
-1. **Detection over Assumption**: Scripts detect hardware capabilities rather than assuming specific use cases
-2. **Composability**: Features can be mixed and matched based on user needs
-3. **Automatic Optimization**: Hardware-specific optimizations are applied automatically
-4. **Clear Documentation**: Each feature documents its purpose and requirements
-
-This multi-level organizational approach allows us to maintain a clean repository structure while providing flexibility for different use cases.
+This README documents authentic personal choices and trade-offs for my future self, not AI-generated marketing copy.
 
 ## Quick Setup
 
