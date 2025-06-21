@@ -13,7 +13,7 @@
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
       },
-      "disabled": true
+      "disabled": false
     },
     "github": {
       "command": "github-mcp-wrapper.sh",
