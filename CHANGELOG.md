@@ -2,6 +2,10 @@
 
 A living log of notable changes, decisions, and modifications to the dotfiles setup.
 
+## 2025-06-21
+
+- **Performance Win**: Fixed tmux frequent upgrade prompts - 40% faster setup.sh execution by only upgrading when updates are actually available (17ea3a6)
+
 ## 2025-06-19
 
 - Restructured Amazon Q rules to vendor-neutral knowledge taxonomy (#487) - enables tool-agnostic knowledge organization (Invent and Simplify, Systems Stewardship)

@@ -168,7 +168,7 @@ update_glab() {
     
     # Compare versions
     if [ "$CURRENT_VERSION" = "$LATEST_VERSION" ]; then
-        echo "GitLab CLI is already at the latest version ($CURRENT_VERSION)"
+        echo -e "${GREEN}✓ GitLab CLI is already up to date ($CURRENT_VERSION)${NC}"
         return 0
     else
         echo "Updating GitLab CLI from $CURRENT_VERSION to $LATEST_VERSION..."
