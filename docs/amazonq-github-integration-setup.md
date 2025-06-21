@@ -33,7 +33,11 @@ You can manually add these to your allow list or choose to automatically add the
 
 ## The Fun Part
 
+### Issue-to-PR Generation
 1. Go to your GitHub issues backlog or create a new issue
 2. Add the **Amazon Q development agent** label (🟦 Blue) - this signals the agent to generate new features or iterate code based on issue descriptions and comments
 3. Amazon Q bot will automatically comment on the issue confirming it's starting work and will open a pull request when complete
 4. Bot updates its comment when finished: "✅ I finished the proposed code changes, and the pull request is ready for review: #[PR-number]. Comment on the pull request to provide feedback and request a new iteration."
+
+### Automatic Code Reviews
+Amazon Q Developer also automatically reviews pull requests (created by humans) for security vulnerabilities and code quality issues, commenting: "⏳ I'm reviewing this pull request..." followed by "✅ I finished the code review, and didn't find any security or code quality issues."
