@@ -7,6 +7,14 @@
 # Don't exit on error - this is critical for Pop!_OS compatibility
 set +e
 
+# Set up logging
+SETUP_LOG="$HOME/setup-dotfiles.log"
+echo "=== Dotfiles setup started at $(date) ===" > "$SETUP_LOG"
+
+# Log all output to file while still showing on screen
+exec > >(tee -a "$SETUP_LOG")
+exec 2>&1
+
 # Define colors and formatting
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -31,6 +39,8 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     echo -e "Please run: ${GREEN}source setup.sh${NC}"
     exit 1
 fi
+
+echo -e "${BLUE}Setup log will be saved to: $SETUP_LOG${NC}"
 
 # Add debug logging
 echo "Debug: Starting setup script in sourced mode"
@@ -535,10 +545,15 @@ fi
 
 # Source bash aliases to make them immediately available
 echo "Loading bash aliases into current session..."
+echo "DEBUG: About to source ~/.bash_aliases" >> "$SETUP_LOG"
 if [[ -f ~/.bash_aliases ]]; then
+  echo "DEBUG: ~/.bash_aliases exists, sourcing now..." >> "$SETUP_LOG"
   # shellcheck disable=SC1090
   source ~/.bash_aliases
+  echo "DEBUG: Successfully sourced ~/.bash_aliases" >> "$SETUP_LOG"
   echo -e "${GREEN}✓ Bash aliases loaded successfully${NC}"
+else
+  echo "DEBUG: ~/.bash_aliases not found" >> "$SETUP_LOG"
 fi
 
 echo -e "${DIVIDER}"
@@ -551,3 +566,5 @@ trap - ERR
 
 # Final debug message
 echo "Debug: Setup script completed successfully"
+echo "=== Setup completed at $(date) ===" >> "$SETUP_LOG"
+echo -e "${BLUE}Full setup log saved to: $SETUP_LOG${NC}"
