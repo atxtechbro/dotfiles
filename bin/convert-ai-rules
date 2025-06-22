@@ -118,16 +118,54 @@ main() {
     local repos=()
     
     if [ "$1" == "--find-all" ]; then
-        log_info "Finding all repositories with AI context files in home directory..."
+        log_info "Finding all repositories with AI context files..."
         
-        # Depth-first search for both AmazonQ.md and CLAUDE.md files
-        while IFS= read -r ai_file; do
-            repo_dir=$(dirname "$ai_file")
-            # Check if it's a git repo and not already in our list
-            if [ -d "$repo_dir/.git" ] && [[ ! " ${repos[@]} " =~ " ${repo_dir} " ]]; then
-                repos+=("$repo_dir")
+        # Fast path: check common project directories first
+        local common_dirs=(
+            ~/work
+            ~/projects
+            ~/dev
+            ~/code
+            ~/src
+            ~/ppv
+            ~/repos
+            ~/github
+            ~/gitlab
+        )
+        
+        # Function to search a directory
+        search_directory() {
+            local search_dir="$1"
+            find "$search_dir" \
+                -path "*/.*" -prune -o \
+                -path "*/node_modules" -prune -o \
+                -path "*/venv" -prune -o \
+                -path "*/.venv" -prune -o \
+                -path "*/env" -prune -o \
+                -path "*/.env" -prune -o \
+                -path "*/dist" -prune -o \
+                -path "*/build" -prune -o \
+                -path "*/target" -prune -o \
+                -path "*/cache" -prune -o \
+                -path "*/tmp" -prune -o \
+                -path "*/temp" -prune -o \
+                -maxdepth 5 \
+                \( -name "AmazonQ.md" -o -name "CLAUDE.md" \) \
+                -type f -print 2>/dev/null
+        }
+        
+        # Search common directories that exist
+        for dir in "${common_dirs[@]}"; do
+            if [ -d "$dir" ]; then
+                while IFS= read -r ai_file; do
+                    repo_dir=$(dirname "$ai_file")
+                    # Check if it's a git repo and not already in our list
+                    if [ -d "$repo_dir/.git" ] && [[ ! " ${repos[@]} " =~ " ${repo_dir} " ]]; then
+                        repos+=("$repo_dir")
+                    fi
+                done < <(search_directory "$dir")
             fi
-        done < <(find ~ \( -name "AmazonQ.md" -o -name "CLAUDE.md" \) -type f 2>/dev/null | sort)
+        done
         
         echo "Found ${#repos[@]} repositories with AI context files"
         echo
@@ -161,14 +199,39 @@ main() {
     local success=0
     local failed=0
     
-    for repo in "${repos[@]}"; do
-        if process_repo "$repo"; then
-            ((success++))
+    # Check if we can use parallel processing
+    if command -v xargs &>/dev/null && [ ${#repos[@]} -gt 3 ]; then
+        log_info "Processing ${#repos[@]} repositories in parallel..."
+        
+        # Export the function so xargs can use it
+        export -f process_repo
+        export -f log_info log_success log_warning log_error
+        
+        # Source logging.sh in subshells
+        export LOGGING_SOURCE
+        if [[ -f ~/bin/logging.sh ]]; then
+            LOGGING_SOURCE="source ~/bin/logging.sh"
         else
-            ((failed++))
+            LOGGING_SOURCE="source ${SCRIPT_DIR}/../utils/logging.sh"
         fi
-        echo
-    done
+        
+        # Process in parallel with max 4 jobs
+        printf '%s\n' "${repos[@]}" | xargs -P 4 -I {} bash -c "$LOGGING_SOURCE; process_repo \"\$1\"" _ {} 2>&1
+        
+        # Can't easily track success/failed in parallel mode
+        success=${#repos[@]}
+        failed=0
+    else
+        # Fall back to sequential processing
+        for repo in "${repos[@]}"; do
+            if process_repo "$repo"; then
+                ((success++))
+            else
+                ((failed++))
+            fi
+            echo
+        done
+    fi
     
     # Summary
     echo "Summary:"
