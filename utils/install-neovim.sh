@@ -2,36 +2,34 @@
 # Neovim Installation Utility
 # Automated installation following the spilled coffee principle
 
-# Colors for output
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-YELLOW='\033[0;33m'
-NC='\033[0m' # No Color
+# Source common logging functions
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/logging.sh"
 
 install_neovim() {
-    echo "Setting up Neovim..."
+    log_info "Setting up nvim..."
     
     # Check if Neovim is already installed
     if command -v nvim &> /dev/null; then
         CURRENT_VERSION=$(nvim --version | head -n1 | cut -d' ' -f2)
-        echo -e "${GREEN}✓ Neovim is already installed (version $CURRENT_VERSION)${NC}"
+        log_success "Already installed: $CURRENT_VERSION"
         return 0
     fi
     
-    echo "Installing Neovim..."
+    log_info "Installing nvim..."
     
     if [[ "$OSTYPE" == "darwin"* ]]; then
         # macOS installation via Homebrew
         if command -v brew &> /dev/null; then
-            echo "Installing Neovim via Homebrew..."
+            log_info "Using Homebrew..."
             if brew install neovim; then
-                echo -e "${GREEN}✓ Neovim installed successfully via Homebrew${NC}"
+                log_success "Installed via Homebrew"
             else
-                echo -e "${RED}Failed to install Neovim via Homebrew${NC}"
+                log_error "Homebrew install failed"
                 return 1
             fi
         else
-            echo -e "${RED}Homebrew not found. Please install Homebrew first.${NC}"
+            log_error "Homebrew not found"
             return 1
         fi
         
@@ -39,7 +37,7 @@ install_neovim() {
         # Linux installation
         if command -v apt &> /dev/null; then
             # Ubuntu/Debian - use PPA for latest version
-            echo "Installing Neovim via apt (using unstable PPA for latest version)..."
+            log_info "Using apt + PPA..."
             sudo apt-get update
             sudo apt-get install -y software-properties-common
             sudo add-apt-repository ppa:neovim-ppa/unstable -y
@@ -48,47 +46,47 @@ install_neovim() {
             
         elif command -v pacman &> /dev/null; then
             # Arch Linux
-            echo "Installing Neovim via pacman..."
+            log_info "Using pacman..."
             sudo pacman -S --noconfirm neovim
             
         elif command -v dnf &> /dev/null; then
             # Fedora/RHEL
-            echo "Installing Neovim via dnf..."
+            log_info "Using dnf..."
             sudo dnf install -y neovim
             
         else
             # Fallback: build from source
-            echo "No package manager found. Building Neovim from source..."
+            log_warning "Building from source..."
             install_neovim_from_source
             return $?
         fi
         
         if command -v nvim &> /dev/null; then
-            echo -e "${GREEN}✓ Neovim installed successfully${NC}"
+            log_success "Installed"
         else
-            echo -e "${YELLOW}Package installation completed but nvim command not found. Trying source build...${NC}"
+            log_warning "Not found, building from source..."
             install_neovim_from_source
             return $?
         fi
         
     else
-        echo -e "${RED}Unsupported OS: $OSTYPE${NC}"
+        log_error "Unsupported: $OSTYPE"
         return 1
     fi
     
     # Verify installation
     if command -v nvim &> /dev/null; then
         INSTALLED_VERSION=$(nvim --version | head -n1 | cut -d' ' -f2)
-        echo -e "${GREEN}✓ Neovim installation verified (version $INSTALLED_VERSION)${NC}"
+        log_success "Verified: $INSTALLED_VERSION"
         return 0
     else
-        echo -e "${RED}Neovim installation failed${NC}"
+        log_error "Install failed"
         return 1
     fi
 }
 
 install_neovim_from_source() {
-    echo "Building Neovim from source..."
+    log_info "Building from source..."
     
     # Install build dependencies
     if command -v apt &> /dev/null; then
@@ -103,7 +101,7 @@ install_neovim_from_source() {
     # Create temporary directory
     local temp_dir=$(mktemp -d)
     cd "$temp_dir" || {
-        echo -e "${RED}Failed to create temporary directory${NC}"
+        log_error "Temp dir failed"
         return 1
     }
     
@@ -111,18 +109,18 @@ install_neovim_from_source() {
     if git clone https://github.com/neovim/neovim.git; then
         cd neovim || return 1
         
-        echo "Building Neovim (this may take a few minutes)..."
+        log_info "Building (takes time)..."
         if make CMAKE_BUILD_TYPE=RelWithDebInfo; then
-            echo "Installing Neovim..."
+            log_info "Installing..."
             if sudo make install; then
-                echo -e "${GREEN}✓ Neovim built and installed from source${NC}"
+                log_success "Built from source"
                 cd / && rm -rf "$temp_dir"
                 return 0
             fi
         fi
     fi
     
-    echo -e "${RED}Failed to build Neovim from source${NC}"
+    log_error "Build failed"
     cd / && rm -rf "$temp_dir"
     return 1
 }
@@ -132,7 +130,7 @@ setup_neovim_config() {
         return 1
     fi
     
-    echo "Setting up Neovim configuration..."
+    log_info "Setting up config..."
     
     # Create config directory
     mkdir -p ~/.config
@@ -141,9 +139,9 @@ setup_neovim_config() {
     if [[ -d "$HOME/ppv/pillars/dotfiles/nvim" ]]; then
         rm -rf ~/.config/nvim
         ln -sfn "$HOME/ppv/pillars/dotfiles/nvim" ~/.config/nvim
-        echo -e "${GREEN}✓ Neovim configuration linked${NC}"
+        log_success "Config linked"
     else
-        echo -e "${YELLOW}Dotfiles nvim configuration not found. Skipping config setup.${NC}"
+        log_warning "nvim config not found"
     fi
     
     return 0

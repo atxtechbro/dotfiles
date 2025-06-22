@@ -56,6 +56,30 @@ When adding new utility scripts, please follow these guidelines:
 5. **Environment Variables**: Set up necessary environment variables
 6. **Idempotence**: Scripts should be safe to run multiple times
 7. **Educational Content**: Include information about the tool being installed
+8. **Logging**: Use the common logging functions from `logging.sh`
+
+## Logging Functions
+
+All utility scripts should use the common logging functions provided in `logging.sh`. This ensures consistent output formatting and makes it easier to distinguish between different types of messages.
+
+```bash
+# Source the logging functions at the top of your script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/logging.sh"
+
+# Available logging functions
+log_info "This is an informational message"
+log_success "This is a success message"
+log_warning "This is a warning message"
+log_error "This is an error message"
+log_debug "This is a debug message (only shown if DEBUG=1)"
+```
+
+Benefits of using these logging functions:
+- Consistent visual formatting across all scripts
+- Clear distinction between different message types
+- Easier debugging and troubleshooting
+- Ability to filter messages by type
 
 ## The Spilled Coffee Principle
 
