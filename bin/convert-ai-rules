@@ -103,16 +103,16 @@ main() {
     local repos=()
     
     if [ "$1" == "--find-all" ]; then
-        echo "🔍 Finding all repositories with AmazonQ.md files..."
+        echo "🔍 Finding all repositories with AmazonQ.md files in home directory..."
         
-        # Find all AmazonQ.md files and get their parent directories
+        # Depth-first search through home directory for all AmazonQ.md files
         while IFS= read -r amazonq_file; do
             repo_dir=$(dirname "$amazonq_file")
             # Check if it's a git repo
             if [ -d "$repo_dir/.git" ]; then
                 repos+=("$repo_dir")
             fi
-        done < <(find ~ -name "AmazonQ.md" -type f 2>/dev/null | grep -E "/ppv/|/work/" | sort)
+        done < <(find ~ -name "AmazonQ.md" -type f 2>/dev/null | sort)
         
         echo "Found ${#repos[@]} repositories with AmazonQ.md files"
         echo

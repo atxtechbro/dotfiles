@@ -22,6 +22,16 @@ The dotfiles repository provides an AI provider-agnostic system for managing MCP
 ### 3. AI Provider Rules
 - **File**: `AI-RULES.md` - Repository-specific AI context
 - **Symlinks**: `CLAUDE.md` → `AI-RULES.md`, `AmazonQ.md` → `AI-RULES.md`
+- **Conversion Script**: `bin/convert-ai-rules` - Automates the standardization process
+
+To convert existing `AmazonQ.md` files to the standardized pattern:
+```bash
+# Convert a single repository
+convert-ai-rules ~/work/my-project
+
+# Find and convert all repositories in home directory (depth-first search)
+convert-ai-rules --find-all
+```
 
 ## Adding a New MCP Client
 
