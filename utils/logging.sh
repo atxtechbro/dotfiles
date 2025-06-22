@@ -12,7 +12,33 @@ NC='\033[0m' # No Color
 # Log an informational message
 # Usage: log_info "Your message here"
 log_info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
+# Log an informational message
+# Usage: log_info "Your message here"
+log_info() {
+    printf "${BLUE}[INFO]${NC} %s
+" "$1"
+}
+
+# Log a success message
+# Usage: log_success "Your message here"
+log_success() {
+    printf "${GREEN}[SUCCESS]${NC} %s
+" "$1"
+}
+
+# Log a warning message
+# Usage: log_warning "Your message here"
+log_warning() {
+    printf "${YELLOW}[WARNING]${NC} %s
+" "$1"
+}
+
+# Log an error message
+# Usage: log_error "Your message here"
+log_error() {
+    printf "${RED}[ERROR]${NC} %s
+" "$1"
+}
 }
 
 # Log a success message
