@@ -3,6 +3,10 @@ export EDITOR=nvim
 export SUDO_EDITOR=nvim
 export RUST_BACKTRACE=full
 
+# Prevent WSL_DISTRO_NAME unbound variable errors in Amazon Q integration
+# Set to empty if not already defined (non-WSL environments)
+: ${WSL_DISTRO_NAME:=}
+
 # Add MCP wrapper scripts to PATH for cross-machine portability
 export PATH="$PATH:$HOME/ppv/pillars/dotfiles/mcp"
 
