@@ -8,15 +8,12 @@
 # fully operational after running setup without manual intervention
 # =========================================================
 
-# Define colors for consistent output
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-YELLOW='\033[0;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+# Source common logging functions
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/logging.sh"
 
 install_docker() {
-  echo -e "${YELLOW}Docker is not installed. Installing now...${NC}"
+  log_warning "Docker is not installed. Installing now..."
   
   # Determine OS type for installation
   if [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -24,7 +21,7 @@ install_docker() {
   elif [[ "$OSTYPE" == "darwin"* ]]; then
     install_docker_macos
   else
-    echo -e "${RED}Unsupported OS: $OSTYPE. Please install Docker manually.${NC}"
+    log_error "Unsupported OS: $OSTYPE. Please install Docker manually."
     return 1
   fi
 }
@@ -32,74 +29,74 @@ install_docker() {
 install_docker_linux() {
   # Auto-install Docker based on available package manager
   if command -v apt &> /dev/null; then
-    echo "Using apt to install Docker..."
+    log_info "Using apt to install Docker..."
     (sudo apt-get update && sudo apt-get install -y docker.io) || {
-      echo -e "${YELLOW}Docker installation with apt failed. Continuing anyway...${NC}"
+      log_warning "Docker installation with apt failed. Continuing anyway..."
       return 1
     }
-    (sudo systemctl enable docker) || echo "Failed to enable Docker service. Continuing..."
-    (sudo systemctl start docker) || echo "Failed to start Docker service. Continuing..."
-    (sudo usermod -aG docker "$USER") || echo "Failed to add user to Docker group. Continuing..."
-    echo -e "${GREEN}✓ Docker installation attempted${NC}"
+    (sudo systemctl enable docker) || log_warning "Failed to enable Docker service. Continuing..."
+    (sudo systemctl start docker) || log_warning "Failed to start Docker service. Continuing..."
+    (sudo usermod -aG docker "$USER") || log_warning "Failed to add user to Docker group. Continuing..."
+    log_success "Docker installation attempted"
   
   elif command -v pacman &> /dev/null; then
-    echo "Using pacman to install Docker..."
+    log_info "Using pacman to install Docker..."
     (sudo pacman -Sy --noconfirm docker) || {
-      echo "Docker installation with pacman failed. Continuing..."
+      log_warning "Docker installation with pacman failed. Continuing..."
       return 1
     }
-    (sudo systemctl enable docker) || echo "Failed to enable Docker service. Continuing..."
-    (sudo systemctl start docker) || echo "Failed to start Docker service. Continuing..."
-    (sudo usermod -aG docker "$USER") || echo "Failed to add user to Docker group. Continuing..."
-    echo -e "${GREEN}✓ Docker installation attempted${NC}"
+    (sudo systemctl enable docker) || log_warning "Failed to enable Docker service. Continuing..."
+    (sudo systemctl start docker) || log_warning "Failed to start Docker service. Continuing..."
+    (sudo usermod -aG docker "$USER") || log_warning "Failed to add user to Docker group. Continuing..."
+    log_success "Docker installation attempted"
   
   elif command -v dnf &> /dev/null; then
-    echo "Using dnf to install Docker..."
+    log_info "Using dnf to install Docker..."
     (sudo dnf -y install docker) || {
-      echo "Docker installation with dnf failed. Continuing..."
+      log_warning "Docker installation with dnf failed. Continuing..."
       return 1
     }
-    (sudo systemctl enable docker) || echo "Failed to enable Docker service. Continuing..."
-    (sudo systemctl start docker) || echo "Failed to start Docker service. Continuing..."
-    (sudo usermod -aG docker "$USER") || echo "Failed to add user to Docker group. Continuing..."
-    echo -e "${GREEN}✓ Docker installation attempted${NC}"
+    (sudo systemctl enable docker) || log_warning "Failed to enable Docker service. Continuing..."
+    (sudo systemctl start docker) || log_warning "Failed to start Docker service. Continuing..."
+    (sudo usermod -aG docker "$USER") || log_warning "Failed to add user to Docker group. Continuing..."
+    log_success "Docker installation attempted"
   
   else
-    echo -e "${RED}Unable to install Docker automatically on Linux.${NC}"
-    echo "Please install Docker manually for your distribution."
+    log_error "Unable to install Docker automatically on Linux."
+    log_info "Please install Docker manually for your distribution."
     return 1
   fi
   
-  echo "Note: You'll need to log out and back in for group changes to take effect."
+  log_info "Note: You'll need to log out and back in for group changes to take effect."
   return 0
 }
 
 install_docker_macos() {
   # Check if Homebrew is available
   if ! command -v brew &> /dev/null; then
-    echo -e "${RED}Homebrew is required to install Docker on macOS.${NC}"
-    echo "Please ensure Homebrew is installed first."
+    log_error "Homebrew is required to install Docker on macOS."
+    log_info "Please ensure Homebrew is installed first."
     return 1
   fi
   
-  echo "Using Homebrew to install Docker Desktop..."
+  log_info "Using Homebrew to install Docker Desktop..."
   
   # Install Docker Desktop via Homebrew cask
   if brew install --cask docker; then
-    echo -e "${GREEN}✓ Docker Desktop installed successfully${NC}"
+    log_success "Docker Desktop installed successfully"
     
     # Start Docker Desktop application
-    echo "Starting Docker Desktop application..."
+    log_info "Starting Docker Desktop application..."
     open -a Docker
     
     # Wait for Docker daemon to be ready
-    echo "Waiting for Docker daemon to start (this may take a minute)..."
+    log_info "Waiting for Docker daemon to start (this may take a minute)..."
     local max_attempts=30
     local attempt=0
     
     while [ $attempt -lt $max_attempts ]; do
       if docker info &>/dev/null; then
-        echo -e "${GREEN}✓ Docker daemon is ready${NC}"
+        log_success "Docker daemon is ready"
         return 0
       fi
       
@@ -108,14 +105,14 @@ install_docker_macos() {
       ((attempt++))
     done
     
-    echo -e "\n${YELLOW}Docker Desktop installed but daemon not ready yet.${NC}"
-    echo "Docker Desktop may still be starting up. Please wait a moment and try again."
-    echo "You can check Docker status with: docker info"
+    log_warning "Docker Desktop installed but daemon not ready yet."
+    log_info "Docker Desktop may still be starting up. Please wait a moment and try again."
+    log_info "You can check Docker status with: docker info"
     return 0
     
   else
-    echo -e "${RED}Failed to install Docker Desktop via Homebrew.${NC}"
-    echo "Please install Docker Desktop manually from: https://www.docker.com/products/docker-desktop"
+    log_error "Failed to install Docker Desktop via Homebrew."
+    log_info "Please install Docker Desktop manually from: https://www.docker.com/products/docker-desktop"
     return 1
   fi
 }
