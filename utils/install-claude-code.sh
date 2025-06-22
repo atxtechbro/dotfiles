@@ -73,9 +73,6 @@ setup_claude_code() {
             echo "1. Run: claude login"
             echo "2. Follow the authentication process"
             echo "3. MCP servers will be automatically configured by the dotfiles setup"
-        else
-            echo -e "${RED}Failed to install Claude Code CLI${NC}"
-            return 1
         fi
     fi
     

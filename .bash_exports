@@ -3,6 +3,13 @@ export EDITOR=nvim
 export SUDO_EDITOR=nvim
 export RUST_BACKTRACE=full
 
+# Prevent unbound variable errors in Amazon Q integration
+# Set to empty if not already defined
+: ${WSL_DISTRO_NAME:=}
+: ${Q_LOG_LEVEL:=}
+: ${QTERM_SESSION_ID:=}
+: ${TTY:=$(tty 2>/dev/null || echo "")}
+
 # Add MCP wrapper scripts to PATH for cross-machine portability
 export PATH="$PATH:$HOME/ppv/pillars/dotfiles/mcp"
 
