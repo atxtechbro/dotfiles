@@ -36,13 +36,19 @@ setup_claude_code() {
         
         if [ "$LATEST_VERSION" = "unknown" ]; then
             echo -e "${YELLOW}Could not determine latest version. Attempting to update anyway...${NC}"
-            npm update -g @anthropic-ai/claude-code
+            if ! npm update -g @anthropic-ai/claude-code; then
+                echo -e "${RED}Failed to update Claude Code. Please try again or check your npm installation.${NC}"
+                return 1
+            fi
         elif [ "$CURRENT_VERSION" = "$LATEST_VERSION" ]; then
             echo -e "${GREEN}✓ Claude Code is already up to date (version: $CURRENT_VERSION)${NC}"
             return 0
         else
             echo "Updating Claude Code from $CURRENT_VERSION to $LATEST_VERSION..."
-            npm update -g @anthropic-ai/claude-code
+            if ! npm update -g @anthropic-ai/claude-code; then
+                echo -e "${RED}Failed to update Claude Code. Please try again or check your npm installation.${NC}"
+                return 1
+            fi
             
             # Verify update
             NEW_VERSION=$(claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
@@ -55,7 +61,10 @@ setup_claude_code() {
     else
         # Install Claude Code
         echo "Installing Claude Code CLI..."
-        if npm install -g @anthropic-ai/claude-code; then
+        if ! npm install -g @anthropic-ai/claude-code; then
+            echo -e "${RED}Failed to install Claude Code CLI. Please try again or check your npm installation.${NC}"
+            return 1
+        else
             VERSION=$(claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
             echo -e "${GREEN}✓ Claude Code successfully installed (version: $VERSION)${NC}"
             
