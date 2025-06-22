@@ -1,12 +1,11 @@
-# Llama.cpp related aliases
+# Llama.cpp related aliases - DISABLED (no longer used)
 # Include this file in your .bashrc or .bash_aliases
 
 # Set library path for llama.cpp
-alias llama-env="export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/ppv/pipelines/llama.cpp/build/bin"
+# alias llama-env="export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-}:~/ppv/pipelines/llama.cpp/build/bin"
 
 # Run llama.cpp models
-alias llama-run="llama-run"
+# alias llama-run="llama-run"
 
 # Pipe content to llama.cpp
-alias llama-pipe='llama-run -p "$(cat -)"'
-
+# alias llama-pipe='llama-run -p "$(cat -)"'
