@@ -321,21 +321,6 @@ else
   echo -e "${RED}Claude Code installation script not found at $DOT_DEN/utils/install-claude-code.sh${NC}"
 fi
 
-# AI Provider Model Configuration
-echo -e "${DIVIDER}"
-echo "Configuring AI provider default models..."
-
-# Amazon Q default model
-if command -v q &> /dev/null; then
-  echo "Setting Amazon Q default model to Claude 4 Sonnet..."
-  q settings chat.defaultModel claude-4-sonnet >/dev/null 2>&1 || echo -e "${YELLOW}Could not set Amazon Q default model${NC}"
-fi
-
-# Claude Code default model
-if command -v claude &> /dev/null; then
-  echo "Setting Claude Code default model to Claude Opus 4..."
-  claude config set model claude-opus-4-20250514 >/dev/null 2>&1 || echo -e "${YELLOW}Could not set Claude Code default model${NC}"
-fi
 
 # Node.js setup with NVM
 echo -e "${DIVIDER}"
