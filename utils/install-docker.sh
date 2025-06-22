@@ -31,7 +31,33 @@ install_docker_linux() {
   if command -v apt &> /dev/null; then
     log_info "Using apt to install Docker..."
     (sudo apt-get update && sudo apt-get install -y docker.io) || {
-      log_warning "Docker installation with apt failed. Continuing anyway..."
+# Auto-install Docker based on available package manager
+  if command -v apt &> /dev/null; then
+    log_info "Using apt to install Docker..."
+    if ! (sudo apt-get update && sudo apt-get install -y docker.io); then
+      log_error "Docker installation with apt failed."
+      return 1
+    fi
+    (sudo systemctl enable docker) || log_warning "Failed to enable Docker service. Continuing..."
+    (sudo systemctl start docker) || log_warning "Failed to start Docker service. Continuing..."
+    (sudo usermod -aG docker "$USER") || log_warning "Failed to add user to Docker group. Continuing..."
+    log_success "Docker installation completed"
+  
+  elif command -v pacman &> /dev/null; then
+    log_info "Using pacman to install Docker..."
+    if ! (sudo pacman -Sy --noconfirm docker); then
+      log_error "Docker installation with pacman failed."
+      return 1
+    fi
+    (sudo systemctl enable docker) || log_warning "Failed to enable Docker service. Continuing..."
+    (sudo systemctl start docker) || log_warning "Failed to start Docker service. Continuing..."
+    (sudo usermod -aG docker "$USER") || log_warning "Failed to add user to Docker group. Continuing..."
+    log_success "Docker installation completed"
+  
+  elif command -v dnf &> /dev/null; then
+    log_info "Using dnf to install Docker..."
+    if ! (sudo dnf -y install docker); then
+      log_error "Docker installation with dnf failed."
       return 1
     }
     (sudo systemctl enable docker) || log_warning "Failed to enable Docker service. Continuing..."
