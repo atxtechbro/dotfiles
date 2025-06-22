@@ -62,7 +62,29 @@ log_error() {
 # Log a debug message (only shown if DEBUG=1)
 # Usage: log_debug "Your message here"
 log_debug() {
+log_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} ${1}"
+}
+
+# Log a warning message
+# Usage: log_warning "Your message here"
+log_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} ${1}"
+}
+
+# Log an error message
+# Usage: log_error "Your message here"
+log_error() {
+    echo -e "${RED}[ERROR]${NC} ${1}"
+}
+
+# Log a debug message (only shown if DEBUG=1)
+# Usage: log_debug "Your message here"
+log_debug() {
     if [[ "${DEBUG:-0}" == "1" ]]; then
+        echo -e "[DEBUG] ${1}"
+    fi
+}
         echo -e "[DEBUG] $1"
     fi
 }
