@@ -246,6 +246,15 @@ if [[ -f "$DOT_DEN/.bash_exports.local.example" && ! -f ~/.bash_exports.local ]]
     echo "Created ~/.bash_exports.local from template. Please edit to configure your environment."
 fi
 
+# Set up global logging framework
+echo "Setting up global logging framework..."
+mkdir -p "$HOME/bin"
+LOGGING_SYMLINK="$HOME/bin/logging.sh"
+if [[ ! -L "$LOGGING_SYMLINK" ]] || [[ "$(readlink "$LOGGING_SYMLINK")" != "$DOT_DEN/utils/logging.sh" ]]; then
+    ln -sf "$DOT_DEN/utils/logging.sh" "$LOGGING_SYMLINK"
+    echo -e "${GREEN}✓ Created global logging framework symlink at ~/bin/logging.sh${NC}"
+fi
+
 # Create secrets file from template
 if [[ -f "$DOT_DEN/.bash_secrets.example" && ! -f ~/.bash_secrets ]]; then
     echo "Creating secrets file from template..."

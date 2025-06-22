@@ -5,9 +5,17 @@ All shell scripts in this repository MUST use the standardized logging framework
 ## Implementation
 
 ```bash
-# Source at the top of your script
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/../utils/logging.sh"
+# Source at the top of your script (globally available after setup.sh)
+source ~/bin/logging.sh
+
+# Or if you need a fallback for scripts run before setup:
+if [[ -f ~/bin/logging.sh ]]; then
+    source ~/bin/logging.sh
+else
+    # Fallback to relative path
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    source "${SCRIPT_DIR}/../utils/logging.sh"
+fi
 ```
 
 ## Functions

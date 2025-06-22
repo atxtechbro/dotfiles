@@ -4,9 +4,14 @@
 
 set -euo pipefail
 
-# Source logging framework
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/../utils/logging.sh"
+# Source logging framework (global after setup.sh)
+if [[ -f ~/bin/logging.sh ]]; then
+    source ~/bin/logging.sh
+else
+    # Fallback to relative path
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    source "${SCRIPT_DIR}/../utils/logging.sh"
+fi
 
 # Function to process a single repository
 process_repo() {
