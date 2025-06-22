@@ -306,6 +306,22 @@ else
   echo -e "${RED}Amazon Q installation script not found at $DOT_DEN/utils/install-amazon-q.sh${NC}"
 fi
 
+# Claude Code CLI setup and management
+echo -e "${DIVIDER}"
+echo "Setting up Claude Code CLI..."
+
+# Setup Claude Code CLI (install, update, configure)
+if [[ -f "$DOT_DEN/utils/install-claude-code.sh" ]]; then
+  source "$DOT_DEN/utils/install-claude-code.sh"
+  setup_claude_code || {
+    echo -e "${RED}Failed to setup Claude Code CLI completely. Some features may not work.${NC}"
+    echo "You can install it manually later with: npm install -g @anthropic-ai/claude-code"
+  }
+else
+  echo -e "${RED}Claude Code installation script not found at $DOT_DEN/utils/install-claude-code.sh${NC}"
+fi
+
+
 # Node.js setup with NVM
 echo -e "${DIVIDER}"
 echo "Setting up Node.js with NVM..."
