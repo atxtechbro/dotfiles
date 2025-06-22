@@ -1,6 +1,7 @@
 #!/bin/bash
-# Convert AmazonQ.md files to AI-RULES.md with symlinks pattern
+# Convert provider-specific AI context files to AI-RULES.md with symlinks pattern
 # This implements the standardized AI context file structure
+# Handles: AmazonQ.md, CLAUDE.md, or any other AI provider files
 
 set -euo pipefail
 
@@ -28,27 +29,37 @@ process_repo() {
         return 1
     fi
     
-    # Check if AmazonQ.md exists
-    if [ ! -f "AmazonQ.md" ]; then
-        log_info "No AmazonQ.md found, skipping"
-        return 0
-    fi
-    
-    # Check if already converted
-    if [ -L "AmazonQ.md" ] && [ -f "AI-RULES.md" ]; then
-        log_success "Already converted"
+    # Find which AI context file exists (AmazonQ.md, CLAUDE.md, etc.)
+    local ai_file=""
+    if [ -f "AmazonQ.md" ] && [ ! -L "AmazonQ.md" ]; then
+        ai_file="AmazonQ.md"
+    elif [ -f "CLAUDE.md" ] && [ ! -L "CLAUDE.md" ]; then
+        ai_file="CLAUDE.md"
+    else
+        # Check if already converted
+        if [ -f "AI-RULES.md" ] && ([ -L "AmazonQ.md" ] || [ -L "CLAUDE.md" ]); then
+            log_success "Already converted"
+            return 0
+        fi
+        log_info "No AI context file found (AmazonQ.md or CLAUDE.md), skipping"
         return 0
     fi
     
     # Perform conversion
-    log_info "Converting AmazonQ.md to AI-RULES.md..."
+    log_info "Converting $ai_file to AI-RULES.md..."
     
-    # Move AmazonQ.md to AI-RULES.md
-    git mv AmazonQ.md AI-RULES.md
+    # Move the provider-specific file to AI-RULES.md
+    git mv "$ai_file" AI-RULES.md
     
-    # Create symlink: AmazonQ.md -> AI-RULES.md
-    ln -s AI-RULES.md AmazonQ.md
-    git add AmazonQ.md
+    # Create symlink for the original file
+    ln -s AI-RULES.md "$ai_file"
+    git add "$ai_file"
+    
+    # Create symlinks for both standard names if they don't exist
+    if [ ! -e "AmazonQ.md" ]; then
+        ln -s AI-RULES.md AmazonQ.md
+        git add AmazonQ.md
+    fi
     
     # Create symlink: CLAUDE.md -> AI-RULES.md (if it doesn't exist)
     if [ ! -e "CLAUDE.md" ]; then
@@ -64,9 +75,9 @@ process_repo() {
     else
         git commit -m "refactor: standardize AI context files to AI-RULES.md pattern
 
-- Rename AmazonQ.md to AI-RULES.md
-- Create symlinks: AmazonQ.md -> AI-RULES.md
-- Create symlinks: CLAUDE.md -> AI-RULES.md
+- Convert $ai_file to AI-RULES.md
+- Create symlinks for both AmazonQ.md and CLAUDE.md
+- Provider-agnostic: works with any AI context file
 
 This follows the dotfiles repository pattern for AI context management.
 
@@ -87,8 +98,9 @@ main() {
     echo "🔄 AI Rules File Converter"
     echo "=========================="
     echo
-    echo "This script converts AmazonQ.md files to the standardized AI-RULES.md pattern"
-    echo "with symlinks for both AmazonQ.md and CLAUDE.md pointing to AI-RULES.md."
+    echo "This script converts provider-specific AI context files to the standardized"
+    echo "AI-RULES.md pattern with symlinks for both AmazonQ.md and CLAUDE.md."
+    echo "Works with: AmazonQ.md, CLAUDE.md, or any existing AI provider file."
     echo
     
     # Parse arguments
@@ -106,22 +118,22 @@ main() {
     local repos=()
     
     if [ "$1" == "--find-all" ]; then
-        log_info "Finding all repositories with AmazonQ.md files in home directory..."
+        log_info "Finding all repositories with AI context files in home directory..."
         
-        # Depth-first search through home directory for all AmazonQ.md files
-        while IFS= read -r amazonq_file; do
-            repo_dir=$(dirname "$amazonq_file")
-            # Check if it's a git repo
-            if [ -d "$repo_dir/.git" ]; then
+        # Depth-first search for both AmazonQ.md and CLAUDE.md files
+        while IFS= read -r ai_file; do
+            repo_dir=$(dirname "$ai_file")
+            # Check if it's a git repo and not already in our list
+            if [ -d "$repo_dir/.git" ] && [[ ! " ${repos[@]} " =~ " ${repo_dir} " ]]; then
                 repos+=("$repo_dir")
             fi
-        done < <(find ~ -name "AmazonQ.md" -type f 2>/dev/null | sort)
+        done < <(find ~ \( -name "AmazonQ.md" -o -name "CLAUDE.md" \) -type f 2>/dev/null | sort)
         
-        echo "Found ${#repos[@]} repositories with AmazonQ.md files"
+        echo "Found ${#repos[@]} repositories with AI context files"
         echo
         
         if [ ${#repos[@]} -eq 0 ]; then
-            echo "No repositories found with AmazonQ.md files"
+            echo "No repositories found with AI context files"
             exit 0
         fi
         

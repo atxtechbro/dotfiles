@@ -278,7 +278,7 @@ fi
 if [[ "$AUTO_CONVERT_AI_RULES" == "true" ]]; then
     echo -e "${DIVIDER}"
     echo "Running AI rules conversion..."
-    echo -e "${YELLOW}This will standardize AmazonQ.md files to AI-RULES.md pattern across your repositories.${NC}"
+    echo -e "${YELLOW}This will standardize AI context files to AI-RULES.md pattern across your repositories.${NC}"
     echo -e "${YELLOW}To disable this, set AUTO_CONVERT_AI_RULES=false in .env${NC}"
     
     if command -v convert-ai-rules &>/dev/null; then

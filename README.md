@@ -168,7 +168,7 @@ The setup script automatically handles:
 - Setting up your secrets file from the template
 - Applying configurations immediately
 - Installing and configuring essential tools (tmux, Amazon Q CLI, GitHub CLI, etc.)
-- Converting AmazonQ.md files to AI-RULES.md pattern (configurable)
+- Converting AI context files to AI-RULES.md pattern (configurable)
 
 Following the "Spilled Coffee Principle" - the setup script ensures you can be fully operational after running it once.
 
@@ -182,7 +182,7 @@ cp .env.example .env
 ```
 
 Available options:
-- `AUTO_CONVERT_AI_RULES`: Set to `false` to skip automatic AmazonQ.md → AI-RULES.md conversion
+- `AUTO_CONVERT_AI_RULES`: Set to `false` to skip automatic AI context → AI-RULES.md conversion
 - `WORK_MACHINE`: Set to `true` for work machines (filters MCP servers)
 
 ## AI Provider Agnostic Context
