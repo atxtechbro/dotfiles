@@ -47,16 +47,6 @@ export PATH="$DOT_DEN/mcp/servers:$PATH"
 # Export flag to tell subscripts we're running from the main setup
 export SETUP_SCRIPT_RUNNING=true
 
-# Load environment configuration if exists
-if [[ -f "$DOT_DEN/.env" ]]; then
-    echo "Loading environment configuration from .env..."
-    set -a  # automatically export all variables
-    source "$DOT_DEN/.env"
-    set +a  # turn off automatic export
-fi
-
-# Set defaults for configuration options
-AUTO_CONVERT_AI_RULES="${AUTO_CONVERT_AI_RULES:-true}"
 
 echo -e "${DIVIDER}"
 echo -e "${GREEN}Setting up dotfiles...${NC}"
@@ -274,23 +264,18 @@ fi
 # Set up AI provider global rules (Amazon Q + Claude Code)
 "$DOT_DEN/utils/setup-ai-provider-rules.py"
 
-# Run AI rules conversion if enabled
-if [[ "$AUTO_CONVERT_AI_RULES" == "true" ]]; then
-    echo -e "${DIVIDER}"
-    echo "Running AI rules conversion..."
-    echo -e "${YELLOW}This will standardize AI context files to AI-RULES.md pattern across your repositories.${NC}"
-    echo -e "${YELLOW}To disable this, set AUTO_CONVERT_AI_RULES=false in .env${NC}"
-    
-    if command -v convert-ai-rules &>/dev/null; then
-        # Run in non-interactive mode by piping 'y' to the command
-        echo "y" | convert-ai-rules --find-all || {
-            echo -e "${YELLOW}AI rules conversion completed (some repos may have been skipped)${NC}"
-        }
-    else
-        echo -e "${YELLOW}convert-ai-rules script not found in PATH. Skipping conversion.${NC}"
-    fi
+# Run AI rules conversion
+echo -e "${DIVIDER}"
+echo "Running AI rules conversion..."
+echo -e "${YELLOW}This will standardize AI context files to AI-RULES.md pattern across your repositories.${NC}"
+
+if command -v convert-ai-rules &>/dev/null; then
+    # Run in non-interactive mode by piping 'y' to the command
+    echo "y" | convert-ai-rules --find-all || {
+        echo -e "${YELLOW}AI rules conversion completed (some repos may have been skipped)${NC}"
+    }
 else
-    echo -e "${BLUE}AI rules conversion skipped (AUTO_CONVERT_AI_RULES=false)${NC}"
+    echo -e "${YELLOW}convert-ai-rules script not found in PATH. Skipping conversion.${NC}"
 fi
 
 # Configuration files setup complete
