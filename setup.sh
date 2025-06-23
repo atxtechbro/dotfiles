@@ -254,6 +254,14 @@ fi
 # Set up AI provider global rules (Amazon Q + Claude Code)
 "$DOT_DEN/utils/setup-ai-provider-rules.py"
 
+# Generate Claude commands from templates
+if [[ -f "$DOT_DEN/utils/generate-claude-commands.sh" ]]; then
+  echo "Generating Claude commands from templates..."
+  "$DOT_DEN/utils/generate-claude-commands.sh"
+else
+  echo -e "${YELLOW}Claude command generation script not found. Skipping command generation.${NC}"
+fi
+
 # Configuration files setup complete
 echo -e "${GREEN}✓ Configuration files setup complete${NC}"
 
