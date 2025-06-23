@@ -62,9 +62,17 @@ class VariableResolver(PlaceholderResolver):
         
         # Check for variable files in search paths
         for search_path in context.get('search_paths', []):
-            var_file = Path(search_path) / f"{placeholder.lower()}.md"
-            if var_file.exists():
-                return var_file.read_text().strip()
+            search_path = Path(search_path).resolve()
+            var_file = search_path / f"{placeholder.lower()}.md"
+            
+            # Ensure the resolved path is within the search path
+            try:
+                var_file = var_file.resolve()
+                if search_path in var_file.parents and var_file.exists():
+                    return var_file.read_text().strip()
+            except (OSError, RuntimeError):
+                # Skip if path resolution fails
+                continue
         
         return None
 
@@ -78,16 +86,23 @@ class FileInjectionResolver(PlaceholderResolver):
     def resolve(self, placeholder: str, context: Dict[str, Any]) -> Optional[str]:
         file_path = placeholder[7:]  # Remove 'INJECT:' prefix
         
+        # Normalize and check for path traversal attempts
+        file_path = os.path.normpath(file_path)
+        if '..' in file_path or file_path.startswith('/'):
+            return None  # Reject absolute paths and parent directory references
+        
         # Try relative to knowledge base first
-        knowledge_base = context.get('knowledge_base', Path.cwd() / 'knowledge')
-        full_path = Path(knowledge_base) / file_path
+        knowledge_base = Path(context.get('knowledge_base', Path.cwd() / 'knowledge')).resolve()
         
-        if full_path.exists():
-            return full_path.read_text()
-        
-        # Try as absolute or relative path
-        if Path(file_path).exists():
-            return Path(file_path).read_text()
+        try:
+            full_path = (knowledge_base / file_path).resolve()
+            # Ensure the resolved path is within the knowledge base
+            if knowledge_base in full_path.parents or full_path == knowledge_base:
+                if full_path.exists():
+                    return full_path.read_text()
+        except (OSError, RuntimeError):
+            # Skip if path resolution fails
+            pass
         
         return None
 
@@ -121,14 +136,17 @@ class FunctionResolver(PlaceholderResolver):
         func_name = match.group(1)
         params = match.group(2)
         
-        # Check for custom functions in context
-        custom_functions = context.get('custom_functions', {})
-        if func_name in custom_functions:
-            return str(custom_functions[func_name](params))
-        
-        # Check built-in functions
-        if func_name in self.functions:
-            return str(self.functions[func_name]())
+        try:
+            # Check for custom functions in context
+            custom_functions = context.get('custom_functions', {})
+            if func_name in custom_functions:
+                return str(custom_functions[func_name](params))
+            
+            # Check built-in functions
+            if func_name in self.functions:
+                return str(self.functions[func_name]())
+        except Exception as e:
+            return f"[ERROR in function {func_name}: {e}]"
         
         return None
 
@@ -152,10 +170,20 @@ class CommandResolver(PlaceholderResolver):
     
     def resolve(self, placeholder: str, context: Dict[str, Any]) -> Optional[str]:
         command = placeholder[5:]  # Remove 'EXEC:' prefix
+        
+        # Only allow simple, safe commands (no shell injection)
+        # For production use, consider removing this resolver entirely
+        # or implementing a whitelist of allowed commands
+        if any(char in command for char in [';', '&', '|', '$', '`', '\n', '\r']):
+            return "[ERROR: Command contains unsafe characters]"
+        
         try:
+            # Use shell=False and split command properly
+            # This is still potentially dangerous - consider removing EXEC support
+            cmd_parts = command.split()
             result = subprocess.run(
-                command, 
-                shell=True, 
+                cmd_parts, 
+                shell=False, 
                 capture_output=True, 
                 text=True,
                 timeout=10  # 10 second timeout
@@ -196,14 +224,25 @@ class PromptOrchestrator:
     def add_json_file(self, json_path: Path):
         """Load and flatten JSON data into data sources"""
         try:
-            data = json.loads(json_path.read_text())
+            json_path = json_path.resolve()
+            # Basic path safety check
+            if not json_path.exists():
+                print(f"Warning: JSON file not found: {json_path}")
+                return
+                
+            content = json_path.read_text()
+            data = json.loads(content)
             self._flatten_json(data)
             
             # Also store the entire content
             key = json_path.stem.upper().replace('-', '_').replace(' ', '_')
-            self.context['data_sources'][key] = json_path.read_text()
+            self.context['data_sources'][key] = content
+        except json.JSONDecodeError as e:
+            print(f"Warning: Invalid JSON in {json_path}: {e}")
+        except (OSError, IOError) as e:
+            print(f"Warning: Failed to read {json_path}: {e}")
         except Exception as e:
-            print(f"Warning: Failed to load JSON from {json_path}: {e}")
+            print(f"Warning: Unexpected error loading {json_path}: {e}")
     
     def _flatten_json(self, obj: Dict[str, Any], prefix: str = ""):
         """Flatten nested JSON into data sources"""
@@ -263,7 +302,11 @@ class PromptOrchestrator:
         elif 'fashion' in str(template_path):
             self.add_search_path(Path('fashion/variables'))
         
-        template_content = template_path.read_text()
+        try:
+            template_content = template_path.read_text()
+        except (OSError, IOError) as e:
+            print(f"Error: Failed to read template file: {e}")
+            return False
         processed, missing = self.process_template(template_content)
         
         if missing:
