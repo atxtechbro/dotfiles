@@ -58,6 +58,16 @@ env/
 .env/
 mcp/servers/aws-docs/venv/
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
 # Clojure cache
 .cpcache/
 

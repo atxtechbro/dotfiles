@@ -1,0 +1,59 @@
+Close GitHub issue #{{ ARGUMENTS }} - determine if it needs implementation or just closure.
+
+Repository: atxtechbro/dotfiles
+
+## Core Principles
+{{ INJECT:principles/do-dont-explain.md }}
+{{ INJECT:principles/tracer-bullets.md }}
+
+## Step 1: Analyze the Issue
+Use `mcp__github__get_issue` to read issue #{{ ARGUMENTS }} and determine:
+- Is this already resolved? → Quick close
+- Does this need implementation? → Full workflow
+- Is this invalid/duplicate? → Close with explanation
+
+## Quick Close Path
+If the issue is already resolved, invalid, or duplicate:
+1. Add explanatory comment with `mcp__github__add_issue_comment`
+2. Close with `mcp__github__update_issue` (state: "closed")
+3. Done!
+
+## Full Implementation Path
+If the issue needs implementation:
+
+### 1. Set Up Development
+{{ INJECT:procedures/worktree-workflow.md }}
+
+Apply to issue #{{ ARGUMENTS }}:
+- Replace <NUMBER> with {{ ARGUMENTS }}
+- Replace <description> with issue title slug
+
+### 2. Implement Solution
+- Use TodoWrite to track implementation tasks
+- Follow existing patterns in codebase
+- Test changes as you go
+- Run lint/typecheck if available
+
+{{ INJECT:procedures/git-workflow.md }}
+
+### 3. Create Pull Request
+- Push: `git push -u origin fix/<description>-{{ ARGUMENTS }}`
+- Create PR with `mcp__github__create_pull_request`
+- Reference "Closes #{{ ARGUMENTS }}" in PR body
+- PR will auto-close issue when merged
+
+### 4. Post-Implementation
+{{ INJECT:procedures/post-pr-mini-retro.md }}
+
+### 5. Cleanup
+Remove worktree after PR is created.
+
+## Decision Matrix
+- **Bug report with clear reproduction** → Implementation path
+- **Feature request approved by maintainer** → Implementation path  
+- **Question already answered** → Quick close with link
+- **Duplicate issue** → Quick close referencing original
+- **Invalid/out of scope** → Quick close with explanation
+- **Implemented in recent PR** → Quick close with PR reference
+
+Remember: Act agentically. Make the decision and execute.
