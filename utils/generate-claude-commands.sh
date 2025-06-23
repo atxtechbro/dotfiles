@@ -7,7 +7,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_DIR="$(dirname "$SCRIPT_DIR")"
 TEMPLATES_DIR="$DOTFILES_DIR/.claude/command-templates"
-COMMANDS_DIR="$DOTFILES_DIR/.claude/commands"
+COMMANDS_DIR="$HOME/.claude/commands"
 PROMPT_ORCHESTRATOR="$SCRIPT_DIR/prompt_orchestrator.py"
 
 # Create directories if they don't exist
