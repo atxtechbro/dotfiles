@@ -25,7 +25,20 @@
       "args": [],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
-      }
+      },
+      "disabled": {{IS_PERSONAL_MACHINE}}
+    },
+    "gitlab": {
+      "command": "gitlab-mcp-wrapper.sh",
+      "args": [],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR",
+        "GITLAB_READ_ONLY_MODE": "false",
+        "USE_GITLAB_WIKI": "true",
+        "USE_MILESTONE": "true",
+        "USE_PIPELINE": "true"
+      },
+      "disabled": {{IS_PERSONAL_MACHINE}}
     },
     "brave-search": {
       "command": "brave-search-mcp-wrapper.sh",
@@ -47,17 +60,6 @@
       "args": [],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
-    "gitlab": {
-      "command": "npx",
-      "args": ["-y", "@zereight/mcp-gitlab"],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR",
-        "GITLAB_READ_ONLY_MODE": "false",
-        "USE_GITLAB_WIKI": "true",
-        "USE_MILESTONE": "true",
-        "USE_PIPELINE": "true"
       }
     }
   }
