@@ -209,6 +209,13 @@ if [[ ! -f ~/.config/Claude/claude_desktop_config.json ]] || ! cmp -s "$DOT_DEN"
     cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json
 fi
 
+# Claude Code project-level MCP integration
+# Claude Code reads from .mcp.json in the project root
+if [[ ! -f "$DOT_DEN/.mcp.json" ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json "$DOT_DEN/.mcp.json"; then
+    cp "$DOT_DEN"/mcp/mcp.json "$DOT_DEN/.mcp.json"
+    echo "Updated project-level .mcp.json for Claude Code"
+fi
+
 # Set up Git configuration
 echo "Setting up Git configuration..."
 gitconfig_path="$HOME/.gitconfig"
