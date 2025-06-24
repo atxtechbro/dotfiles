@@ -1,4 +1,4 @@
-Close GitHub issue #{{ ARGUMENTS }} - determine if it needs implementation or just closure.
+Close GitHub issue #{{ ISSUE_NUMBER }} - determine if it needs implementation or just closure.
 
 Repository: atxtechbro/dotfiles
 
@@ -7,7 +7,7 @@ Repository: atxtechbro/dotfiles
 {{ INJECT:principles/tracer-bullets.md }}
 
 ## Step 1: Analyze the Issue
-Use `mcp__github__get_issue` to read issue #{{ ARGUMENTS }} and determine:
+Use `mcp__github__get_issue` to read issue #{{ ISSUE_NUMBER }} and determine:
 - Is this already resolved? → Quick close
 - Does this need implementation? → Full workflow
 - Is this invalid/duplicate? → Close with explanation
@@ -24,8 +24,8 @@ If the issue needs implementation:
 ### 1. Set Up Development
 {{ INJECT:procedures/worktree-workflow.md }}
 
-Apply to issue #{{ ARGUMENTS }}:
-- Replace <NUMBER> with {{ ARGUMENTS }}
+Apply to issue #{{ ISSUE_NUMBER }}:
+- Replace <NUMBER> with {{ ISSUE_NUMBER }}
 - Replace <description> with issue title slug
 
 ### 2. Implement Solution
@@ -37,9 +37,9 @@ Apply to issue #{{ ARGUMENTS }}:
 {{ INJECT:procedures/git-workflow.md }}
 
 ### 3. Create Pull Request
-- Push: `git push -u origin fix/<description>-{{ ARGUMENTS }}`
+- Push: `git push -u origin <branch-name>`
 - Create PR with `mcp__github__create_pull_request`
-- Reference "Closes #{{ ARGUMENTS }}" in PR body
+- Reference "Closes #{{ ISSUE_NUMBER }}" in PR body
 - PR will auto-close issue when merged
 
 ### 4. Post-Implementation
