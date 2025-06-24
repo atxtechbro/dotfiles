@@ -108,6 +108,14 @@ class GitBatch(BaseModel):
     repo_path: str
     commands: list[dict]  # List of {"tool": "git_add", "args": {...}}
 
+class GitRebase(BaseModel):
+    repo_path: str
+    onto: str | None = None  # Branch to rebase onto
+    interactive: bool = False
+    continue_rebase: bool = False
+    skip: bool = False
+    abort: bool = False
+
 class GitTools(str, Enum):
     STATUS = "git_status"
     DIFF_UNSTAGED = "git_diff_unstaged"
@@ -128,6 +136,7 @@ class GitTools(str, Enum):
     MERGE = "git_merge"
     REMOTE = "git_remote"
     BATCH = "git_batch"
+    REBASE = "git_rebase"
 
 def git_status(repo: git.Repo) -> str:
     return repo.git.status()
@@ -385,6 +394,10 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
                 result = git_create_branch(repo, args.get("branch_name"), args.get("base_branch"))
             elif tool == "git_checkout":
                 result = git_checkout(repo, args.get("branch_name"))
+            elif tool == "git_rebase":
+                result = git_rebase(repo, args.get("onto"), args.get("interactive", False), 
+                                   args.get("continue_rebase", False), args.get("skip", False), 
+                                   args.get("abort", False))
             else:
                 result = f"Unknown tool: {tool}"
             
@@ -394,6 +407,60 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
             break  # Stop on first error
     
     return results
+
+def git_rebase(repo: git.Repo, onto: str | None = None, interactive: bool = False, 
+               continue_rebase: bool = False, skip: bool = False, abort: bool = False) -> str:
+    """Handle git rebase operations"""
+    
+    # Handle rebase control operations
+    if abort:
+        try:
+            repo.git.rebase("--abort")
+            return "Rebase aborted successfully"
+        except git.GitCommandError as e:
+            return f"Error aborting rebase: {str(e)}"
+    
+    if continue_rebase:
+        try:
+            repo.git.rebase("--continue")
+            return "Rebase continued successfully"
+        except git.GitCommandError as e:
+            if "No rebase in progress?" in str(e):
+                return "No rebase in progress"
+            return f"Error continuing rebase: {str(e)}"
+    
+    if skip:
+        try:
+            repo.git.rebase("--skip")
+            return "Skipped current commit and continued rebase"
+        except git.GitCommandError as e:
+            if "No rebase in progress?" in str(e):
+                return "No rebase in progress"
+            return f"Error skipping commit: {str(e)}"
+    
+    # Start a new rebase
+    if not onto:
+        return "Error: 'onto' branch required for rebase operation"
+    
+    cmd_parts = []
+    
+    if interactive:
+        # For interactive rebase, we'll use a simplified approach
+        # In a real terminal environment, this would open an editor
+        return "Interactive rebase is not fully supported in this environment. Use standard rebase instead."
+    
+    cmd_parts.append(onto)
+    
+    try:
+        output = repo.git.rebase(*cmd_parts)
+        return output if output else f"Successfully rebased onto '{onto}'"
+    except git.GitCommandError as e:
+        if "CONFLICT" in str(e):
+            return f"Rebase conflict detected. Resolve conflicts and run with --continue, or --abort to cancel.\n{str(e)}"
+        elif "up to date" in str(e).lower():
+            return f"Current branch is up to date with '{onto}'"
+        else:
+            return f"Error during rebase: {str(e)}"
 
 async def serve(repository: Path | None) -> None:
     logger = logging.getLogger(__name__)
@@ -505,6 +572,11 @@ async def serve(repository: Path | None) -> None:
                 name=GitTools.BATCH,
                 description="Execute multiple git commands in sequence",
                 inputSchema=GitBatch.schema(),
+            ),
+            Tool(
+                name=GitTools.REBASE,
+                description="Rebase current branch onto another branch (supports --continue, --skip, --abort)",
+                inputSchema=GitRebase.schema(),
             )
         ]
 
@@ -973,6 +1045,21 @@ Format the output as markdown suitable for GitHub PR description."""
                     return [TextContent(
                         type="text",
                         text="\n".join(formatted_results)
+                    )]
+
+                case GitTools.REBASE:
+                    result = git_rebase(
+                        repo,
+                        arguments.get("onto"),
+                        arguments.get("interactive", False),
+                        arguments.get("continue_rebase", False),
+                        arguments.get("skip", False),
+                        arguments.get("abort", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Rebase operation completed", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
                     )]
 
                 case _:

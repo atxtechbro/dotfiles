@@ -28,6 +28,35 @@ This is a customized version of the git-mcp-server that has been migrated into t
 | `git_create_branch` | Creates new branch | ✅ |
 | `git_checkout` | Switches branches | ✅ |
 | `git_show` | Shows commit contents | ✅ |
+| `git_worktree_add` | Add a new worktree for parallel development | ✅ |
+| `git_worktree_remove` | Remove a worktree | ✅ |
+| `git_worktree_list` | List all worktrees | ✅ |
+| `git_push` | Push commits to remote repository | ✅ |
+| `git_pull` | Pull changes from remote repository | ✅ |
+| `git_merge` | Merge branches with support for different strategies | ✅ |
+| `git_remote` | Manage remote repositories | ✅ |
+| `git_batch` | Execute multiple git commands in sequence | ✅ |
+| `git_rebase` | Rebase current branch onto another branch | ✅ |
+
+### Git Rebase Tool
+
+The `git_rebase` tool supports maintaining linear history and reorganizing commits:
+
+**Parameters:**
+- `repo_path`: Path to the git repository (required)
+- `onto`: Branch to rebase onto (required for new rebase)
+- `interactive`: Enable interactive rebase (limited support)
+- `continue_rebase`: Continue an in-progress rebase
+- `skip`: Skip current commit during rebase
+- `abort`: Abort an in-progress rebase
+
+**Usage Examples:**
+- Start rebase: `{"repo_path": ".", "onto": "main"}`
+- Continue after resolving conflicts: `{"repo_path": ".", "continue_rebase": true}`
+- Skip problematic commit: `{"repo_path": ".", "skip": true}`
+- Abort rebase: `{"repo_path": ".", "abort": true}`
+
+**Note:** Interactive rebase is not fully supported in MCP environment due to editor limitations.
 
 ## Logging Implementation
 
