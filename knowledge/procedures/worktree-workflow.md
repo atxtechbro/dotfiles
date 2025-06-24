@@ -11,4 +11,4 @@ Suppose you need to work on multiple tasks simultaneously with complete code iso
 3. Work in worktree: Pass worktree path as `repo_path` to MCP tools (no `cd` needed!)
 4. Commit, push, create PR as normal
 5. Ask for any pr feedback and address if any
-6. Cleanup: Use `mcp__git__git_worktree_remove` with `force: true`
+6. Cleanup: Use `mcp__git__git_worktree_remove`
