@@ -179,6 +179,15 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         fi
     fi
 fi
+
+# Generate MCP configuration from template
+echo "Generating MCP configuration..."
+if [[ -x "$DOT_DEN/mcp/generate-mcp-config.sh" ]]; then
+    "$DOT_DEN/mcp/generate-mcp-config.sh"
+else
+    echo "Warning: MCP generator not found, using existing config"
+fi
+
 # Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
 # (as opposed to Workspace Configuration: .amazonq/mcp.json - Specific to the current workspace)
 mkdir -p ~/.aws/amazonq
@@ -190,21 +199,6 @@ fi
 mkdir -p ~/.config/Claude
 if [[ ! -f ~/.config/Claude/claude_desktop_config.json ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json; then
     cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json
-fi
-
-# Apply environment-specific MCP server configuration
-if [[ -f "$DOT_DEN/utils/mcp-environment.sh" ]]; then
-  # Source the MCP environment utility (suppress function definition output)
-  # shellcheck disable=SC1090
-  source "$DOT_DEN/utils/mcp-environment.sh" >/dev/null
-  
-  # Detect current environment
-  CURRENT_ENV=$(detect_environment)
-  echo "Configuring MCP servers for $CURRENT_ENV environment..."
-  
-  # Apply environment-specific configuration to all MCP config files
-  filter_mcp_config ~/.aws/amazonq/mcp.json "$CURRENT_ENV"
-  filter_mcp_config ~/.config/Claude/claude_desktop_config.json "$CURRENT_ENV"
 fi
 
 # Set up Git configuration

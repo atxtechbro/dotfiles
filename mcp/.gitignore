@@ -1,0 +1,5 @@
+# Generated files
+mcp.json
+
+# The source of truth is mcp.template.json
+# mcp.json is generated from it during setup
