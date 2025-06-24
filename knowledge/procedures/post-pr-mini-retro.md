@@ -2,16 +2,22 @@
 
 After submitting a pull request for feature-related workflows, conduct a mini retro focused on systems improvement. This supports the Snowball Method by capturing learnings and dedicating 20% of time to systems improvement.
 
-## IMPORTANT: Collaborative Process
+## IMPORTANT: Agent-Led Collaborative Process
 
-**This retro MUST be a collaborative process between the agent and human:**
-1. Agent presents the retro questions below
-2. Human provides input and reflection on each question
-3. Agent and human discuss insights together
-4. Human explicitly confirms when the retro is complete
-5. Agent must PAUSE and wait for human responses - do NOT complete the retro alone
+**The agent drives the retro while actively inviting human participation:**
 
-The agent should say something like: "Let's conduct the post-PR mini retro together. I'll ask the questions and wait for your input on each one before we proceed."
+1. **Agent creates a retro plan**: Think through the implementation, identify key moments, and structure the discussion
+2. **Agent invites human in**: Present your plan and explicitly invite the human to participate
+3. **Agent leads with substance**: Share your genuine reflections, tensions observed, and questions you have
+4. **Human adds perspective**: The human provides input where they have insights or corrections
+5. **Collaborative discussion**: Both parties explore insights together
+6. **Human confirms completion**: The human explicitly confirms when the retro is complete
+
+The agent should:
+- Start with something like: "I've been reflecting on our implementation. Here's my retro plan... [plan]. Let's work through this together."
+- Share real observations and questions, not just run through a checklist
+- Be specific about decision points and tensions noticed
+- Genuinely seek the human's perspective on key moments
 
 ## Retro Questions
 
