@@ -85,6 +85,12 @@ class GitPush(BaseModel):
     set_upstream: bool = False
     force: bool = False
 
+class GitPull(BaseModel):
+    repo_path: str
+    remote: str = "origin"
+    branch: str | None = None
+    rebase: bool = False
+
 class GitRemote(BaseModel):
     repo_path: str
     action: str  # "list", "add", "remove", "get-url"
@@ -111,6 +117,7 @@ class GitTools(str, Enum):
     WORKTREE_REMOVE = "git_worktree_remove"
     WORKTREE_LIST = "git_worktree_list"
     PUSH = "git_push"
+    PULL = "git_pull"
     REMOTE = "git_remote"
     BATCH = "git_batch"
 
@@ -260,6 +267,24 @@ def git_push(repo: git.Repo, remote: str = "origin", branch: str = None, set_ups
     
     return f"Pushed {branch} to {remote}" + (f" (tracking)" if set_upstream else "")
 
+def git_pull(repo: git.Repo, remote: str = "origin", branch: str | None = None, rebase: bool = False) -> str:
+    """Pull changes from remote repository"""
+    # Build command as a list
+    cmd_parts = []
+    
+    if rebase:
+        cmd_parts.append("--rebase")
+    
+    cmd_parts.append(remote)
+    
+    if branch:
+        cmd_parts.append(branch)
+    
+    # Use the git command directly through repo.git
+    output = repo.git.pull(*cmd_parts)
+    
+    return output if output else f"Already up to date with {remote}" + (f"/{branch}" if branch else "")
+
 def git_remote(repo: git.Repo, action: str, name: str | None = None, url: str | None = None) -> str:
     """Manage remote repositories"""
     if action == "list":
@@ -302,6 +327,8 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
                 result = git_commit(repo, args.get("message", ""))
             elif tool == "git_push":
                 result = git_push(repo, args.get("remote", "origin"), args.get("branch"), args.get("set_upstream", False), args.get("force", False))
+            elif tool == "git_pull":
+                result = git_pull(repo, args.get("remote", "origin"), args.get("branch"), args.get("rebase", False))
             elif tool == "git_status":
                 result = git_status(repo)
             elif tool == "git_create_branch":
@@ -408,6 +435,11 @@ async def serve(repository: Path | None) -> None:
                 name=GitTools.PUSH,
                 description="Push commits to remote repository (branch required, main blocked)",
                 inputSchema=GitPush.schema(),
+            ),
+            Tool(
+                name=GitTools.PULL,
+                description="Pull changes from remote repository",
+                inputSchema=GitPull.schema(),
             ),
             Tool(
                 name=GitTools.REMOTE,
@@ -825,6 +857,19 @@ Format the output as markdown suitable for GitHub PR description."""
                         arguments.get("force", False)
                     )
                     log_tool_success("atxtechbro-git-mcp-server", name, f"Pushed to {arguments.get('remote', 'origin')}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.PULL:
+                    result = git_pull(
+                        repo,
+                        arguments.get("remote", "origin"),
+                        arguments.get("branch"),
+                        arguments.get("rebase", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Pulled from {arguments.get('remote', 'origin')}", repo_path, arguments)
                     return [TextContent(
                         type="text",
                         text=result
