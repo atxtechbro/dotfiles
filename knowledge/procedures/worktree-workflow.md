@@ -11,9 +11,4 @@ Suppose you need to work on multiple tasks simultaneously with complete code iso
 3. Work in worktree: Pass worktree path as `repo_path` to MCP tools (no `cd` needed!)
 4. Commit, push, create PR as normal
 5. Ask for any pr feedback and address if any
-6. Cleanup: Use `mcp__git__git_worktree_remove` from the main repository
-   - Always specify `repo_path` as the main repository path
-   - First try without `force` parameter (defaults to false)
-   - If removal fails due to uncommitted changes, review what's there
-   - Only add `force: true` if you're certain the changes can be discarded
-   - **WARNING**: Never remove a worktree while your working directory is inside it
+6. Cleanup: Use `mcp__git__git_worktree_remove`
