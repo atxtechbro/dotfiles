@@ -91,14 +91,6 @@ class GitRemote(BaseModel):
     name: str | None = None
     url: str | None = None
 
-class GitStageCommitPush(BaseModel):
-    repo_path: str
-    files: list[str]
-    message: str
-    remote: str = "origin"
-    branch: str | None = None
-    set_upstream: bool = False
-
 class GitBatch(BaseModel):
     repo_path: str
     commands: list[dict]  # List of {"tool": "git_add", "args": {...}}
@@ -120,7 +112,6 @@ class GitTools(str, Enum):
     WORKTREE_LIST = "git_worktree_list"
     PUSH = "git_push"
     REMOTE = "git_remote"
-    STAGE_COMMIT_PUSH = "git_stage_commit_push"
     BATCH = "git_batch"
 
 def git_status(repo: git.Repo) -> str:
@@ -288,33 +279,6 @@ def git_remote(repo: git.Repo, action: str, name: str | None = None, url: str | 
     else:
         return f"Error: Unknown action '{action}'. Valid actions: list, add, remove, get-url"
 
-def git_stage_commit_push(repo: git.Repo, files: list[str], message: str, remote: str = "origin", branch: str | None = None, set_upstream: bool = False) -> str:
-    """Stage, commit, and push in one operation"""
-    results = []
-    
-    # Stage files
-    repo.index.add(files)
-    results.append(f"Staged {len(files)} file(s)")
-    
-    # Commit
-    commit = repo.index.commit(message)
-    results.append(f"Committed: {commit.hexsha[:8]}")
-    
-    # Push
-    push_args = [remote]
-    if set_upstream:
-        push_args = ["-u", remote]
-    
-    if branch:
-        push_args.append(branch)
-    else:
-        push_args.append(repo.active_branch.name)
-    
-    repo.git.push(*push_args)
-    results.append(f"Pushed {branch or repo.active_branch.name} to {remote}")
-    
-    return " → ".join(results)
-
 def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
     """Execute multiple git commands in sequence"""
     results = []
@@ -441,11 +405,6 @@ async def serve(repository: Path | None) -> None:
                 name=GitTools.REMOTE,
                 description="Manage remote repositories (list, add, remove, get-url)",
                 inputSchema=GitRemote.schema(),
-            ),
-            Tool(
-                name=GitTools.STAGE_COMMIT_PUSH,
-                description="Stage files, commit, and push in one operation",
-                inputSchema=GitStageCommitPush.schema(),
             ),
             Tool(
                 name=GitTools.BATCH,
@@ -871,21 +830,6 @@ Format the output as markdown suitable for GitHub PR description."""
                         arguments.get("url")
                     )
                     log_tool_success("atxtechbro-git-mcp-server", name, f"Remote action: {arguments['action']}", repo_path, arguments)
-                    return [TextContent(
-                        type="text",
-                        text=result
-                    )]
-
-                case GitTools.STAGE_COMMIT_PUSH:
-                    result = git_stage_commit_push(
-                        repo,
-                        arguments["files"],
-                        arguments["message"],
-                        arguments.get("remote", "origin"),
-                        arguments.get("branch"),
-                        arguments.get("set_upstream", False)
-                    )
-                    log_tool_success("atxtechbro-git-mcp-server", name, f"Stage-commit-push completed", repo_path, arguments)
                     return [TextContent(
                         type="text",
                         text=result
