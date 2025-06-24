@@ -245,7 +245,7 @@ def git_push(repo: git.Repo, remote: str = "origin", branch: str | None = None, 
     # Use the git command directly through repo.git
     output = repo.git.push(*cmd_parts)
     
-    return f"Pushed to {remote}" + (f" (tracking {remote}/{branch or repo.active_branch.name})" if set_upstream else "")
+    return f"Pushed {branch or repo.active_branch.name} to {remote}" + (f" (tracking)" if set_upstream else "")
 
 def git_remote(repo: git.Repo, action: str, name: str | None = None, url: str | None = None) -> str:
     """Manage remote repositories"""
