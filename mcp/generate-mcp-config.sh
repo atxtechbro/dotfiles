@@ -16,21 +16,18 @@ if [[ ! -f "$TEMPLATE" ]]; then
 fi
 
 # Check if we're on a work machine
-IS_WORK_MACHINE="${WORK_MACHINE:-false}"
+# IS_PERSONAL_MACHINE is true when WORK_MACHINE is not "true"
+if [ "${WORK_MACHINE:-false}" = "true" ]; then
+    IS_PERSONAL_MACHINE="false"
+else
+    IS_PERSONAL_MACHINE="true"
+fi
 
 echo "🔧 Generating mcp.json from template..."
-echo "📍 Machine type: $([ "$IS_WORK_MACHINE" = "true" ] && echo "work" || echo "personal")"
+echo "📍 Machine type: $([ "$IS_PERSONAL_MACHINE" = "true" ] && echo "personal" || echo "work")"
 
-if [ "$IS_WORK_MACHINE" = "true" ]; then
-    # Include work-only servers - remove the conditional markers
-    sed -e '/{{#if WORK_MACHINE}}/d' \
-        -e '/{{\/if}}/d' \
-        "$TEMPLATE" > "$OUTPUT"
-else
-    # Exclude work-only servers - remove everything between conditionals
-    sed -e '/{{#if WORK_MACHINE}}/,/{{\/if}}/d' \
-        "$TEMPLATE" > "$OUTPUT"
-fi
+# Simple substitution - replace {{IS_PERSONAL_MACHINE}} with actual value
+sed "s/{{IS_PERSONAL_MACHINE}}/$IS_PERSONAL_MACHINE/g" "$TEMPLATE" > "$OUTPUT"
 
 echo "✅ Generated mcp.json"
 
