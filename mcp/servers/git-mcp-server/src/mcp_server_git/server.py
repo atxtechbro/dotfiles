@@ -64,6 +64,33 @@ class GitShow(BaseModel):
     repo_path: str
     revision: str
 
+class GitWorktreeAdd(BaseModel):
+    repo_path: str
+    worktree_path: str
+    branch_name: str | None = None
+    create_branch: bool = False
+
+class GitWorktreeRemove(BaseModel):
+    repo_path: str
+    worktree_path: str
+    force: bool = False
+
+class GitWorktreeList(BaseModel):
+    repo_path: str
+
+class GitPush(BaseModel):
+    repo_path: str
+    remote: str = "origin"
+    branch: str | None = None
+    set_upstream: bool = False
+    force: bool = False
+
+class GitRemote(BaseModel):
+    repo_path: str
+    action: str  # "list", "add", "remove", "get-url"
+    name: str | None = None
+    url: str | None = None
+
 class GitTools(str, Enum):
     STATUS = "git_status"
     DIFF_UNSTAGED = "git_diff_unstaged"
@@ -76,6 +103,11 @@ class GitTools(str, Enum):
     CREATE_BRANCH = "git_create_branch"
     CHECKOUT = "git_checkout"
     SHOW = "git_show"
+    WORKTREE_ADD = "git_worktree_add"
+    WORKTREE_REMOVE = "git_worktree_remove"
+    WORKTREE_LIST = "git_worktree_list"
+    PUSH = "git_push"
+    REMOTE = "git_remote"
 
 def git_status(repo: git.Repo) -> str:
     return repo.git.status()
@@ -143,6 +175,103 @@ def git_show(repo: git.Repo, revision: str) -> str:
         output.append(f"\n--- {d.a_path}\n+++ {d.b_path}\n")
         output.append(d.diff.decode('utf-8'))
     return "".join(output)
+
+def git_worktree_add(repo: git.Repo, worktree_path: str, branch_name: str | None = None, create_branch: bool = False) -> str:
+    """Add a new worktree"""
+    args = ["worktree", "add", worktree_path]
+    
+    if create_branch and branch_name:
+        args.extend(["-b", branch_name])
+    elif branch_name:
+        args.append(branch_name)
+    
+    output = repo.git.execute(args)
+    return f"Worktree added at {worktree_path}" + (f" on new branch {branch_name}" if create_branch else "")
+
+def git_worktree_remove(repo: git.Repo, worktree_path: str, force: bool = False) -> str:
+    """Remove a worktree"""
+    args = ["worktree", "remove", worktree_path]
+    if force:
+        args.append("--force")
+    
+    output = repo.git.execute(args)
+    return f"Worktree at {worktree_path} removed"
+
+def git_worktree_list(repo: git.Repo) -> str:
+    """List all worktrees"""
+    output = repo.git.worktree("list", "--porcelain")
+    
+    # Parse porcelain output
+    worktrees = []
+    current_worktree = {}
+    
+    for line in output.strip().split('\n'):
+        if not line:
+            if current_worktree:
+                worktrees.append(current_worktree)
+                current_worktree = {}
+        elif line.startswith("worktree "):
+            current_worktree["path"] = line[9:]
+        elif line.startswith("HEAD "):
+            current_worktree["head"] = line[5:]
+        elif line.startswith("branch "):
+            current_worktree["branch"] = line[7:]
+    
+    if current_worktree:
+        worktrees.append(current_worktree)
+    
+    # Format output
+    result = []
+    for wt in worktrees:
+        result.append(f"Path: {wt.get('path', 'unknown')}")
+        result.append(f"  Branch: {wt.get('branch', 'detached HEAD')}")
+        result.append(f"  HEAD: {wt.get('head', 'unknown')[:8]}")
+        result.append("")
+    
+    return "\n".join(result).strip()
+
+def git_push(repo: git.Repo, remote: str = "origin", branch: str | None = None, set_upstream: bool = False, force: bool = False) -> str:
+    """Push changes to remote repository"""
+    args = ["push", remote]
+    
+    if branch:
+        args.append(branch)
+    
+    if set_upstream:
+        args.extend(["-u", remote, branch or repo.active_branch.name])
+    
+    if force:
+        args.append("--force")
+    
+    output = repo.git.execute(args)
+    return f"Pushed to {remote}" + (f" (tracking {remote}/{branch or repo.active_branch.name})" if set_upstream else "")
+
+def git_remote(repo: git.Repo, action: str, name: str | None = None, url: str | None = None) -> str:
+    """Manage remote repositories"""
+    if action == "list":
+        remotes = repo.git.remote("-v")
+        return remotes if remotes else "No remotes configured"
+    
+    elif action == "add":
+        if not name or not url:
+            return "Error: Both name and url required for adding remote"
+        repo.git.remote("add", name, url)
+        return f"Added remote '{name}' -> {url}"
+    
+    elif action == "remove":
+        if not name:
+            return "Error: Remote name required for removal"
+        repo.git.remote("remove", name)
+        return f"Removed remote '{name}'"
+    
+    elif action == "get-url":
+        if not name:
+            return "Error: Remote name required"
+        url = repo.git.remote("get-url", name)
+        return f"{name}: {url}"
+    
+    else:
+        return f"Error: Unknown action '{action}'. Valid actions: list, add, remove, get-url"
 
 async def serve(repository: Path | None) -> None:
     logger = logging.getLogger(__name__)
@@ -214,6 +343,31 @@ async def serve(repository: Path | None) -> None:
                 name=GitTools.SHOW,
                 description="Shows the contents of a commit",
                 inputSchema=GitShow.schema(),
+            ),
+            Tool(
+                name=GitTools.WORKTREE_ADD,
+                description="Add a new worktree for parallel development",
+                inputSchema=GitWorktreeAdd.schema(),
+            ),
+            Tool(
+                name=GitTools.WORKTREE_REMOVE,
+                description="Remove a worktree",
+                inputSchema=GitWorktreeRemove.schema(),
+            ),
+            Tool(
+                name=GitTools.WORKTREE_LIST,
+                description="List all worktrees",
+                inputSchema=GitWorktreeList.schema(),
+            ),
+            Tool(
+                name=GitTools.PUSH,
+                description="Push commits to remote repository",
+                inputSchema=GitPush.schema(),
+            ),
+            Tool(
+                name=GitTools.REMOTE,
+                description="Manage remote repositories (list, add, remove, get-url)",
+                inputSchema=GitRemote.schema(),
             )
         ]
 
@@ -574,6 +728,66 @@ Format the output as markdown suitable for GitHub PR description."""
                 case GitTools.SHOW:
                     result = git_show(repo, arguments["revision"])
                     log_tool_success("atxtechbro-git-mcp-server", name, f"Showed revision: {arguments['revision']}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.WORKTREE_ADD:
+                    result = git_worktree_add(
+                        repo, 
+                        arguments["worktree_path"],
+                        arguments.get("branch_name"),
+                        arguments.get("create_branch", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Added worktree at {arguments['worktree_path']}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.WORKTREE_REMOVE:
+                    result = git_worktree_remove(
+                        repo,
+                        arguments["worktree_path"],
+                        arguments.get("force", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Removed worktree at {arguments['worktree_path']}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.WORKTREE_LIST:
+                    result = git_worktree_list(repo)
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Listed worktrees", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.PUSH:
+                    result = git_push(
+                        repo,
+                        arguments.get("remote", "origin"),
+                        arguments.get("branch"),
+                        arguments.get("set_upstream", False),
+                        arguments.get("force", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Pushed to {arguments.get('remote', 'origin')}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.REMOTE:
+                    result = git_remote(
+                        repo,
+                        arguments["action"],
+                        arguments.get("name"),
+                        arguments.get("url")
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Remote action: {arguments['action']}", repo_path, arguments)
                     return [TextContent(
                         type="text",
                         text=result
