@@ -112,7 +112,7 @@ class GitFetch(BaseModel):
     repo_path: str
     remote: str = "origin"
     branch: str | None = None  # Specific branch to fetch
-    all: bool = False  # Fetch all remotes
+    fetch_all: bool = False  # Fetch all remotes
     prune: bool = False  # Remove deleted remote branches
     tags: bool = True  # Fetch tags
 
@@ -311,12 +311,12 @@ def git_pull(repo: git.Repo, remote: str = "origin", branch: str | None = None, 
     
     return output if output else f"Already up to date with {remote}" + (f"/{branch}" if branch else "")
 
-def git_fetch(repo: git.Repo, remote: str = "origin", branch: str | None = None, all: bool = False, prune: bool = False, tags: bool = True) -> str:
+def git_fetch(repo: git.Repo, remote: str = "origin", branch: str | None = None, fetch_all: bool = False, prune: bool = False, tags: bool = True) -> str:
     """Fetch changes from remote repository without merging"""
     # Build command as a list
     cmd_parts = []
     
-    if all:
+    if fetch_all:
         cmd_parts.append("--all")
     
     if prune:
@@ -326,7 +326,7 @@ def git_fetch(repo: git.Repo, remote: str = "origin", branch: str | None = None,
         cmd_parts.append("--no-tags")
     
     # Only add remote and branch if not fetching all
-    if not all:
+    if not fetch_all:
         cmd_parts.append(remote)
         
         if branch:
@@ -1073,7 +1073,7 @@ Format the output as markdown suitable for GitHub PR description."""
                         repo,
                         arguments.get("remote", "origin"),
                         arguments.get("branch"),
-                        arguments.get("all", False),
+                        arguments.get("fetch_all", False),
                         arguments.get("prune", False),
                         arguments.get("tags", True)
                     )
