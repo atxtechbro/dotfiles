@@ -236,6 +236,11 @@ def git_worktree_list(repo: git.Repo) -> str:
 
 def git_push(repo: git.Repo, remote: str = "origin", branch: str | None = None, set_upstream: bool = False, force: bool = False) -> str:
     """Push changes to remote repository"""
+    # Safety check: prevent pushing to main
+    target_branch = branch or repo.active_branch.name
+    if target_branch == "main":
+        raise ValueError("Direct pushes to main branch are not allowed. Please create a feature branch and use pull requests.")
+    
     # Build command as a list
     cmd_parts = []
     
@@ -243,14 +248,14 @@ def git_push(repo: git.Repo, remote: str = "origin", branch: str | None = None, 
         cmd_parts.append("--force")
     
     if set_upstream:
-        cmd_parts.extend(["-u", remote, branch or repo.active_branch.name])
+        cmd_parts.extend(["-u", remote, target_branch])
     else:
-        cmd_parts.extend([remote, branch or repo.active_branch.name])
+        cmd_parts.extend([remote, target_branch])
     
     # Use the git command directly through repo.git
     output = repo.git.push(*cmd_parts)
     
-    return f"Pushed {branch or repo.active_branch.name} to {remote}" + (f" (tracking)" if set_upstream else "")
+    return f"Pushed {target_branch} to {remote}" + (f" (tracking)" if set_upstream else "")
 
 def git_remote(repo: git.Repo, action: str, name: str | None = None, url: str | None = None) -> str:
     """Manage remote repositories"""
