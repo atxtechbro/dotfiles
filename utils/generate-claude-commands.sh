@@ -28,8 +28,7 @@ for template in "$TEMPLATES_DIR"/*.md; do
         output="$COMMANDS_DIR/$filename"
         
         echo "  Processing: $filename"
-        # Use Python orchestrator with knowledge base
-        # Replace {{VAR:ISSUE_NUMBER}} with $ISSUE_NUMBER for Claude commands
+        # Pass template variables to orchestrator
         "$PROMPT_ORCHESTRATOR" "$template" \
             -o "$output" \
             -v ISSUE_NUMBER='$ISSUE_NUMBER' \
