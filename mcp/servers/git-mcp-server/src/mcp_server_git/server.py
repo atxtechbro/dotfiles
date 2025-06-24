@@ -178,23 +178,22 @@ def git_show(repo: git.Repo, revision: str) -> str:
 
 def git_worktree_add(repo: git.Repo, worktree_path: str, branch_name: str | None = None, create_branch: bool = False) -> str:
     """Add a new worktree"""
-    args = ["worktree", "add", worktree_path]
-    
     if create_branch and branch_name:
-        args.extend(["-b", branch_name])
+        output = repo.git.worktree("add", "-b", branch_name, worktree_path)
     elif branch_name:
-        args.append(branch_name)
+        output = repo.git.worktree("add", worktree_path, branch_name)
+    else:
+        output = repo.git.worktree("add", worktree_path)
     
-    output = repo.git.execute(args)
     return f"Worktree added at {worktree_path}" + (f" on new branch {branch_name}" if create_branch else "")
 
 def git_worktree_remove(repo: git.Repo, worktree_path: str, force: bool = False) -> str:
     """Remove a worktree"""
-    args = ["worktree", "remove", worktree_path]
     if force:
-        args.append("--force")
+        output = repo.git.worktree("remove", "--force", worktree_path)
+    else:
+        output = repo.git.worktree("remove", worktree_path)
     
-    output = repo.git.execute(args)
     return f"Worktree at {worktree_path} removed"
 
 def git_worktree_list(repo: git.Repo) -> str:
@@ -232,18 +231,20 @@ def git_worktree_list(repo: git.Repo) -> str:
 
 def git_push(repo: git.Repo, remote: str = "origin", branch: str | None = None, set_upstream: bool = False, force: bool = False) -> str:
     """Push changes to remote repository"""
-    args = ["push", remote]
-    
-    if branch:
-        args.append(branch)
-    
-    if set_upstream:
-        args.extend(["-u", remote, branch or repo.active_branch.name])
+    # Build command as a list
+    cmd_parts = []
     
     if force:
-        args.append("--force")
+        cmd_parts.append("--force")
     
-    output = repo.git.execute(args)
+    if set_upstream:
+        cmd_parts.extend(["-u", remote, branch or repo.active_branch.name])
+    else:
+        cmd_parts.extend([remote, branch or repo.active_branch.name])
+    
+    # Use the git command directly through repo.git
+    output = repo.git.push(*cmd_parts)
+    
     return f"Pushed to {remote}" + (f" (tracking {remote}/{branch or repo.active_branch.name})" if set_upstream else "")
 
 def git_remote(repo: git.Repo, action: str, name: str | None = None, url: str | None = None) -> str:
