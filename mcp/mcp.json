@@ -39,7 +39,8 @@
       "args": [],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
-      }
+      },
+      "disabled": true
     },
     "gdrive": {
       "command": "gdrive-mcp-wrapper.sh",
