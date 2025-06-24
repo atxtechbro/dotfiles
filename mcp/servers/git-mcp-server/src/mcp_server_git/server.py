@@ -91,6 +91,18 @@ class GitRemote(BaseModel):
     name: str | None = None
     url: str | None = None
 
+class GitStageCommitPush(BaseModel):
+    repo_path: str
+    files: list[str]
+    message: str
+    remote: str = "origin"
+    branch: str | None = None
+    set_upstream: bool = False
+
+class GitBatch(BaseModel):
+    repo_path: str
+    commands: list[dict]  # List of {"tool": "git_add", "args": {...}}
+
 class GitTools(str, Enum):
     STATUS = "git_status"
     DIFF_UNSTAGED = "git_diff_unstaged"
@@ -108,6 +120,8 @@ class GitTools(str, Enum):
     WORKTREE_LIST = "git_worktree_list"
     PUSH = "git_push"
     REMOTE = "git_remote"
+    STAGE_COMMIT_PUSH = "git_stage_commit_push"
+    BATCH = "git_batch"
 
 def git_status(repo: git.Repo) -> str:
     return repo.git.status()
@@ -274,6 +288,64 @@ def git_remote(repo: git.Repo, action: str, name: str | None = None, url: str | 
     else:
         return f"Error: Unknown action '{action}'. Valid actions: list, add, remove, get-url"
 
+def git_stage_commit_push(repo: git.Repo, files: list[str], message: str, remote: str = "origin", branch: str | None = None, set_upstream: bool = False) -> str:
+    """Stage, commit, and push in one operation"""
+    results = []
+    
+    # Stage files
+    repo.index.add(files)
+    results.append(f"Staged {len(files)} file(s)")
+    
+    # Commit
+    commit = repo.index.commit(message)
+    results.append(f"Committed: {commit.hexsha[:8]}")
+    
+    # Push
+    push_args = [remote]
+    if set_upstream:
+        push_args = ["-u", remote]
+    
+    if branch:
+        push_args.append(branch)
+    else:
+        push_args.append(repo.active_branch.name)
+    
+    repo.git.push(*push_args)
+    results.append(f"Pushed {branch or repo.active_branch.name} to {remote}")
+    
+    return " → ".join(results)
+
+def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
+    """Execute multiple git commands in sequence"""
+    results = []
+    
+    for cmd in commands:
+        tool = cmd.get("tool")
+        args = cmd.get("args", {})
+        
+        try:
+            if tool == "git_add":
+                result = git_add(repo, args.get("files", []))
+            elif tool == "git_commit":
+                result = git_commit(repo, args.get("message", ""))
+            elif tool == "git_push":
+                result = git_push(repo, args.get("remote", "origin"), args.get("branch"), args.get("set_upstream", False), args.get("force", False))
+            elif tool == "git_status":
+                result = git_status(repo)
+            elif tool == "git_create_branch":
+                result = git_create_branch(repo, args.get("branch_name"), args.get("base_branch"))
+            elif tool == "git_checkout":
+                result = git_checkout(repo, args.get("branch_name"))
+            else:
+                result = f"Unknown tool: {tool}"
+            
+            results.append({"tool": tool, "status": "success", "result": result})
+        except Exception as e:
+            results.append({"tool": tool, "status": "error", "error": str(e)})
+            break  # Stop on first error
+    
+    return results
+
 async def serve(repository: Path | None) -> None:
     logger = logging.getLogger(__name__)
 
@@ -369,6 +441,16 @@ async def serve(repository: Path | None) -> None:
                 name=GitTools.REMOTE,
                 description="Manage remote repositories (list, add, remove, get-url)",
                 inputSchema=GitRemote.schema(),
+            ),
+            Tool(
+                name=GitTools.STAGE_COMMIT_PUSH,
+                description="Stage files, commit, and push in one operation",
+                inputSchema=GitStageCommitPush.schema(),
+            ),
+            Tool(
+                name=GitTools.BATCH,
+                description="Execute multiple git commands in sequence",
+                inputSchema=GitBatch.schema(),
             )
         ]
 
@@ -792,6 +874,39 @@ Format the output as markdown suitable for GitHub PR description."""
                     return [TextContent(
                         type="text",
                         text=result
+                    )]
+
+                case GitTools.STAGE_COMMIT_PUSH:
+                    result = git_stage_commit_push(
+                        repo,
+                        arguments["files"],
+                        arguments["message"],
+                        arguments.get("remote", "origin"),
+                        arguments.get("branch"),
+                        arguments.get("set_upstream", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Stage-commit-push completed", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.BATCH:
+                    results = git_batch(repo, arguments["commands"])
+                    success_count = sum(1 for r in results if r["status"] == "success")
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Batch executed: {success_count}/{len(results)} succeeded", repo_path, arguments)
+                    
+                    # Format results for display
+                    formatted_results = []
+                    for r in results:
+                        if r["status"] == "success":
+                            formatted_results.append(f"✓ {r['tool']}: {r['result']}")
+                        else:
+                            formatted_results.append(f"✗ {r['tool']}: {r['error']}")
+                    
+                    return [TextContent(
+                        type="text",
+                        text="\n".join(formatted_results)
                     )]
 
                 case _:
