@@ -91,6 +91,13 @@ class GitPull(BaseModel):
     branch: str | None = None
     rebase: bool = False
 
+class GitMerge(BaseModel):
+    repo_path: str
+    branch: str  # Branch to merge into current
+    message: str | None = None  # Custom merge commit message
+    strategy: str | None = None  # "ff-only", "no-ff", "squash"
+    abort: bool = False  # For aborting a merge in progress
+
 class GitRemote(BaseModel):
     repo_path: str
     action: str  # "list", "add", "remove", "get-url"
@@ -118,6 +125,7 @@ class GitTools(str, Enum):
     WORKTREE_LIST = "git_worktree_list"
     PUSH = "git_push"
     PULL = "git_pull"
+    MERGE = "git_merge"
     REMOTE = "git_remote"
     BATCH = "git_batch"
 
@@ -285,6 +293,46 @@ def git_pull(repo: git.Repo, remote: str = "origin", branch: str | None = None, 
     
     return output if output else f"Already up to date with {remote}" + (f"/{branch}" if branch else "")
 
+def git_merge(repo: git.Repo, branch: str, message: str | None = None, strategy: str | None = None, abort: bool = False) -> str:
+    """Merge branches with support for different strategies"""
+    if abort:
+        try:
+            repo.git.merge("--abort")
+            return "Merge aborted successfully"
+        except git.GitCommandError as e:
+            return f"Error aborting merge: {str(e)}"
+    
+    # Build merge command
+    cmd_parts = []
+    
+    if strategy == "ff-only":
+        cmd_parts.append("--ff-only")
+    elif strategy == "no-ff":
+        cmd_parts.append("--no-ff")
+    elif strategy == "squash":
+        cmd_parts.append("--squash")
+    
+    if message and strategy != "squash":  # Custom message doesn't apply to squash
+        cmd_parts.extend(["-m", message])
+    
+    cmd_parts.append(branch)
+    
+    try:
+        output = repo.git.merge(*cmd_parts)
+        
+        # If squash merge, we need to commit separately
+        if strategy == "squash" and repo.index.diff("HEAD"):
+            commit_msg = message or f"Squash merge branch '{branch}'"
+            repo.index.commit(commit_msg)
+            return f"Squash merged '{branch}' and committed"
+        
+        return output if output else f"Successfully merged '{branch}'"
+    except git.GitCommandError as e:
+        if "CONFLICT" in str(e):
+            return f"Merge conflict detected. Resolve conflicts and commit, or run with --abort to cancel merge.\n{str(e)}"
+        else:
+            return f"Error during merge: {str(e)}"
+
 def git_remote(repo: git.Repo, action: str, name: str | None = None, url: str | None = None) -> str:
     """Manage remote repositories"""
     if action == "list":
@@ -329,6 +377,8 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
                 result = git_push(repo, args.get("remote", "origin"), args.get("branch"), args.get("set_upstream", False), args.get("force", False))
             elif tool == "git_pull":
                 result = git_pull(repo, args.get("remote", "origin"), args.get("branch"), args.get("rebase", False))
+            elif tool == "git_merge":
+                result = git_merge(repo, args.get("branch"), args.get("message"), args.get("strategy"), args.get("abort", False))
             elif tool == "git_status":
                 result = git_status(repo)
             elif tool == "git_create_branch":
@@ -440,6 +490,11 @@ async def serve(repository: Path | None) -> None:
                 name=GitTools.PULL,
                 description="Pull changes from remote repository",
                 inputSchema=GitPull.schema(),
+            ),
+            Tool(
+                name=GitTools.MERGE,
+                description="Merge branches with support for different strategies",
+                inputSchema=GitMerge.schema(),
             ),
             Tool(
                 name=GitTools.REMOTE,
@@ -870,6 +925,20 @@ Format the output as markdown suitable for GitHub PR description."""
                         arguments.get("rebase", False)
                     )
                     log_tool_success("atxtechbro-git-mcp-server", name, f"Pulled from {arguments.get('remote', 'origin')}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.MERGE:
+                    result = git_merge(
+                        repo,
+                        arguments["branch"],
+                        arguments.get("message"),
+                        arguments.get("strategy"),
+                        arguments.get("abort", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Merged branch {arguments['branch']}", repo_path, arguments)
                     return [TextContent(
                         type="text",
                         text=result
