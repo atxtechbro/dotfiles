@@ -1,5 +1,7 @@
 # Git MCP Command Chaining and Logging Behavior
 
+This document explains how the [MCP tool-level logging framework](../mcp/README.md#adding-tool-level-logging-to-mcp-servers) handles chained git commands.
+
 ## How Logging Works with Chained Commands
 
 ### git_stage_commit_push
@@ -38,3 +40,7 @@ git_stage_commit_push | STATUS: SUCCESS | Stage-commit-push completed
 ```
 
 This design follows the principle of abstraction - log at the level of user intent, not implementation details.
+
+## Log Location
+
+All tool calls are logged to `~/mcp-tool-calls.log` as configured in the [logging framework](../mcp/README.md#tool-level-logging-guidelines). Use `check-mcp-logs -t` to view recent tool calls.
