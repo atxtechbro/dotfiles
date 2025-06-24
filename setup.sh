@@ -180,6 +180,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     fi
 fi
 # Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
+
+# Generate MCP configuration based on machine type
+echo "Generating MCP configuration based on WORK_MACHINE=${WORK_MACHINE:-false}..."
+if [[ -f "$DOT_DEN/mcp/generate-mcp-config.sh" ]]; then
+    "$DOT_DEN/mcp/generate-mcp-config.sh"
+fi
+
 # (as opposed to Workspace Configuration: .amazonq/mcp.json - Specific to the current workspace)
 mkdir -p ~/.aws/amazonq
 if [[ ! -f ~/.aws/amazonq/mcp.json ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json; then
