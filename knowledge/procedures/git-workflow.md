@@ -14,6 +14,7 @@
 - If there's a related issue, suffix with issue number: `type/description-123` (e.g., `feature/add-authentication-512`)
 - Use short-lived branches for complex tasks
 - Keep changes small and frequent
+- Never push directly to main - always use feature branches
 
 ## Common Errors to Avoid
 - Don't thank self when closing your own PRs
