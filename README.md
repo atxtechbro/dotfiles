@@ -180,6 +180,21 @@ This repository automatically configures global context for multiple AI coding a
 
 All context is sourced from the `knowledge/` directory and automatically configured by the setup script. See [AI Provider Agnostic Context](docs/ai-provider-agnostic-context.md) for details.
 
+### Slash Commands
+
+Custom slash commands for Claude Code are defined as templates in `.claude/command-templates/`:
+
+- **Templates**: Stored in `.claude/command-templates/` (e.g., `close-issue.md`, `retro.md`)
+- **Generation**: Run `utils/generate-claude-commands.sh` to process templates
+- **Output**: Generated commands appear in `~/.claude/commands/`
+- **Injection**: Templates use `{{ INJECT:path }}` to pull content from `knowledge/` directory
+- **Variables**: Templates support variables like `{{ ISSUE_NUMBER }}` for dynamic content
+
+To modify a slash command:
+1. Edit the template in `.claude/command-templates/`
+2. Run `utils/generate-claude-commands.sh` (automatically run by `source setup.sh`)
+3. The updated command is now available in Claude Code
+
 ## Secret Management
 
 Sensitive information like API tokens are stored in `~/.bash_secrets` (not tracked in git).
