@@ -81,7 +81,7 @@ class GitWorktreeList(BaseModel):
 class GitPush(BaseModel):
     repo_path: str
     remote: str = "origin"
-    branch: str | None = None
+    branch: str
     set_upstream: bool = False
     force: bool = False
 
@@ -90,14 +90,6 @@ class GitRemote(BaseModel):
     action: str  # "list", "add", "remove", "get-url"
     name: str | None = None
     url: str | None = None
-
-class GitStageCommitPush(BaseModel):
-    repo_path: str
-    files: list[str]
-    message: str
-    remote: str = "origin"
-    branch: str | None = None
-    set_upstream: bool = False
 
 class GitBatch(BaseModel):
     repo_path: str
@@ -120,7 +112,6 @@ class GitTools(str, Enum):
     WORKTREE_LIST = "git_worktree_list"
     PUSH = "git_push"
     REMOTE = "git_remote"
-    STAGE_COMMIT_PUSH = "git_stage_commit_push"
     BATCH = "git_batch"
 
 def git_status(repo: git.Repo) -> str:
@@ -243,8 +234,16 @@ def git_worktree_list(repo: git.Repo) -> str:
     
     return "\n".join(result).strip()
 
-def git_push(repo: git.Repo, remote: str = "origin", branch: str | None = None, set_upstream: bool = False, force: bool = False) -> str:
+def git_push(repo: git.Repo, remote: str = "origin", branch: str = None, set_upstream: bool = False, force: bool = False) -> str:
     """Push changes to remote repository"""
+    # Branch is now mandatory
+    if not branch:
+        raise ValueError("Branch parameter is required for git_push")
+    
+    # Safety check: prevent pushing to main
+    if branch == "main":
+        raise ValueError("Direct pushes to main branch are not allowed. Please create a feature branch and use pull requests.")
+    
     # Build command as a list
     cmd_parts = []
     
@@ -252,14 +251,14 @@ def git_push(repo: git.Repo, remote: str = "origin", branch: str | None = None, 
         cmd_parts.append("--force")
     
     if set_upstream:
-        cmd_parts.extend(["-u", remote, branch or repo.active_branch.name])
+        cmd_parts.extend(["-u", remote, branch])
     else:
-        cmd_parts.extend([remote, branch or repo.active_branch.name])
+        cmd_parts.extend([remote, branch])
     
     # Use the git command directly through repo.git
     output = repo.git.push(*cmd_parts)
     
-    return f"Pushed {branch or repo.active_branch.name} to {remote}" + (f" (tracking)" if set_upstream else "")
+    return f"Pushed {branch} to {remote}" + (f" (tracking)" if set_upstream else "")
 
 def git_remote(repo: git.Repo, action: str, name: str | None = None, url: str | None = None) -> str:
     """Manage remote repositories"""
@@ -287,33 +286,6 @@ def git_remote(repo: git.Repo, action: str, name: str | None = None, url: str | 
     
     else:
         return f"Error: Unknown action '{action}'. Valid actions: list, add, remove, get-url"
-
-def git_stage_commit_push(repo: git.Repo, files: list[str], message: str, remote: str = "origin", branch: str | None = None, set_upstream: bool = False) -> str:
-    """Stage, commit, and push in one operation"""
-    results = []
-    
-    # Stage files
-    repo.index.add(files)
-    results.append(f"Staged {len(files)} file(s)")
-    
-    # Commit
-    commit = repo.index.commit(message)
-    results.append(f"Committed: {commit.hexsha[:8]}")
-    
-    # Push
-    push_args = [remote]
-    if set_upstream:
-        push_args = ["-u", remote]
-    
-    if branch:
-        push_args.append(branch)
-    else:
-        push_args.append(repo.active_branch.name)
-    
-    repo.git.push(*push_args)
-    results.append(f"Pushed {branch or repo.active_branch.name} to {remote}")
-    
-    return " → ".join(results)
 
 def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
     """Execute multiple git commands in sequence"""
@@ -434,18 +406,13 @@ async def serve(repository: Path | None) -> None:
             ),
             Tool(
                 name=GitTools.PUSH,
-                description="Push commits to remote repository",
+                description="Push commits to remote repository (branch required, main blocked)",
                 inputSchema=GitPush.schema(),
             ),
             Tool(
                 name=GitTools.REMOTE,
                 description="Manage remote repositories (list, add, remove, get-url)",
                 inputSchema=GitRemote.schema(),
-            ),
-            Tool(
-                name=GitTools.STAGE_COMMIT_PUSH,
-                description="Stage files, commit, and push in one operation",
-                inputSchema=GitStageCommitPush.schema(),
             ),
             Tool(
                 name=GitTools.BATCH,
@@ -871,21 +838,6 @@ Format the output as markdown suitable for GitHub PR description."""
                         arguments.get("url")
                     )
                     log_tool_success("atxtechbro-git-mcp-server", name, f"Remote action: {arguments['action']}", repo_path, arguments)
-                    return [TextContent(
-                        type="text",
-                        text=result
-                    )]
-
-                case GitTools.STAGE_COMMIT_PUSH:
-                    result = git_stage_commit_push(
-                        repo,
-                        arguments["files"],
-                        arguments["message"],
-                        arguments.get("remote", "origin"),
-                        arguments.get("branch"),
-                        arguments.get("set_upstream", False)
-                    )
-                    log_tool_success("atxtechbro-git-mcp-server", name, f"Stage-commit-push completed", repo_path, arguments)
                     return [TextContent(
                         type="text",
                         text=result
