@@ -1,1 +1,1 @@
-/home/linuxmint-lp/ppv/pillars/dotfiles/mcp/servers/git-mcp-server/src/mcp_server_git/__main__.py
+src/mcp_server_git/__main__.py
