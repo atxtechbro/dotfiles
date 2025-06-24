@@ -231,20 +231,20 @@ def git_worktree_list(repo: git.Repo) -> str:
 
 def git_push(repo: git.Repo, remote: str = "origin", branch: str | None = None, set_upstream: bool = False, force: bool = False) -> str:
     """Push changes to remote repository"""
-    args = [remote]
-    
-    if set_upstream:
-        args = ["-u", remote]
-    
-    if branch:
-        args.append(branch)
-    else:
-        args.append(repo.active_branch.name)
+    # Build command as a list
+    cmd_parts = []
     
     if force:
-        args.insert(0, "--force")
+        cmd_parts.append("--force")
     
-    output = repo.git.push(*args)
+    if set_upstream:
+        cmd_parts.extend(["-u", remote, branch or repo.active_branch.name])
+    else:
+        cmd_parts.extend([remote, branch or repo.active_branch.name])
+    
+    # Use the git command directly through repo.git
+    output = repo.git.push(*cmd_parts)
+    
     return f"Pushed to {remote}" + (f" (tracking {remote}/{branch or repo.active_branch.name})" if set_upstream else "")
 
 def git_remote(repo: git.Repo, action: str, name: str | None = None, url: str | None = None) -> str:
