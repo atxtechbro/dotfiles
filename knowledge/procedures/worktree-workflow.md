@@ -1,11 +1,12 @@
-# Git Worktree Workflow (Beta - Imperfect System)
+# Git Worktree Workflow
 
-We know very little about worktrees. This is an admittedly imperfect system to be improved upon later per Versioning Mindset.
+Suppose you need to work on multiple tasks simultaneously with complete code isolation between Claude Code instances. Git worktrees provide this isolation.
 
-1. `mkdir -p ~/ppv/pillars/worktrees/dotfiles`
-2. `cd ~/ppv/pillars/dotfiles && git worktree add ~/ppv/pillars/worktrees/dotfiles/issue-<NUMBER> -b feature/<description>-<NUMBER>`
-3. Work in worktree: `cd ~/ppv/pillars/worktrees/dotfiles/issue-<NUMBER>`
+1. `mkdir -p ~/ppv/pillars/dotfiles/worktrees`
+2. Create worktree:
+   - **New branch**: `git worktree add ~/ppv/pillars/dotfiles/worktrees/<worktree-name> -b <branch-name>`
+   - **Existing branch**: `git worktree add ~/ppv/pillars/dotfiles/worktrees/<worktree-name> <branch-name>`
+3. Work in worktree: `cd ~/ppv/pillars/dotfiles/worktrees/<worktree-name>`
 4. Commit, push, create PR as normal
-5. Cleanup: `cd ~/ppv/pillars/dotfiles && git worktree remove ~/ppv/pillars/worktrees/dotfiles/issue-<NUMBER> --force`
-
-**Quirks found**: Must use full paths, cleanup requires returning to main repo directory.
+5. Ask for any pr feedback and address if any
+6. Cleanup: `cd ~/ppv/pillars/dotfiles && git worktree remove ~/ppv/pillars/dotfiles/worktrees/<worktree-name> --force`
