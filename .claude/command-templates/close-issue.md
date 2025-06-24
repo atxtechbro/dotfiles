@@ -39,12 +39,15 @@ Apply to issue #{{ ISSUE_NUMBER }}:
 - Create PR with `mcp__github__create_pull_request`
 - Reference "Closes #{{ ISSUE_NUMBER }}" in PR body
 - PR will auto-close issue when merged
+- Add "Conduct post-PR mini retro" to your todo list
 
-### 4. Post-Implementation
-{{ INJECT:procedures/post-pr-mini-retro.md }}
-
-### 5. Cleanup
+### 4. Cleanup
 Remove worktree after PR is created.
+
+## REQUIRED: Post-PR Mini Retro (if PR was created)
+**TRIGGER**: If you created a pull request, you MUST complete this step before finishing.
+
+{{ INJECT:procedures/post-pr-mini-retro.md }}
 
 ## Decision Matrix
 - **Bug report with clear reproduction** → Implementation path
