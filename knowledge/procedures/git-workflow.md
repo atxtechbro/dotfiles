@@ -2,6 +2,8 @@
 
 ## MCP Git Tools Usage
 **IMPORTANT**: Use `mcp__git__*` tools instead of bash commands.
+- **Time Saver**: Use `mcp__git__git_stage_commit_push` for the common add→commit→push workflow
+- **Complex Workflows**: Use `mcp__git__git_batch` to chain multiple git operations
 
 ## Commit Standards
 - Always use conventional commit syntax: `<type>[scope]: description` (scope optional but encouraged; use separate `-m` for trailers)
