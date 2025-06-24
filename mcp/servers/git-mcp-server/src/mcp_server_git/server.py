@@ -81,7 +81,7 @@ class GitWorktreeList(BaseModel):
 class GitPush(BaseModel):
     repo_path: str
     remote: str = "origin"
-    branch: str | None = None
+    branch: str
     set_upstream: bool = False
     force: bool = False
 
@@ -234,11 +234,14 @@ def git_worktree_list(repo: git.Repo) -> str:
     
     return "\n".join(result).strip()
 
-def git_push(repo: git.Repo, remote: str = "origin", branch: str | None = None, set_upstream: bool = False, force: bool = False) -> str:
+def git_push(repo: git.Repo, remote: str = "origin", branch: str = None, set_upstream: bool = False, force: bool = False) -> str:
     """Push changes to remote repository"""
+    # Branch is now mandatory
+    if not branch:
+        raise ValueError("Branch parameter is required for git_push")
+    
     # Safety check: prevent pushing to main
-    target_branch = branch or repo.active_branch.name
-    if target_branch == "main":
+    if branch == "main":
         raise ValueError("Direct pushes to main branch are not allowed. Please create a feature branch and use pull requests.")
     
     # Build command as a list
@@ -248,14 +251,14 @@ def git_push(repo: git.Repo, remote: str = "origin", branch: str | None = None, 
         cmd_parts.append("--force")
     
     if set_upstream:
-        cmd_parts.extend(["-u", remote, target_branch])
+        cmd_parts.extend(["-u", remote, branch])
     else:
-        cmd_parts.extend([remote, target_branch])
+        cmd_parts.extend([remote, branch])
     
     # Use the git command directly through repo.git
     output = repo.git.push(*cmd_parts)
     
-    return f"Pushed {target_branch} to {remote}" + (f" (tracking)" if set_upstream else "")
+    return f"Pushed {branch} to {remote}" + (f" (tracking)" if set_upstream else "")
 
 def git_remote(repo: git.Repo, action: str, name: str | None = None, url: str | None = None) -> str:
     """Manage remote repositories"""
@@ -403,7 +406,7 @@ async def serve(repository: Path | None) -> None:
             ),
             Tool(
                 name=GitTools.PUSH,
-                description="Push commits to remote repository",
+                description="Push commits to remote repository (branch required, main blocked)",
                 inputSchema=GitPush.schema(),
             ),
             Tool(
