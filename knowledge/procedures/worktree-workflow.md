@@ -1,6 +1,6 @@
-# Git Worktree Workflow (Beta - Imperfect System)
+# Git Worktree Workflow
 
-We know very little about worktrees. This is an admittedly imperfect system to be improved upon later per Versioning Mindset.
+Suppose you need to work on multiple tasks simultaneously with complete code isolation between Claude Code instances. Git worktrees provide this isolation.
 
 1. `mkdir -p ~/ppv/pillars/dotfiles/worktrees`
 2. `cd ~/ppv/pillars/dotfiles && git worktree add ~/ppv/pillars/dotfiles/worktrees/issue-<NUMBER> -b feature/<description>-<NUMBER>`
