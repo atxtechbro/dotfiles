@@ -28,11 +28,10 @@ for template in "$TEMPLATES_DIR"/*.md; do
         output="$COMMANDS_DIR/$filename"
         
         echo "  Processing: $filename"
-        # Use Python orchestrator with knowledge base
-        # Replace {{VAR:ARGUMENTS}} with $ARGUMENTS for Claude commands
+        # Pass template variables to orchestrator
         "$PROMPT_ORCHESTRATOR" "$template" \
             -o "$output" \
-            -v ARGUMENTS='$ARGUMENTS' \
+            -v ISSUE_NUMBER='$ISSUE_NUMBER' \
             -k "$DOTFILES_DIR/knowledge"
     fi
 done
