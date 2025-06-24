@@ -33,6 +33,7 @@ This is a customized version of the git-mcp-server that has been migrated into t
 | `git_worktree_list` | List all worktrees | ✅ |
 | `git_push` | Push commits to remote repository | ✅ |
 | `git_pull` | Pull changes from remote repository | ✅ |
+| `git_fetch` | Fetch updates from remote repository without merging | ✅ |
 | `git_merge` | Merge branches with support for different strategies | ✅ |
 | `git_remote` | Manage remote repositories | ✅ |
 | `git_batch` | Execute multiple git commands in sequence | ✅ |
@@ -57,6 +58,24 @@ The `git_rebase` tool supports maintaining linear history and reorganizing commi
 - Abort rebase: `{"repo_path": ".", "abort": true}`
 
 **Note:** Interactive rebase is not fully supported in MCP environment due to editor limitations.
+
+### Git Fetch Tool
+
+The `git_fetch` tool allows updating remote refs without merging, essential for checking remote changes:
+
+**Parameters:**
+- `repo_path`: Path to the git repository (required)
+- `remote`: Remote to fetch from (default: "origin")
+- `branch`: Specific branch to fetch (optional)
+- `all`: Fetch all remotes (default: false)
+- `prune`: Remove deleted remote branches (default: false)
+- `tags`: Fetch tags (default: true)
+
+**Usage Examples:**
+- Fetch default remote: `{"repo_path": "."}`
+- Fetch specific branch: `{"repo_path": ".", "branch": "feature-branch"}`
+- Fetch all remotes with pruning: `{"repo_path": ".", "all": true, "prune": true}`
+- Fetch without tags: `{"repo_path": ".", "tags": false}`
 
 ## Logging Implementation
 
