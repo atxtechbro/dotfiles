@@ -9,6 +9,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEMPLATE="$SCRIPT_DIR/mcp.template.json"
 OUTPUT="$SCRIPT_DIR/mcp.json"
 
+# Check if template exists
+if [[ ! -f "$TEMPLATE" ]]; then
+    echo "❌ Error: Template file not found: $TEMPLATE"
+    exit 1
+fi
+
 # Check if we're on a work machine
 IS_WORK_MACHINE="${WORK_MACHINE:-false}"
 
