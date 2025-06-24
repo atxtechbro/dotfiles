@@ -1,11 +1,18 @@
-# Git Worktree Workflow (Beta - Imperfect System)
+# Git Worktree Workflow
 
-We know very little about worktrees. This is an admittedly imperfect system to be improved upon later per Versioning Mindset.
+Use git worktrees to work on multiple issues/features in parallel without branch switching.
 
-1. `mkdir -p ~/ppv/pillars/worktrees/dotfiles`
-2. `cd ~/ppv/pillars/dotfiles && git worktree add ~/ppv/pillars/worktrees/dotfiles/issue-<NUMBER> -b feature/<description>-<NUMBER>`
-3. Work in worktree: `cd ~/ppv/pillars/worktrees/dotfiles/issue-<NUMBER>`
-4. Commit, push, create PR as normal
-5. Cleanup: `cd ~/ppv/pillars/dotfiles && git worktree remove ~/ppv/pillars/worktrees/dotfiles/issue-<NUMBER> --force`
+1. `mkdir -p worktrees`
+2. `git worktree add worktrees/issue-<NUMBER> -b <type>/<description>-<NUMBER>`
+   - Use branch naming conventions: `feature/`, `fix/`, `docs/`, `refactor/`, etc.
+3. Work with files using: `git -C worktrees/issue-<NUMBER>` for all git commands
+4. Edit files with absolute paths when needed
+5. Commit and push: 
+   ```bash
+   git -C worktrees/issue-<NUMBER> add -A
+   git -C worktrees/issue-<NUMBER> commit -m "..."
+   git -C worktrees/issue-<NUMBER> push -u origin <type>/<description>-<NUMBER>
+   ```
+6. Cleanup: `git worktree remove worktrees/issue-<NUMBER> --force`
 
-**Quirks found**: Must use full paths, cleanup requires returning to main repo directory.
+**Key point**: Use `git -C <path>` to run git commands in any worktree without changing directories.
