@@ -108,6 +108,14 @@ class GitBatch(BaseModel):
     repo_path: str
     commands: list[dict]  # List of {"tool": "git_add", "args": {...}}
 
+class GitFetch(BaseModel):
+    repo_path: str
+    remote: str = "origin"
+    branch: str | None = None  # Specific branch to fetch
+    all: bool = False  # Fetch all remotes
+    prune: bool = False  # Remove deleted remote branches
+    tags: bool = True  # Fetch tags
+
 class GitRebase(BaseModel):
     repo_path: str
     onto: str | None = None  # Branch to rebase onto
@@ -133,6 +141,7 @@ class GitTools(str, Enum):
     WORKTREE_LIST = "git_worktree_list"
     PUSH = "git_push"
     PULL = "git_pull"
+    FETCH = "git_fetch"
     MERGE = "git_merge"
     REMOTE = "git_remote"
     BATCH = "git_batch"
@@ -302,6 +311,56 @@ def git_pull(repo: git.Repo, remote: str = "origin", branch: str | None = None, 
     
     return output if output else f"Already up to date with {remote}" + (f"/{branch}" if branch else "")
 
+def git_fetch(repo: git.Repo, remote: str = "origin", branch: str | None = None, all: bool = False, prune: bool = False, tags: bool = True) -> str:
+    """Fetch changes from remote repository without merging"""
+    # Build command as a list
+    cmd_parts = []
+    
+    if all:
+        cmd_parts.append("--all")
+    
+    if prune:
+        cmd_parts.append("--prune")
+    
+    if not tags:
+        cmd_parts.append("--no-tags")
+    
+    # Only add remote and branch if not fetching all
+    if not all:
+        cmd_parts.append(remote)
+        
+        if branch:
+            cmd_parts.append(branch)
+    
+    # Use the git command directly through repo.git
+    try:
+        output = repo.git.fetch(*cmd_parts, verbose=True)
+        
+        # Parse the output to show what was fetched
+        if output:
+            lines = output.strip().split('\n')
+            result_lines = []
+            
+            for line in lines:
+                # Skip empty lines and connection info
+                if line and not line.startswith('From '):
+                    result_lines.append(line)
+            
+            if result_lines:
+                return f"Fetched from {remote}:\n" + "\n".join(result_lines)
+            else:
+                return f"Already up to date with {remote}"
+        else:
+            return f"Already up to date with {remote}"
+    except git.GitCommandError as e:
+        # git fetch returns non-zero exit code even on success sometimes
+        # Check if it's actually an error
+        output = str(e.stdout)
+        if output:
+            return f"Fetched from {remote}:\n{output}"
+        else:
+            raise
+
 def git_merge(repo: git.Repo, branch: str, message: str | None = None, strategy: str | None = None, abort: bool = False) -> str:
     """Merge branches with support for different strategies"""
     if abort:
@@ -386,6 +445,8 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
                 result = git_push(repo, args.get("remote", "origin"), args.get("branch"), args.get("set_upstream", False), args.get("force", False))
             elif tool == "git_pull":
                 result = git_pull(repo, args.get("remote", "origin"), args.get("branch"), args.get("rebase", False))
+            elif tool == "git_fetch":
+                result = git_fetch(repo, args.get("remote", "origin"), args.get("branch"), args.get("all", False), args.get("prune", False), args.get("tags", True))
             elif tool == "git_merge":
                 result = git_merge(repo, args.get("branch"), args.get("message"), args.get("strategy"), args.get("abort", False))
             elif tool == "git_status":
@@ -557,6 +618,11 @@ async def serve(repository: Path | None) -> None:
                 name=GitTools.PULL,
                 description="Pull changes from remote repository",
                 inputSchema=GitPull.schema(),
+            ),
+            Tool(
+                name=GitTools.FETCH,
+                description="Fetch updates from remote repository without merging",
+                inputSchema=GitFetch.schema(),
             ),
             Tool(
                 name=GitTools.MERGE,
@@ -997,6 +1063,21 @@ Format the output as markdown suitable for GitHub PR description."""
                         arguments.get("rebase", False)
                     )
                     log_tool_success("atxtechbro-git-mcp-server", name, f"Pulled from {arguments.get('remote', 'origin')}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.FETCH:
+                    result = git_fetch(
+                        repo,
+                        arguments.get("remote", "origin"),
+                        arguments.get("branch"),
+                        arguments.get("all", False),
+                        arguments.get("prune", False),
+                        arguments.get("tags", True)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Fetched from {arguments.get('remote', 'origin')}", repo_path, arguments)
                     return [TextContent(
                         type="text",
                         text=result
