@@ -1,7 +1,5 @@
 Close GitHub issue #{{ ISSUE_NUMBER }} - determine if it needs implementation or just closure.
 
-Repository: atxtechbro/dotfiles
-
 ## Core Principles
 {{ INJECT:principles/do-dont-explain.md }}
 {{ INJECT:principles/tracer-bullets.md }}
