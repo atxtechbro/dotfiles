@@ -37,7 +37,7 @@ Apply to issue #{{ ISSUE_NUMBER }}:
 {{ INJECT:procedures/git-workflow.md }}
 
 ### 3. Create Pull Request
-- Push: `git push -u origin <branch-name>`
+- Push the feature branch to remote
 - Create PR with `mcp__github__create_pull_request`
 - Reference "Closes #{{ ISSUE_NUMBER }}" in PR body
 - PR will auto-close issue when merged
