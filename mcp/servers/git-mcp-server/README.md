@@ -38,6 +38,8 @@ This is a customized version of the git-mcp-server that has been migrated into t
 | `git_remote` | Manage remote repositories | ✅ |
 | `git_batch` | Execute multiple git commands in sequence | ✅ |
 | `git_rebase` | Rebase current branch onto another branch | ✅ |
+| `git_stash` | Stash the changes in a dirty working directory away | ✅ |
+| `git_stash_pop` | Apply and remove stashed changes | ✅ |
 
 ### Git Rebase Tool
 
@@ -76,6 +78,49 @@ The `git_fetch` tool allows updating remote refs without merging, essential for 
 - Fetch specific branch: `{"repo_path": ".", "branch": "feature-branch"}`
 - Fetch all remotes with pruning: `{"repo_path": ".", "all": true, "prune": true}`
 - Fetch without tags: `{"repo_path": ".", "tags": false}`
+
+### Git Stash Tool
+
+The `git_stash` tool provides comprehensive stash management for temporary work storage:
+
+**Parameters:**
+- `repo_path`: Path to the git repository (required)
+- `action`: Operation to perform (default: "push")
+  - `"push"`: Save current changes to stash
+  - `"list"`: Show all stashes
+  - `"show"`: Display contents of a stash
+  - `"apply"`: Apply stash without removing it
+  - `"pop"`: Apply and remove stash
+  - `"drop"`: Remove a specific stash
+  - `"clear"`: Remove all stashes
+- `message`: Message for stash (optional, for push action)
+- `stash_ref`: Stash reference like "stash@{0}" (optional, for pop/apply/drop/show)
+- `keep_index`: Keep staged changes (default: false, for push)
+- `include_untracked`: Include untracked files (default: false, for push)
+
+**Usage Examples:**
+- Create stash with message: `{"repo_path": ".", "action": "push", "message": "WIP: feature implementation"}`
+- List all stashes: `{"repo_path": ".", "action": "list"}`
+- Show specific stash: `{"repo_path": ".", "action": "show", "stash_ref": "stash@{1}"}`
+- Apply without removing: `{"repo_path": ".", "action": "apply", "stash_ref": "stash@{0}"}`
+- Drop specific stash: `{"repo_path": ".", "action": "drop", "stash_ref": "stash@{2}"}`
+- Clear all stashes: `{"repo_path": ".", "action": "clear"}`
+
+### Git Stash Pop Tool
+
+The `git_stash_pop` tool is a convenience wrapper for applying and removing stashed changes:
+
+**Parameters:**
+- `repo_path`: Path to the git repository (required)
+- `stash_ref`: Specific stash to pop (optional, defaults to "stash@{0}")
+- `index`: Restore staged changes (default: false)
+
+**Usage Examples:**
+- Pop latest stash: `{"repo_path": "."}`
+- Pop specific stash: `{"repo_path": ".", "stash_ref": "stash@{2}"}`
+- Pop with index restoration: `{"repo_path": ".", "index": true}`
+
+**Note:** If merge conflicts occur during pop, the stash is not removed and must be resolved manually.
 
 ## Logging Implementation
 

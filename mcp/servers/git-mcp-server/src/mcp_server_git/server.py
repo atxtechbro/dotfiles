@@ -124,6 +124,19 @@ class GitRebase(BaseModel):
     skip: bool = False
     abort: bool = False
 
+class GitStash(BaseModel):
+    repo_path: str
+    action: str = "push"  # "push", "pop", "apply", "list", "drop", "clear", "show"
+    message: str | None = None  # For push action
+    stash_ref: str | None = None  # For pop/apply/drop/show (e.g., "stash@{0}")
+    keep_index: bool = False  # Keep staged changes
+    include_untracked: bool = False  # Include untracked files
+
+class GitStashPop(BaseModel):
+    repo_path: str
+    stash_ref: str | None = None  # Specific stash to pop (e.g., "stash@{0}")
+    index: bool = False  # Restore staged changes
+
 class GitTools(str, Enum):
     STATUS = "git_status"
     DIFF_UNSTAGED = "git_diff_unstaged"
@@ -146,6 +159,8 @@ class GitTools(str, Enum):
     REMOTE = "git_remote"
     BATCH = "git_batch"
     REBASE = "git_rebase"
+    STASH = "git_stash"
+    STASH_POP = "git_stash_pop"
 
 def git_status(repo: git.Repo) -> str:
     return repo.git.status()
@@ -459,6 +474,12 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
                 result = git_rebase(repo, args.get("onto"), args.get("interactive", False), 
                                    args.get("continue_rebase", False), args.get("skip", False), 
                                    args.get("abort", False))
+            elif tool == "git_stash":
+                result = git_stash(repo, args.get("action", "push"), args.get("message"), 
+                                 args.get("stash_ref"), args.get("keep_index", False), 
+                                 args.get("include_untracked", False))
+            elif tool == "git_stash_pop":
+                result = git_stash_pop(repo, args.get("stash_ref"), args.get("index", False))
             else:
                 result = f"Unknown tool: {tool}"
             
@@ -522,6 +543,92 @@ def git_rebase(repo: git.Repo, onto: str | None = None, interactive: bool = Fals
             return f"Current branch is up to date with '{onto}'"
         else:
             return f"Error during rebase: {str(e)}"
+
+def git_stash(repo: git.Repo, action: str = "push", message: str | None = None, 
+              stash_ref: str | None = None, keep_index: bool = False, 
+              include_untracked: bool = False) -> str:
+    """
+    Handle various git stash operations
+    """
+    try:
+        if action == "push":
+            cmd_parts = ["stash", "push"]
+            if message:
+                cmd_parts.extend(["-m", message])
+            if keep_index:
+                cmd_parts.append("--keep-index")
+            if include_untracked:
+                cmd_parts.append("--include-untracked")
+            
+            output = repo.git.execute(cmd_parts)
+            return output if output else "Changes stashed successfully"
+            
+        elif action == "list":
+            output = repo.git.stash("list")
+            return output if output else "No stashes found"
+            
+        elif action == "show":
+            stash = stash_ref or "stash@{0}"
+            output = repo.git.stash("show", "-p", stash)
+            return output if output else f"No changes in {stash}"
+            
+        elif action == "drop":
+            stash = stash_ref or "stash@{0}"
+            output = repo.git.stash("drop", stash)
+            return output if output else f"Dropped {stash}"
+            
+        elif action == "clear":
+            output = repo.git.stash("clear")
+            return output if output else "All stashes cleared"
+            
+        elif action == "pop":
+            stash = stash_ref or "stash@{0}"
+            output = repo.git.stash("pop", stash)
+            return output if output else f"Applied and removed {stash}"
+            
+        elif action == "apply":
+            stash = stash_ref or "stash@{0}"
+            output = repo.git.stash("apply", stash)
+            return output if output else f"Applied {stash}"
+            
+        else:
+            return f"Unknown stash action: {action}"
+            
+    except git.GitCommandError as e:
+        return f"Stash error: {str(e)}"
+
+def git_stash_pop(repo: git.Repo, stash_ref: str | None = None, index: bool = False) -> str:
+    """
+    Apply and remove stashed changes (convenience wrapper)
+    """
+    try:
+        cmd_parts = ["stash", "pop"]
+        if index:
+            cmd_parts.append("--index")
+        if stash_ref:
+            cmd_parts.append(stash_ref)
+            
+        output = repo.git.execute(cmd_parts)
+        
+output = repo.git.execute(cmd_parts)
+        
+        stash = stash_ref or "stash@{0}"
+        return output if output else f"Successfully applied and removed {stash}"
+            
+    except git.GitCommandError as e:
+        if "CONFLICT" in str(e):
+            return output
+        else:
+            stash = stash_ref or "stash@{0}"
+            return f"Successfully applied and removed {stash}"
+            
+    except git.GitCommandError as e:
+        if "CONFLICT" in str(e):
+            return f"Merge conflict when applying stash. Stash was not removed.\n{str(e)}"
+        elif "No stash entries found" in str(e):
+            return "No stashes to pop"
+        else:
+            return f"Error popping stash: {str(e)}"
 
 async def serve(repository: Path | None) -> None:
     logger = logging.getLogger(__name__)
@@ -643,6 +750,16 @@ async def serve(repository: Path | None) -> None:
                 name=GitTools.REBASE,
                 description="Rebase current branch onto another branch (supports --continue, --skip, --abort)",
                 inputSchema=GitRebase.schema(),
+            ),
+            Tool(
+                name=GitTools.STASH,
+                description="Stash the changes in a dirty working directory away",
+                inputSchema=GitStash.schema(),
+            ),
+            Tool(
+                name=GitTools.STASH_POP,
+                description="Apply and remove stashed changes",
+                inputSchema=GitStashPop.schema(),
             )
         ]
 
@@ -1138,6 +1255,33 @@ Format the output as markdown suitable for GitHub PR description."""
                         arguments.get("abort", False)
                     )
                     log_tool_success("atxtechbro-git-mcp-server", name, "Rebase operation completed", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.STASH:
+                    result = git_stash(
+                        repo,
+                        arguments.get("action", "push"),
+                        arguments.get("message"),
+                        arguments.get("stash_ref"),
+                        arguments.get("keep_index", False),
+                        arguments.get("include_untracked", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Stash operation completed", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.STASH_POP:
+                    result = git_stash_pop(
+                        repo,
+                        arguments.get("stash_ref"),
+                        arguments.get("index", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Stash pop completed", repo_path, arguments)
                     return [TextContent(
                         type="text",
                         text=result
