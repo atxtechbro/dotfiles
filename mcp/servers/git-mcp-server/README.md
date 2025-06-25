@@ -40,6 +40,16 @@ This is a customized version of the git-mcp-server that has been migrated into t
 | `git_rebase` | Rebase current branch onto another branch | ✅ |
 | `git_stash` | Stash the changes in a dirty working directory away | ✅ |
 | `git_stash_pop` | Apply and remove stashed changes | ✅ |
+| `git_cherry_pick` | Cherry-pick commits onto the current branch | ✅ |
+| `git_reflog` | Show the reference log for recovery and history inspection | ✅ |
+| `git_blame` | Show who last modified each line of a file | ✅ |
+| `git_revert` | Create a new commit that undoes a previous commit | ✅ |
+| `git_reset_hard` | Hard reset to a specific commit (DESTRUCTIVE) | ✅ |
+| `git_branch_delete` | Delete local and optionally remote branches | ✅ |
+| `git_clean` | Remove untracked files and directories (DESTRUCTIVE) | ✅ |
+| `git_bisect` | Binary search to find commit that introduced a bug | ✅ |
+| `git_describe` | Generate human-readable names for commits | ✅ |
+| `git_shortlog` | Summarize git log by contributor | ✅ |
 
 ### Git Rebase Tool
 
@@ -121,6 +131,173 @@ The `git_stash_pop` tool is a convenience wrapper for applying and removing stas
 - Pop with index restoration: `{"repo_path": ".", "index": true}`
 
 **Note:** If merge conflicts occur during pop, the stash is not removed and must be resolved manually.
+
+### Git Cherry Pick Tool
+
+The `git_cherry_pick` tool allows applying specific commits from other branches:
+
+**Parameters:**
+- `repo_path`: Path to the git repository (required)
+- `commits`: Single commit SHA or array of commits (required)
+- `continue_pick`: Continue an in-progress cherry-pick
+- `skip`: Skip current commit during cherry-pick
+- `abort`: Abort an in-progress cherry-pick
+- `no_commit`: Apply changes without creating commits
+- `mainline_parent`: Parent number for merge commits (1 or 2)
+
+**Usage Examples:**
+- Pick single commit: `{"repo_path": ".", "commits": "abc123"}`
+- Pick multiple commits: `{"repo_path": ".", "commits": ["abc123", "def456"]}`
+- Continue after resolving conflicts: `{"repo_path": ".", "continue_pick": true}`
+- Abort cherry-pick: `{"repo_path": ".", "abort": true}`
+
+### Git Reflog Tool
+
+The `git_reflog` tool provides access to the reference log for recovery operations:
+
+**Parameters:**
+- `repo_path`: Path to the git repository (required)
+- `max_count`: Maximum number of entries to show (default: 30)
+- `ref`: Specific reference to show reflog for (optional)
+
+**Usage Examples:**
+- Show default reflog: `{"repo_path": "."}`
+- Show specific branch reflog: `{"repo_path": ".", "ref": "feature-branch"}`
+- Show last 10 entries: `{"repo_path": ".", "max_count": 10}`
+
+### Git Blame Tool
+
+The `git_blame` tool shows line-by-line authorship information:
+
+**Parameters:**
+- `repo_path`: Path to the git repository (required)
+- `file_path`: Path to the file to blame (required)
+- `line_range`: Limit output to line range (e.g., "10,20")
+
+**Usage Examples:**
+- Blame entire file: `{"repo_path": ".", "file_path": "src/main.py"}`
+- Blame specific lines: `{"repo_path": ".", "file_path": "src/main.py", "line_range": "100,150"}`
+
+### Git Revert Tool
+
+The `git_revert` tool creates new commits that undo previous commits:
+
+**Parameters:**
+- `repo_path`: Path to the git repository (required)
+- `commit`: Commit SHA to revert (required)
+- `no_edit`: Use default commit message
+- `no_commit`: Apply changes without creating commit
+- `mainline_parent`: Parent number for merge commits
+
+**Usage Examples:**
+- Revert commit: `{"repo_path": ".", "commit": "abc123"}`
+- Revert without editing message: `{"repo_path": ".", "commit": "abc123", "no_edit": true}`
+- Revert merge commit: `{"repo_path": ".", "commit": "abc123", "mainline_parent": 1}`
+
+### Git Reset Hard Tool
+
+The `git_reset_hard` tool performs a hard reset, discarding all changes:
+
+**Parameters:**
+- `repo_path`: Path to the git repository (required)
+- `ref`: Reference to reset to (default: "HEAD")
+
+**Usage Examples:**
+- Reset to HEAD: `{"repo_path": "."}`
+- Reset to specific commit: `{"repo_path": ".", "ref": "abc123"}`
+- Reset to branch: `{"repo_path": ".", "ref": "origin/main"}`
+
+**⚠️ WARNING:** This operation is destructive and will discard all uncommitted changes!
+
+### Git Branch Delete Tool
+
+The `git_branch_delete` tool removes local and optionally remote branches:
+
+**Parameters:**
+- `repo_path`: Path to the git repository (required)
+- `branch_name`: Name of branch to delete (required)
+- `force`: Force delete even if not merged
+- `remote`: Delete remote branch as well
+
+**Usage Examples:**
+- Delete merged branch: `{"repo_path": ".", "branch_name": "feature-done"}`
+- Force delete: `{"repo_path": ".", "branch_name": "abandoned-feature", "force": true}`
+- Delete remote too: `{"repo_path": ".", "branch_name": "old-feature", "remote": true}`
+
+### Git Clean Tool
+
+The `git_clean` tool removes untracked files and directories:
+
+**Parameters:**
+- `repo_path`: Path to the git repository (required)
+- `force`: Actually remove files (required for safety)
+- `directories`: Also remove directories
+- `ignored`: Also remove ignored files
+- `dry_run`: Show what would be removed
+
+**Usage Examples:**
+- Dry run: `{"repo_path": ".", "dry_run": true}`
+- Clean files: `{"repo_path": ".", "force": true}`
+- Clean everything: `{"repo_path": ".", "force": true, "directories": true, "ignored": true}`
+
+**⚠️ WARNING:** This operation is destructive! Always use dry_run first.
+
+### Git Bisect Tool
+
+The `git_bisect` tool performs binary search to find problematic commits:
+
+**Parameters:**
+- `repo_path`: Path to the git repository (required)
+- `action`: Bisect action (required)
+  - `"start"`: Start bisect session
+  - `"bad"`: Mark commit as bad
+  - `"good"`: Mark commit as good
+  - `"skip"`: Skip current commit
+  - `"reset"`: End bisect session
+  - `"view"`: Show bisect status
+- `commit`: Commit SHA for good/bad actions
+- `bad_commit`: Bad commit for start action
+- `good_commit`: Good commit for start action
+
+**Usage Examples:**
+- Start bisect: `{"repo_path": ".", "action": "start", "bad_commit": "HEAD", "good_commit": "v1.0"}`
+- Mark as bad: `{"repo_path": ".", "action": "bad"}`
+- Mark as good: `{"repo_path": ".", "action": "good", "commit": "abc123"}`
+- End bisect: `{"repo_path": ".", "action": "reset"}`
+
+### Git Describe Tool
+
+The `git_describe` tool generates human-readable names from tags:
+
+**Parameters:**
+- `repo_path`: Path to the git repository (required)
+- `commit`: Commit to describe (optional)
+- `all`: Use all refs, not just tags
+- `tags`: Use any tag, not just annotated
+- `long`: Always use long format
+
+**Usage Examples:**
+- Describe HEAD: `{"repo_path": "."}`
+- Describe commit: `{"repo_path": ".", "commit": "abc123"}`
+- Use all tags: `{"repo_path": ".", "tags": true}`
+
+### Git Shortlog Tool
+
+The `git_shortlog` tool summarizes commits by author:
+
+**Parameters:**
+- `repo_path`: Path to the git repository (required)
+- `numbered`: Sort by number of commits
+- `summary`: Show only commit count
+- `email`: Show email addresses
+- `since`: Show commits since date
+- `until`: Show commits until date
+
+**Usage Examples:**
+- Basic summary: `{"repo_path": "."}`
+- Numbered list: `{"repo_path": ".", "numbered": true}`
+- Last month: `{"repo_path": ".", "since": "1 month ago"}`
+- Count only: `{"repo_path": ".", "summary": true, "numbered": true}`
 
 ## Logging Implementation
 
