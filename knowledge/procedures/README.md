@@ -6,3 +6,4 @@ Actionable processes and workflows that evolve with experience.
 - `git-workflow.md` - Git conventions and branch management
 - `post-pr-mini-retro.md` - Systems improvement retro after feature PRs
 - `worktree-workflow.md` - Git worktree workflow (beta/imperfect system)
+- `self-organizing-readme.md` - Automated README reorganization based on usage patterns
