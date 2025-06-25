@@ -1,7 +1,6 @@
 Close GitHub issue #{{ ISSUE_NUMBER }} - determine if it needs implementation or just closure.
 
 ## Core Principles
-{{ INJECT:principles/do-dont-explain.md }}
 {{ INJECT:principles/tracer-bullets.md }}
 
 ## Step 1: Analyze the Issue
