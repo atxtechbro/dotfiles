@@ -146,6 +146,22 @@ class GitCherryPick(BaseModel):
     abort: bool = False
     mainline_parent: int | None = None  # For merge commits
 
+class GitReflog(BaseModel):
+    repo_path: str
+    max_count: int = 30  # Number of reflog entries to show
+    ref: str | None = None  # Specific ref to show reflog for (e.g., HEAD, branch name)
+
+class GitBlame(BaseModel):
+    repo_path: str
+    file_path: str  # Path to the file to blame
+    line_range: str | None = None  # Line range (e.g., "10,20" or "10,+5")
+
+class GitRevert(BaseModel):
+    repo_path: str
+    commits: list[str] | str  # Single commit or list of commits to revert
+    no_commit: bool = False  # Stage changes without committing
+    no_edit: bool = False  # Use default commit message
+
 class GitTools(str, Enum):
     STATUS = "git_status"
     DIFF_UNSTAGED = "git_diff_unstaged"
@@ -171,6 +187,9 @@ class GitTools(str, Enum):
     STASH = "git_stash"
     STASH_POP = "git_stash_pop"
     CHERRY_PICK = "git_cherry_pick"
+    REFLOG = "git_reflog"
+    BLAME = "git_blame"
+    REVERT = "git_revert"
 
 def git_status(repo: git.Repo) -> str:
     return repo.git.status()
@@ -490,6 +509,12 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
                                  args.get("include_untracked", False))
             elif tool == "git_stash_pop":
                 result = git_stash_pop(repo, args.get("stash_ref"), args.get("index", False))
+            elif tool == "git_reflog":
+                result = git_reflog(repo, args.get("max_count", 30), args.get("ref"))
+            elif tool == "git_blame":
+                result = git_blame(repo, args.get("file_path"), args.get("line_range"))
+            elif tool == "git_revert":
+                result = git_revert(repo, args.get("commits"), args.get("no_commit", False), args.get("no_edit", False))
             else:
                 result = f"Unknown tool: {tool}"
             
@@ -696,6 +721,119 @@ def git_cherry_pick(repo: git.Repo, commits: list[str] | str, no_commit: bool = 
     except Exception as e:
         return f"Unexpected error during cherry-pick: {str(e)}"
 
+def git_reflog(repo: git.Repo, max_count: int = 30, ref: str | None = None) -> str:
+    """
+    Show the reference log (reflog) for recovery and history inspection
+    """
+    try:
+        cmd_parts = ["reflog"]
+        
+        # Add count limit
+        cmd_parts.extend(["-n", str(max_count)])
+        
+        # Add specific ref if provided
+        if ref:
+            cmd_parts.append(ref)
+        
+        output = repo.git.execute(cmd_parts)
+        
+        if not output:
+            ref_name = ref or "HEAD"
+            return f"No reflog entries found for {ref_name}"
+            
+        return output
+        
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "ambiguous argument" in error_str:
+            return f"Invalid reference: {ref}"
+        elif "fatal: your current branch" in error_str:
+            return f"No reflog available for {ref or 'current branch'}"
+        else:
+            return f"Reflog error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error accessing reflog: {str(e)}"
+
+def git_blame(repo: git.Repo, file_path: str, line_range: str | None = None) -> str:
+    """
+    Show who last modified each line of a file (line-by-line authorship)
+    """
+    try:
+        cmd_parts = ["blame"]
+        
+        # Add line range if specified
+        if line_range:
+            cmd_parts.extend(["-L", line_range])
+        
+        # Add the file path
+        cmd_parts.append(file_path)
+        
+        output = repo.git.execute(cmd_parts)
+        
+        if not output:
+            return f"No blame information available for {file_path}"
+            
+        return output
+        
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "no such path" in error_str:
+            return f"File not found: {file_path}"
+        elif "line range" in error_str:
+            return f"Invalid line range: {line_range}"
+        elif "fatal: no such ref" in error_str:
+            return "File does not exist in the current branch"
+        else:
+            return f"Blame error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error running git blame: {str(e)}"
+
+def git_revert(repo: git.Repo, commits: list[str] | str, no_commit: bool = False, no_edit: bool = False) -> str:
+    """
+    Create a new commit that undoes a previous commit
+    """
+    try:
+        # Ensure commits is a list
+        if isinstance(commits, str):
+            commits = [commits]
+        
+        cmd_parts = ["revert"]
+        
+        if no_commit:
+            cmd_parts.append("--no-commit")
+        
+        if no_edit:
+            cmd_parts.append("--no-edit")
+        
+        # Add commits to revert
+        cmd_parts.extend(commits)
+        
+        output = repo.git.execute(cmd_parts)
+        
+        # Prepare success message
+        if len(commits) == 1:
+            action = "staged" if no_commit else "reverted"
+            return output if output else f"Successfully {action} commit {commits[0]}"
+        else:
+            action = "staged" if no_commit else "reverted"
+            return output if output else f"Successfully {action} {len(commits)} commits"
+            
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "CONFLICT" in error_str:
+            return f"Revert conflict detected. Resolve conflicts and commit manually\n{error_str}"
+        elif "bad revision" in error_str:
+            return f"Invalid commit reference: {error_str}"
+        elif "cherry-pick is already in progress" in error_str:
+            return "Cannot revert: a cherry-pick is already in progress"
+        else:
+            return f"Revert error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during revert: {str(e)}"
+
 async def serve(repository: Path | None) -> None:
     logger = logging.getLogger(__name__)
 
@@ -831,6 +969,21 @@ async def serve(repository: Path | None) -> None:
                 name=GitTools.CHERRY_PICK,
                 description="Cherry-pick commits onto the current branch (supports --continue, --skip, --abort)",
                 inputSchema=GitCherryPick.schema(),
+            ),
+            Tool(
+                name=GitTools.REFLOG,
+                description="Show the reference log (reflog) for recovery and history inspection",
+                inputSchema=GitReflog.schema(),
+            ),
+            Tool(
+                name=GitTools.BLAME,
+                description="Show who last modified each line of a file",
+                inputSchema=GitBlame.schema(),
+            ),
+            Tool(
+                name=GitTools.REVERT,
+                description="Create a new commit that undoes a previous commit",
+                inputSchema=GitRevert.schema(),
             )
         ]
 
@@ -1369,6 +1522,43 @@ Format the output as markdown suitable for GitHub PR description."""
                         arguments.get("mainline_parent")
                     )
                     log_tool_success("atxtechbro-git-mcp-server", name, "Cherry-pick operation completed", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.REFLOG:
+                    result = git_reflog(
+                        repo,
+                        arguments.get("max_count", 30),
+                        arguments.get("ref")
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Retrieved reflog entries", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.BLAME:
+                    result = git_blame(
+                        repo,
+                        arguments["file_path"],
+                        arguments.get("line_range")
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Retrieved blame for {arguments['file_path']}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.REVERT:
+                    result = git_revert(
+                        repo,
+                        arguments["commits"],
+                        arguments.get("no_commit", False),
+                        arguments.get("no_edit", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Revert operation completed", repo_path, arguments)
                     return [TextContent(
                         type="text",
                         text=result
