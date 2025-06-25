@@ -179,6 +179,26 @@ class GitClean(BaseModel):
     ignored: bool = False  # Also remove ignored files
     dry_run: bool = True  # Show what would be deleted without deleting
 
+class GitBisect(BaseModel):
+    repo_path: str
+    action: str  # "start", "bad", "good", "skip", "reset", "view"
+    bad_commit: str | None = None  # For start action
+    good_commit: str | None = None  # For start action
+
+class GitDescribe(BaseModel):
+    repo_path: str
+    commit: str | None = None  # Commit to describe (default: HEAD)
+    tags: bool = True  # Use tags for description
+    all: bool = False  # Use all refs, not just annotated tags
+    long: bool = False  # Always output long format
+
+class GitShortlog(BaseModel):
+    repo_path: str
+    revision_range: str | None = None  # e.g., "v1.0..HEAD" or "main"
+    numbered: bool = True  # Show number of commits per author
+    summary: bool = True  # Suppress commit descriptions
+    email: bool = False  # Show author emails
+
 class GitTools(str, Enum):
     STATUS = "git_status"
     DIFF_UNSTAGED = "git_diff_unstaged"
@@ -210,6 +230,9 @@ class GitTools(str, Enum):
     RESET_HARD = "git_reset_hard"
     BRANCH_DELETE = "git_branch_delete"
     CLEAN = "git_clean"
+    BISECT = "git_bisect"
+    DESCRIBE = "git_describe"
+    SHORTLOG = "git_shortlog"
 
 def git_status(repo: git.Repo) -> str:
     return repo.git.status()
@@ -542,6 +565,14 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
             elif tool == "git_clean":
                 result = git_clean(repo, args.get("force", False), args.get("directories", False), 
                                  args.get("ignored", False), args.get("dry_run", True))
+            elif tool == "git_bisect":
+                result = git_bisect(repo, args.get("action"), args.get("bad_commit"), args.get("good_commit"))
+            elif tool == "git_describe":
+                result = git_describe(repo, args.get("commit"), args.get("tags", True), 
+                                    args.get("all", False), args.get("long", False))
+            elif tool == "git_shortlog":
+                result = git_shortlog(repo, args.get("revision_range"), args.get("numbered", True),
+                                    args.get("summary", True), args.get("email", False))
             else:
                 result = f"Unknown tool: {tool}"
             
@@ -1004,6 +1035,217 @@ def git_clean(repo: git.Repo, force: bool = False, directories: bool = False,
     except Exception as e:
         return f"Unexpected error during clean: {str(e)}"
 
+def git_bisect(repo: git.Repo, action: str, bad_commit: str | None = None, good_commit: str | None = None) -> str:
+    """
+    Binary search to find commit that introduced a bug
+    """
+    try:
+        # Validate action
+        allowed_actions = ["start", "bad", "good", "skip", "reset", "view"]
+        if action not in allowed_actions:
+            return f"Unknown bisect action: {action}. Allowed actions: {', '.join(allowed_actions)}"
+        
+        if action == "start":
+            # Start bisect
+            try:
+                repo.git.bisect("start")
+                result = "Bisect started"
+                
+                # Mark bad commit if provided
+                if bad_commit:
+                    repo.git.bisect("bad", bad_commit)
+                    result += f"\nMarked {bad_commit} as bad"
+                
+                # Mark good commit if provided
+                if good_commit:
+                    repo.git.bisect("good", good_commit)
+                    result += f"\nMarked {good_commit} as good"
+                    
+                    # Get the commit to test
+                    try:
+                        output = repo.git.bisect("view")
+                        if output and "Bisecting:" in output:
+                            result += f"\n\n{output}"
+                    except:
+                        pass
+                
+                return result
+            except git.GitCommandError as e:
+                if "already started" in str(e):
+                    return "Bisect already in progress. Use 'reset' to stop current bisect first."
+                return f"Error starting bisect: {str(e)}"
+        
+        elif action == "bad":
+            # Mark current commit as bad
+            output = repo.git.bisect("bad")
+            if "is the first bad commit" in output:
+                return f"Bisect complete! First bad commit found:\n\n{output}"
+            return output if output else "Marked current commit as bad"
+        
+        elif action == "good":
+            # Mark current commit as good
+            output = repo.git.bisect("good")
+            if "is the first bad commit" in output:
+                return f"Bisect complete! First bad commit found:\n\n{output}"
+            return output if output else "Marked current commit as good"
+        
+        elif action == "skip":
+            # Skip current commit
+            output = repo.git.bisect("skip")
+            return output if output else "Skipped current commit"
+        
+        elif action == "reset":
+            # Reset bisect
+            output = repo.git.bisect("reset")
+            return output if output else "Bisect reset - returned to original branch"
+        
+        elif action == "view":
+            # View current bisect status
+            try:
+                output = repo.git.bisect("view")
+                if not output:
+                    # Try to get log of bisect
+                    log = repo.git.bisect("log")
+                    if log:
+                        return f"Bisect log:\n{log}"
+                    return "No bisect in progress"
+                return output
+            except git.GitCommandError:
+                return "No bisect in progress"
+                
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "no terms defined" in error_str:
+            return "No bisect in progress. Start with action='start'"
+        elif "bad revision" in error_str:
+            return f"Invalid commit reference"
+        else:
+            return f"Bisect error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during bisect: {str(e)}"
+
+def git_describe(repo: git.Repo, commit: str | None = None, tags: bool = True, 
+                all: bool = False, long: bool = False) -> str:
+    """
+    Generate human-readable names for commits based on tags
+    """
+    try:
+        cmd_parts = ["describe"]
+        
+        # Add options
+        if all:
+            cmd_parts.append("--all")
+        elif tags:
+            cmd_parts.append("--tags")
+        
+        if long:
+            cmd_parts.append("--long")
+        
+        # Add commit reference if provided
+        if commit:
+            cmd_parts.append(commit)
+        
+        output = repo.git.execute(cmd_parts)
+        
+        if output:
+            # Get additional info about the commit
+            try:
+                commit_ref = commit or "HEAD"
+                commit_obj = repo.commit(commit_ref)
+                result = f"Description: {output}\n"
+                result += f"Commit: {commit_obj.hexsha[:7]}\n"
+                result += f"Author: {commit_obj.author}\n"
+                result += f"Date: {commit_obj.authored_datetime}\n"
+                result += f"Message: {commit_obj.summary}"
+                return result
+            except:
+                # Fallback to just the description
+                return output
+        else:
+            return "No description available (no tags found)"
+            
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "No tags can describe" in error_str or "No names found" in error_str:
+            # Try to provide helpful context
+            try:
+                commit_ref = commit or "HEAD"
+                commit_obj = repo.commit(commit_ref)
+                return f"No tags found to describe commit {commit_obj.hexsha[:7]}\nConsider creating a tag with 'git tag' first"
+            except:
+                return "No tags found in repository. Create tags to enable descriptions."
+        elif "bad revision" in error_str:
+            return f"Invalid commit reference: {commit}"
+        else:
+            return f"Describe error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during describe: {str(e)}"
+
+def git_shortlog(repo: git.Repo, revision_range: str | None = None, 
+                numbered: bool = True, summary: bool = True, email: bool = False) -> str:
+    """
+    Summarize git log by contributor
+    """
+    try:
+        cmd_parts = ["shortlog"]
+        
+        # Add options
+        if numbered:
+            cmd_parts.append("-n")  # Sort by number of commits
+        
+        if summary:
+            cmd_parts.append("-s")  # Suppress commit descriptions
+        
+        if email:
+            cmd_parts.append("-e")  # Show emails
+        
+        # Add revision range if provided
+        if revision_range:
+            cmd_parts.append(revision_range)
+        
+        output = repo.git.execute(cmd_parts)
+        
+        if output:
+            # Add summary statistics
+            lines = output.strip().split('\n')
+            total_commits = 0
+            contributor_count = len(lines)
+            
+            for line in lines:
+                # Extract commit count from numbered output
+                if numbered and summary:
+                    parts = line.strip().split(None, 1)
+                    if parts and parts[0].isdigit():
+                        total_commits += int(parts[0])
+            
+            result = f"Contributor Summary"
+            if revision_range:
+                result += f" ({revision_range})"
+            result += f":\n\n{output}\n\n"
+            
+            if total_commits > 0:
+                result += f"Total: {contributor_count} contributor(s), {total_commits} commit(s)"
+            else:
+                result += f"Total: {contributor_count} contributor(s)"
+            
+            return result
+        else:
+            return "No commits found in the specified range"
+            
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "bad revision" in error_str:
+            return f"Invalid revision range: {revision_range}"
+        elif "unknown revision" in error_str:
+            return f"Unknown revision in range: {revision_range}"
+        else:
+            return f"Shortlog error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during shortlog: {str(e)}"
+
 async def serve(repository: Path | None) -> None:
     logger = logging.getLogger(__name__)
 
@@ -1169,6 +1411,21 @@ async def serve(repository: Path | None) -> None:
                 name=GitTools.CLEAN,
                 description="Remove untracked files and directories (DESTRUCTIVE - use dry_run first)",
                 inputSchema=GitClean.schema(),
+            ),
+            Tool(
+                name=GitTools.BISECT,
+                description="Binary search to find commit that introduced a bug (actions: start, bad, good, skip, reset, view)",
+                inputSchema=GitBisect.schema(),
+            ),
+            Tool(
+                name=GitTools.DESCRIBE,
+                description="Generate human-readable names for commits based on tags",
+                inputSchema=GitDescribe.schema(),
+            ),
+            Tool(
+                name=GitTools.SHORTLOG,
+                description="Summarize git log by contributor",
+                inputSchema=GitShortlog.schema(),
             )
         ]
 
@@ -1782,6 +2039,47 @@ Format the output as markdown suitable for GitHub PR description."""
                         arguments.get("dry_run", True)
                     )
                     log_tool_success("atxtechbro-git-mcp-server", name, "Clean operation completed", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.BISECT:
+                    result = git_bisect(
+                        repo,
+                        arguments["action"],
+                        arguments.get("bad_commit"),
+                        arguments.get("good_commit")
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Bisect {arguments['action']} completed", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.DESCRIBE:
+                    result = git_describe(
+                        repo,
+                        arguments.get("commit"),
+                        arguments.get("tags", True),
+                        arguments.get("all", False),
+                        arguments.get("long", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Describe completed", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.SHORTLOG:
+                    result = git_shortlog(
+                        repo,
+                        arguments.get("revision_range"),
+                        arguments.get("numbered", True),
+                        arguments.get("summary", True),
+                        arguments.get("email", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Shortlog completed", repo_path, arguments)
                     return [TextContent(
                         type="text",
                         text=result
