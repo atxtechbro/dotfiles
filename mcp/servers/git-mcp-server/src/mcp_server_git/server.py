@@ -146,6 +146,59 @@ class GitCherryPick(BaseModel):
     abort: bool = False
     mainline_parent: int | None = None  # For merge commits
 
+class GitReflog(BaseModel):
+    repo_path: str
+    max_count: int = 30  # Number of reflog entries to show
+    ref: str | None = None  # Specific ref to show reflog for (e.g., HEAD, branch name)
+
+class GitBlame(BaseModel):
+    repo_path: str
+    file_path: str  # Path to the file to blame
+    line_range: str | None = None  # Line range (e.g., "10,20" or "10,+5")
+
+class GitRevert(BaseModel):
+    repo_path: str
+    commits: list[str] | str  # Single commit or list of commits to revert
+    no_commit: bool = False  # Stage changes without committing
+    no_edit: bool = False  # Use default commit message
+
+class GitResetHard(BaseModel):
+    repo_path: str
+    ref: str = "HEAD"  # Commit/branch/tag to reset to
+
+class GitBranchDelete(BaseModel):
+    repo_path: str
+    branch_name: str  # Branch to delete
+    force: bool = False  # Force delete even if not merged
+    remote: bool = False  # Delete remote branch as well
+
+class GitClean(BaseModel):
+    repo_path: str
+    force: bool = False  # Required to actually delete files
+    directories: bool = False  # Also remove untracked directories
+    ignored: bool = False  # Also remove ignored files
+    dry_run: bool = True  # Show what would be deleted without deleting
+
+class GitBisect(BaseModel):
+    repo_path: str
+    action: str  # "start", "bad", "good", "skip", "reset", "view"
+    bad_commit: str | None = None  # For start action
+    good_commit: str | None = None  # For start action
+
+class GitDescribe(BaseModel):
+    repo_path: str
+    commit: str | None = None  # Commit to describe (default: HEAD)
+    tags: bool = True  # Use tags for description
+    all: bool = False  # Use all refs, not just annotated tags
+    long: bool = False  # Always output long format
+
+class GitShortlog(BaseModel):
+    repo_path: str
+    revision_range: str | None = None  # e.g., "v1.0..HEAD" or "main"
+    numbered: bool = True  # Show number of commits per author
+    summary: bool = True  # Suppress commit descriptions
+    email: bool = False  # Show author emails
+
 class GitTools(str, Enum):
     STATUS = "git_status"
     DIFF_UNSTAGED = "git_diff_unstaged"
@@ -171,6 +224,15 @@ class GitTools(str, Enum):
     STASH = "git_stash"
     STASH_POP = "git_stash_pop"
     CHERRY_PICK = "git_cherry_pick"
+    REFLOG = "git_reflog"
+    BLAME = "git_blame"
+    REVERT = "git_revert"
+    RESET_HARD = "git_reset_hard"
+    BRANCH_DELETE = "git_branch_delete"
+    CLEAN = "git_clean"
+    BISECT = "git_bisect"
+    DESCRIBE = "git_describe"
+    SHORTLOG = "git_shortlog"
 
 def git_status(repo: git.Repo) -> str:
     return repo.git.status()
@@ -490,6 +552,27 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
                                  args.get("include_untracked", False))
             elif tool == "git_stash_pop":
                 result = git_stash_pop(repo, args.get("stash_ref"), args.get("index", False))
+            elif tool == "git_reflog":
+                result = git_reflog(repo, args.get("max_count", 30), args.get("ref"))
+            elif tool == "git_blame":
+                result = git_blame(repo, args.get("file_path"), args.get("line_range"))
+            elif tool == "git_revert":
+                result = git_revert(repo, args.get("commits"), args.get("no_commit", False), args.get("no_edit", False))
+            elif tool == "git_reset_hard":
+                result = git_reset_hard(repo, args.get("ref", "HEAD"))
+            elif tool == "git_branch_delete":
+                result = git_branch_delete(repo, args.get("branch_name"), args.get("force", False), args.get("remote", False))
+            elif tool == "git_clean":
+                result = git_clean(repo, args.get("force", False), args.get("directories", False), 
+                                 args.get("ignored", False), args.get("dry_run", True))
+            elif tool == "git_bisect":
+                result = git_bisect(repo, args.get("action"), args.get("bad_commit"), args.get("good_commit"))
+            elif tool == "git_describe":
+                result = git_describe(repo, args.get("commit"), args.get("tags", True), 
+                                    args.get("all", False), args.get("long", False))
+            elif tool == "git_shortlog":
+                result = git_shortlog(repo, args.get("revision_range"), args.get("numbered", True),
+                                    args.get("summary", True), args.get("email", False))
             else:
                 result = f"Unknown tool: {tool}"
             
@@ -696,6 +779,473 @@ def git_cherry_pick(repo: git.Repo, commits: list[str] | str, no_commit: bool = 
     except Exception as e:
         return f"Unexpected error during cherry-pick: {str(e)}"
 
+def git_reflog(repo: git.Repo, max_count: int = 30, ref: str | None = None) -> str:
+    """
+    Show the reference log (reflog) for recovery and history inspection
+    """
+    try:
+        cmd_parts = ["reflog"]
+        
+        # Add count limit
+        cmd_parts.extend(["-n", str(max_count)])
+        
+        # Add specific ref if provided
+        if ref:
+            cmd_parts.append(ref)
+        
+        output = repo.git.execute(cmd_parts)
+        
+        if not output:
+            ref_name = ref or "HEAD"
+            return f"No reflog entries found for {ref_name}"
+            
+        return output
+        
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "ambiguous argument" in error_str:
+            return f"Invalid reference: {ref}"
+        elif "fatal: your current branch" in error_str:
+            return f"No reflog available for {ref or 'current branch'}"
+        else:
+            return f"Reflog error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error accessing reflog: {str(e)}"
+
+def git_blame(repo: git.Repo, file_path: str, line_range: str | None = None) -> str:
+    """
+    Show who last modified each line of a file (line-by-line authorship)
+    """
+    try:
+        cmd_parts = ["blame"]
+        
+        # Add line range if specified
+        if line_range:
+            cmd_parts.extend(["-L", line_range])
+        
+        # Add the file path
+        cmd_parts.append(file_path)
+        
+        output = repo.git.execute(cmd_parts)
+        
+        if not output:
+            return f"No blame information available for {file_path}"
+            
+        return output
+        
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "no such path" in error_str:
+            return f"File not found: {file_path}"
+        elif "line range" in error_str:
+            return f"Invalid line range: {line_range}"
+        elif "fatal: no such ref" in error_str:
+            return "File does not exist in the current branch"
+        else:
+            return f"Blame error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error running git blame: {str(e)}"
+
+def git_revert(repo: git.Repo, commits: list[str] | str, no_commit: bool = False, no_edit: bool = False) -> str:
+    """
+    Create a new commit that undoes a previous commit
+    """
+    try:
+        # Ensure commits is a list
+        if isinstance(commits, str):
+            commits = [commits]
+        
+        cmd_parts = ["revert"]
+        
+        if no_commit:
+            cmd_parts.append("--no-commit")
+        
+        if no_edit:
+            cmd_parts.append("--no-edit")
+        
+        # Add commits to revert
+        cmd_parts.extend(commits)
+        
+        output = repo.git.execute(cmd_parts)
+        
+        # Prepare success message
+        if len(commits) == 1:
+            action = "staged" if no_commit else "reverted"
+            return output if output else f"Successfully {action} commit {commits[0]}"
+        else:
+            action = "staged" if no_commit else "reverted"
+            return output if output else f"Successfully {action} {len(commits)} commits"
+            
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "CONFLICT" in error_str:
+            return f"Revert conflict detected. Resolve conflicts and commit manually\n{error_str}"
+        elif "bad revision" in error_str:
+            return f"Invalid commit reference: {error_str}"
+        elif "cherry-pick is already in progress" in error_str:
+            return "Cannot revert: a cherry-pick is already in progress"
+        else:
+            return f"Revert error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during revert: {str(e)}"
+
+def git_reset_hard(repo: git.Repo, ref: str = "HEAD") -> str:
+    """
+    Hard reset to a specific commit (DESTRUCTIVE - discards all changes)
+    """
+    try:
+        # Get current branch name for warning message
+        try:
+            current_branch = repo.active_branch.name
+        except:
+            current_branch = "detached HEAD"
+        
+        # Perform hard reset
+        repo.git.reset("--hard", ref)
+        
+        # Get info about where we reset to
+        try:
+            reset_commit = repo.commit(ref)
+            reset_info = f"{reset_commit.hexsha[:7]} - {reset_commit.summary}"
+        except:
+            reset_info = ref
+        
+        return f"Hard reset successful. Branch '{current_branch}' is now at {reset_info}\nWARNING: All uncommitted changes have been discarded!"
+        
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "unknown revision" in error_str or "bad revision" in error_str:
+            return f"Invalid reference: {ref}"
+        elif "needs merge" in error_str:
+            return "Cannot reset: You have unmerged files. Resolve conflicts first."
+        else:
+            return f"Reset error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during hard reset: {str(e)}"
+
+def git_branch_delete(repo: git.Repo, branch_name: str, force: bool = False, remote: bool = False) -> str:
+    """
+    Delete local and optionally remote branches
+    """
+    try:
+        results = []
+        
+        # Check if we're trying to delete the current branch
+        try:
+            current_branch = repo.active_branch.name
+            if current_branch == branch_name:
+                return f"Cannot delete the current branch '{branch_name}'. Switch to another branch first."
+        except:
+            pass  # Might be in detached HEAD state
+        
+        # Delete local branch
+        try:
+            if force:
+                repo.git.branch("-D", branch_name)
+            else:
+                repo.git.branch("-d", branch_name)
+            results.append(f"Deleted local branch '{branch_name}'")
+        except git.GitCommandError as e:
+            error_str = str(e)
+            if "not found" in error_str:
+                if not remote:
+                    return f"Branch '{branch_name}' not found"
+                # If only remote deletion requested, continue
+            elif "not fully merged" in error_str:
+                return f"Branch '{branch_name}' is not fully merged. Use force=true to delete anyway."
+            else:
+                return f"Error deleting local branch: {error_str}"
+        
+        # Delete remote branch if requested
+        if remote:
+            try:
+                # Try to delete from origin by default
+                repo.git.push("origin", "--delete", branch_name)
+                results.append(f"Deleted remote branch 'origin/{branch_name}'")
+            except git.GitCommandError as e:
+                error_str = str(e)
+                if "remote ref does not exist" in error_str:
+                    results.append(f"Remote branch 'origin/{branch_name}' not found")
+                else:
+                    results.append(f"Error deleting remote branch: {error_str}")
+        
+        return "\n".join(results) if results else "No branches deleted"
+        
+    except Exception as e:
+        return f"Unexpected error deleting branch: {str(e)}"
+
+def git_clean(repo: git.Repo, force: bool = False, directories: bool = False, 
+              ignored: bool = False, dry_run: bool = True) -> str:
+    """
+    Remove untracked files and directories (DESTRUCTIVE)
+    """
+    try:
+        cmd_parts = ["clean"]
+        
+        # Build command flags
+        flags = ""
+        if dry_run:
+            flags += "n"  # Dry run - show what would be deleted
+        if force:
+            flags += "f"  # Force - actually delete
+        if directories:
+            flags += "d"  # Include directories
+        if ignored:
+            flags += "x"  # Include ignored files
+        
+        if flags:
+            cmd_parts.append(f"-{flags}")
+        
+        # Execute clean command
+        output = repo.git.execute(cmd_parts)
+        
+        if not output:
+            return "Nothing to clean - working directory is clean"
+        
+        # Format output based on mode
+        if dry_run:
+            lines = output.strip().split('\n')
+            cleaned_lines = [line.replace("Would remove ", "") for line in lines if line]
+            file_count = len(cleaned_lines)
+            
+            result = f"Would remove {file_count} item(s):\n"
+            result += "\n".join(f"  - {item}" for item in cleaned_lines)
+            result += "\n\nTo actually delete these files, run with dry_run=false and force=true"
+            return result
+        else:
+            lines = output.strip().split('\n')
+            cleaned_lines = [line.replace("Removing ", "") for line in lines if line]
+            file_count = len(cleaned_lines)
+            
+            result = f"Successfully removed {file_count} item(s):\n"
+            result += "\n".join(f"  - {item}" for item in cleaned_lines)
+            return result
+            
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "failed to remove" in error_str:
+            return f"Failed to remove some files: {error_str}"
+        else:
+            return f"Clean error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during clean: {str(e)}"
+
+def git_bisect(repo: git.Repo, action: str, bad_commit: str | None = None, good_commit: str | None = None) -> str:
+    """
+    Binary search to find commit that introduced a bug
+    """
+    try:
+        # Validate action
+        allowed_actions = ["start", "bad", "good", "skip", "reset", "view"]
+        if action not in allowed_actions:
+            return f"Unknown bisect action: {action}. Allowed actions: {', '.join(allowed_actions)}"
+        
+        if action == "start":
+            # Start bisect
+            try:
+                repo.git.bisect("start")
+                result = "Bisect started"
+                
+                # Mark bad commit if provided
+                if bad_commit:
+                    repo.git.bisect("bad", bad_commit)
+                    result += f"\nMarked {bad_commit} as bad"
+                
+                # Mark good commit if provided
+                if good_commit:
+                    repo.git.bisect("good", good_commit)
+                    result += f"\nMarked {good_commit} as good"
+                    
+                    # Get the commit to test
+                    try:
+                        output = repo.git.bisect("view")
+                        if output and "Bisecting:" in output:
+                            result += f"\n\n{output}"
+                    except:
+                        pass
+                
+                return result
+            except git.GitCommandError as e:
+                if "already started" in str(e):
+                    return "Bisect already in progress. Use 'reset' to stop current bisect first."
+                return f"Error starting bisect: {str(e)}"
+        
+        elif action == "bad":
+            # Mark current commit as bad
+            output = repo.git.bisect("bad")
+            if "is the first bad commit" in output:
+                return f"Bisect complete! First bad commit found:\n\n{output}"
+            return output if output else "Marked current commit as bad"
+        
+        elif action == "good":
+            # Mark current commit as good
+            output = repo.git.bisect("good")
+            if "is the first bad commit" in output:
+                return f"Bisect complete! First bad commit found:\n\n{output}"
+            return output if output else "Marked current commit as good"
+        
+        elif action == "skip":
+            # Skip current commit
+            output = repo.git.bisect("skip")
+            return output if output else "Skipped current commit"
+        
+        elif action == "reset":
+            # Reset bisect
+            output = repo.git.bisect("reset")
+            return output if output else "Bisect reset - returned to original branch"
+        
+        elif action == "view":
+            # View current bisect status
+            try:
+                output = repo.git.bisect("view")
+                if not output:
+                    # Try to get log of bisect
+                    log = repo.git.bisect("log")
+                    if log:
+                        return f"Bisect log:\n{log}"
+                    return "No bisect in progress"
+                return output
+            except git.GitCommandError:
+                return "No bisect in progress"
+                
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "no terms defined" in error_str:
+            return "No bisect in progress. Start with action='start'"
+        elif "bad revision" in error_str:
+            return f"Invalid commit reference"
+        else:
+            return f"Bisect error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during bisect: {str(e)}"
+
+def git_describe(repo: git.Repo, commit: str | None = None, tags: bool = True, 
+                all: bool = False, long: bool = False) -> str:
+    """
+    Generate human-readable names for commits based on tags
+    """
+    try:
+        cmd_parts = ["describe"]
+        
+        # Add options
+        if all:
+            cmd_parts.append("--all")
+        elif tags:
+            cmd_parts.append("--tags")
+        
+        if long:
+            cmd_parts.append("--long")
+        
+        # Add commit reference if provided
+        if commit:
+            cmd_parts.append(commit)
+        
+        output = repo.git.execute(cmd_parts)
+        
+        if output:
+            # Get additional info about the commit
+            try:
+                commit_ref = commit or "HEAD"
+                commit_obj = repo.commit(commit_ref)
+                result = f"Description: {output}\n"
+                result += f"Commit: {commit_obj.hexsha[:7]}\n"
+                result += f"Author: {commit_obj.author}\n"
+                result += f"Date: {commit_obj.authored_datetime}\n"
+                result += f"Message: {commit_obj.summary}"
+                return result
+            except:
+                # Fallback to just the description
+                return output
+        else:
+            return "No description available (no tags found)"
+            
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "No tags can describe" in error_str or "No names found" in error_str:
+            # Try to provide helpful context
+            try:
+                commit_ref = commit or "HEAD"
+                commit_obj = repo.commit(commit_ref)
+                return f"No tags found to describe commit {commit_obj.hexsha[:7]}\nConsider creating a tag with 'git tag' first"
+            except:
+                return "No tags found in repository. Create tags to enable descriptions."
+        elif "bad revision" in error_str:
+            return f"Invalid commit reference: {commit}"
+        else:
+            return f"Describe error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during describe: {str(e)}"
+
+def git_shortlog(repo: git.Repo, revision_range: str | None = None, 
+                numbered: bool = True, summary: bool = True, email: bool = False) -> str:
+    """
+    Summarize git log by contributor
+    """
+    try:
+        cmd_parts = ["shortlog"]
+        
+        # Add options
+        if numbered:
+            cmd_parts.append("-n")  # Sort by number of commits
+        
+        if summary:
+            cmd_parts.append("-s")  # Suppress commit descriptions
+        
+        if email:
+            cmd_parts.append("-e")  # Show emails
+        
+        # Add revision range if provided
+        if revision_range:
+            cmd_parts.append(revision_range)
+        
+        output = repo.git.execute(cmd_parts)
+        
+        if output:
+            # Add summary statistics
+            lines = output.strip().split('\n')
+            total_commits = 0
+            contributor_count = len(lines)
+            
+            for line in lines:
+                # Extract commit count from numbered output
+                if numbered and summary:
+                    parts = line.strip().split(None, 1)
+                    if parts and parts[0].isdigit():
+                        total_commits += int(parts[0])
+            
+            result = f"Contributor Summary"
+            if revision_range:
+                result += f" ({revision_range})"
+            result += f":\n\n{output}\n\n"
+            
+            if total_commits > 0:
+                result += f"Total: {contributor_count} contributor(s), {total_commits} commit(s)"
+            else:
+                result += f"Total: {contributor_count} contributor(s)"
+            
+            return result
+        else:
+            return "No commits found in the specified range"
+            
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "bad revision" in error_str:
+            return f"Invalid revision range: {revision_range}"
+        elif "unknown revision" in error_str:
+            return f"Unknown revision in range: {revision_range}"
+        else:
+            return f"Shortlog error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during shortlog: {str(e)}"
+
 async def serve(repository: Path | None) -> None:
     logger = logging.getLogger(__name__)
 
@@ -831,6 +1381,51 @@ async def serve(repository: Path | None) -> None:
                 name=GitTools.CHERRY_PICK,
                 description="Cherry-pick commits onto the current branch (supports --continue, --skip, --abort)",
                 inputSchema=GitCherryPick.schema(),
+            ),
+            Tool(
+                name=GitTools.REFLOG,
+                description="Show the reference log (reflog) for recovery and history inspection",
+                inputSchema=GitReflog.schema(),
+            ),
+            Tool(
+                name=GitTools.BLAME,
+                description="Show who last modified each line of a file",
+                inputSchema=GitBlame.schema(),
+            ),
+            Tool(
+                name=GitTools.REVERT,
+                description="Create a new commit that undoes a previous commit",
+                inputSchema=GitRevert.schema(),
+            ),
+            Tool(
+                name=GitTools.RESET_HARD,
+                description="Hard reset to a specific commit (DESTRUCTIVE - discards all changes)",
+                inputSchema=GitResetHard.schema(),
+            ),
+            Tool(
+                name=GitTools.BRANCH_DELETE,
+                description="Delete local and optionally remote branches",
+                inputSchema=GitBranchDelete.schema(),
+            ),
+            Tool(
+                name=GitTools.CLEAN,
+                description="Remove untracked files and directories (DESTRUCTIVE - use dry_run first)",
+                inputSchema=GitClean.schema(),
+            ),
+            Tool(
+                name=GitTools.BISECT,
+                description="Binary search to find commit that introduced a bug (actions: start, bad, good, skip, reset, view)",
+                inputSchema=GitBisect.schema(),
+            ),
+            Tool(
+                name=GitTools.DESCRIBE,
+                description="Generate human-readable names for commits based on tags",
+                inputSchema=GitDescribe.schema(),
+            ),
+            Tool(
+                name=GitTools.SHORTLOG,
+                description="Summarize git log by contributor",
+                inputSchema=GitShortlog.schema(),
             )
         ]
 
@@ -1369,6 +1964,122 @@ Format the output as markdown suitable for GitHub PR description."""
                         arguments.get("mainline_parent")
                     )
                     log_tool_success("atxtechbro-git-mcp-server", name, "Cherry-pick operation completed", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.REFLOG:
+                    result = git_reflog(
+                        repo,
+                        arguments.get("max_count", 30),
+                        arguments.get("ref")
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Retrieved reflog entries", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.BLAME:
+                    result = git_blame(
+                        repo,
+                        arguments["file_path"],
+                        arguments.get("line_range")
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Retrieved blame for {arguments['file_path']}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.REVERT:
+                    result = git_revert(
+                        repo,
+                        arguments["commits"],
+                        arguments.get("no_commit", False),
+                        arguments.get("no_edit", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Revert operation completed", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.RESET_HARD:
+                    result = git_reset_hard(
+                        repo,
+                        arguments.get("ref", "HEAD")
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Hard reset to {arguments.get('ref', 'HEAD')}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.BRANCH_DELETE:
+                    result = git_branch_delete(
+                        repo,
+                        arguments["branch_name"],
+                        arguments.get("force", False),
+                        arguments.get("remote", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Deleted branch {arguments['branch_name']}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.CLEAN:
+                    result = git_clean(
+                        repo,
+                        arguments.get("force", False),
+                        arguments.get("directories", False),
+                        arguments.get("ignored", False),
+                        arguments.get("dry_run", True)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Clean operation completed", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.BISECT:
+                    result = git_bisect(
+                        repo,
+                        arguments["action"],
+                        arguments.get("bad_commit"),
+                        arguments.get("good_commit")
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Bisect {arguments['action']} completed", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.DESCRIBE:
+                    result = git_describe(
+                        repo,
+                        arguments.get("commit"),
+                        arguments.get("tags", True),
+                        arguments.get("all", False),
+                        arguments.get("long", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Describe completed", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.SHORTLOG:
+                    result = git_shortlog(
+                        repo,
+                        arguments.get("revision_range"),
+                        arguments.get("numbered", True),
+                        arguments.get("summary", True),
+                        arguments.get("email", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Shortlog completed", repo_path, arguments)
                     return [TextContent(
                         type="text",
                         text=result
