@@ -13,6 +13,10 @@ Current servers from this source:
 
 This standardized approach makes it easy to add more MCP servers in the future from this abundant collection.
 
+## Server Locations Quick Reference
+
+- Git MCP Server: `mcp/servers/git-mcp-server/src/mcp_server_git/server.py`
+
 ## Available MCP Integrations
 
 | Integration | Description | Authentication Method | Installation Method | Documentation | Tool-Level Logging | Init-Level Logging |
