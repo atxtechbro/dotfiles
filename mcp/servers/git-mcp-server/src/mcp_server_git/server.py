@@ -137,6 +137,15 @@ class GitStashPop(BaseModel):
     stash_ref: str | None = None  # Specific stash to pop (e.g., "stash@{0}")
     index: bool = False  # Restore staged changes
 
+class GitCherryPick(BaseModel):
+    repo_path: str
+    commits: list[str] | str  # Single commit or list of commits
+    no_commit: bool = False  # Stage changes without committing
+    continue_pick: bool = False
+    skip: bool = False
+    abort: bool = False
+    mainline_parent: int | None = None  # For merge commits
+
 class GitTools(str, Enum):
     STATUS = "git_status"
     DIFF_UNSTAGED = "git_diff_unstaged"
@@ -161,6 +170,7 @@ class GitTools(str, Enum):
     REBASE = "git_rebase"
     STASH = "git_stash"
     STASH_POP = "git_stash_pop"
+    CHERRY_PICK = "git_cherry_pick"
 
 def git_status(repo: git.Repo) -> str:
     return repo.git.status()
@@ -627,6 +637,65 @@ def git_stash_pop(repo: git.Repo, stash_ref: str | None = None, index: bool = Fa
         else:
             return f"Error popping stash: {str(e)}"
 
+def git_cherry_pick(repo: git.Repo, commits: list[str] | str, no_commit: bool = False,
+                   continue_pick: bool = False, skip: bool = False, abort: bool = False,
+                   mainline_parent: int | None = None) -> str:
+    """
+    Cherry-pick commits onto the current branch
+    """
+    try:
+        # Handle control flow options first
+        if abort:
+            output = repo.git.cherry_pick("--abort")
+            return output if output else "Cherry-pick aborted"
+        
+        if continue_pick:
+            output = repo.git.cherry_pick("--continue")
+            return output if output else "Cherry-pick continued"
+            
+        if skip:
+            output = repo.git.cherry_pick("--skip")
+            return output if output else "Cherry-pick skipped"
+        
+        # Handle normal cherry-pick
+        if isinstance(commits, str):
+            commits = [commits]
+        
+        cmd_parts = ["cherry-pick"]
+        
+        if no_commit:
+            cmd_parts.append("--no-commit")
+            
+        if mainline_parent is not None:
+            cmd_parts.extend(["-m", str(mainline_parent)])
+            
+        cmd_parts.extend(commits)
+        
+        output = repo.git.execute(cmd_parts)
+        
+        # Prepare success message
+        if len(commits) == 1:
+            action = "staged" if no_commit else "applied"
+            return output if output else f"Successfully {action} commit {commits[0]}"
+        else:
+            action = "staged" if no_commit else "applied"
+            return output if output else f"Successfully {action} {len(commits)} commits"
+            
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        # Check for specific error conditions
+        if "CONFLICT" in error_str:
+            return f"Cherry-pick conflict detected. Resolve conflicts and use --continue\n{error_str}"
+        elif "bad revision" in error_str:
+            return f"Invalid commit reference: {error_str}"
+        elif "cherry-pick is already in progress" in error_str:
+            return "A cherry-pick is already in progress. Use --continue, --skip, or --abort"
+        else:
+            return f"Cherry-pick error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during cherry-pick: {str(e)}"
+
 async def serve(repository: Path | None) -> None:
     logger = logging.getLogger(__name__)
 
@@ -757,6 +826,11 @@ async def serve(repository: Path | None) -> None:
                 name=GitTools.STASH_POP,
                 description="Apply and remove stashed changes",
                 inputSchema=GitStashPop.schema(),
+            ),
+            Tool(
+                name=GitTools.CHERRY_PICK,
+                description="Cherry-pick commits onto the current branch (supports --continue, --skip, --abort)",
+                inputSchema=GitCherryPick.schema(),
             )
         ]
 
@@ -1279,6 +1353,22 @@ Format the output as markdown suitable for GitHub PR description."""
                         arguments.get("index", False)
                     )
                     log_tool_success("atxtechbro-git-mcp-server", name, "Stash pop completed", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.CHERRY_PICK:
+                    result = git_cherry_pick(
+                        repo,
+                        arguments["commits"],
+                        arguments.get("no_commit", False),
+                        arguments.get("continue_pick", False),
+                        arguments.get("skip", False),
+                        arguments.get("abort", False),
+                        arguments.get("mainline_parent")
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Cherry-pick operation completed", repo_path, arguments)
                     return [TextContent(
                         type="text",
                         text=result
