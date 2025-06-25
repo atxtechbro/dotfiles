@@ -43,6 +43,56 @@ The "snowball method" focuses on continuous knowledge accumulation and compoundi
 - Reduced cognitive load: Less need to "re-learn" or "re-discover" previous solutions
 
 This principle ensures that our development environment continuously improves over time.
+## 🧠 Recent Activity Context (Last 7 Days)
+
+*Auto-generated on 2025-06-25 15:07:38 - helps Claude remember recent work*
+
+### Activity Summary
+- **Total Commits**: 175
+- **Files Modified**: 113
+
+### Most Active Files
+- `mcp/servers/git-mcp-server/src/mcp_server_git/server.py` (23 changes)
+- `setup.sh` (18 changes)
+- `knowledge/procedures/worktree-workflow.md` (11 changes)
+- `knowledge/procedures/git-workflow.md` (6 changes)
+- `docs/amazonq-github-integration-setup.md` (6 changes)
+- `.claude/command-templates/close-issue.md` (6 changes)
+- `knowledge/principles/README.md` (5 changes)
+- `utils/logging.sh` (4 changes)
+- `utils/install-gh-cli.sh` (4 changes)
+- `utils/install-claude-code.sh` (4 changes)
+
+### Recent Work Types
+- **docs**: 31 commits
+- **feat**: 22 commits
+- **fix**: 20 commits
+- **refactor**: 8 commits
+- **chore**: 6 commits
+
+### Active Components
+- **mcp**: 28 commits
+- **procedures**: 13 commits
+- **claude**: 5 commits
+- **git-mcp**: 1 commits
+- **knowledge**: 1 commits
+
+### Applied Principles
+- `invent-and-simplify`: 5 times
+- `systems-stewardship`: 2 times
+- `spilled-coffee-principle`: 1 times
+
+### Recent Feature Work
+- 06/25: feat[mcp]: add git_bisect, git_describe, and git_shortlog tools
+- 06/25: feat[mcp]: add git_reset_hard, git_branch_delete, and git_clean tools
+- 06/25: feat[mcp]: add git_reflog, git_blame, and git_revert tools
+- 06/25: feat[mcp]: add git_cherry_pick tool to MCP server
+- 06/25: feat[knowledge]: apply VM principle - enrich existing files with discovered concepts
+
+### Current Focus Areas
+- **MCP Servers**: 69 changes
+- **Knowledge Base**: 46 changes
+- **Utilities**: 42 changes
 
 ## Modular Shell Configuration
 

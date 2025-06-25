@@ -1,0 +1,65 @@
+name: Update README Memory Section
+
+on:
+  schedule:
+    # Run daily at 3 AM UTC
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    inputs:
+      days:
+        description: 'Number of days to analyze'
+        required: false
+        default: '7'
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  update-memory:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Full history needed for git log analysis
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Configure Git
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+    
+    - name: Update README Memory Section
+      run: |
+        # Use input days if provided, otherwise default to 7
+        DAYS="${{ github.event.inputs.days || '7' }}"
+        python3 utils/update-readme-memory.py $DAYS
+    
+    - name: Check for changes
+      id: check_changes
+      run: |
+        if [[ -n $(git status --porcelain README.md) ]]; then
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "changed=false" >> "$GITHUB_OUTPUT"
+        fi
+    
+    - name: Commit and push changes
+      if: steps.check_changes.outputs.changed == 'true'
+      run: |
+        git add README.md
+        git commit -m "chore[docs]: auto-update README memory section
+
+        Auto-generated memory context from last ${{ github.event.inputs.days || '7' }} days of git activity.
+        
+        Principle: systems-stewardship"
+        git push
