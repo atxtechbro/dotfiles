@@ -2,9 +2,11 @@
 
 Guide for running the README memory update action on your own infrastructure.
 
+⚠️ **SECURITY WARNING**: For public repositories, all GitHub Actions logs are publicly visible. See [self-hosted-runner-security.md](./self-hosted-runner-security.md) for critical security information.
+
 ## Why Self-Hosted?
 
-- **Privacy**: Git history analysis stays on your infrastructure
+- **Local Processing**: Git history analysis happens on your infrastructure (but logs are still public!)
 - **Cost**: No GitHub Actions minutes consumed
 - **Control**: Run on your schedule with your resources
 - **Integration**: Can access local resources if needed

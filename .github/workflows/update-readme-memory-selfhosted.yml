@@ -38,22 +38,16 @@ jobs:
     - name: Detect environment
       id: detect_env
       run: |
-        echo "Running on: ${{ runner.name }}"
-        echo "Runner OS: ${{ runner.os }}"
-        
-        # Check if we're on self-hosted
+        # Minimal output to avoid leaking environment details
         if [[ "${{ runner.name }}" != "GitHub Actions"* ]]; then
           echo "is_self_hosted=true" >> "$GITHUB_OUTPUT"
-          echo "Detected self-hosted runner"
         else
           echo "is_self_hosted=false" >> "$GITHUB_OUTPUT"
-          echo "Detected GitHub-hosted runner"
         fi
         
-        # Check Python availability
+        # Check Python availability without revealing version
         if command -v python3 &> /dev/null; then
           echo "python_available=true" >> "$GITHUB_OUTPUT"
-          echo "Python3 version: $(python3 --version)"
         else
           echo "python_available=false" >> "$GITHUB_OUTPUT"
         fi
@@ -83,12 +77,21 @@ jobs:
         fi
     
     - name: Update README Memory Section
+      env:
+        CI: true
+        GITHUB_ACTIONS: true
       run: |
         # Use input days if provided, otherwise default to 7
         DAYS="${{ github.event.inputs.days || '7' }}"
         
-        # Add error handling for self-hosted environments
-        if ! python3 utils/update-readme-memory.py $DAYS; then
+        # Use secure script for self-hosted to minimize output
+        SCRIPT="utils/update-readme-memory.py"
+        if [[ "${{ steps.detect_env.outputs.is_self_hosted }}" == "true" ]]; then
+          SCRIPT="utils/update-readme-memory-secure.py"
+        fi
+        
+        # Run with minimal output
+        if ! python3 "$SCRIPT" $DAYS; then
           echo "Failed to update README memory section"
           exit 1
         fi
