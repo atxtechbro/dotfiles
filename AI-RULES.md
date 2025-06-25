@@ -3,6 +3,12 @@
 ## Token Economy Rule
 **CRITICAL**: Keep all `~/ppv/pillars/dotfiles/knowledge/**/*.md` and knowledge directory files radically short to minimize token usage. If elaboration needed, link to subdirectory README.md files instead.
 
+Every token must pull its weight in the 200k context window:
+- Write authentic notes to future self, not impressive documentation
+- Front page README can be more polished, subfolder READMEs stay raw
+- Optimize for AI starting with 0/200k tokens, not imagined employers
+- Markdown as universal language - human and machine readable
+
 ## Dotfiles Philosophy
 - See README.md for our core principles: The Spilled Coffee Principle and The Snowball Method
 
@@ -17,6 +23,7 @@
 - Use installation scripts that detect and create required directories
 - Prefer symlinks managed by setup scripts over manual file copying
 - Document all dependencies and installation steps in README files
+- **Definition of Done = Hardened**: Work must survive the "spilled coffee test" - if your laptop dies, can you recreate it? If not, it's not done
 
 ## Script Design
 - Scripts should be idempotent - safe to run multiple times
