@@ -550,6 +550,11 @@ def git_stash(repo: git.Repo, action: str = "push", message: str | None = None,
     """
     Handle various git stash operations
     """
+    # Validate action against whitelist
+    allowed_actions = ["push", "list", "show", "apply", "pop", "drop", "clear"]
+    if action not in allowed_actions:
+        return f"Unknown stash action: {action}. Allowed actions: {', '.join(allowed_actions)}"
+    
     try:
         if action == "push":
             cmd_parts = ["stash", "push"]
@@ -591,11 +596,12 @@ def git_stash(repo: git.Repo, action: str = "push", message: str | None = None,
             output = repo.git.stash("apply", stash)
             return output if output else f"Applied {stash}"
             
-        else:
-            return f"Unknown stash action: {action}"
-            
     except git.GitCommandError as e:
+        # Handle Git-specific errors
         return f"Stash error: {str(e)}"
+    except Exception as e:
+        # Handle unexpected errors
+        return f"Unexpected error during stash operation: {str(e)}"
 
 def git_stash_pop(repo: git.Repo, stash_ref: str | None = None, index: bool = False) -> str:
     """
