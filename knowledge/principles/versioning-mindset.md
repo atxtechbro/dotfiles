@@ -1,4 +1,4 @@
-# The Versioning Mindset
+# The Versioning Mindset (VM)
 
 The "versioning mindset" is the principle that progress happens through iteration rather than reinvention, where small strategic changes compound over time through active feedback loops. There is no final version of anything - everything is iterated on, and we embrace that messy imperfection. It emphasizes:
 
@@ -9,6 +9,15 @@ The "versioning mindset" is the principle that progress happens through iteratio
 - Maintaining history and context to inform future decisions
 - Accepting that all systems are perpetually in beta
 - Improving existing files in place rather than creating `file_v2.md` or `file_improved.md`
+
+**Relationship to abstraction:**
+VM prioritizes making code malleable through the right level of abstraction. Not too specific (hardcoded), not too clever (over-engineered). The sweet spot where code can evolve.
+
+**Example progression:**
+1. Hardcoded solution for specific use case
+2. Discover patterns through use
+3. Abstract to cover more scenarios
+4. Keep iterating based on actual needs
 
 **Example**: Don't create `git-workflow-v2.md` - improve `git-workflow.md` and commit the changes. The filename is stable, the content evolves.
 
