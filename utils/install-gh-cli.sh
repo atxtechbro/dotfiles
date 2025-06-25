@@ -2,7 +2,11 @@
 # GitHub CLI Installation and Update Utility
 
 # Source common logging functions
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -n "${BASH_SOURCE[0]:-}" ]]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+else
+    SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+fi
 source "${SCRIPT_DIR}/logging.sh"
 
 install_or_update_gh_cli() {
@@ -122,6 +126,6 @@ setup_gh_cli() {
 }
 
 # Main execution
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ -n "${BASH_SOURCE[0]:-}" && "${BASH_SOURCE[0]:-}" == "${0}" ]] || [[ -z "${BASH_SOURCE[0]:-}" && "$0" != "bash" && "$0" != "zsh" && "$0" != "-bash" && "$0" != "-zsh" ]]; then
   setup_gh_cli
 fi

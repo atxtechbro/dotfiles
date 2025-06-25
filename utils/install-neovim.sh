@@ -3,7 +3,11 @@
 # Automated installation following the spilled coffee principle
 
 # Source common logging functions
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -n "${BASH_SOURCE[0]:-}" ]]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+else
+    SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+fi
 source "${SCRIPT_DIR}/logging.sh"
 
 install_neovim() {
