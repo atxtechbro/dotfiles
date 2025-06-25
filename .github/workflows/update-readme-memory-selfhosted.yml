@@ -24,16 +24,14 @@ permissions:
 
 jobs:
   update-memory:
-    runs-on: ${{ github.event.inputs.runner_type == 'github-hosted' && 'ubuntu-latest' || '[self-hosted, linux]' }}
+    runs-on: ${{ github.event.inputs.runner_type == 'github-hosted' && 'ubuntu-latest' || 'self-hosted' }}
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0  # Full history needed for git log analysis
         token: ${{ secrets.GITHUB_TOKEN }}
-        # For self-hosted, avoid conflicts with existing checkouts
-        clean: true
     
     - name: Detect environment
       id: detect_env
@@ -52,18 +50,8 @@ jobs:
           echo "python_available=false" >> "$GITHUB_OUTPUT"
         fi
     
-    - name: Set up Python (GitHub-hosted)
-      if: steps.detect_env.outputs.is_self_hosted == 'false'
+    - name: Set up Python
       uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-    
-    - name: Verify Python (Self-hosted)
-      if: steps.detect_env.outputs.is_self_hosted == 'true' && steps.detect_env.outputs.python_available == 'false'
-      run: |
-        echo "ERROR: Python3 is required on self-hosted runners"
-        echo "Please install Python3 on your runner"
-        exit 1
     
     - name: Configure Git
       run: |

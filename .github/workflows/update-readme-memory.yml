@@ -19,31 +19,17 @@ permissions:
 
 jobs:
   update-memory:
-    runs-on: [self-hosted, linux]
+    runs-on: self-hosted
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0  # Full history needed for git log analysis
         token: ${{ secrets.GITHUB_TOKEN }}
     
-    - name: Check Python availability
-      id: check_python
-      run: |
-        if command -v python3 &> /dev/null; then
-          echo "python_available=true" >> "$GITHUB_OUTPUT"
-          echo "Python3 is available: $(python3 --version)"
-        else
-          echo "python_available=false" >> "$GITHUB_OUTPUT"
-          echo "Python3 is not available"
-        fi
-    
-    - name: Set up Python (if needed)
-      if: steps.check_python.outputs.python_available == 'false'
+    - name: Set up Python
       uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
     
     - name: Configure Git
       run: |
