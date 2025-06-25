@@ -137,6 +137,16 @@ class GitStashPop(BaseModel):
     stash_ref: str | None = None  # Specific stash to pop (e.g., "stash@{0}")
     index: bool = False  # Restore staged changes
 
+class GitTag(BaseModel):
+    repo_path: str
+    action: str = "create"  # "create", "list", "delete", "push"
+    tag_name: str | None = None  # For create/delete
+    message: str | None = None  # For annotated tags
+    ref: str = "HEAD"  # Commit to tag
+    annotated: bool = True  # Create annotated vs lightweight
+    force: bool = False  # Force create/update
+    remote: str = "origin"  # For push action
+
 class GitTools(str, Enum):
     STATUS = "git_status"
     DIFF_UNSTAGED = "git_diff_unstaged"
@@ -161,6 +171,7 @@ class GitTools(str, Enum):
     REBASE = "git_rebase"
     STASH = "git_stash"
     STASH_POP = "git_stash_pop"
+    TAG = "git_tag"
 
 def git_status(repo: git.Repo) -> str:
     return repo.git.status()
@@ -610,17 +621,8 @@ def git_stash_pop(repo: git.Repo, stash_ref: str | None = None, index: bool = Fa
             
         output = repo.git.execute(cmd_parts)
         
-output = repo.git.execute(cmd_parts)
-        
         stash = stash_ref or "stash@{0}"
         return output if output else f"Successfully applied and removed {stash}"
-            
-    except git.GitCommandError as e:
-        if "CONFLICT" in str(e):
-            return output
-        else:
-            stash = stash_ref or "stash@{0}"
-            return f"Successfully applied and removed {stash}"
             
     except git.GitCommandError as e:
         if "CONFLICT" in str(e):
@@ -629,6 +631,84 @@ output = repo.git.execute(cmd_parts)
             return "No stashes to pop"
         else:
             return f"Error popping stash: {str(e)}"
+
+def git_tag(repo: git.Repo, action: str = "create", tag_name: str | None = None,
+            message: str | None = None, ref: str = "HEAD", annotated: bool = True,
+            force: bool = False, remote: str = "origin") -> str:
+    """
+    Handle git tag operations (create, list, delete, push)
+    """
+    try:
+        if action == "create":
+            if not tag_name:
+                return "Tag name is required for create action"
+                
+            # Create tag with options
+            if annotated and message:
+                # Annotated tag with message
+                repo.create_tag(tag_name, ref=ref, message=message, force=force)
+                return f"Created annotated tag '{tag_name}' with message: {message}"
+            elif annotated:
+                # Annotated tag without message (will use default)
+                repo.create_tag(tag_name, ref=ref, force=force)
+                return f"Created annotated tag '{tag_name}'"
+            else:
+                # Lightweight tag
+                repo.create_tag(tag_name, ref=ref, force=force)
+                return f"Created lightweight tag '{tag_name}'"
+                
+        elif action == "list":
+            tags = repo.tags
+            if not tags:
+                return "No tags found"
+            
+            tag_list = []
+            for tag in tags:
+                try:
+                    # Try to get tag message for annotated tags
+                    tag_object = tag.tag
+                    if tag_object and hasattr(tag_object, 'message'):
+                        tag_list.append(f"{tag.name} - {tag_object.message.strip()}")
+                    else:
+                        tag_list.append(tag.name)
+                except:
+                    # Lightweight tag
+                    tag_list.append(tag.name)
+            
+            return "Tags:\n" + "\n".join(tag_list)
+            
+        elif action == "delete":
+            if not tag_name:
+                return "Tag name is required for delete action"
+                
+            # Delete local tag
+            repo.delete_tag(tag_name)
+            return f"Deleted local tag '{tag_name}'"
+            
+        elif action == "push":
+            if tag_name:
+                # Push specific tag
+                repo.git.push(remote, tag_name, force=force)
+                return f"Pushed tag '{tag_name}' to {remote}"
+            else:
+                # Push all tags
+                repo.git.push(remote, "--tags", force=force)
+                return f"Pushed all tags to {remote}"
+                
+        else:
+            return f"Unknown tag action: {action}. Allowed actions: create, list, delete, push"
+            
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "already exists" in error_str:
+            return f"Tag '{tag_name}' already exists. Use force=true to overwrite."
+        elif "not found" in error_str:
+            return f"Tag '{tag_name}' not found"
+        else:
+            return f"Tag error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during tag operation: {str(e)}"
 
 async def serve(repository: Path | None) -> None:
     logger = logging.getLogger(__name__)
@@ -760,6 +840,11 @@ async def serve(repository: Path | None) -> None:
                 name=GitTools.STASH_POP,
                 description="Apply and remove stashed changes",
                 inputSchema=GitStashPop.schema(),
+            ),
+            Tool(
+                name=GitTools.TAG,
+                description="Handle git tag operations (create, list, delete, push)",
+                inputSchema=GitTag.schema(),
             )
         ]
 
@@ -1282,6 +1367,23 @@ Format the output as markdown suitable for GitHub PR description."""
                         arguments.get("index", False)
                     )
                     log_tool_success("atxtechbro-git-mcp-server", name, "Stash pop completed", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.TAG:
+                    result = git_tag(
+                        repo,
+                        arguments.get("action", "create"),
+                        arguments.get("tag_name"),
+                        arguments.get("message"),
+                        arguments.get("ref", "HEAD"),
+                        arguments.get("annotated", True),
+                        arguments.get("force", False),
+                        arguments.get("remote", "origin")
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Tag operation completed", repo_path, arguments)
                     return [TextContent(
                         type="text",
                         text=result
