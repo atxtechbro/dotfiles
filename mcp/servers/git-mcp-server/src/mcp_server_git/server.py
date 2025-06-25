@@ -610,7 +610,13 @@ def git_stash_pop(repo: git.Repo, stash_ref: str | None = None, index: bool = Fa
             
         output = repo.git.execute(cmd_parts)
         
-        if output:
+output = repo.git.execute(cmd_parts)
+        
+        stash = stash_ref or "stash@{0}"
+        return output if output else f"Successfully applied and removed {stash}"
+            
+    except git.GitCommandError as e:
+        if "CONFLICT" in str(e):
             return output
         else:
             stash = stash_ref or "stash@{0}"
