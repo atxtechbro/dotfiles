@@ -123,6 +123,6 @@ install_or_update_tmux() {
 }
 
 # Main execution
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ -n "${BASH_SOURCE[0]}" && "${BASH_SOURCE[0]}" == "${0}" ]] || [[ -z "${BASH_SOURCE[0]}" && "$0" != "bash" && "$0" != "zsh" && "$0" != "-bash" && "$0" != "-zsh" ]]; then
     install_or_update_tmux
 fi
