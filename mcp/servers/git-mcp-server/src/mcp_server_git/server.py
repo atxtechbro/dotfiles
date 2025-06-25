@@ -162,6 +162,23 @@ class GitRevert(BaseModel):
     no_commit: bool = False  # Stage changes without committing
     no_edit: bool = False  # Use default commit message
 
+class GitResetHard(BaseModel):
+    repo_path: str
+    ref: str = "HEAD"  # Commit/branch/tag to reset to
+
+class GitBranchDelete(BaseModel):
+    repo_path: str
+    branch_name: str  # Branch to delete
+    force: bool = False  # Force delete even if not merged
+    remote: bool = False  # Delete remote branch as well
+
+class GitClean(BaseModel):
+    repo_path: str
+    force: bool = False  # Required to actually delete files
+    directories: bool = False  # Also remove untracked directories
+    ignored: bool = False  # Also remove ignored files
+    dry_run: bool = True  # Show what would be deleted without deleting
+
 class GitTools(str, Enum):
     STATUS = "git_status"
     DIFF_UNSTAGED = "git_diff_unstaged"
@@ -190,6 +207,9 @@ class GitTools(str, Enum):
     REFLOG = "git_reflog"
     BLAME = "git_blame"
     REVERT = "git_revert"
+    RESET_HARD = "git_reset_hard"
+    BRANCH_DELETE = "git_branch_delete"
+    CLEAN = "git_clean"
 
 def git_status(repo: git.Repo) -> str:
     return repo.git.status()
@@ -515,6 +535,13 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
                 result = git_blame(repo, args.get("file_path"), args.get("line_range"))
             elif tool == "git_revert":
                 result = git_revert(repo, args.get("commits"), args.get("no_commit", False), args.get("no_edit", False))
+            elif tool == "git_reset_hard":
+                result = git_reset_hard(repo, args.get("ref", "HEAD"))
+            elif tool == "git_branch_delete":
+                result = git_branch_delete(repo, args.get("branch_name"), args.get("force", False), args.get("remote", False))
+            elif tool == "git_clean":
+                result = git_clean(repo, args.get("force", False), args.get("directories", False), 
+                                 args.get("ignored", False), args.get("dry_run", True))
             else:
                 result = f"Unknown tool: {tool}"
             
@@ -834,6 +861,149 @@ def git_revert(repo: git.Repo, commits: list[str] | str, no_commit: bool = False
     except Exception as e:
         return f"Unexpected error during revert: {str(e)}"
 
+def git_reset_hard(repo: git.Repo, ref: str = "HEAD") -> str:
+    """
+    Hard reset to a specific commit (DESTRUCTIVE - discards all changes)
+    """
+    try:
+        # Get current branch name for warning message
+        try:
+            current_branch = repo.active_branch.name
+        except:
+            current_branch = "detached HEAD"
+        
+        # Perform hard reset
+        repo.git.reset("--hard", ref)
+        
+        # Get info about where we reset to
+        try:
+            reset_commit = repo.commit(ref)
+            reset_info = f"{reset_commit.hexsha[:7]} - {reset_commit.summary}"
+        except:
+            reset_info = ref
+        
+        return f"Hard reset successful. Branch '{current_branch}' is now at {reset_info}\nWARNING: All uncommitted changes have been discarded!"
+        
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "unknown revision" in error_str or "bad revision" in error_str:
+            return f"Invalid reference: {ref}"
+        elif "needs merge" in error_str:
+            return "Cannot reset: You have unmerged files. Resolve conflicts first."
+        else:
+            return f"Reset error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during hard reset: {str(e)}"
+
+def git_branch_delete(repo: git.Repo, branch_name: str, force: bool = False, remote: bool = False) -> str:
+    """
+    Delete local and optionally remote branches
+    """
+    try:
+        results = []
+        
+        # Check if we're trying to delete the current branch
+        try:
+            current_branch = repo.active_branch.name
+            if current_branch == branch_name:
+                return f"Cannot delete the current branch '{branch_name}'. Switch to another branch first."
+        except:
+            pass  # Might be in detached HEAD state
+        
+        # Delete local branch
+        try:
+            if force:
+                repo.git.branch("-D", branch_name)
+            else:
+                repo.git.branch("-d", branch_name)
+            results.append(f"Deleted local branch '{branch_name}'")
+        except git.GitCommandError as e:
+            error_str = str(e)
+            if "not found" in error_str:
+                if not remote:
+                    return f"Branch '{branch_name}' not found"
+                # If only remote deletion requested, continue
+            elif "not fully merged" in error_str:
+                return f"Branch '{branch_name}' is not fully merged. Use force=true to delete anyway."
+            else:
+                return f"Error deleting local branch: {error_str}"
+        
+        # Delete remote branch if requested
+        if remote:
+            try:
+                # Try to delete from origin by default
+                repo.git.push("origin", "--delete", branch_name)
+                results.append(f"Deleted remote branch 'origin/{branch_name}'")
+            except git.GitCommandError as e:
+                error_str = str(e)
+                if "remote ref does not exist" in error_str:
+                    results.append(f"Remote branch 'origin/{branch_name}' not found")
+                else:
+                    results.append(f"Error deleting remote branch: {error_str}")
+        
+        return "\n".join(results) if results else "No branches deleted"
+        
+    except Exception as e:
+        return f"Unexpected error deleting branch: {str(e)}"
+
+def git_clean(repo: git.Repo, force: bool = False, directories: bool = False, 
+              ignored: bool = False, dry_run: bool = True) -> str:
+    """
+    Remove untracked files and directories (DESTRUCTIVE)
+    """
+    try:
+        cmd_parts = ["clean"]
+        
+        # Build command flags
+        flags = ""
+        if dry_run:
+            flags += "n"  # Dry run - show what would be deleted
+        if force:
+            flags += "f"  # Force - actually delete
+        if directories:
+            flags += "d"  # Include directories
+        if ignored:
+            flags += "x"  # Include ignored files
+        
+        if flags:
+            cmd_parts.append(f"-{flags}")
+        
+        # Execute clean command
+        output = repo.git.execute(cmd_parts)
+        
+        if not output:
+            return "Nothing to clean - working directory is clean"
+        
+        # Format output based on mode
+        if dry_run:
+            lines = output.strip().split('\n')
+            cleaned_lines = [line.replace("Would remove ", "") for line in lines if line]
+            file_count = len(cleaned_lines)
+            
+            result = f"Would remove {file_count} item(s):\n"
+            result += "\n".join(f"  - {item}" for item in cleaned_lines)
+            result += "\n\nTo actually delete these files, run with dry_run=false and force=true"
+            return result
+        else:
+            lines = output.strip().split('\n')
+            cleaned_lines = [line.replace("Removing ", "") for line in lines if line]
+            file_count = len(cleaned_lines)
+            
+            result = f"Successfully removed {file_count} item(s):\n"
+            result += "\n".join(f"  - {item}" for item in cleaned_lines)
+            return result
+            
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "failed to remove" in error_str:
+            return f"Failed to remove some files: {error_str}"
+        else:
+            return f"Clean error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during clean: {str(e)}"
+
 async def serve(repository: Path | None) -> None:
     logger = logging.getLogger(__name__)
 
@@ -984,6 +1154,21 @@ async def serve(repository: Path | None) -> None:
                 name=GitTools.REVERT,
                 description="Create a new commit that undoes a previous commit",
                 inputSchema=GitRevert.schema(),
+            ),
+            Tool(
+                name=GitTools.RESET_HARD,
+                description="Hard reset to a specific commit (DESTRUCTIVE - discards all changes)",
+                inputSchema=GitResetHard.schema(),
+            ),
+            Tool(
+                name=GitTools.BRANCH_DELETE,
+                description="Delete local and optionally remote branches",
+                inputSchema=GitBranchDelete.schema(),
+            ),
+            Tool(
+                name=GitTools.CLEAN,
+                description="Remove untracked files and directories (DESTRUCTIVE - use dry_run first)",
+                inputSchema=GitClean.schema(),
             )
         ]
 
@@ -1559,6 +1744,44 @@ Format the output as markdown suitable for GitHub PR description."""
                         arguments.get("no_edit", False)
                     )
                     log_tool_success("atxtechbro-git-mcp-server", name, "Revert operation completed", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.RESET_HARD:
+                    result = git_reset_hard(
+                        repo,
+                        arguments.get("ref", "HEAD")
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Hard reset to {arguments.get('ref', 'HEAD')}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.BRANCH_DELETE:
+                    result = git_branch_delete(
+                        repo,
+                        arguments["branch_name"],
+                        arguments.get("force", False),
+                        arguments.get("remote", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Deleted branch {arguments['branch_name']}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.CLEAN:
+                    result = git_clean(
+                        repo,
+                        arguments.get("force", False),
+                        arguments.get("directories", False),
+                        arguments.get("ignored", False),
+                        arguments.get("dry_run", True)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Clean operation completed", repo_path, arguments)
                     return [TextContent(
                         type="text",
                         text=result

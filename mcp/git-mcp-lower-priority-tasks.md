@@ -27,19 +27,19 @@ These tasks are drawn from two GitHub issues:
   - Description: Create a new commit that undoes a previous commit
   - Use case: Safe rollback of changes while preserving history
 
-- [ ] **git_reset_hard** - For hard resets
-  - Status: TODO
+- [x] **git_reset_hard** - For hard resets
+  - Status: COMPLETED
   - Description: Hard reset to a specific commit (destructive)
   - Note: We currently only have soft reset
   - Use case: Forcefully return to a previous state
 
-- [ ] **git_branch_delete** - For branch cleanup
-  - Status: TODO
+- [x] **git_branch_delete** - For branch cleanup
+  - Status: COMPLETED
   - Description: Delete local and remote branches
   - Use case: Repository maintenance and cleanup
 
-- [ ] **git_clean** - For removing untracked files
-  - Status: TODO
+- [x] **git_clean** - For removing untracked files
+  - Status: COMPLETED
   - Description: Remove untracked files and directories
   - Use case: Clean working directory
 
