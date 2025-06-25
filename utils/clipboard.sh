@@ -43,7 +43,7 @@ clipboard_paste() {
 }
 
 # If script is executed directly, provide command-line interface
-if [[ -n "${BASH_SOURCE[0]}" && "${BASH_SOURCE[0]}" == "${0}" ]] || [[ -z "${BASH_SOURCE[0]}" && "$0" != "bash" && "$0" != "zsh" && "$0" != "-bash" && "$0" != "-zsh" ]]; then
+if [[ -n "${BASH_SOURCE[0]:-}" && "${BASH_SOURCE[0]:-}" == "${0}" ]] || [[ -z "${BASH_SOURCE[0]:-}" && "$0" != "bash" && "$0" != "zsh" && "$0" != "-bash" && "$0" != "-zsh" ]]; then
     case "${1:-}" in
         "copy"|"c")
             clipboard_copy
