@@ -2,7 +2,12 @@
 # Claude Code installation and update script
 # Installs or updates Claude Code CLI to the latest version
 
-set -euo pipefail
+# Don't use set -e when this script might be sourced
+# It would affect the parent shell and cause exits
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    # Script is being executed directly, safe to use strict mode
+    set -euo pipefail
+fi
 
 # Colors for output
 GREEN='\033[0;32m'
