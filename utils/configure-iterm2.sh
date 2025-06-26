@@ -36,7 +36,9 @@ ITERM2_TMUX_CONFIG='{
                 "regex": "(arn:aws:|i-[0-9a-f]{8,17}|sg-[0-9a-f]{8,17}|vpc-[0-9a-f]{8,17}|subnet-[0-9a-f]{8,17})",
                 "actions": [{"title": "Copy", "action": 1}]
             }
-        ]
+        ],
+        "Mouse Reporting": true,
+        "Mouse Reporting allow mouse wheel": true
     },
     "global": {
         "Default Bookmark Guid": "TMUX-DEV-WORKFLOW-2024",
@@ -97,6 +99,9 @@ configure_iterm2() {
                 });
             }
         );
+        "Mouse Reporting" = 1;
+        "Mouse Reporting allow mouse wheel" = 1;
+        "Unicode Version" = 9;
     }'
     
     defaults write com.googlecode.iterm2 "Default Bookmark Guid" -string "TMUX-DEV-WORKFLOW-2024"
@@ -111,7 +116,7 @@ configure_iterm2() {
     defaults write com.googlecode.iterm2 "NoSyncSuppressClipboardAccessDeniedWarning" -bool true
     defaults write com.googlecode.iterm2 "NoSyncNeverRemindPrefsChangesLostForFile" -bool true
     
-    echo -e "${GREEN}✓ iTerm2 configured for tmux workflow (140x45, Monaco 14pt, clipboard access hardened)${NC}"
+    echo -e "${GREEN}✓ iTerm2 configured for tmux workflow (140x45, Monaco 14pt, mouse reporting enabled, clipboard access hardened)${NC}"
     
     if pgrep -x "iTerm2" > /dev/null; then
         echo -e "${YELLOW}iTerm2 restart required for changes to take effect${NC}"
