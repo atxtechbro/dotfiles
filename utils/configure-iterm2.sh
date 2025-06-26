@@ -8,7 +8,12 @@ configure_iterm2() {
     echo "Configuring iTerm2 for tmux + Amazon Q CLI workflow..."
     
     # Get the directory where this script is located
-    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    # When sourced from setup.sh, we need to use DOT_DEN
+    if [[ -n "$DOT_DEN" ]]; then
+        SCRIPT_DIR="$DOT_DEN/utils"
+    else
+        SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    fi
     
     # Check if we have the preferences template
     if [[ -f "$SCRIPT_DIR/iterm2-preferences.plist" ]]; then
@@ -34,8 +39,14 @@ configure_iterm2() {
     fi
     
     if pgrep -x "iTerm2" > /dev/null; then
-        echo -e "${YELLOW}iTerm2 restart required for changes to take effect${NC}"
-        echo "Run: osascript -e 'quit app \"iTerm2\"' && open -a iTerm2"
+        echo -e "${YELLOW}⚠️  iTerm2 MUST be restarted for changes to take effect${NC}"
+        echo -e "${YELLOW}   (Unlike manual preference changes, programmatic changes require a restart)${NC}"
+        echo ""
+        echo "To restart iTerm2:"
+        echo "  1. Quit iTerm2 completely (Cmd+Q)"
+        echo "  2. Reopen iTerm2"
+        echo ""
+        echo "Or run: osascript -e 'quit app \"iTerm2\"' && sleep 2 && open -a iTerm2"
     fi
     
     return 0

@@ -3,6 +3,16 @@
 ## Overview
 We use a template-based approach for iTerm2 configuration. Instead of trying to construct preferences programmatically, we capture a known-good configuration and apply it wholesale.
 
+## Important: Restart Required
+**Unlike manual preference changes in the iTerm2 UI (which take effect immediately), programmatic changes require restarting iTerm2.**
+
+When you run the configuration script:
+1. Preferences are written to disk
+2. `cfprefsd` is reloaded
+3. **But iTerm2 must be restarted to read the new preferences**
+
+This is why manual changes work instantly but our script requires a restart.
+
 ## Why This Approach?
 1. **Completeness**: iTerm2 has hundreds of preference keys. Missing any can cause unexpected behavior.
 2. **Reliability**: Captures all interdependencies between settings.
