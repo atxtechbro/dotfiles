@@ -362,7 +362,8 @@ if [ ! -d "$NVM_DIR" ]; then
       # shellcheck source=/dev/null
       . "$NVM_DIR/nvm.sh"
     fi
-    if [ -s "$NVM_DIR/bash_completion" ]; then
+    # Only load bash completion in bash shells to avoid zsh errors
+    if [ -n "$BASH_VERSION" ] && [ -s "$NVM_DIR/bash_completion" ]; then
       # shellcheck source=/dev/null
       . "$NVM_DIR/bash_completion"
     fi
@@ -382,7 +383,8 @@ else
       # shellcheck source=/dev/null
       . "$NVM_DIR/nvm.sh"
     fi
-    if [ -s "$NVM_DIR/bash_completion" ]; then
+    # Only load bash completion in bash shells to avoid zsh errors
+    if [ -n "$BASH_VERSION" ] && [ -s "$NVM_DIR/bash_completion" ]; then
       # shellcheck source=/dev/null
       . "$NVM_DIR/bash_completion"
     fi
@@ -417,7 +419,8 @@ else
         # shellcheck source=/dev/null
         . "$NVM_DIR/nvm.sh"
       fi
-      if [ -s "$NVM_DIR/bash_completion" ]; then
+      # Only load bash completion in bash shells to avoid zsh errors
+      if [ -n "$BASH_VERSION" ] && [ -s "$NVM_DIR/bash_completion" ]; then
         # shellcheck source=/dev/null
         . "$NVM_DIR/bash_completion"
       fi
