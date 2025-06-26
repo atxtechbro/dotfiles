@@ -1,0 +1,92 @@
+{
+    AllowClipboardAccess = 1;
+    "Default Bookmark Guid" = "TMUX-DEV-WORKFLOW-2024";
+    HapticFeedbackForEsc = 0;
+    LeftOptionKey = 2;
+    "NSSplitView Subview Frames NSColorPanelSplitView" =     (
+        "0.000000, 0.000000, 224.000000, 258.000000, NO, NO",
+        "0.000000, 259.000000, 224.000000, 48.000000, NO, NO"
+    );
+    "NSToolbar Configuration com.apple.NSColorPanel" =     {
+        "TB Is Shown" = 1;
+    };
+    "NSWindow Frame NSColorPanel" = "0 149 224 278 0 0 1512 944 ";
+    "New Bookmarks" =     (
+                {
+            Columns = 140;
+            Command = "/bin/bash --login";
+            "Custom Command" = No;
+            "Default Bookmark" = Yes;
+            Guid = "TMUX-DEV-WORKFLOW-2024";
+            "Horizontal Spacing" = 1;
+            "Jobs to Ignore" =             (
+                rlogin,
+                ssh,
+                slogin,
+                telnet
+            );
+            "Mouse Reporting" = 1;
+            Name = TmuxDev;
+            "Non Ascii Font" = "Monaco 14";
+            "Normal Font" = "Monaco 14";
+            "Option Key Sends" = 2;
+            "Prompt Before Closing 2" = 0;
+            "Right Option Key Sends" = 2;
+            Rows = 45;
+            "Scrollback Lines" = 0;
+            "Smart Selection Rules" =             (
+                                {
+                    actions =                     (
+                                                {
+                            action = 0;
+                            title = Open;
+                        }
+                    );
+                    notes = "File paths";
+                    precision = "very_high";
+                    regex = "/?([a-zA-Z0-9._-]+/)*[a-zA-Z0-9._-]+\\\\.[a-zA-Z0-9]+";
+                },
+                                {
+                    actions =                     (
+                                                {
+                            action = 0;
+                            title = "Open URL";
+                        }
+                    );
+                    notes = URLs;
+                    precision = "very_high";
+                    regex = "https?://[a-zA-Z0-9.-]+[a-zA-Z0-9/._-]*";
+                },
+                                {
+                    actions =                     (
+                                                {
+                            action = 1;
+                            title = Copy;
+                        }
+                    );
+                    notes = "AWS Resource IDs";
+                    precision = high;
+                    regex = "(arn:aws:|i-[0-9a-f]{8,17}|sg-[0-9a-f]{8,17}|vpc-[0-9a-f]{8,17}|subnet-[0-9a-f]{8,17})";
+                }
+            );
+            Tags =             (
+            );
+            "Terminal Type" = "xterm-256color";
+            "Unlimited Scrollback" = 1;
+            "Vertical Spacing" = 1;
+        }
+    );
+    "NoSyncFrame_SharedPreferences" =     {
+        screenFrame = "{{0, 0}, {1512, 982}}";
+        topLeft = "{363, 793}";
+    };
+    NoSyncIgnoreSystemWindowRestoration = 1;
+    NoSyncNeverRemindPrefsChangesLostForFile = 1;
+    NoSyncSuppressClipboardAccessDeniedWarning = 1;
+    RightOptionKey = 2;
+    SoundForEsc = 0;
+    SuppressRestartAnnouncement = 1;
+    UseBorder = 0;
+    VisualIndicatorForEsc = 0;
+    WindowStyle = 0;
+}
