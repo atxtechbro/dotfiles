@@ -74,3 +74,8 @@ build/
 # MCP client directories
 mcp/clients/
 .nrepl-port
+
+# Screenshots directory
+# Keep the directory structure but ignore all screenshot files
+screenshots/*
+!screenshots/.gitkeep
