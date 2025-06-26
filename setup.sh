@@ -550,6 +550,17 @@ if command -v docker &> /dev/null; then
   fi
 fi
 
+# macOS Screenshots Configuration
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  echo -e "${DIVIDER}"
+  if [[ -f "$DOT_DEN/utils/configure-macos-screenshots.sh" ]]; then
+    source "$DOT_DEN/utils/configure-macos-screenshots.sh"
+    configure_screenshots || {
+      echo -e "${YELLOW}Screenshot configuration had issues but continuing...${NC}"
+    }
+  fi
+fi
+
 # Source bash aliases to make them immediately available
 echo "Loading bash aliases into current session..."
 if [[ -f ~/.bash_aliases ]]; then
