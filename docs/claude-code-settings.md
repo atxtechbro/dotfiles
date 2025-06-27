@@ -27,6 +27,7 @@ The configuration script is called automatically:
 
 ## Available Settings
 
+### Global Settings (via `claude config`)
 See `.claude/settings/claude-code-defaults.json` for the current configuration. The settings file is the source of truth and includes:
 
 - **Visual**: theme, editor mode
@@ -36,6 +37,23 @@ See `.claude/settings/claude-code-defaults.json` for the current configuration. 
 - **Features**: todo list, auto-compact, IDE connections
 
 Each setting in the JSON file is automatically applied by the configuration script.
+
+### Project Settings (direct file read)
+See `.claude/settings.local.json` for project-level settings including:
+
+- **Permissions**: allowed and denied tool usage patterns
+- **Environment Variables**: timeout limits, token limits, cost warnings
+- **MCP Servers**: enabled Model Context Protocol servers
+
+Environment variables configured:
+- `CLAUDE_CODE_MAX_OUTPUT_TOKENS`: 8192 - Maximum tokens in Claude responses
+- `BASH_DEFAULT_TIMEOUT_MS`: 120000 - Default bash command timeout (2 min)
+- `BASH_MAX_TIMEOUT_MS`: 600000 - Maximum bash timeout (10 min)
+- `BASH_MAX_OUTPUT_LENGTH`: 50000 - Max characters before truncation
+- `DISABLE_COST_WARNINGS`: 1 - Suppress cost warning messages
+- `MCP_TIMEOUT`: 30000 - MCP server startup timeout
+- `MCP_TOOL_TIMEOUT`: 60000 - MCP tool execution timeout
+- `MAX_MCP_OUTPUT_TOKENS`: 25000 - Maximum tokens in MCP responses
 
 ## Adding New Settings
 
@@ -78,4 +96,6 @@ Terminal bell should work by default in most terminal emulators.
 ## Related
 - Issue #564: Claude Code Settings Configuration-as-Code
 - Issue #577: Migrate to settings.json Format
+- Issue #579: Add Environment Variables (implemented)
+- Issue #580: Configure Additional settings.json Options
 - Principle: systems-stewardship
