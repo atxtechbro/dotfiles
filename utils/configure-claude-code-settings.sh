@@ -65,7 +65,7 @@ configure_claude_code_settings() {
     
     # Show current configuration
     echo -e "\nCurrent Claude Code global settings:"
-    claude config list --global 2>/dev/null | grep -E "(preferredNotifChannel|messageIdleNotifThresholdMs)" || true
+    claude config list --global 2>/dev/null | grep -E "(theme|editorMode|autoUpdates|verbose|preferredNotifChannel|diffTool|parallelTasksCount|todoFeatureEnabled|messageIdleNotifThresholdMs|autoConnectIde|autoCompactEnabled)" || true
     
     # Platform-specific notes
     if [[ "$OSTYPE" == "darwin"* ]]; then
