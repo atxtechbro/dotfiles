@@ -19,19 +19,19 @@ echo "Go installation verified. Proceeding with GitHub MCP server setup..."
 # Create servers directory if it doesn't exist
 mkdir -p "$CURRENT_SCRIPT_DIRECTORY/servers"
 
-# Clone the forked GitHub MCP server repository if it doesn't exist
-if [ ! -d "$CURRENT_SCRIPT_DIRECTORY/servers/github-mcp-server" ]; then
-    echo "Cloning forked GitHub MCP server repository..."
-    git clone https://github.com/atxtechbro/github-mcp-server.git "$CURRENT_SCRIPT_DIRECTORY/servers/github-mcp-server"
-else
-    echo "GitHub MCP server repository already exists, updating..."
-    cd "$CURRENT_SCRIPT_DIRECTORY/servers/github-mcp-server"
-    git pull
+# GitHub MCP server is now in-house at mcp/github-mcp-server
+GITHUB_MCP_DIR="$CURRENT_SCRIPT_DIRECTORY/github-mcp-server"
+
+# Verify the in-house GitHub MCP server exists
+if [ ! -d "$GITHUB_MCP_DIR" ]; then
+    echo "Error: GitHub MCP server directory not found at $GITHUB_MCP_DIR"
+    echo "The GitHub MCP server is now managed in-house within the dotfiles repository."
+    exit 1
 fi
 
 # Build the GitHub MCP server
-echo "Building GitHub MCP server from source..."
-cd "$CURRENT_SCRIPT_DIRECTORY/servers/github-mcp-server/cmd/github-mcp-server"
+echo "Building GitHub MCP server from in-house source..."
+cd "$GITHUB_MCP_DIR/cmd/github-mcp-server"
 
 # Remove existing binary if it exists to ensure a fresh build
 if [ -f "$CURRENT_SCRIPT_DIRECTORY/servers/github" ]; then

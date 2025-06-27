@@ -1,0 +1,31 @@
+{
+  "annotations": {
+    "title": "Search repositories",
+    "readOnlyHint": true
+  },
+  "description": "Search for GitHub repositories",
+  "inputSchema": {
+    "properties": {
+      "page": {
+        "description": "Page number for pagination (min 1)",
+        "minimum": 1,
+        "type": "number"
+      },
+      "perPage": {
+        "description": "Results per page for pagination (min 1, max 100)",
+        "maximum": 100,
+        "minimum": 1,
+        "type": "number"
+      },
+      "query": {
+        "description": "Search query",
+        "type": "string"
+      }
+    },
+    "required": [
+      "query"
+    ],
+    "type": "object"
+  },
+  "name": "search_repositories"
+}
