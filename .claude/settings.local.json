@@ -8,6 +8,17 @@
       "Bash(mkdir:*)",
       "Bash(source:*)",
       
+      "Read",
+      "LS", 
+      "Glob",
+      "Grep",
+      "Task",
+      "TodoRead",
+      "NotebookRead",
+      "WebSearch",
+      "ListMcpResourcesTool",
+      "ReadMcpResourceTool",
+      
       "Bash(git add:*)",
       "Bash(git checkout:*)",
       "Bash(git cherry-pick:*)",
@@ -59,6 +70,11 @@
       
       "mcp__brave-search__brave_web_search",
       "mcp__filesystem__read_file",
+      "mcp__filesystem__list_files",
+      "mcp__filesystem__list_all_files",
+      "mcp__filesystem__file_tree",
+      "mcp__filesystem__file_info",
+      "mcp__filesystem__search_files",
       
       "Bash(/home/linuxmint-lp/ppv/pillars/dotfiles/utils/generate-claude-commands.sh:*)",
       "Bash(./utils/configure-claude-code-settings.sh:*)",
