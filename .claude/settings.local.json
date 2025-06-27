@@ -68,6 +68,27 @@
       "WebFetch(domain:docs.anthropic.com)"
     ]
   },
+  "env": {
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8192",
+    "BASH_DEFAULT_TIMEOUT_MS": "120000",
+    "BASH_MAX_TIMEOUT_MS": "600000",
+    "BASH_MAX_OUTPUT_LENGTH": "50000",
+    "DISABLE_COST_WARNINGS": "1",
+    "MCP_TIMEOUT": "30000",
+    "MCP_TOOL_TIMEOUT": "60000",
+    "MAX_MCP_OUTPUT_TOKENS": "25000"
+  },
+  "theme": "dark-daltonized",
+  "editorMode": "normal",
+  "autoUpdates": true,
+  "verbose": true,
+  "preferredNotifChannel": "terminal_bell",
+  "diffTool": "auto",
+  "parallelTasksCount": 1,
+  "todoFeatureEnabled": true,
+  "messageIdleNotifThresholdMs": 60000,
+  "autoConnectIde": false,
+  "autoCompactEnabled": true,
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
     "awslabs.aws-documentation-mcp-server",
