@@ -1,0 +1,38 @@
+{
+  "annotations": {
+    "title": "Get issue comments",
+    "readOnlyHint": true
+  },
+  "description": "Get comments for a specific issue in a GitHub repository.",
+  "inputSchema": {
+    "properties": {
+      "issue_number": {
+        "description": "Issue number",
+        "type": "number"
+      },
+      "owner": {
+        "description": "Repository owner",
+        "type": "string"
+      },
+      "page": {
+        "description": "Page number",
+        "type": "number"
+      },
+      "per_page": {
+        "description": "Number of records per page",
+        "type": "number"
+      },
+      "repo": {
+        "description": "Repository name",
+        "type": "string"
+      }
+    },
+    "required": [
+      "owner",
+      "repo",
+      "issue_number"
+    ],
+    "type": "object"
+  },
+  "name": "get_issue_comments"
+}

@@ -1,0 +1,17 @@
+{
+  "annotations": {
+    "title": "Get my user profile",
+    "readOnlyHint": true
+  },
+  "description": "Get details of the authenticated GitHub user. Use this when a request includes \"me\", \"my\". The output will not change unless the user changes their profile, so only call this once.",
+  "inputSchema": {
+    "properties": {
+      "reason": {
+        "description": "Optional: the reason for requesting the user information",
+        "type": "string"
+      }
+    },
+    "type": "object"
+  },
+  "name": "get_me"
+}

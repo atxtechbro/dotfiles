@@ -45,8 +45,6 @@ Thumbs.db
 # Documentation
 nvim/lua/config/dap.lua.backup
 
-# GitHub MCP Server
-github-mcp-server/
 
 # Amazon Q Developer CLI
 amazon-q-developer-cli/
