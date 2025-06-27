@@ -36,21 +36,11 @@ for template in "$TEMPLATES_DIR"/*.md; do
             -v ISSUE_NUMBER='$ISSUE_NUMBER' \
             -k "$DOTFILES_DIR/knowledge"
         
-        # Generate session ID for this command execution
-        # Then prepend logging to the generated file
-        cat > "$output.tmp" << 'EOF'
-<!-- SLASH COMMAND USAGE LOGGING -->
-<!-- Logs to ~/claude-slash-commands.log -->
-!SESSION_ID="$(date '+%Y%m%d-%H%M%S')-COMMAND_NAME-$ARGUMENTS"
-!echo "$(date '+%Y-%m-%d %H:%M:%S') | SESSION_START | $SESSION_ID | COMMAND_NAME | $ARGUMENTS" >> ~/claude-slash-commands.log
-
-<!-- Log each tool usage during this session -->
-<!-- Claude will inject: !echo "$(date '+%Y-%m-%d %H:%M:%S') | TOOL_USE | $SESSION_ID | TOOL_NAME" >> ~/claude-slash-commands.log -->
+        # Dead simple logging - just append to log
+        cat > "$output.tmp" << EOF
+!echo "\$(date '+%Y-%m-%d %H:%M:%S') $command_name \$ARGUMENTS" >> ~/claude-slash-commands.log
 
 EOF
-        
-        # Replace COMMAND_NAME with actual command name
-        sed -i "s/COMMAND_NAME/$command_name/g" "$output.tmp"
         
         # Append the original content
         cat "$output" >> "$output.tmp"
