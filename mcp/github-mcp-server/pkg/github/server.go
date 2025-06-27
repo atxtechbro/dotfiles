@@ -216,6 +216,25 @@ func OptionalPaginationParams(r mcp.CallToolRequest) (PaginationParams, error) {
 	}, nil
 }
 
+// OptionalPaginationParamsForPullRequests returns pagination parameters with a smaller
+// default perPage value (3) to avoid token limit issues with large pull request data.
+// Pull requests include substantial data (descriptions, comments, diff info) that can
+// easily exceed token limits even with small result sets.
+func OptionalPaginationParamsForPullRequests(r mcp.CallToolRequest) (PaginationParams, error) {
+	page, err := OptionalIntParamWithDefault(r, "page", 1)
+	if err != nil {
+		return PaginationParams{}, err
+	}
+	perPage, err := OptionalIntParamWithDefault(r, "perPage", 3)
+	if err != nil {
+		return PaginationParams{}, err
+	}
+	return PaginationParams{
+		page:    page,
+		perPage: perPage,
+	}, nil
+}
+
 func MarshalledTextResult(v any) *mcp.CallToolResult {
 	data, err := json.Marshal(v)
 	if err != nil {

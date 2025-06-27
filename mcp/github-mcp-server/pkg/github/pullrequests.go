@@ -392,7 +392,7 @@ func ListPullRequests(getClient GetClientFn, t translations.TranslationHelperFun
 			if err != nil {
 				return mcp.NewToolResultError(err.Error()), nil
 			}
-			pagination, err := OptionalPaginationParams(request)
+			pagination, err := OptionalPaginationParamsForPullRequests(request)
 			if err != nil {
 				return mcp.NewToolResultError(err.Error()), nil
 			}
