@@ -9,23 +9,7 @@ We use a configuration-as-code approach to manage Claude Code settings, storing 
 ## Current Implementation
 
 ### Settings File
-All Claude Code settings are defined in `.claude/settings/claude-code-defaults.json`:
-
-```json
-{
-  "theme": "dark-daltonized",
-  "editorMode": "normal",
-  "autoUpdates": true,
-  "verbose": false,
-  "preferredNotifChannel": "terminal_bell",
-  "diffTool": "auto",
-  "parallelTasksCount": 1,
-  "todoFeatureEnabled": true,
-  "messageIdleNotifThresholdMs": 60000,
-  "autoConnectIde": false,
-  "autoCompactEnabled": true
-}
-```
+All Claude Code settings are defined in `.claude/settings/claude-code-defaults.json`. This file is the single source of truth for our configuration.
 
 ### Application Script
 The `utils/configure-claude-code-settings.sh` script:
@@ -41,19 +25,15 @@ The configuration script is called automatically:
 
 ## Available Settings
 
-| Setting | Description | Default | Our Value |
-|---------|-------------|---------|-----------|
-| `theme` | Color theme | `dark` | `dark-daltonized` |
-| `editorMode` | Editor mode | `normal` | `normal` |
-| `autoUpdates` | Enable automatic updates | `true` | `true` |
-| `verbose` | Show full command outputs | `false` | `false` |
-| `preferredNotifChannel` | Notification channel | `iterm2` | `terminal_bell` |
-| `diffTool` | Diff tool preference | `auto` | `auto` |
-| `parallelTasksCount` | Parallel task execution | `1` | `1` |
-| `todoFeatureEnabled` | Enable todo list feature | `true` | `true` |
-| `messageIdleNotifThresholdMs` | Idle notification delay | `60000` | `60000` |
-| `autoConnectIde` | Auto-connect to IDE | `false` | `false` |
-| `autoCompactEnabled` | Auto-compact messages | `true` | `true` |
+See `.claude/settings/claude-code-defaults.json` for the current configuration. The settings file is the source of truth and includes:
+
+- **Visual**: theme, editor mode
+- **Behavior**: auto-updates, verbose output, diff tool
+- **Notifications**: preferred channel, idle thresholds  
+- **Performance**: parallel task execution
+- **Features**: todo list, auto-compact, IDE connections
+
+Each setting in the JSON file is automatically applied by the configuration script.
 
 ## Adding New Settings
 
