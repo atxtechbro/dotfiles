@@ -8,16 +8,8 @@
       "Bash(mkdir:*)",
       "Bash(source:*)",
       
-      "Read",
-      "LS", 
-      "Glob",
-      "Grep",
-      "Task",
-      "TodoRead",
-      "NotebookRead",
-      "WebSearch",
-      "ListMcpResourcesTool",
-      "ReadMcpResourceTool",
+      "LS",  // kept getting prompted when listing dirs
+      "Read",  // add more as they bug me
       
       "Bash(git add:*)",
       "Bash(git checkout:*)",
@@ -70,11 +62,7 @@
       
       "mcp__brave-search__brave_web_search",
       "mcp__filesystem__read_file",
-      "mcp__filesystem__list_files",
-      "mcp__filesystem__list_all_files",
-      "mcp__filesystem__file_tree",
-      "mcp__filesystem__file_info",
-      "mcp__filesystem__search_files",
+      "mcp__filesystem__list_files",  // another listing prompt
       
       "Bash(/home/linuxmint-lp/ppv/pillars/dotfiles/utils/generate-claude-commands.sh:*)",
       "Bash(./utils/configure-claude-code-settings.sh:*)",
