@@ -6,6 +6,8 @@ This document describes how we manage Claude Code settings in our dotfiles repos
 
 We use a configuration-as-code approach to manage Claude Code settings, storing them in version control and applying them automatically during setup.
 
+These settings were discovered by running `claude config list --global` and capturing the current configuration to prevent environment drift.
+
 ## Current Implementation
 
 ### Settings File
