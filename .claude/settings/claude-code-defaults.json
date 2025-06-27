@@ -2,7 +2,7 @@
   "theme": "dark-daltonized",
   "editorMode": "normal",
   "autoUpdates": true,
-  "verbose": false,
+  "verbose": true,
   "preferredNotifChannel": "terminal_bell",
   "diffTool": "auto",
   "parallelTasksCount": 1,
