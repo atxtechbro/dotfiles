@@ -1,107 +1,29 @@
 {
   "permissions": {
     "allow": [
-      "Bash(find:*)",
-      "Bash(grep:*)",
-      "Bash(locate:*)",
-      "Bash(ls:*)",
-      "Bash(mkdir:*)",
-      "Bash(source:*)",
-      
-      "LS",
-      "Read"
-      
-      "Bash(git add:*)",
-      "Bash(git checkout:*)",
-      "Bash(git cherry-pick:*)",
-      "Bash(git commit:*)",
-      "Bash(git mv:*)",
-      "Bash(git rebase:*)",
-      "Bash(git rm:*)",
-      
-      "Bash(gh pr list:*)",
-      "Bash(gh pr view:*)",
-      "Bash(gh repo list:*)",
-      "Bash(gh search commits:*)",
-      
-      "Bash(claude config --help)",
-      "Bash(claude config get --global verbose)",
-      "Bash(claude config list --global)",
-      "Bash(claude config list)",
-      "Bash(claude config set --help)",
-      
-      "mcp__git__git_add",
-      "mcp__git__git_checkout",
-      "mcp__git__git_cherry_pick",
-      "mcp__git__git_commit",
-      "mcp__git__git_create_branch",
+      "mcp__github__get_issue",
+      "mcp__github__search_issues",
+      "mcp__github__list_issues",
+      "mcp__git__git_worktree_add",
+      "mcp__git__git_log",
+      "mcp__git__git_status",
       "mcp__git__git_diff",
       "mcp__git__git_diff_staged",
       "mcp__git__git_diff_unstaged",
-      "mcp__git__git_fetch",
-      "mcp__git__git_log",
-      "mcp__git__git_rebase",
-      "mcp__git__git_stash",
-      "mcp__git__git_status",
-      "mcp__git__git_worktree_add",
-      "mcp__git__git_worktree_remove",
-      
-      "mcp__github__create_issue",
-      "mcp__github__create_pull_request",
-      "mcp__github__get_file_contents",
-      "mcp__github__get_issue",
-      "mcp__github__get_job_logs",
-      "mcp__github__get_pull_request",
-      "mcp__github__get_pull_request_comments",
-      "mcp__github__get_pull_request_reviews",
-      "mcp__github__list_pull_requests",
-      "mcp__github__list_workflow_runs",
-      "mcp__github__search_code",
-      "mcp__github__search_issues",
-      "mcp__github__search_repositories",
-      
-      "mcp__brave-search__brave_web_search",
-      "mcp__filesystem__read_file",
-      "mcp__filesystem__list_files"
-      
-      "Bash(/home/linuxmint-lp/ppv/pillars/dotfiles/utils/generate-claude-commands.sh:*)",
-      "Bash(./utils/configure-claude-code-settings.sh:*)",
-      "Bash(check-mcp-logs:*)",
-      "Bash(python:*)",
-      
-      "WebFetch(domain:docs.anthropic.com)"
+      "mcp__git__git_show",
+      "mcp__git__git_branch_list",
+      "mcp__git__git_remote",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)"
     ]
   },
-  "env": {
-    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8192",
-    "BASH_DEFAULT_TIMEOUT_MS": "120000",
-    "BASH_MAX_TIMEOUT_MS": "600000",
-    "BASH_MAX_OUTPUT_LENGTH": "50000",
-    "DISABLE_COST_WARNINGS": "1",
-    "MCP_TIMEOUT": "30000",
-    "MCP_TOOL_TIMEOUT": "60000",
-    "MAX_MCP_OUTPUT_TOKENS": "25000"
-  },
-  "theme": "dark-daltonized",
-  "editorMode": "normal",
-  "autoUpdates": true,
-  "verbose": true,
-  "preferredNotifChannel": "terminal_bell",
-  "diffTool": "auto",
-  "parallelTasksCount": 1,
-  "todoFeatureEnabled": true,
-  "messageIdleNotifThresholdMs": 60000,
-  "autoConnectIde": false,
-  "autoCompactEnabled": true,
-  "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
     "awslabs.aws-documentation-mcp-server",
     "git",
     "github",
-    "atlassian",
     "brave-search",
-    "filesystem",
-    "gdrive",
-    "gitlab"
+    "gdrive"
   ]
 }
