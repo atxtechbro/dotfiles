@@ -516,6 +516,18 @@ else
 fi
 echo -e "${DIVIDER}"
 
+# urlview setup (for tmux URL extraction)
+echo "Setting up urlview (tmux URL extraction utility)..."
+if [[ -f "$DOT_DEN/utils/install-urlview.sh" ]]; then
+    source "$DOT_DEN/utils/install-urlview.sh"
+    install_or_update_urlview || {
+        echo -e "${YELLOW}Failed to setup urlview. tmux URL extraction may not work.${NC}"
+        echo "You can install it manually: apt install urlview (Linux) or brew install urlview (macOS)"
+    }
+else
+    echo -e "${RED}urlview installation script not found at $DOT_DEN/utils/install-urlview.sh${NC}"
+fi
+
 # Check if user is in docker group (Linux only)
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   if groups | grep -q docker; then
