@@ -934,6 +934,11 @@ def git_branch_delete(repo: git.Repo, branch_name: str, force: bool = False, rem
     try:
         results = []
         
+        # Safety check: prevent deletion of main/master branches
+        protected_branches = {"main", "master"}
+        if branch_name.lower() in protected_branches:
+            return f"Cannot delete protected branch '{branch_name}'. Direct deletion of main/master branches is not allowed for safety reasons."
+        
         # Check if we're trying to delete the current branch
         try:
             current_branch = repo.active_branch.name
