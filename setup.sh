@@ -204,9 +204,9 @@ if [[ ! -f ~/.aws/amazonq/mcp.json ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json ~/.aws
 fi
 
 # Claude Desktop MCP integration
-mkdir -p ~/.config/Claude
-if [[ ! -f ~/.config/Claude/claude_desktop_config.json ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json; then
-    cp "$DOT_DEN"/mcp/mcp.json ~/.config/Claude/claude_desktop_config.json
+mkdir -p ~/.config/claude
+if [[ ! -f ~/.config/claude/claude_desktop_config.json ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json ~/.config/claude/claude_desktop_config.json; then
+    cp "$DOT_DEN"/mcp/mcp.json ~/.config/claude/claude_desktop_config.json
 fi
 
 # Claude Code project-level MCP integration
