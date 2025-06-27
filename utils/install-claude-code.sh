@@ -84,9 +84,6 @@ setup_claude_code() {
     # Configure MCP servers for Claude Code
     configure_claude_mcp
     
-    # Configure Claude Code settings from source control
-    configure_claude_code_settings
-    
     return 0
 }
 
@@ -162,17 +159,6 @@ configure_claude_mcp() {
     else
         echo -e "${YELLOW}Warning: MCP configuration not found at $MCP_CONFIG_SOURCE${NC}"
         echo "MCP servers will need to be configured manually."
-    fi
-}
-
-configure_claude_code_settings() {
-    # Get the directory where this script is located
-    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-    
-    # Source the configuration script
-    if [ -f "$SCRIPT_DIR/configure-claude-code-settings.sh" ]; then
-        source "$SCRIPT_DIR/configure-claude-code-settings.sh"
-        configure_claude_code_settings
     fi
 }
 
