@@ -36,9 +36,8 @@ Apply to issue #{{ ISSUE_NUMBER }}:
 
 ### 3. Create Pull Request
 - Push the feature branch to remote
-- Create PR with `mcp__github__create_pull_request`
+- Create PR with `mcp__github__create_pull_request` following the PR template at `.github/PULL_REQUEST_TEMPLATE.md`
 - Reference "Closes #{{ ISSUE_NUMBER }}" in PR body
-- PR will auto-close issue when merged
 - Add "Conduct post-PR mini retro" to your todo list
 
 ### 4. Cleanup
