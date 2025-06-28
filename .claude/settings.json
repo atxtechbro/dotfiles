@@ -6,6 +6,7 @@
       "Bash(locate:*)",
       "Bash(ls:*)",
       "Bash(mkdir:*)",
+      "Bash(mkdir -p:*)",
       "Bash(source:*)",
       
       "LS",
