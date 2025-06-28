@@ -7,29 +7,27 @@ assignees: ''
 ---
 
 <!-- 
-IMPORTANT: 
-- Title format: type(scope): brief description
-  - type: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
-  - scope: component affected (e.g., bash, tmux, git)
-  - description: concise summary of the changes
-- Please provide complete information following the template below
+AUDIENCE: Future AI agents searching for solutions to similar problems
+FORMAT: Use keywords, exact error messages, and technical details they'll search for
 -->
 
-## Description
-<!-- Describe the changes introduced by this PR and the motivation behind them -->
+## Problem & Solution
+<!-- What problem does this solve? Include exact error messages and symptoms -->
+**Problem**: 
+**Solution**: 
+**Keywords**: <!-- e.g., token limit, MCP error, pagination -->
 
 ## Related Issues
-<!-- Link to any related issues using the format: Fixes #issue_number, Resolves #issue_number -->
+<!-- Link related issues: Fixes #issue_number, Closes #issue_number -->
 
-## Changes Made
-<!-- List the specific changes made in this PR -->
-- 
+## Technical Details
+<!-- Specific changes for AI discovery -->
+**Files changed**: 
+**Key modifications**: 
+**Alternative approaches considered**: 
 
-## Testing Done
-<!-- Describe the testing you've done to verify your changes work properly -->
-
-## Breaking Changes
-<!-- List any breaking changes and migration steps required, if applicable -->
+## Testing
+<!-- How to verify this works -->
 
 ## Checklist
 - [ ] My code follows the style guidelines of this project
