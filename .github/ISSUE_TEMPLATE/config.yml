@@ -1,8 +1,3 @@
-blank_issues_enabled: false
-contact_links:
-  - name: Documentation Issue
-    url: https://github.com/atxtechbro/dotfiles/issues/new?labels=documentation&template=bug_report.md&title=docs%28scope%29%3A+brief+description
-    about: Report issues with documentation
-  - name: Question
-    url: https://github.com/atxtechbro/dotfiles/issues/new?labels=question&template=feature_request.md&title=question%28scope%29%3A+brief+description
-    about: Ask a question about this project
+blank_issues_enabled: true
+# Single flexible template for all issue types
+# See README.md for philosophy behind this approach
