@@ -19,6 +19,8 @@
 
 # Claude Code personal configuration
 CLAUDE.local.md
+# Claude Code local settings (personal overrides, not for source control per Anthropic docs)
+.claude/settings.local.json
 
 # Private SSH keys
 id_rsa
