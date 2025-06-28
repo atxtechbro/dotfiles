@@ -339,16 +339,18 @@ else
 fi
 
 # Symlink Claude Code settings to correct location
-# Claude Code reads from ~/.claude/settings.json, not from .claude/settings.local.json
-if [[ -f "$DOT_DEN/.claude/settings.local.json" ]]; then
-  echo "Creating symlink for Claude Code settings..."
+# Claude Code terminology: ~/.claude/settings.json = "user settings" (their term for global)
+# We call these "global settings" since they apply across all your projects
+# Using .claude/settings.json (not .local) prevents Claude from overwriting on startup
+if [[ -f "$DOT_DEN/.claude/settings.json" ]]; then
+  echo "Creating symlink for Claude Code global settings..."
   # Create ~/.claude directory if it doesn't exist
   mkdir -p "$HOME/.claude"
   # Create symlink (force to overwrite if exists)
-  ln -sf "$DOT_DEN/.claude/settings.local.json" "$HOME/.claude/settings.json"
-  echo -e "${GREEN}✓ Claude Code settings symlinked to ~/.claude/settings.json${NC}"
+  ln -sf "$DOT_DEN/.claude/settings.json" "$HOME/.claude/settings.json"
+  echo -e "${GREEN}✓ Claude Code global settings symlinked to ~/.claude/settings.json${NC}"
 else
-  echo -e "${YELLOW}Warning: .claude/settings.local.json not found. Skipping settings symlink.${NC}"
+  echo -e "${YELLOW}Warning: .claude/settings.json not found. Skipping settings symlink.${NC}"
 fi
 
 
