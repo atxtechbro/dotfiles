@@ -40,6 +40,9 @@ mcp_test_*
 *~
 tmp.txt
 
+# Git worktrees directory
+worktrees/
+
 # OS specific files
 .DS_Store
 Thumbs.db
