@@ -23,6 +23,47 @@ from mcp.types import (
 
 from .logging_utils import log_tool_error, log_tool_success
 
+# Define read-only and write tools
+READ_ONLY_TOOLS = {
+    "git_status",
+    "git_diff_unstaged", 
+    "git_diff_staged",
+    "git_diff",
+    "git_log",
+    "git_show",
+    "git_worktree_list",
+    "git_reflog",
+    "git_blame",
+    "git_describe",
+    "git_shortlog",
+    "git_remote",  # Will be limited to list action only
+    "git_fetch",   # Safe - only downloads data
+    "git_branch_delete",  # Will be limited to local branches only
+}
+
+WRITE_TOOLS = {
+    "git_commit",
+    "git_add",
+    "git_reset",
+    "git_create_branch",
+    "git_checkout",
+    "git_worktree_add",
+    "git_worktree_remove",
+    "git_push",
+    "git_pull",
+    "git_merge",
+    "git_rebase",
+    "git_stash",
+    "git_stash_pop",
+    "git_cherry_pick",
+    "git_revert",
+    "git_reset_hard",
+    "git_clean",
+    "git_bisect",
+}
+
+# git_batch is special - it can be in both depending on the commands it contains
+
 class GitStatus(BaseModel):
     repo_path: str
 
@@ -233,6 +274,43 @@ class GitTools(str, Enum):
     BISECT = "git_bisect"
     DESCRIBE = "git_describe"
     SHORTLOG = "git_shortlog"
+
+# Tool registry for easy access
+TOOL_REGISTRY = {
+    GitTools.STATUS: (GitStatus, "Shows the working tree status"),
+    GitTools.DIFF_UNSTAGED: (GitDiffUnstaged, "Shows changes in the working directory that are not yet staged"),
+    GitTools.DIFF_STAGED: (GitDiffStaged, "Shows changes that are staged for commit"),
+    GitTools.DIFF: (GitDiff, "Shows differences between branches or commits"),
+    GitTools.COMMIT: (GitCommit, "Records changes to the repository"),
+    GitTools.ADD: (GitAdd, "Adds file contents to the staging area"),
+    GitTools.RESET: (GitReset, "Unstages all staged changes"),
+    GitTools.LOG: (GitLog, "Shows the commit logs"),
+    GitTools.CREATE_BRANCH: (GitCreateBranch, "Creates a new branch from an optional base branch"),
+    GitTools.CHECKOUT: (GitCheckout, "Switches branches"),
+    GitTools.SHOW: (GitShow, "Shows the contents of a commit"),
+    GitTools.WORKTREE_ADD: (GitWorktreeAdd, "Add a new worktree for parallel development"),
+    GitTools.WORKTREE_REMOVE: (GitWorktreeRemove, "Remove a worktree"),
+    GitTools.WORKTREE_LIST: (GitWorktreeList, "List all worktrees"),
+    GitTools.PUSH: (GitPush, "Push commits to remote repository (branch required, main blocked)"),
+    GitTools.PULL: (GitPull, "Pull changes from remote repository"),
+    GitTools.FETCH: (GitFetch, "Fetch updates from remote repository without merging"),
+    GitTools.MERGE: (GitMerge, "Merge branches with support for different strategies"),
+    GitTools.REMOTE: (GitRemote, "Manage remote repositories (list, add, remove, get-url)"),
+    GitTools.BATCH: (GitBatch, "Execute multiple git commands in sequence"),
+    GitTools.REBASE: (GitRebase, "Rebase current branch onto another branch (supports --continue, --skip, --abort)"),
+    GitTools.STASH: (GitStash, "Stash the changes in a dirty working directory away"),
+    GitTools.STASH_POP: (GitStashPop, "Apply and remove stashed changes"),
+    GitTools.CHERRY_PICK: (GitCherryPick, "Cherry-pick commits onto the current branch (supports --continue, --skip, --abort)"),
+    GitTools.REFLOG: (GitReflog, "Show the reference log (reflog) for recovery and history inspection"),
+    GitTools.BLAME: (GitBlame, "Show who last modified each line of a file"),
+    GitTools.REVERT: (GitRevert, "Create a new commit that undoes a previous commit"),
+    GitTools.RESET_HARD: (GitResetHard, "Hard reset to a specific commit (DESTRUCTIVE - discards all changes)"),
+    GitTools.BRANCH_DELETE: (GitBranchDelete, "Delete local and optionally remote branches"),
+    GitTools.CLEAN: (GitClean, "Remove untracked files and directories (DESTRUCTIVE - use dry_run first)"),
+    GitTools.BISECT: (GitBisect, "Binary search to find commit that introduced a bug (actions: start, bad, good, skip, reset, view)"),
+    GitTools.DESCRIBE: (GitDescribe, "Generate human-readable names for commits based on tags"),
+    GitTools.SHORTLOG: (GitShortlog, "Summarize git log by contributor"),
+}
 
 def git_status(repo: git.Repo) -> str:
     return repo.git.status()
@@ -1251,7 +1329,7 @@ def git_shortlog(repo: git.Repo, revision_range: str | None = None,
     except Exception as e:
         return f"Unexpected error during shortlog: {str(e)}"
 
-async def serve(repository: Path | None) -> None:
+async def serve(repository: Path | None, read_only: bool = False) -> None:
     logger = logging.getLogger(__name__)
 
     if repository is not None:
@@ -1262,177 +1340,37 @@ async def serve(repository: Path | None) -> None:
             logger.error(f"{repository} is not a valid Git repository")
             return
 
-    server = Server("mcp-git")
+    server_name = "mcp-git-read" if read_only else "mcp-git"
+    server = Server(server_name)
 
     @server.list_tools()
     async def list_tools() -> list[Tool]:
-        return [
-            Tool(
-                name=GitTools.STATUS,
-                description="Shows the working tree status",
-                inputSchema=GitStatus.schema(),
-            ),
-            Tool(
-                name=GitTools.DIFF_UNSTAGED,
-                description="Shows changes in the working directory that are not yet staged",
-                inputSchema=GitDiffUnstaged.schema(),
-            ),
-            Tool(
-                name=GitTools.DIFF_STAGED,
-                description="Shows changes that are staged for commit",
-                inputSchema=GitDiffStaged.schema(),
-            ),
-            Tool(
-                name=GitTools.DIFF,
-                description="Shows differences between branches or commits",
-                inputSchema=GitDiff.schema(),
-            ),
-            Tool(
-                name=GitTools.COMMIT,
-                description="Records changes to the repository",
-                inputSchema=GitCommit.schema(),
-            ),
-            Tool(
-                name=GitTools.ADD,
-                description="Adds file contents to the staging area",
-                inputSchema=GitAdd.schema(),
-            ),
-            Tool(
-                name=GitTools.RESET,
-                description="Unstages all staged changes",
-                inputSchema=GitReset.schema(),
-            ),
-            Tool(
-                name=GitTools.LOG,
-                description="Shows the commit logs",
-                inputSchema=GitLog.schema(),
-            ),
-            Tool(
-                name=GitTools.CREATE_BRANCH,
-                description="Creates a new branch from an optional base branch",
-                inputSchema=GitCreateBranch.schema(),
-            ),
-            Tool(
-                name=GitTools.CHECKOUT,
-                description="Switches branches",
-                inputSchema=GitCheckout.schema(),
-            ),
-            Tool(
-                name=GitTools.SHOW,
-                description="Shows the contents of a commit",
-                inputSchema=GitShow.schema(),
-            ),
-            Tool(
-                name=GitTools.WORKTREE_ADD,
-                description="Add a new worktree for parallel development",
-                inputSchema=GitWorktreeAdd.schema(),
-            ),
-            Tool(
-                name=GitTools.WORKTREE_REMOVE,
-                description="Remove a worktree",
-                inputSchema=GitWorktreeRemove.schema(),
-            ),
-            Tool(
-                name=GitTools.WORKTREE_LIST,
-                description="List all worktrees",
-                inputSchema=GitWorktreeList.schema(),
-            ),
-            Tool(
-                name=GitTools.PUSH,
-                description="Push commits to remote repository (branch required, main blocked)",
-                inputSchema=GitPush.schema(),
-            ),
-            Tool(
-                name=GitTools.PULL,
-                description="Pull changes from remote repository",
-                inputSchema=GitPull.schema(),
-            ),
-            Tool(
-                name=GitTools.FETCH,
-                description="Fetch updates from remote repository without merging",
-                inputSchema=GitFetch.schema(),
-            ),
-            Tool(
-                name=GitTools.MERGE,
-                description="Merge branches with support for different strategies",
-                inputSchema=GitMerge.schema(),
-            ),
-            Tool(
-                name=GitTools.REMOTE,
-                description="Manage remote repositories (list, add, remove, get-url)",
-                inputSchema=GitRemote.schema(),
-            ),
-            Tool(
-                name=GitTools.BATCH,
-                description="Execute multiple git commands in sequence",
-                inputSchema=GitBatch.schema(),
-            ),
-            Tool(
-                name=GitTools.REBASE,
-                description="Rebase current branch onto another branch (supports --continue, --skip, --abort)",
-                inputSchema=GitRebase.schema(),
-            ),
-            Tool(
-                name=GitTools.STASH,
-                description="Stash the changes in a dirty working directory away",
-                inputSchema=GitStash.schema(),
-            ),
-            Tool(
-                name=GitTools.STASH_POP,
-                description="Apply and remove stashed changes",
-                inputSchema=GitStashPop.schema(),
-            ),
-            Tool(
-                name=GitTools.CHERRY_PICK,
-                description="Cherry-pick commits onto the current branch (supports --continue, --skip, --abort)",
-                inputSchema=GitCherryPick.schema(),
-            ),
-            Tool(
-                name=GitTools.REFLOG,
-                description="Show the reference log (reflog) for recovery and history inspection",
-                inputSchema=GitReflog.schema(),
-            ),
-            Tool(
-                name=GitTools.BLAME,
-                description="Show who last modified each line of a file",
-                inputSchema=GitBlame.schema(),
-            ),
-            Tool(
-                name=GitTools.REVERT,
-                description="Create a new commit that undoes a previous commit",
-                inputSchema=GitRevert.schema(),
-            ),
-            Tool(
-                name=GitTools.RESET_HARD,
-                description="Hard reset to a specific commit (DESTRUCTIVE - discards all changes)",
-                inputSchema=GitResetHard.schema(),
-            ),
-            Tool(
-                name=GitTools.BRANCH_DELETE,
-                description="Delete local and optionally remote branches",
-                inputSchema=GitBranchDelete.schema(),
-            ),
-            Tool(
-                name=GitTools.CLEAN,
-                description="Remove untracked files and directories (DESTRUCTIVE - use dry_run first)",
-                inputSchema=GitClean.schema(),
-            ),
-            Tool(
-                name=GitTools.BISECT,
-                description="Binary search to find commit that introduced a bug (actions: start, bad, good, skip, reset, view)",
-                inputSchema=GitBisect.schema(),
-            ),
-            Tool(
-                name=GitTools.DESCRIBE,
-                description="Generate human-readable names for commits based on tags",
-                inputSchema=GitDescribe.schema(),
-            ),
-            Tool(
-                name=GitTools.SHORTLOG,
-                description="Summarize git log by contributor",
-                inputSchema=GitShortlog.schema(),
-            )
-        ]
+        tools = []
+        
+        # Determine which tools to include based on read_only mode
+        if read_only:
+            allowed_tools = READ_ONLY_TOOLS | {"git_batch"}  # git_batch is allowed but validated
+        else:
+            allowed_tools = set(TOOL_REGISTRY.keys())  # All tools in write mode
+        
+        # Build tool list from registry
+        for tool_name, (model_class, description) in TOOL_REGISTRY.items():
+            if tool_name in allowed_tools:
+                # Special case descriptions for read-only mode
+                if read_only and tool_name == "git_remote":
+                    description = "List remote repositories (read-only: list action only)"
+                elif read_only and tool_name == "git_branch_delete":
+                    description = "Delete local branches only (read-only: remote deletion blocked)"
+                elif read_only and tool_name == "git_batch":
+                    description = "Execute multiple git commands in sequence (read-only: limited to safe operations)"
+                    
+                tools.append(Tool(
+                    name=tool_name,
+                    description=description,
+                    inputSchema=model_class.schema(),
+                ))
+        
+        return tools
 
     @server.list_prompts()
     async def list_prompts() -> list[Prompt]:
@@ -1689,6 +1627,41 @@ Format the output as markdown suitable for GitHub PR description."""
 
     @server.call_tool()
     async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+        # Check if tool is allowed in read-only mode
+        if read_only:
+            # Special handling for tools with restrictions
+            if name == GitTools.REMOTE:
+                if arguments.get("action") != "list":
+                    error_msg = f"Tool '{name}' with action '{arguments.get('action')}' is not allowed in read-only mode"
+                    log_tool_error("atxtechbro-git-mcp-server", name, error_msg, arguments.get("repo_path"), arguments)
+                    return [TextContent(type="text", text=f"Error: {error_msg}")]
+            elif name == GitTools.BRANCH_DELETE:
+                if arguments.get("remote", False):
+                    error_msg = "Remote branch deletion is not allowed in read-only mode"
+                    log_tool_error("atxtechbro-git-mcp-server", name, error_msg, arguments.get("repo_path"), arguments)
+                    return [TextContent(type="text", text=f"Error: {error_msg}")]
+            elif name == GitTools.BATCH:
+                # Validate all commands in batch are allowed
+                for cmd in arguments.get("commands", []):
+                    tool_name = cmd.get("tool")
+                    if tool_name not in READ_ONLY_TOOLS and tool_name != GitTools.BATCH:
+                        error_msg = f"Tool '{tool_name}' in batch is not allowed in read-only mode"
+                        log_tool_error("atxtechbro-git-mcp-server", name, error_msg, arguments.get("repo_path"), arguments)
+                        return [TextContent(type="text", text=f"Error: {error_msg}")]
+                    # Recursively check restrictions for special tools
+                    if tool_name == GitTools.REMOTE and cmd.get("args", {}).get("action") != "list":
+                        error_msg = f"Remote action '{cmd.get('args', {}).get('action')}' in batch is not allowed in read-only mode"
+                        log_tool_error("atxtechbro-git-mcp-server", name, error_msg, arguments.get("repo_path"), arguments)
+                        return [TextContent(type="text", text=f"Error: {error_msg}")]
+                    if tool_name == GitTools.BRANCH_DELETE and cmd.get("args", {}).get("remote", False):
+                        error_msg = "Remote branch deletion in batch is not allowed in read-only mode"
+                        log_tool_error("atxtechbro-git-mcp-server", name, error_msg, arguments.get("repo_path"), arguments)
+                        return [TextContent(type="text", text=f"Error: {error_msg}")]
+            elif name not in READ_ONLY_TOOLS:
+                error_msg = f"Tool '{name}' is not allowed in read-only mode"
+                log_tool_error("atxtechbro-git-mcp-server", name, error_msg, arguments.get("repo_path"), arguments)
+                return [TextContent(type="text", text=f"Error: {error_msg}")]
+        
         repo_path = Path(arguments["repo_path"])
         
         try:
