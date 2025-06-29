@@ -189,31 +189,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 # Generate MCP configuration from template
+# This now generates directly to all needed locations
 echo "Generating MCP configuration..."
 if [[ -x "$DOT_DEN/mcp/generate-mcp-config.sh" ]]; then
     "$DOT_DEN/mcp/generate-mcp-config.sh"
 else
-    echo "Warning: MCP generator not found, using existing config"
-fi
-
-# Global Configuration: ~/.aws/amazonq/mcp.json - Applies to all workspaces
-# (as opposed to Workspace Configuration: .amazonq/mcp.json - Specific to the current workspace)
-mkdir -p ~/.aws/amazonq
-if [[ ! -f ~/.aws/amazonq/mcp.json ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json; then
-    cp "$DOT_DEN"/mcp/mcp.json ~/.aws/amazonq/mcp.json
-fi
-
-# Claude Desktop MCP integration
-mkdir -p ~/.config/claude
-if [[ ! -f ~/.config/claude/claude_desktop_config.json ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json ~/.config/claude/claude_desktop_config.json; then
-    cp "$DOT_DEN"/mcp/mcp.json ~/.config/claude/claude_desktop_config.json
-fi
-
-# Claude Code project-level MCP integration
-# Claude Code reads from .mcp.json in the project root
-if [[ ! -f "$DOT_DEN/.mcp.json" ]] || ! cmp -s "$DOT_DEN"/mcp/mcp.json "$DOT_DEN/.mcp.json"; then
-    cp "$DOT_DEN"/mcp/mcp.json "$DOT_DEN/.mcp.json"
-    echo "Updated project-level .mcp.json for Claude Code"
+    echo -e "${RED}Error: MCP generator not found at $DOT_DEN/mcp/generate-mcp-config.sh${NC}"
+    echo "MCP servers will not be configured properly."
 fi
 
 # Set up Git configuration

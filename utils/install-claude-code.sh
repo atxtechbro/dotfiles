@@ -94,8 +94,12 @@ configure_claude_mcp() {
     SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     DOT_DEN="$(dirname "$SCRIPT_DIR")"
     
-    # Claude Code expects MCP configuration in these locations
-    MCP_CONFIG_SOURCE="$DOT_DEN/mcp/mcp.json"
+    # Run the MCP generator to create/update configurations
+    if [[ -x "$DOT_DEN/mcp/generate-mcp-config.sh" ]]; then
+        "$DOT_DEN/mcp/generate-mcp-config.sh"
+    else
+        echo "Warning: MCP generator not found, configurations may be outdated"
+    fi
     
     # Claude Code supports multiple configuration scopes:
     # 1. Local scope: Project-specific user settings (via `claude mcp add`)
@@ -113,53 +117,27 @@ configure_claude_mcp() {
     #    - Good for general-purpose tools
     #    - Lowest priority (but what dotfiles uses by default)
     
-    # For dotfiles setup, we configure at USER SCOPE for global availability
-    # This aligns with dotfiles philosophy: personal dev environment that works everywhere
-    MCP_CONFIG_DEST="$HOME/.mcp.json"
+    # The generator already handles all locations including:
+    # - ~/.mcp.json (Claude Code user scope)
+    # - $DOT_DEN/.mcp.json (project scope)
+    # - ~/.aws/amazonq/mcp.json (Amazon Q)
+    # - ~/.config/claude/claude_desktop_config.json (Claude Desktop)
     
-    if [ -f "$MCP_CONFIG_SOURCE" ]; then
-        # Copy MCP configuration to Claude Code's user-scope location
-        cp "$MCP_CONFIG_SOURCE" "$MCP_CONFIG_DEST"
-        
-        # Apply environment-specific filtering if available
-        if [ -f "$DOT_DEN/utils/mcp-environment.sh" ]; then
-            # Source the MCP environment utility (suppress output)
-            source "$DOT_DEN/utils/mcp-environment.sh" >/dev/null 2>&1
-            
-            # Detect current environment
-            CURRENT_ENV=$(detect_environment)
-            
-            # Apply environment-specific configuration
-            filter_mcp_config "$MCP_CONFIG_DEST" "$CURRENT_ENV"
-        fi
-        
-        echo -e "${GREEN}✓ MCP servers configured for Claude Code at user scope (~/.mcp.json)${NC}"
-        
-        # List configured servers
-        if command -v jq &> /dev/null; then
-            echo "Configured MCP servers:"
-            jq -r '.mcpServers | keys[]' "$MCP_CONFIG_DEST" 2>/dev/null | sed 's/^/  - /'
-        fi
-        
-        # Also create a project-specific .mcp.json in dotfiles for when working in this repo
-        PROJECT_MCP="$DOT_DEN/.mcp.json"
-        if [ ! -f "$PROJECT_MCP" ]; then
-            cp "$MCP_CONFIG_SOURCE" "$PROJECT_MCP"
-            echo -e "${GREEN}✓ Created project-scope MCP configuration for dotfiles repo${NC}"
-        fi
-        
-        echo -e "\n${BLUE}Claude Code MCP configuration scope guide:${NC}"
-        echo -e "  • User scope (default): ~/.mcp.json - Your personal servers, available everywhere"
-        echo -e "  • Project scope: .mcp.json - Team-shared servers for specific projects"
-        echo -e "  • Local scope: claude mcp add - Private project overrides"
-        echo -e "\n${YELLOW}To use different scopes:${NC}"
-        echo -e "  • Force load from file: claude --mcp-config /path/to/mcp.json"
-        echo -e "  • Add project server: claude mcp add --scope project <name> <command>"
-        echo -e "  • Add local override: claude mcp add --scope local <name> <command>"
-    else
-        echo -e "${YELLOW}Warning: MCP configuration not found at $MCP_CONFIG_SOURCE${NC}"
-        echo "MCP servers will need to be configured manually."
+    # List configured servers if possible
+    MCP_CONFIG_DEST="$HOME/.mcp.json"
+    if [ -f "$MCP_CONFIG_DEST" ] && command -v jq &> /dev/null; then
+        echo "Configured MCP servers:"
+        jq -r '.mcpServers | keys[]' "$MCP_CONFIG_DEST" 2>/dev/null | sed 's/^/  - /'
     fi
+    
+    echo -e "\n${BLUE}Claude Code MCP configuration scope guide:${NC}"
+    echo -e "  • User scope (default): ~/.mcp.json - Your personal servers, available everywhere"
+    echo -e "  • Project scope: .mcp.json - Team-shared servers for specific projects"
+    echo -e "  • Local scope: claude mcp add - Private project overrides"
+    echo -e "\n${YELLOW}To use different scopes:${NC}"
+    echo -e "  • Force load from file: claude --mcp-config /path/to/mcp.json"
+    echo -e "  • Add project server: claude mcp add --scope project <name> <command>"
+    echo -e "  • Add local override: claude mcp add --scope local <name> <command>"
 }
 
 # Run setup if script is executed directly (not sourced)

@@ -9,7 +9,7 @@ The dotfiles repository provides an AI provider-agnostic system for managing MCP
 ## Key Components
 
 ### 1. MCP Server Configuration
-- **Source**: `mcp/mcp.json` - Single source of truth for MCP server definitions
+- **Source**: `mcp/mcp.template.json` - Single source of truth for MCP server definitions with work/personal machine conditionals
 - **Format**: Standard MCP JSON format with `mcpServers` object
 - **Wrappers**: Shell scripts in `mcp/servers/` directory for server initialization
 
@@ -48,7 +48,10 @@ configure_<client_name>_mcp() {
     
     SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     DOT_DEN="$(dirname "$SCRIPT_DIR")"
-    MCP_CONFIG_SOURCE="$DOT_DEN/mcp/mcp.json"
+    # Run the MCP generator instead of copying from a static file
+    if [[ -x "$DOT_DEN/mcp/generate-mcp-config.sh" ]]; then
+        "$DOT_DEN/mcp/generate-mcp-config.sh"
+    fi
     
     # Determine where the client expects MCP configuration
     # Copy/symlink the configuration
@@ -118,7 +121,7 @@ Create `docs/<client-name>-setup.md` documenting:
 
 ### Pattern 3: Configuration File
 - Client uses JSON/YAML configuration
-- Copy and transform `mcp/mcp.json` to client format
+- Generate config from `mcp/mcp.template.json` using `generate-mcp-config.sh`
 - Apply environment-specific filtering
 
 ## Environment Detection
@@ -137,7 +140,8 @@ The system supports environment-specific MCP server filtering:
 
 ## Maintenance
 
-- Keep `mcp/mcp.json` as the single source of truth
+- Keep `mcp/mcp.template.json` as the single source of truth
+- Generated configs are created at runtime via `generate-mcp-config.sh`
 - Update wrapper scripts in `mcp/servers/` as needed
 - Maintain backward compatibility with existing clients
 - Document any client-specific workarounds
