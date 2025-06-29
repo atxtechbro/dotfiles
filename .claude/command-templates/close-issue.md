@@ -10,6 +10,9 @@ Use `mcp__github__get_issue` to read issue #{{ ISSUE_NUMBER }} and determine:
 - Is this invalid/duplicate? → Close with explanation
 - Check recent merged PRs for similar patterns → `mcp__github__list_pull_requests` (state: "closed")
 
+## Step 2: Get Issue Comments
+Use `mcp__github__get_issue_comments` to enrich understanding of issue #{{ ISSUE_NUMBER }}.
+
 ## Quick Close Path
 If the issue is already resolved, invalid, or duplicate:
 1. Add explanatory comment with `mcp__github__add_issue_comment`
@@ -19,14 +22,14 @@ If the issue is already resolved, invalid, or duplicate:
 ## Full Implementation Path
 If the issue needs implementation:
 
-### 1. Set Up Development
+### 3. Set Up Development
 {{ INJECT:procedures/worktree-workflow.md }}
 
 Apply to issue #{{ ISSUE_NUMBER }}:
 - Replace <NUMBER> with {{ ISSUE_NUMBER }}
 - Replace <description> with issue title slug
 
-### 2. Implement Solution
+### 4. Implement Solution
 - Use TodoWrite to track implementation tasks
 - Follow existing patterns in codebase
 - Test changes as you go
@@ -34,13 +37,13 @@ Apply to issue #{{ ISSUE_NUMBER }}:
 
 {{ INJECT:procedures/git-workflow.md }}
 
-### 3. Create Pull Request
+### 5. Create Pull Request
 - Push the feature branch to remote
 - Create PR with `mcp__github__create_pull_request` following the PR template at `.github/PULL_REQUEST_TEMPLATE.md`
 - Reference "Closes #{{ ISSUE_NUMBER }}" in PR body
 - Add "Conduct post-PR mini retro" to your todo list
 
-### 4. Cleanup
+### 6. Cleanup
 Remove worktree after PR is created.
 
 ## REQUIRED: Post-PR Mini Retro (if PR was created)
