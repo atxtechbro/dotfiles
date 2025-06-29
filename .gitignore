@@ -78,9 +78,6 @@ build/
 mcp/clients/
 .nrepl-port
 
-# Generated MCP configuration (generated from template)
-mcp/mcp.json
-
 # Screenshots directory
 # Keep the directory structure but ignore all screenshot files
 screenshots/*
