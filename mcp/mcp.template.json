@@ -7,15 +7,8 @@
         "FASTMCP_LOG_LEVEL": "ERROR"
       }
     },
-    "git-read": {
-      "command": "git-mcp-read-wrapper.sh",
-      "args": [],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
-    "git-write": {
-      "command": "git-mcp-write-wrapper.sh",
+    "git": {
+      "command": "git-mcp-wrapper.sh",
       "args": [],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"

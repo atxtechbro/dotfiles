@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # =========================================================
-# GIT MCP WRITE WRAPPER SCRIPT
+# GIT MCP WRITE WRAPPER SCRIPT [DEPRECATED]
 # =========================================================
-# PURPOSE: Runtime wrapper that executes the Git MCP server with full write access
-# This script is called by the MCP system during normal operation
-# Runs without --read-only flag to enable all operations
+# PURPOSE: This script is deprecated. Use git-mcp-wrapper.sh instead.
+# The git-read/git-write split has been consolidated into a single git server
+# that relies on Git's built-in authentication for security.
 # =========================================================
 
 # Get the directory where this script is located

@@ -1,15 +1,12 @@
-# Git MCP Server - Flag-Based Read/Write Split
+# Git MCP Server - Unified Server with Optional Read-Only Mode
 
 ## Overview
-The Git MCP server now supports a `--read-only` flag to restrict operations:
-- `git-read`: Safe read-only operations (runs with `--read-only` flag)
-- `git-write`: Full operations (runs without restrictions)
+The Git MCP server is now consolidated into a single server that provides full functionality by default, with an optional `--read-only` flag for restricted operations if needed.
 
 ## Architecture
-This implementation follows the same pattern as the GitHub MCP server:
-- Single Python codebase with conditional behavior
-- Flag passed through wrapper scripts
-- Tool filtering based on mode at runtime
+- Single Python codebase with all Git operations
+- Relies on Git's built-in authentication for security
+- Optional `--read-only` flag available but not used by default
 
 ## Implementation Details
 
@@ -45,11 +42,11 @@ Tools are categorized into READ_ONLY_TOOLS and WRITE_TOOLS sets. The server:
 - git_rebase, git_stash, git_cherry_pick
 - git_revert, git_reset_hard, git_clean, git_bisect
 
-## Migration
-Users need to:
-1. Update their MCP client config to use new server names
-2. Replace `git` with `git-read` for safe operations
-3. Manually enable `git-write` when needed
+## Migration from Split Servers
+Users who were using `git-read` and `git-write` should:
+1. Update their MCP client config to use the single `git` server
+2. Remove references to `git-read` and `git-write`
+3. Trust Git's built-in authentication for security
 
 ## Benefits
 - Consistent with GitHub server approach

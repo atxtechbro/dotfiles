@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # =========================================================
-# GIT MCP READ-ONLY WRAPPER SCRIPT
+# GIT MCP READ-ONLY WRAPPER SCRIPT [DEPRECATED]
 # =========================================================
-# PURPOSE: Runtime wrapper that executes the Git MCP server in read-only mode
-# This script is called by the MCP system during normal operation
-# Uses the --read-only flag to restrict to safe operations
+# PURPOSE: This script is deprecated. Use git-mcp-wrapper.sh instead.
+# The git-read/git-write split has been consolidated into a single git server
+# that relies on Git's built-in authentication for security.
 # =========================================================
 
 # Get the directory where this script is located
