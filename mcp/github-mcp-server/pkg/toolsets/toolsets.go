@@ -7,6 +7,22 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
+// ToolHandlerRegistrar is a function type for registering tool handlers
+type ToolHandlerRegistrar func(name string, handler server.ToolHandlerFunc)
+
+// toolHandlerRegistrar is the global registrar function
+var toolHandlerRegistrar ToolHandlerRegistrar
+
+// SetToolHandlerRegistrar sets the global tool handler registrar
+func SetToolHandlerRegistrar(registrar ToolHandlerRegistrar) {
+	toolHandlerRegistrar = registrar
+}
+
+// GetToolHandlerRegistrar returns the global tool handler registrar
+func GetToolHandlerRegistrar() ToolHandlerRegistrar {
+	return toolHandlerRegistrar
+}
+
 type ToolsetDoesNotExistError struct {
 	Name string
 }
@@ -97,10 +113,18 @@ func (t *Toolset) RegisterTools(s *server.MCPServer) {
 	}
 	for _, tool := range t.readTools {
 		s.AddTool(tool.Tool, tool.Handler)
+		// Register tool handler for batch execution
+		if registerHandler := GetToolHandlerRegistrar(); registerHandler != nil {
+			registerHandler(tool.Tool.Name, tool.Handler)
+		}
 	}
 	if !t.readOnly {
 		for _, tool := range t.writeTools {
 			s.AddTool(tool.Tool, tool.Handler)
+			// Register tool handler for batch execution
+			if registerHandler := GetToolHandlerRegistrar(); registerHandler != nil {
+				registerHandler(tool.Tool.Name, tool.Handler)
+			}
 		}
 	}
 }
