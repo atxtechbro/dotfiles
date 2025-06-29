@@ -12,3 +12,5 @@ dependencies = [
 
 [project.scripts]
 atxtechbro-git-mcp-server = "mcp_server_git:main"
+mcp-server-git-read = "mcp_server_git.server_read:main"
+mcp-server-git-write = "mcp_server_git.server_write:main"
