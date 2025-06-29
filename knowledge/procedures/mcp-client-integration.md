@@ -7,7 +7,7 @@ Procedure for adding new MCP clients to the dotfiles ecosystem.
 1. **Create installer**: `utils/install-<client>.sh` with setup/update logic
 2. **Update AI provider setup**: Add class to `utils/setup-ai-provider-rules.py`
 3. **Hook into setup.sh**: Add installation section after Claude Code
-4. **Configure MCP path**: Copy/symlink `mcp/mcp.json` to client's expected location
+4. **Configure MCP path**: Run `mcp/generate-mcp-config.sh` to generate configs in all needed locations
 5. **Test integration**: Run setup.sh and verify MCP servers work
 
 ## Integration Patterns
