@@ -9,6 +9,7 @@ Use `mcp__github__get_issue` to read issue #{{ ISSUE_NUMBER }} and determine:
 - Does this need implementation? → Full workflow
 - Is this invalid/duplicate? → Close with explanation
 - Check recent merged PRs for similar patterns → `mcp__github__list_pull_requests` (state: "closed")
+- Get issue comments with `mcp__github__get_issue_comments` to enrich understanding
 
 ## Quick Close Path
 If the issue is already resolved, invalid, or duplicate:
