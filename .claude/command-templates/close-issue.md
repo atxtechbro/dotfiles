@@ -1,4 +1,4 @@
-Complete and implement GitHub issue #{{ ISSUE_NUMBER }} (not just close it!) - analyze whether it needs full implementation or quick closure.
+Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 
 ## Core Principles
 {{ INJECT:principles/tracer-bullets.md }}
