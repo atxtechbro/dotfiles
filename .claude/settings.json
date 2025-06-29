@@ -34,7 +34,7 @@
       "Bash(claude config set --help)",
       
       "mcp__git-read",
-      "mcp__github",
+      "mcp__github-read",
       "mcp__brave-search",
       "mcp__filesystem",
       "mcp__awslabs.aws-documentation-mcp-server",
@@ -75,7 +75,7 @@
   "enabledMcpjsonServers": [
     "awslabs.aws-documentation-mcp-server",
     "git-read",
-    "github",
+    "github-read",
     "atlassian",
     "brave-search",
     "filesystem",
