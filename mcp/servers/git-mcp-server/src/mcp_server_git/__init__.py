@@ -9,7 +9,8 @@ from .server import serve
 @click.command()
 @click.option("--repository", "-r", type=Path, help="Git repository path")
 @click.option("-v", "--verbose", count=True)
-def main(repository: Path | None, verbose: bool) -> None:
+@click.option("--read-only", is_flag=True, help="Run in read-only mode (no write operations)")
+def main(repository: Path | None, verbose: bool, read_only: bool) -> None:
     """MCP Git Server - Git functionality for MCP"""
     import asyncio
 
@@ -20,7 +21,7 @@ def main(repository: Path | None, verbose: bool) -> None:
         logging_level = logging.DEBUG
 
     logging.basicConfig(level=logging_level, stream=sys.stderr)
-    asyncio.run(serve(repository))
+    asyncio.run(serve(repository, read_only))
 
 if __name__ == "__main__":
     main()
