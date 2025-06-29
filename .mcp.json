@@ -14,8 +14,13 @@
         "FASTMCP_LOG_LEVEL": "ERROR"
       }
     },
-    "github": {
-      "command": "github-mcp-wrapper.sh",
+    "github-read": {
+      "command": "github-mcp-read-wrapper.sh",
+      "args": [],
+      "env": {}
+    },
+    "github-write": {
+      "command": "github-mcp-write-wrapper.sh",
       "args": [],
       "env": {}
     },
