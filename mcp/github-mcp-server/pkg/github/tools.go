@@ -144,6 +144,12 @@ func DefaultToolsetGroup(readOnly bool, getClient GetClientFn, getGQLClient GetG
 			toolsets.NewServerTool(GetMe(getClient, t)),
 		)
 
+	// Add batch toolset for chained operations
+	batch := toolsets.NewToolset("batch", "Batch execution of multiple GitHub operations").
+		AddReadTools(
+			toolsets.NewServerTool(GitHubBatch(getClient, getGQLClient, getRawClient, t)),
+		)
+
 	// Add toolsets to the group
 	tsg.AddToolset(contextTools)
 	tsg.AddToolset(repos)
@@ -156,6 +162,7 @@ func DefaultToolsetGroup(readOnly bool, getClient GetClientFn, getGQLClient GetG
 	tsg.AddToolset(secretProtection)
 	tsg.AddToolset(notifications)
 	tsg.AddToolset(experiments)
+	tsg.AddToolset(batch)
 
 	return tsg
 }

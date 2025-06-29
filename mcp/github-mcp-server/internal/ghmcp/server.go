@@ -16,6 +16,7 @@ import (
 	"github.com/github/github-mcp-server/pkg/github"
 	mcplog "github.com/github/github-mcp-server/pkg/log"
 	"github.com/github/github-mcp-server/pkg/raw"
+	"github.com/github/github-mcp-server/pkg/toolsets"
 	"github.com/github/github-mcp-server/pkg/translations"
 	gogithub "github.com/google/go-github/v72/github"
 	"github.com/mark3labs/mcp-go/mcp"
@@ -128,6 +129,9 @@ func NewMCPServer(cfg MCPServerConfig) (*server.MCPServer, error) {
 		}
 		return raw.NewClient(client, apiHost.rawURL), nil // closing over client
 	}
+
+	// Set up the tool handler registrar for batch execution
+	toolsets.SetToolHandlerRegistrar(github.RegisterToolHandler)
 
 	// Create default toolsets
 	tsg := github.DefaultToolsetGroup(cfg.ReadOnly, getClient, getGQLClient, getRawClient, cfg.Translator)
