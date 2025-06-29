@@ -151,7 +151,7 @@ func DismissNotification(getclient GetClientFn, t translations.TranslationHelper
 			mcp.WithDescription(t("TOOL_DISMISS_NOTIFICATION_DESCRIPTION", "Dismiss a notification by marking it as read or done")),
 			mcp.WithToolAnnotation(mcp.ToolAnnotation{
 				Title:        t("TOOL_DISMISS_NOTIFICATION_USER_TITLE", "Dismiss notification"),
-				ReadOnlyHint: ToBoolPtr(false),
+				ReadOnlyHint: ToBoolPtr(true),
 			}),
 			mcp.WithString("threadID",
 				mcp.Required(),
@@ -218,7 +218,7 @@ func MarkAllNotificationsRead(getClient GetClientFn, t translations.TranslationH
 			mcp.WithDescription(t("TOOL_MARK_ALL_NOTIFICATIONS_READ_DESCRIPTION", "Mark all notifications as read")),
 			mcp.WithToolAnnotation(mcp.ToolAnnotation{
 				Title:        t("TOOL_MARK_ALL_NOTIFICATIONS_READ_USER_TITLE", "Mark all notifications as read"),
-				ReadOnlyHint: ToBoolPtr(false),
+				ReadOnlyHint: ToBoolPtr(true),
 			}),
 			mcp.WithString("lastReadAt",
 				mcp.Description("Describes the last point that notifications were checked (optional). Default: Now"),
@@ -355,7 +355,7 @@ func ManageNotificationSubscription(getClient GetClientFn, t translations.Transl
 			mcp.WithDescription(t("TOOL_MANAGE_NOTIFICATION_SUBSCRIPTION_DESCRIPTION", "Manage a notification subscription: ignore, watch, or delete a notification thread subscription.")),
 			mcp.WithToolAnnotation(mcp.ToolAnnotation{
 				Title:        t("TOOL_MANAGE_NOTIFICATION_SUBSCRIPTION_USER_TITLE", "Manage notification subscription"),
-				ReadOnlyHint: ToBoolPtr(false),
+				ReadOnlyHint: ToBoolPtr(true),
 			}),
 			mcp.WithString("notificationID",
 				mcp.Required(),
@@ -440,7 +440,7 @@ func ManageRepositoryNotificationSubscription(getClient GetClientFn, t translati
 			mcp.WithDescription(t("TOOL_MANAGE_REPOSITORY_NOTIFICATION_SUBSCRIPTION_DESCRIPTION", "Manage a repository notification subscription: ignore, watch, or delete repository notifications subscription for the provided repository.")),
 			mcp.WithToolAnnotation(mcp.ToolAnnotation{
 				Title:        t("TOOL_MANAGE_REPOSITORY_NOTIFICATION_SUBSCRIPTION_USER_TITLE", "Manage repository notification subscription"),
-				ReadOnlyHint: ToBoolPtr(false),
+				ReadOnlyHint: ToBoolPtr(true),
 			}),
 			mcp.WithString("owner",
 				mcp.Required(),
