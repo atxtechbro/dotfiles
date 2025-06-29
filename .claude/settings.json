@@ -75,7 +75,6 @@
   "enabledMcpjsonServers": [
     "awslabs.aws-documentation-mcp-server",
     "git-read",
-    "git-write",
     "github",
     "atlassian",
     "brave-search",
