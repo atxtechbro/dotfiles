@@ -1,4 +1,6 @@
-Close GitHub issue #{{ ISSUE_NUMBER }} - determine if it needs implementation or just closure.
+Complete and implement GitHub issue #{{ ISSUE_NUMBER }} (not just close it!) - analyze whether it needs full implementation or quick closure.
+
+**IMPORTANT**: The `/close-issue` command means "work on and complete the issue" which results in automatic closure when the PR merges. Only literally close the issue without implementation if it's already resolved, duplicate, or invalid.
 
 ## Core Principles
 {{ INJECT:principles/tracer-bullets.md }}
@@ -50,11 +52,21 @@ Remove worktree after PR is created.
 {{ INJECT:procedures/post-pr-mini-retro.md }}
 
 ## Decision Matrix
-- **Bug report with clear reproduction** → Implementation path
-- **Feature request approved by maintainer** → Implementation path  
-- **Question already answered** → Quick close with link
-- **Duplicate issue** → Quick close referencing original
-- **Invalid/out of scope** → Quick close with explanation
-- **Implemented in recent PR** → Quick close with PR reference
 
-Remember: Act agentically. Make the decision and execute.
+**Default assumption: Issues need implementation unless proven otherwise.**
+
+### → Full Implementation Path (create PR that closes issue):
+- **Bug report with clear reproduction**
+- **Feature request approved by maintainer**
+- **Enhancement with clear value**
+- **Documentation improvements**
+- **Any valid issue that hasn't been addressed**
+
+### → Quick Close Path (close without implementation):
+- **Question already answered** → Close with link to answer
+- **Duplicate issue** → Close referencing original issue
+- **Invalid/out of scope** → Close with polite explanation
+- **Already implemented in recent PR** → Close with PR reference
+- **No longer relevant** → Close with explanation
+
+Remember: When in doubt, lean toward implementation. The issue was created for a reason.
