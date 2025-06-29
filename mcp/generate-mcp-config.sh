@@ -49,9 +49,9 @@ mkdir -p ~/.config/claude
 generate_config ~/.config/claude/claude_desktop_config.json
 echo "  ✅ Claude Desktop (~/.config/claude/claude_desktop_config.json)"
 
-# Claude Code project-level config (when working in dotfiles repo)
-generate_config "$DOT_DEN/.mcp.json"
-echo "  ✅ Claude Code project config ($DOT_DEN/.mcp.json)"
+# Claude Code user-level config (global across all projects)
+generate_config ~/.mcp.json
+echo "  ✅ Claude Code user/global config (~/.mcp.json)"
 
 # Claude Code legacy config location (if directory exists)
 CLAUDE_LEGACY_DIR="$HOME/.config/claude-cli-nodejs"
