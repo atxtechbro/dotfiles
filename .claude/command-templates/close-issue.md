@@ -57,4 +57,4 @@ Remove worktree after PR is created.
 - **Invalid/out of scope** → Quick close with explanation
 - **Implemented in recent PR** → Quick close with PR reference
 
-Remember: Act agentically. Make the decision and execute.
+Remember: Act agentically. Make the decision and execute. 
