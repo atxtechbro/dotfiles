@@ -188,15 +188,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     fi
 fi
 
-# Generate MCP configuration from template
-# This now generates directly to all needed locations
-echo "Generating MCP configuration..."
-if [[ -x "$DOT_DEN/mcp/generate-mcp-config.sh" ]]; then
-    "$DOT_DEN/mcp/generate-mcp-config.sh"
-else
-    echo -e "${RED}Error: MCP generator not found at $DOT_DEN/mcp/generate-mcp-config.sh${NC}"
-    echo "MCP servers will not be configured properly."
-fi
 
 # Set up Git configuration
 echo "Setting up Git configuration..."

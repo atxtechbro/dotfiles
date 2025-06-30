@@ -24,7 +24,6 @@
       "args": [],
       "env": {}
     },
-    {{#if WORK_MACHINE}}
     "atlassian": {
       "command": "atlassian-mcp-wrapper.sh",
       "args": [],
@@ -43,7 +42,6 @@
         "USE_PIPELINE": "true"
       }
     },
-    {{/if}}
     "brave-search": {
       "command": "brave-search-mcp-wrapper.sh",
       "args": [],
