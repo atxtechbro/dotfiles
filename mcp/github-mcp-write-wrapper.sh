@@ -44,5 +44,6 @@ elif [[ -n "$GITHUB_TOKEN" ]] && [[ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ]]; then
   export GITHUB_PERSONAL_ACCESS_TOKEN="$GITHUB_TOKEN"
 fi
 
-# Run the server with write-only flag (only write operations)
-mcp_exec_with_logging "GITHUB-WRITE" "$SERVER_BIN" stdio --write-only "$@"
+# Run the server (full access - both read and write operations)
+# Note: The GitHub server doesn't have a --write-only flag, only --read-only
+mcp_exec_with_logging "GITHUB-WRITE" "$SERVER_BIN" stdio "$@"
