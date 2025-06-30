@@ -1,15 +1,16 @@
 # GitHub MCP Server - Read/Write Split
 
 ## Overview
-The GitHub MCP server has been split into two modes using the existing `--read-only` flag:
+The GitHub MCP server has been split into two distinct modes:
 - `github-read`: Read-only operations (runs with `--read-only` flag)
-- `github-write`: Full operations (runs without restrictions)
+- `github-write`: Write-only operations (runs with `--write-only` flag)
 
 ## Architecture
-Unlike the Git server split, the GitHub server uses the same binary with different flags:
+The GitHub server uses the same binary with different flags:
 - Both wrappers execute the same `github-mcp-server` binary
 - The read wrapper adds `--read-only` flag
-- The write wrapper runs without restrictions
+- The write wrapper adds `--write-only` flag
+- This ensures no overlap between read and write operations
 
 ## Read-Only Operations (github-read)
 When running with `--read-only`, the server restricts to:
@@ -19,19 +20,20 @@ When running with `--read-only`, the server restricts to:
 - Notification viewing (but not dismissing/marking as read in strict mode)
 
 ## Write Operations (github-write)
-Full access includes:
+When running with `--write-only`, the server restricts to write operations only:
 - All create_* operations
 - All update_* operations
 - All delete_* operations
 - merge_pull_request, push_files
 - Workflow runs and management
-- Notification management
+- Notification management (dismissing, marking as read)
+- Note: Read operations are NOT available in this mode
 
 ## Security Notes
-- The GitHub server already has built-in read-only mode support
-- The `--read-only` flag is enforced at the toolset level
+- The GitHub server has built-in read-only and write-only mode support
+- The `--read-only` and `--write-only` flags are enforced at the toolset level
 - Each toolset separates read and write tools internally
-- No code changes needed - just different launch flags
+- Clear separation prevents accidental exposure of read operations in write mode
 
 ## Migration
 Users need to:

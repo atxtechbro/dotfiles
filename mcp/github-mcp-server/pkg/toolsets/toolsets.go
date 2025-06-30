@@ -81,6 +81,7 @@ type Toolset struct {
 	Description string
 	Enabled     bool
 	readOnly    bool
+	writeOnly   bool
 	writeTools  []server.ServerTool
 	readTools   []server.ServerTool
 	// resources are not tools, but the community seems to be moving towards namespaces as a broader concept
@@ -95,6 +96,9 @@ func (t *Toolset) GetActiveTools() []server.ServerTool {
 		if t.readOnly {
 			return t.readTools
 		}
+		if t.writeOnly {
+			return t.writeTools
+		}
 		return append(t.readTools, t.writeTools...)
 	}
 	return nil
@@ -104,6 +108,9 @@ func (t *Toolset) GetAvailableTools() []server.ServerTool {
 	if t.readOnly {
 		return t.readTools
 	}
+	if t.writeOnly {
+		return t.writeTools
+	}
 	return append(t.readTools, t.writeTools...)
 }
 
@@ -111,13 +118,17 @@ func (t *Toolset) RegisterTools(s *server.MCPServer) {
 	if !t.Enabled {
 		return
 	}
-	for _, tool := range t.readTools {
-		s.AddTool(tool.Tool, tool.Handler)
-		// Register tool handler for batch execution
-		if registerHandler := GetToolHandlerRegistrar(); registerHandler != nil {
-			registerHandler(tool.Tool.Name, tool.Handler)
+	// Register read tools only if not in write-only mode
+	if !t.writeOnly {
+		for _, tool := range t.readTools {
+			s.AddTool(tool.Tool, tool.Handler)
+			// Register tool handler for batch execution
+			if registerHandler := GetToolHandlerRegistrar(); registerHandler != nil {
+				registerHandler(tool.Tool.Name, tool.Handler)
+			}
 		}
 	}
+	// Register write tools only if not in read-only mode
 	if !t.readOnly {
 		for _, tool := range t.writeTools {
 			s.AddTool(tool.Tool, tool.Handler)
@@ -173,6 +184,11 @@ func (t *Toolset) SetReadOnly() {
 	t.readOnly = true
 }
 
+func (t *Toolset) SetWriteOnly() {
+	// Set the toolset to write-only
+	t.writeOnly = true
+}
+
 func (t *Toolset) AddWriteTools(tools ...server.ServerTool) *Toolset {
 	// Silently ignore if the toolset is read-only to avoid any breach of that contract
 	for _, tool := range tools {
@@ -200,19 +216,24 @@ type ToolsetGroup struct {
 	Toolsets     map[string]*Toolset
 	everythingOn bool
 	readOnly     bool
+	writeOnly    bool
 }
 
-func NewToolsetGroup(readOnly bool) *ToolsetGroup {
+func NewToolsetGroup(readOnly bool, writeOnly bool) *ToolsetGroup {
 	return &ToolsetGroup{
 		Toolsets:     make(map[string]*Toolset),
 		everythingOn: false,
 		readOnly:     readOnly,
+		writeOnly:    writeOnly,
 	}
 }
 
 func (tg *ToolsetGroup) AddToolset(ts *Toolset) {
 	if tg.readOnly {
 		ts.SetReadOnly()
+	}
+	if tg.writeOnly {
+		ts.SetWriteOnly()
 	}
 	tg.Toolsets[ts.Name] = ts
 }

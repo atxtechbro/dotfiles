@@ -16,8 +16,8 @@ type GetGQLClientFn func(context.Context) (*githubv4.Client, error)
 
 var DefaultTools = []string{"all"}
 
-func DefaultToolsetGroup(readOnly bool, getClient GetClientFn, getGQLClient GetGQLClientFn, getRawClient raw.GetRawClientFn, t translations.TranslationHelperFunc) *toolsets.ToolsetGroup {
-	tsg := toolsets.NewToolsetGroup(readOnly)
+func DefaultToolsetGroup(readOnly bool, writeOnly bool, getClient GetClientFn, getGQLClient GetGQLClientFn, getRawClient raw.GetRawClientFn, t translations.TranslationHelperFunc) *toolsets.ToolsetGroup {
+	tsg := toolsets.NewToolsetGroup(readOnly, writeOnly)
 
 	// Define all available features with their default state (disabled)
 	// Create toolsets

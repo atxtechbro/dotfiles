@@ -46,6 +46,9 @@ type MCPServerConfig struct {
 	// ReadOnly indicates if we should only offer read-only tools
 	ReadOnly bool
 
+	// WriteOnly indicates if we should only offer write-only tools (excluding read tools)
+	WriteOnly bool
+
 	// Translator provides translated text for the server tooling
 	Translator translations.TranslationHelperFunc
 }
@@ -134,7 +137,7 @@ func NewMCPServer(cfg MCPServerConfig) (*server.MCPServer, error) {
 	toolsets.SetToolHandlerRegistrar(github.RegisterToolHandler)
 
 	// Create default toolsets
-	tsg := github.DefaultToolsetGroup(cfg.ReadOnly, getClient, getGQLClient, getRawClient, cfg.Translator)
+	tsg := github.DefaultToolsetGroup(cfg.ReadOnly, cfg.WriteOnly, getClient, getGQLClient, getRawClient, cfg.Translator)
 	err = tsg.EnableToolsets(enabledToolsets)
 
 	if err != nil {
@@ -173,6 +176,9 @@ type StdioServerConfig struct {
 	// ReadOnly indicates if we should only register read-only tools
 	ReadOnly bool
 
+	// WriteOnly indicates if we should only register write-only tools (excluding read tools)
+	WriteOnly bool
+
 	// ExportTranslations indicates if we should export translations
 	// See: https://github.com/github/github-mcp-server?tab=readme-ov-file#i18n--overriding-descriptions
 	ExportTranslations bool
@@ -199,6 +205,7 @@ func RunStdioServer(cfg StdioServerConfig) error {
 		EnabledToolsets: cfg.EnabledToolsets,
 		DynamicToolsets: cfg.DynamicToolsets,
 		ReadOnly:        cfg.ReadOnly,
+		WriteOnly:       cfg.WriteOnly,
 		Translator:      t,
 	})
 	if err != nil {

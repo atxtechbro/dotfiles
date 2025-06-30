@@ -3,9 +3,9 @@
 # =========================================================
 # GITHUB MCP WRITE WRAPPER SCRIPT
 # =========================================================
-# PURPOSE: Runtime wrapper that executes the GitHub MCP server with full write access
+# PURPOSE: Runtime wrapper that executes the GitHub MCP server with write-only access
 # This script is called by the MCP system during normal operation
-# Runs without --read-only flag to enable all operations
+# Uses the --write-only flag to restrict to write operations only
 # =========================================================
 
 # Get the directory where this script is located
@@ -44,5 +44,5 @@ elif [[ -n "$GITHUB_TOKEN" ]] && [[ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ]]; then
   export GITHUB_PERSONAL_ACCESS_TOKEN="$GITHUB_TOKEN"
 fi
 
-# Run the server without read-only flag (full access)
-mcp_exec_with_logging "GITHUB-WRITE" "$SERVER_BIN" stdio "$@"
+# Run the server with write-only flag (only write operations)
+mcp_exec_with_logging "GITHUB-WRITE" "$SERVER_BIN" stdio --write-only "$@"
