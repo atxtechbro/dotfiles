@@ -1,0 +1,2 @@
+[console_scripts]
+md2conf = md2conf.__main__:main

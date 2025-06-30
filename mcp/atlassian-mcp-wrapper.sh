@@ -25,8 +25,25 @@ if [[ "$WORK_MACHINE" != "true" ]]; then
     exit 1
 fi
 
-# Check if uvx is available (required to run the mcp-atlassian Python package)
-mcp_check_command "ATLASSIAN" "uvx" "Install uv: curl -LsSf https://astral.sh/uv/install.sh | sh"
+# Check if Python 3 is available
+mcp_check_command "ATLASSIAN" "python3" "Install Python 3.10 or higher"
+
+# Path to our forked atlassian-mcp-server
+ATLASSIAN_MCP_DIR="$SCRIPT_DIR/servers/atlassian-mcp-server"
+
+# Check if the server directory exists
+if [ ! -d "$ATLASSIAN_MCP_DIR" ]; then
+    echo "Error: Atlassian MCP server directory not found at $ATLASSIAN_MCP_DIR" >&2
+    echo "Run: source setup.sh to set up the server" >&2
+    exit 1
+fi
+
+# Check if virtual environment exists
+if [ ! -d "$ATLASSIAN_MCP_DIR/.venv" ]; then
+    echo "Error: Python virtual environment not found" >&2
+    echo "Run: $ATLASSIAN_MCP_DIR/setup.sh to set up the environment" >&2
+    exit 1
+fi
 
 # Source secrets file
 mcp_source_secrets "ATLASSIAN"
@@ -41,8 +58,8 @@ mcp_check_env_var "ATLASSIAN" "ATLASSIAN_JIRA_URL" "Add: export ATLASSIAN_JIRA_U
 mcp_check_env_var "ATLASSIAN" "ATLASSIAN_JIRA_USERNAME" "Add: export ATLASSIAN_JIRA_USERNAME=\"your.email@domain.com\""
 mcp_check_env_var "ATLASSIAN" "ATLASSIAN_JIRA_API_TOKEN" "Add: export ATLASSIAN_JIRA_API_TOKEN=\"your_api_token\""
 
-# Run the MCP Atlassian server with credentials from environment variables
-mcp_exec_with_logging "ATLASSIAN" uvx mcp-atlassian \
+# Run the MCP Atlassian server using our local forked version
+mcp_exec_with_logging "ATLASSIAN" "$ATLASSIAN_MCP_DIR/.venv/bin/python" -m mcp_atlassian \
   --confluence-url="$ATLASSIAN_CONFLUENCE_URL" \
   --confluence-username="$ATLASSIAN_CONFLUENCE_USERNAME" \
   --confluence-personal-token="$ATLASSIAN_CONFLUENCE_API_TOKEN" \

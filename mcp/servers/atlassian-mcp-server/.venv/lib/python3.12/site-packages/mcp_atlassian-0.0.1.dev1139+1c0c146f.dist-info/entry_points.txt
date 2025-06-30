@@ -1,0 +1,2 @@
+[console_scripts]
+mcp-atlassian = mcp_atlassian:main
