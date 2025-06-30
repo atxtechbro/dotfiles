@@ -179,6 +179,16 @@ class JiraClient:
                 f"Authentication headers during failure: "
                 f"{get_masked_session_headers(dict(self.jira._session.headers))}"
             )
+            
+            # Try to get more details from HTTP errors
+            if hasattr(e, 'response'):
+                logger.error(f"HTTP Status Code: {e.response.status_code}")
+                logger.error(f"Response Headers: {dict(e.response.headers)}")
+                try:
+                    logger.error(f"Response Body: {e.response.text}")
+                except:
+                    logger.error("Could not read response body")
+            
             raise MCPAtlassianAuthenticationError(error_msg) from e
 
     def _apply_custom_headers(self) -> None:
