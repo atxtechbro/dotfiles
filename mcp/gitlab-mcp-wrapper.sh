@@ -31,7 +31,7 @@ mcp_source_secrets "GITLAB"
 
 # Check if required GitLab environment variables are set
 mcp_check_env_var "GITLAB" "GITLAB_URL" "Add: export GITLAB_URL=\"https://gitlab.example.com\""
-mcp_check_env_var "GITLAB" "GITLAB_PAT" "Add: export GITLAB_PAT=\"your_personal_access_token\""
+mcp_check_env_var "GITLAB" "GITLAB_PERSONAL_ACCESS_TOKEN" "Add: export GITLAB_PERSONAL_ACCESS_TOKEN=\"your_personal_access_token\""
 
 # Pass through any environment variables from the MCP config
 export GITLAB_READ_ONLY_MODE="${GITLAB_READ_ONLY_MODE:-false}"
