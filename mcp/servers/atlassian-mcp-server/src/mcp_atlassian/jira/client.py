@@ -153,13 +153,20 @@ class JiraClient:
             logger.debug(
                 "Testing Jira authentication by retrieving current user info..."
             )
+            logger.debug(f"Auth type: {self.config.auth_type}")
+            logger.debug(f"URL: {self.config.url}")
+            logger.debug(f"Is Cloud: {self.config.is_cloud}")
+            
             current_user = self.jira.myself()
+            logger.debug(f"myself() returned: {type(current_user)}")
+            
             if current_user:
                 logger.info(
                     f"Jira authentication successful. "
                     f"Current user: {current_user.get('displayName', 'Unknown')} "
                     f"({current_user.get('emailAddress', 'No email')})"
                 )
+                logger.debug(f"Full user data: {current_user}")
             else:
                 logger.warning(
                     "Jira authentication test returned empty user info - "

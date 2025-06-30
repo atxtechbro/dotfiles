@@ -30,15 +30,27 @@ class ProjectsMixin(JiraClient, SearchOperationsProto):
             List of project data dictionaries
         """
         try:
+            logger.debug(f"Getting all projects (include_archived={include_archived})")
+            logger.debug(f"Using Jira URL: {self.config.url}")
+            logger.debug(f"Auth type: {self.config.auth_type}")
+            
             params = {}
             if include_archived:
                 params["includeArchived"] = "true"
 
             projects = self.jira.projects(included_archived=include_archived)
+            logger.debug(f"Projects API returned: type={type(projects)}, length={len(projects) if isinstance(projects, list) else 'N/A'}")
+            
+            if projects:
+                logger.debug(f"First project sample: {projects[0] if isinstance(projects, list) and projects else 'No projects'}")
+            
             return projects if isinstance(projects, list) else []
 
         except Exception as e:
             logger.error(f"Error getting all projects: {str(e)}")
+            logger.error(f"Exception type: {type(e).__name__}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
             return []
 
     def get_project(self, project_key: str) -> dict[str, Any] | None:
