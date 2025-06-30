@@ -45,7 +45,7 @@ mcp_check_env_var "ATLASSIAN" "ATLASSIAN_JIRA_API_TOKEN" "Add: export ATLASSIAN_
 mcp_exec_with_logging "ATLASSIAN" uvx mcp-atlassian \
   --confluence-url="$ATLASSIAN_CONFLUENCE_URL" \
   --confluence-username="$ATLASSIAN_CONFLUENCE_USERNAME" \
-  --confluence-token="$ATLASSIAN_CONFLUENCE_API_TOKEN" \
+  --confluence-personal-token="$ATLASSIAN_CONFLUENCE_API_TOKEN" \
   --jira-url="$ATLASSIAN_JIRA_URL" \
   --jira-username="$ATLASSIAN_JIRA_USERNAME" \
-  --jira-token="$ATLASSIAN_JIRA_API_TOKEN"
+  --jira-personal-token="$ATLASSIAN_JIRA_API_TOKEN"
