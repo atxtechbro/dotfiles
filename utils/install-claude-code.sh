@@ -88,56 +88,39 @@ setup_claude_code() {
 }
 
 configure_claude_mcp() {
-    echo "Configuring MCP servers for Claude Code..."
+    echo "Checking MCP server configuration..."
     
     # Get the directory where this script is located
     SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     DOT_DEN="$(dirname "$SCRIPT_DIR")"
     
-    # Run the MCP generator to create/update configurations
-    if [[ -x "$DOT_DEN/mcp/generate-mcp-config.sh" ]]; then
-        "$DOT_DEN/mcp/generate-mcp-config.sh"
+    # Check if .mcp.json exists in the dotfiles repository
+    if [[ -f "$DOT_DEN/.mcp.json" ]]; then
+        echo -e "${GREEN}✓ MCP configuration found at $DOT_DEN/.mcp.json${NC}"
     else
-        echo "Warning: MCP generator not found, configurations may be outdated"
+        echo -e "${YELLOW}Warning: No .mcp.json found in dotfiles repository${NC}"
+        echo "MCP servers will only be available when working in the dotfiles directory"
     fi
     
-    # Claude Code supports multiple configuration scopes:
-    # 1. Local scope: Project-specific user settings (via `claude mcp add`)
-    #    - Private to current user and project
-    #    - Not shared via version control
-    #    - Highest priority
-    #
-    # 2. Project scope: .mcp.json in project root
-    #    - Shared with team via version control
-    #    - Good for project-specific servers
-    #    - Medium priority
-    #
-    # 3. User scope: ~/.mcp.json (global across all projects)
-    #    - Personal servers available everywhere
-    #    - Good for general-purpose tools
-    #    - Lowest priority (but what dotfiles uses by default)
+    # Dotfiles uses a simplified MCP configuration approach:
+    # - Single .mcp.json file checked into source control
+    # - All servers included (work-specific ones check environment at runtime)
+    # - No template generation or machine-specific configs
     
-    # The generator already handles all locations including:
-    # - ~/.mcp.json (Claude Code user scope)
-    # - $DOT_DEN/.mcp.json (project scope)
-    # - ~/.aws/amazonq/mcp.json (Amazon Q)
-    # - ~/.config/claude/claude_desktop_config.json (Claude Desktop)
-    
-    # List configured servers if possible
-    MCP_CONFIG_DEST="$HOME/.mcp.json"
-    if [ -f "$MCP_CONFIG_DEST" ] && command -v jq &> /dev/null; then
-        echo "Configured MCP servers:"
-        jq -r '.mcpServers | keys[]' "$MCP_CONFIG_DEST" 2>/dev/null | sed 's/^/  - /'
+    # List configured servers if .mcp.json exists
+    if [ -f "$DOT_DEN/.mcp.json" ] && command -v jq &> /dev/null; then
+        echo "Available MCP servers from dotfiles:"
+        jq -r '.mcpServers | keys[]' "$DOT_DEN/.mcp.json" 2>/dev/null | sed 's/^/  - /'
     fi
     
-    echo -e "\n${BLUE}Claude Code MCP configuration scope guide:${NC}"
-    echo -e "  • User scope (default): ~/.mcp.json - Your personal servers, available everywhere"
-    echo -e "  • Project scope: .mcp.json - Team-shared servers for specific projects"
-    echo -e "  • Local scope: claude mcp add - Private project overrides"
-    echo -e "\n${YELLOW}To use different scopes:${NC}"
-    echo -e "  • Force load from file: claude --mcp-config /path/to/mcp.json"
-    echo -e "  • Add project server: claude mcp add --scope project <name> <command>"
-    echo -e "  • Add local override: claude mcp add --scope local <name> <command>"
+    echo -e "\n${BLUE}MCP Configuration Notes:${NC}"
+    echo -e "  • Dotfiles provides: $DOT_DEN/.mcp.json"
+    echo -e "  • Work-only servers (Atlassian, GitLab) require WORK_MACHINE=true"
+    echo -e "  • To use in other projects: Copy .mcp.json to that project's root"
+    echo -e "\n${YELLOW}Claude Code MCP commands:${NC}"
+    echo -e "  • List servers: claude mcp list"
+    echo -e "  • Add local override: claude mcp add <name> <command>"
+    echo -e "  • Force config file: claude --mcp-config /path/to/mcp.json"
 }
 
 # Run setup if script is executed directly (not sourced)
