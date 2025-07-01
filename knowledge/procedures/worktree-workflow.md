@@ -8,7 +8,9 @@ Suppose you need to work on multiple tasks simultaneously with complete code iso
 2. Create worktree:
    - **New branch**: Use `mcp__git__git_worktree_add` with `create_branch: true`
    - **Existing branch**: Use `mcp__git__git_worktree_add` with branch name
-3. Work in worktree: Pass worktree path as `repo_path` to MCP tools (no `cd` needed!)
-4. Commit, push, create PR as normal
-5. Ask for any pr feedback and address if any
-6. Cleanup: Use `mcp__git__git_worktree_remove`
+3. Initialize worktree environment: `cd` into worktree and run `source setup.sh`
+   - This ensures PATH and environment are configured for the worktree context
+4. Work in worktree: Pass worktree path as `repo_path` to MCP tools (no `cd` needed!)
+5. Commit, push, create PR as normal
+6. Ask for any pr feedback and address if any
+7. Cleanup: Use `mcp__git__git_worktree_remove`
