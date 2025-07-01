@@ -35,15 +35,10 @@ fi
 # Add debug logging
 echo "Debug: Starting setup script in sourced mode"
 
-# Define the dotfiles directory - worktree aware
-# Check if we're in a git repository (including worktrees)
-if git rev-parse --git-common-dir >/dev/null 2>&1; then
-    # We're in a git repo, use its root
-    DOT_DEN="$(git rev-parse --show-toplevel)"
-else
-    # Fall back to known location
-    DOT_DEN="$HOME/ppv/pillars/dotfiles"
-fi
+# Determine dotfiles root relative to this script's location
+# Works from main repo OR worktrees - everything is relative to where you source from
+# This makes the system self-documenting: source from where you want to work
+DOT_DEN="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Export DOT_DEN as a global variable for other scripts to use
 export DOT_DEN
 
