@@ -431,7 +431,49 @@ func ListPullRequests(getClient GetClientFn, t translations.TranslationHelperFun
 				return mcp.NewToolResultError(fmt.Sprintf("failed to list pull requests: %s", string(body))), nil
 			}
 
-			r, err := json.Marshal(prs)
+			// Create minimal PR response to reduce token usage
+			type MinimalPR struct {
+				Number    int       `json:"number"`
+				Title     string    `json:"title"`
+				State     string    `json:"state"`
+				HTMLURL   string    `json:"html_url"`
+				User      struct {
+					Login string `json:"login"`
+				} `json:"user"`
+				CreatedAt *github.Timestamp `json:"created_at"`
+				UpdatedAt *github.Timestamp `json:"updated_at"`
+				Draft     *bool            `json:"draft,omitempty"`
+				Base      struct {
+					Ref string `json:"ref"`
+				} `json:"base"`
+				Head      struct {
+					Ref string `json:"ref"`
+				} `json:"head"`
+			}
+
+			minimalPRs := make([]MinimalPR, len(prs))
+			for i, pr := range prs {
+				minimalPRs[i] = MinimalPR{
+					Number:    pr.GetNumber(),
+					Title:     pr.GetTitle(),
+					State:     pr.GetState(),
+					HTMLURL:   pr.GetHTMLURL(),
+					CreatedAt: pr.CreatedAt,
+					UpdatedAt: pr.UpdatedAt,
+					Draft:     pr.Draft,
+				}
+				if pr.User != nil {
+					minimalPRs[i].User.Login = pr.User.GetLogin()
+				}
+				if pr.Base != nil {
+					minimalPRs[i].Base.Ref = pr.Base.GetRef()
+				}
+				if pr.Head != nil {
+					minimalPRs[i].Head.Ref = pr.Head.GetRef()
+				}
+			}
+
+			r, err := json.Marshal(minimalPRs)
 			if err != nil {
 				return nil, fmt.Errorf("failed to marshal response: %w", err)
 			}
