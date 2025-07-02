@@ -1,0 +1,18 @@
+# AI Provider Command Configuration
+# Format: provider=template_dir|output_dir
+# Lines starting with # are ignored
+
+# Claude Code
+claude=$DOTFILES_DIR/.claude/command-templates|$HOME/.claude/commands
+
+# Amazon Q
+amazonq=$DOTFILES_DIR/.amazonq/command-templates|$HOME/.amazonq/commands
+
+# Cursor
+cursor=$DOTFILES_DIR/.cursor/command-templates|$HOME/.cursor/commands
+
+# VSCode
+vscode=$DOTFILES_DIR/.vscode/command-templates|$HOME/.vscode/commands
+
+# Add new providers here:
+# newprovider=$DOTFILES_DIR/.newprovider/command-templates|$HOME/.newprovider/commands

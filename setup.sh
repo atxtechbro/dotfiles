@@ -238,12 +238,16 @@ else
   echo -e "${YELLOW}Vendor-agnostic MCP setup script not found. Skipping MCP configuration setup.${NC}"
 fi
 
-# Generate Claude commands from templates
-if [[ -f "$DOT_DEN/utils/generate-claude-commands.sh" ]]; then
-  echo "Generating Claude commands from templates..."
+# Generate AI provider commands from templates
+if [[ -f "$DOT_DEN/utils/generate-commands.sh" ]]; then
+  echo "Generating AI provider commands from templates..."
+  "$DOT_DEN/utils/generate-commands.sh"
+elif [[ -f "$DOT_DEN/utils/generate-claude-commands.sh" ]]; then
+  # Fallback to Claude-specific script for backwards compatibility
+  echo "Generating Claude commands from templates (legacy)..."
   "$DOT_DEN/utils/generate-claude-commands.sh"
 else
-  echo -e "${YELLOW}Claude command generation script not found. Skipping command generation.${NC}"
+  echo -e "${YELLOW}Command generation script not found. Skipping command generation.${NC}"
 fi
 
 # Configuration files setup complete
