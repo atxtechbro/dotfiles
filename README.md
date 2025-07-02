@@ -180,20 +180,26 @@ This repository automatically configures global context for multiple AI coding a
 
 All context is sourced from the `knowledge/` directory and automatically configured by the setup script. See [AI Provider Agnostic Context](docs/ai-provider-agnostic-context.md) for details.
 
-### Slash Commands
+### Slash Commands (Vendor-Agnostic)
 
-Custom slash commands for Claude Code are defined as templates in `.claude/command-templates/`:
+Slash commands are now stored in a vendor-agnostic structure that works across all AI coding assistants:
 
-- **Templates**: Stored in `.claude/command-templates/` (e.g., `close-issue.md`, `retro.md`)
-- **Generation**: Run `utils/generate-claude-commands.sh` to process templates
-- **Output**: Generated commands appear in `~/.claude/commands/`
+- **Templates**: Stored in `commands/templates/` (vendor-neutral location)
+- **Generation**: Run `utils/generate-commands.sh` to process templates for all providers
+- **Output**: Generated commands appear in provider-specific locations:
+  - Claude Code: `~/.claude/commands/`
+  - Amazon Q: (future support)
+  - Other providers: (easily extensible)
+- **Symlinks**: `.claude/command-templates` → `commands/templates/` (created by setup.sh)
 - **Injection**: Templates use `{{ INJECT:path }}` to pull content from `knowledge/` directory
 - **Variables**: Templates support variables like `{{ ISSUE_NUMBER }}` for dynamic content
 
 To modify a slash command:
-1. Edit the template in `.claude/command-templates/`
-2. Run `utils/generate-claude-commands.sh` (automatically run by `source setup.sh`)
-3. The updated command is now available in Claude Code
+1. Edit the template in `commands/templates/`
+2. Run `utils/generate-commands.sh` (automatically run by `source setup.sh`)
+3. The updated command is available in all configured AI providers
+
+**Principle**: This vendor-agnostic approach follows `systems-stewardship` - building reusable patterns across tools.
 
 ## Secret Management
 

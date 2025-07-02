@@ -231,12 +231,20 @@ fi
 # Set up AI provider global rules (Amazon Q + Claude Code)
 "$DOT_DEN/utils/setup-ai-provider-rules.py"
 
-# Generate Claude commands from templates
-if [[ -f "$DOT_DEN/utils/generate-claude-commands.sh" ]]; then
-  echo "Generating Claude commands from templates..."
-  "$DOT_DEN/utils/generate-claude-commands.sh"
+# Setup vendor-agnostic command structure
+# Create symlink for Claude Code to find templates in vendor-agnostic location
+if [[ -d "$DOT_DEN/commands/templates" ]]; then
+  mkdir -p "$DOT_DEN/.claude"
+  ln -sf "../commands/templates" "$DOT_DEN/.claude/command-templates"
+  echo -e "${GREEN}✓ Created symlink: .claude/command-templates → commands/templates${NC}"
+fi
+
+# Generate commands from templates
+if [[ -f "$DOT_DEN/utils/generate-commands.sh" ]]; then
+  echo "Generating commands from templates..."
+  "$DOT_DEN/utils/generate-commands.sh"
 else
-  echo -e "${YELLOW}Claude command generation script not found. Skipping command generation.${NC}"
+  echo -e "${YELLOW}Command generation script not found. Skipping command generation.${NC}"
 fi
 
 # Configuration files setup complete
