@@ -22,12 +22,16 @@ Like Brent from The Phoenix Project, we often become the constraint by being the
 
 ```bash
 # IN TERMINAL (BAD - Makes you Brent, the bottleneck hero):
-ln -s mcp/mcp.json .mcp.json      # Works today, forgotten tomorrow
-mv .bashrc .bashrc.backup          # Your knowledge, lost when you leave
-chmod 600 ~/.bash_secrets          # New teammate: "Why doesn't this work?"
-mkdir -p ~/ppv/pillars             # "It worked on my machine..."
-echo "alias q='q'" >> ~/.bashrc   # Snowflake environment alert!
-curl -o tool.tar.gz https://...    # Downloaded where? What version?
+dotfiles (main) $ ln -s mcp/mcp.json .mcp.json      # Works today, forgotten tomorrow
+dotfiles (main) $ mv .bashrc .bashrc.backup          # Your knowledge, lost when you leave
+dotfiles (main) $ chmod 600 ~/.bash_secrets          # New teammate: "Why doesn't this work?"
+dotfiles (main) $ mkdir -p ~/ppv/pillars             # "It worked on my machine..."
+dotfiles (main) $ echo "alias q='q'" >> ~/.bashrc   # Snowflake environment alert!
+dotfiles (main) $ curl -o tool.tar.gz https://...    # Downloaded where? What version?
+
+# Even worse on a feature branch:
+dotfiles (feature/vendor-agnostic-mcp-692) $ ln -s mcp/mcp.json .mcp.json
+# ↑ This "fix" lives only in your terminal history, not in the feature!
 ```
 
 **The Brent Test**: If you get hit by a bus (or take vacation), can someone else recreate what you did? If it's only in your terminal history, you're being Brent.
