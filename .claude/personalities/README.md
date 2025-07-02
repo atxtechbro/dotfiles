@@ -10,6 +10,12 @@ Reusable character perspectives for specialized advice and reviews.
 - **Method**: Socratic questioning
 - **Usage**: `{{ INJECT:personalities/jonah.md }}`
 
+### Brent (The Overloaded Constraint)
+- **Source**: The Phoenix Project by Gene Kim
+- **Specialty**: Knowledge silos, documentation debt, human bottlenecks
+- **Method**: Cautionary tales from being the single point of failure
+- **Usage**: `{{ INJECT:personalities/brent.md }}`
+
 ## Usage Pattern
 
 In any Claude command template, inject a personality with:
