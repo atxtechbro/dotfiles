@@ -8,17 +8,6 @@ Provides Git operations to AI agents via the MCP protocol with comprehensive too
 
 ## Architecture
 
-```
-mcp/servers/git-mcp-server/
-├── src/
-│   └── mcp_server_git/
-│       ├── __init__.py      # Entry point with CLI
-│       ├── __main__.py      # Module runner
-│       ├── server.py        # Core MCP server with all Git tools
-│       └── logging_utils.py # Tool-level logging to ~/mcp-tool-calls.log
-└── .venv/                   # Python dependencies
-```
-
 ## How It Works
 
 1. The wrapper script `mcp/git-mcp-wrapper.sh` calls `.venv/bin/python -m mcp_server_git`
