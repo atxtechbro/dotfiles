@@ -1,1 +1,0 @@
-src/mcp_server_git/__main__.py
