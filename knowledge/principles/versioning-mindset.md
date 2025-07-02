@@ -13,6 +13,11 @@ The "versioning mindset" is the principle that progress happens through iteratio
 **Relationship to abstraction:**
 VM prioritizes making code malleable through the right level of abstraction. Not too specific (hardcoded), not too clever (over-engineered). The sweet spot where code can evolve.
 
+**Knowledge Decay Pattern:**
+- Knowledge doesn't rust like physical inventory, it becomes outdated or constraining
+- Flexible systems sometimes mean having less system, not more
+- Provider-agnostic approaches as manufacturing flexibility
+
 **Example progression:**
 1. Hardcoded solution for specific use case
 2. Discover patterns through use
