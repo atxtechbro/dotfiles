@@ -2,6 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(find:*)",
+      "Bash(find * | *)",
+      "Bash(find * -name * | *)",
+      "Bash(find * -type * | *)",
       "Bash(grep:*)",
       "Bash(locate:*)",
       "Bash(ls:*)",
@@ -46,6 +49,7 @@
       "Bash(./utils/configure-claude-code-settings.sh:*)",
       "Bash(check-mcp-logs:*)",
       "Bash(python:*)",
+      "Bash(find /home/linuxmint-lp/*)",
       
       "WebFetch(domain:docs.anthropic.com)"
     ]
