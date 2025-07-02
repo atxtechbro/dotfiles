@@ -16,39 +16,40 @@ The "spilled coffee principle" states that anyone should be able to destroy thei
 - Symlinks should be managed by setup scripts rather than manual linking
 - Dependencies and installation steps should be well-documented
 
-**❌ Common Violations - Manual Heroics to Avoid:**
+**❌ Common Violations - Manual Terminal Heroics:**
+
+Like Brent from The Phoenix Project, we often become the constraint by being the "go-to hero" who fixes things manually. These commands are perfectly valid IN SCRIPTS, but become anti-patterns when typed directly in terminal:
+
 ```bash
-# Manual symlinking
-ln -s mcp/mcp.json .mcp.json  # NO! Add to setup script
-
-# Ad-hoc file operations
-mv .bashrc .bashrc.backup      # NO! Script the backup process
-chmod 600 ~/.bash_secrets      # NO! Set permissions in script
-
-# One-off directory creation
-mkdir -p ~/ppv/pillars         # NO! Ensure scripts create dirs
-
-# Manual config edits
-echo "alias q='q'" >> ~/.bashrc  # NO! Use modular alias files
-
-# Quick downloads
-curl -o tool.tar.gz https://...  # NO! Add to installation script
+# IN TERMINAL (BAD - Makes you Brent, the bottleneck hero):
+ln -s mcp/mcp.json .mcp.json      # Works today, forgotten tomorrow
+mv .bashrc .bashrc.backup          # Your knowledge, lost when you leave
+chmod 600 ~/.bash_secrets          # New teammate: "Why doesn't this work?"
+mkdir -p ~/ppv/pillars             # "It worked on my machine..."
+echo "alias q='q'" >> ~/.bashrc   # Snowflake environment alert!
+curl -o tool.tar.gz https://...    # Downloaded where? What version?
 ```
 
-**✅ Instead - Embed in Scripts:**
+**The Brent Test**: If you get hit by a bus (or take vacation), can someone else recreate what you did? If it's only in your terminal history, you're being Brent.
+
+**✅ The Same Commands in Scripts (GOOD - No More Brent!):**
 ```bash
-# In setup-vendor-agnostic-mcp.sh
-ln -s mcp/mcp.json "$REPO_ROOT/.mcp.json"
+# IN SCRIPTS (GOOD - Knowledge is codified, not tribal):
 
-# In setup.sh
-mkdir -p "$HOME/ppv/pillars"
-chmod 600 ~/.bash_secrets
+# setup-vendor-agnostic-mcp.sh
+ln -s mcp/mcp.json "$REPO_ROOT/.mcp.json"  # Reproducible by anyone
 
-# In install-tool.sh
+# setup.sh  
+mkdir -p "$HOME/ppv/pillars"                # Self-documenting
+chmod 600 ~/.bash_secrets                   # Security automated
+
+# install-tool.sh
 download_and_install_tool() {
-    curl -o "$TEMP_DIR/tool.tar.gz" https://...
+    curl -o "$TEMP_DIR/tool.tar.gz" https://...  # Version controlled
 }
 ```
+
+**The Phoenix Principle**: Move from "Brent did it" to "The system does it". Every terminal command that changes state should become code, removing key person dependencies.
 
 **The Litmus Test**: Can you destroy your laptop, get a new one, run `git clone && ./setup.sh`, and be back to exactly where you were? If not, you've been a hero instead of a steward.
 
