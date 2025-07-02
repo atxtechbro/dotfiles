@@ -29,9 +29,9 @@ dotfiles (main) $ mkdir -p ~/ppv/pillars             # "It worked on my machine.
 dotfiles (main) $ echo "alias q='q'" >> ~/.bashrc   # Snowflake environment alert!
 dotfiles (main) $ curl -o tool.tar.gz https://...    # Downloaded where? What version?
 
-# Even worse on a feature branch:
+# The exact violation that inspired this documentation:
 dotfiles (feature/vendor-agnostic-mcp-692) $ ln -s mcp/mcp.json .mcp.json
-# ↑ This "fix" lives only in your terminal history, not in the feature!
+# ↑ I actually did this! Then immediately undid it and wrote a script instead.
 ```
 
 **The Brent Test**: If you get hit by a bus (or take vacation), can someone else recreate what you did? If it's only in your terminal history, you're being Brent.
