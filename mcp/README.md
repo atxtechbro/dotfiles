@@ -80,7 +80,13 @@ Requirements:
 
 ## Configuration
 
-The `mcp.json` file contains the configuration for all MCP servers. This file is used by Amazon Q and other MCP clients to discover and connect to the servers.
+The MCP configuration follows a vendor-agnostic pattern:
+
+- **Canonical location**: `mcp/mcp.json` - The single source of truth for MCP configuration
+- **Claude Code compatibility**: `.mcp.json` symlink at repository root points to `mcp/mcp.json`
+- **Setup**: Run `./setup-vendor-agnostic-mcp.sh` to configure the vendor-agnostic structure
+
+This approach allows us to maintain a single MCP configuration file while supporting multiple MCP clients through symlinks or client-specific configurations.
 
 ## Filesystem MCP Server Configuration
 

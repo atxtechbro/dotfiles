@@ -231,6 +231,13 @@ fi
 # Set up AI provider global rules (Amazon Q + Claude Code)
 "$DOT_DEN/utils/setup-ai-provider-rules.py"
 
+# Set up vendor-agnostic MCP configuration
+if [[ -f "$DOT_DEN/mcp/setup-vendor-agnostic-mcp.sh" ]]; then
+  "$DOT_DEN/mcp/setup-vendor-agnostic-mcp.sh"
+else
+  echo -e "${YELLOW}Vendor-agnostic MCP setup script not found. Skipping MCP configuration setup.${NC}"
+fi
+
 # Generate Claude commands from templates
 if [[ -f "$DOT_DEN/utils/generate-claude-commands.sh" ]]; then
   echo "Generating Claude commands from templates..."
