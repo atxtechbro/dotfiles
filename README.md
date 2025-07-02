@@ -16,19 +16,41 @@ The "spilled coffee principle" states that anyone should be able to destroy thei
 - Symlinks should be managed by setup scripts rather than manual linking
 - Dependencies and installation steps should be well-documented
 
-**❌ Counterexample - What NOT to do:**
+**❌ Common Violations - Manual Heroics to Avoid:**
 ```bash
-# Don't give one-off commands like this:
-defaults write com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers -array-add '{LSHandlerContentType="public.unix-executable";LSHandlerRoleAll="com.googlecode.iterm2";}'
+# Manual symlinking
+ln -s mcp/mcp.json .mcp.json  # NO! Add to setup script
+
+# Ad-hoc file operations
+mv .bashrc .bashrc.backup      # NO! Script the backup process
+chmod 600 ~/.bash_secrets      # NO! Set permissions in script
+
+# One-off directory creation
+mkdir -p ~/ppv/pillars         # NO! Ensure scripts create dirs
+
+# Manual config edits
+echo "alias q='q'" >> ~/.bashrc  # NO! Use modular alias files
+
+# Quick downloads
+curl -o tool.tar.gz https://...  # NO! Add to installation script
 ```
 
-**✅ Instead - Add to setup script:**
+**✅ Instead - Embed in Scripts:**
 ```bash
-# Add to setup.sh so it's reproducible
-configure_iterm_as_default_terminal() {
-    defaults write com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers -array-add '{LSHandlerContentType="public.unix-executable";LSHandlerRoleAll="com.googlecode.iterm2";}'
+# In setup-vendor-agnostic-mcp.sh
+ln -s mcp/mcp.json "$REPO_ROOT/.mcp.json"
+
+# In setup.sh
+mkdir -p "$HOME/ppv/pillars"
+chmod 600 ~/.bash_secrets
+
+# In install-tool.sh
+download_and_install_tool() {
+    curl -o "$TEMP_DIR/tool.tar.gz" https://...
 }
 ```
+
+**The Litmus Test**: Can you destroy your laptop, get a new one, run `git clone && ./setup.sh`, and be back to exactly where you were? If not, you've been a hero instead of a steward.
 
 This principle ensures resilience and quick recovery from system failures or when setting up new environments.
 
