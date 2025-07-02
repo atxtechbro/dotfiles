@@ -356,7 +356,6 @@ mcp/servers/git-mcp-server/
 │   ├── __main__.py          # Main module runner
 │   ├── server.py            # Core MCP server with logging
 │   └── logging_utils.py     # Tool-level logging utilities
-├── pyproject.toml           # Personalized package metadata
 └── README.md               # This file
 ```
 
