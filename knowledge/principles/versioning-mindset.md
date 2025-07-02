@@ -24,6 +24,12 @@ VM prioritizes making code malleable through the right level of abstraction. Not
 3. Abstract to cover more scenarios
 4. Keep iterating based on actual needs
 
+**Semantic Compression Hierarchy:**
+When evolving systems, prefer: **Replace > Append > Add**
+- Replace: Transform existing tools/commands for new purposes (e.g., `/retro` → `/inventory-cleanup`)
+- Append: Add capabilities to existing structures
+- Add: Create new structures only when necessary
+
 **Example**: Don't create `git-workflow-v2.md` - improve `git-workflow.md` and commit the changes. The filename is stable, the content evolves.
 
 This principle ensures sustainable, continuous improvement across all aspects of development.

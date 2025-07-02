@@ -1,14 +1,17 @@
-Conduct a collaborative retrospective on our recent work in this session.
+{{ INJECT:personalities/jonah.md }}
 
-## Retro Mindset
-**Exception to do-dont-explain**: This is a collaborative discussion and learning moment. Be consultative, reflective, and thorough. Take time to think through decisions, tensions, and alternatives.
+Conduct a collaborative retrospective on our recent work, focusing on reducing cognitive and procedural inventory.
+
+## Inventory Control Mindset
+**Exception to do-dont-explain**: Channel Jonah's consultative approach. Use Socratic questioning to help identify what's creating unnecessary inventory in our systems.
 
 ## Philosophy
+- **Theory of Constraints**: Identify bottlenecks creating work-in-process inventory
 - **The Snowball Method**: Capture learnings that compound over time
-- **Systems Thinking**: Look for patterns and systemic improvements
-- **Learning Organization**: Extract maximum value from experiences
+- **Cognitive Buffer Management**: Keep spare powder dry by reducing mental clutter
 - **"Don't let a crisis go to waste"**: Find the gold in struggles
 - **"Wring the towel out"**: Extract every drop of insight
+- **Inventory Reduction**: What knowledge/procedures are collecting dust?
 
 ## Process
 1. **Review Recent Work**
