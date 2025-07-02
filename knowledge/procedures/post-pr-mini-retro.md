@@ -58,26 +58,13 @@ The agent should:
 - How did choosing one principle over another create tension or trade-offs?
 - What decisions required balancing competing principles?
 
-## Specialized Review Selection
+## Personality-Driven Focus
 
-After the general retro, the agent should select ONE specialized review to run based on the PR context:
+The `/retro` command will select an appropriate consultant personality based on PR context:
+- **Jonah**: When dealing with constraints, bottlenecks, or competing priorities
+- **Brent**: When heroic interventions occurred or knowledge gaps were exposed
+- Future personalities can be added to `.claude/personalities/` as needed
 
-**Available Specialized Reviews:**
-- `/inventory-reduction-retro` - When dealing with backlog, cognitive load, or too many open loops
-- `/documentation-debt-review` - When heroic interventions occurred or knowledge gaps were exposed
-
-**Selection Process:**
-1. Agent analyzes the PR and retro discussion
-2. Picks the most relevant specialized review
-3. Explains: "Based on [specific observation], I think we should run [review type] because [reasoning]"
-4. Runs the selected review as a focused follow-up
-
-**Selection Criteria Examples:**
-- Many ad-hoc decisions → documentation-debt-review
-- Struggled with priorities → inventory-reduction-retro
-- Knowledge gaps exposed → documentation-debt-review
-- Too many competing concerns → inventory-reduction-retro
-
-This ensures specialized reviews get used when relevant, not just created and forgotten.
+This ensures each retro has a specific lens while maintaining a single, unified command.
 
 This retro helps identify the 20% of systems work that enables the 80% of feature work to flow more smoothly.
