@@ -2,6 +2,12 @@
 # Generate AI provider commands using Python prompt orchestrator
 # This vendor-agnostic script processes command templates for any AI provider
 # Principle: systems-stewardship
+#
+# [TEMPLATE-GENERATION]
+# This script DOES generate slash commands from templates.
+# Templates are stored in commands/templates/ and processed by prompt_orchestrator.py
+# to create provider-specific commands with injected variables and knowledge base content.
+# This allows slash commands to be dynamic and context-aware.
 
 set -euo pipefail
 
@@ -13,10 +19,11 @@ PROMPT_ORCHESTRATOR="$SCRIPT_DIR/prompt_orchestrator.py"
 PROVIDER_CONFIG="$DOTFILES_DIR/.config/provider_dirs.conf"
 
 # Default provider directories if no config file exists
+# Use the vendor-agnostic commands/templates directory for all providers
 declare -A DEFAULT_PROVIDER_DIRS=(
-    ["claude"]="$DOTFILES_DIR/.claude/command-templates|$HOME/.claude/commands"
-    ["amazonq"]="$DOTFILES_DIR/.amazonq/command-templates|$HOME/.amazonq/commands"
-    ["cursor"]="$DOTFILES_DIR/.cursor/command-templates|$HOME/.cursor/commands"
+    ["claude"]="$DOTFILES_DIR/commands/templates|$HOME/.claude/commands"
+    ["amazonq"]="$DOTFILES_DIR/commands/templates|$HOME/.amazonq/commands"
+    ["cursor"]="$DOTFILES_DIR/commands/templates|$HOME/.cursor/commands"
 )
 
 # Load provider directories from config file if it exists

@@ -2,6 +2,11 @@
 # Setup vendor-agnostic MCP configuration
 # This script implements the vendor-agnostic MCP configuration pattern
 # by moving .mcp.json to mcp/mcp.json and creating appropriate symlinks
+#
+# [NO-TEMPLATE-GENERATION]
+# This script does NOT generate MCP configuration from templates.
+# MCP configuration is a static JSON file (mcp/mcp.json) that is checked into git.
+# The only dynamic aspect is creating symlinks for AI provider compatibility.
 
 set -euo pipefail
 
