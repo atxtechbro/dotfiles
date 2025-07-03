@@ -23,13 +23,9 @@ If the issue needs implementation:
 ### 1. Set Up Development
 {{ INJECT:procedures/worktree-workflow.md }}
 
-**CRITICAL**: When creating worktree, always specify `base_branch: "origin/main"` to prevent surprise diffs:
-- Use `mcp__git__git_worktree_add` with parameters:
-  - `repo_path`: main repo path
-  - `worktree_path`: new worktree location
-  - `branch_name`: "feature/<description>-{{ ISSUE_NUMBER }}"
-  - `create_branch`: true
-  - `base_branch`: "origin/main" (ensures clean diff)
+**PRINCIPLE**: Create worktrees with explicit base_branch to ensure clean, predictable diffs.
+- Determine the appropriate base branch for your PR (usually origin/main, but could be a feature branch)
+- Use `mcp__git__git_worktree_add` with `base_branch` parameter to start from the right commit
 
 Apply to issue #{{ ISSUE_NUMBER }}:
 - Replace <NUMBER> with {{ ISSUE_NUMBER }}
