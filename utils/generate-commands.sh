@@ -13,10 +13,11 @@ PROMPT_ORCHESTRATOR="$SCRIPT_DIR/prompt_orchestrator.py"
 PROVIDER_CONFIG="$DOTFILES_DIR/.config/provider_dirs.conf"
 
 # Default provider directories if no config file exists
+# Use the vendor-agnostic commands/templates directory for all providers
 declare -A DEFAULT_PROVIDER_DIRS=(
-    ["claude"]="$DOTFILES_DIR/.claude/command-templates|$HOME/.claude/commands"
-    ["amazonq"]="$DOTFILES_DIR/.amazonq/command-templates|$HOME/.amazonq/commands"
-    ["cursor"]="$DOTFILES_DIR/.cursor/command-templates|$HOME/.cursor/commands"
+    ["claude"]="$DOTFILES_DIR/commands/templates|$HOME/.claude/commands"
+    ["amazonq"]="$DOTFILES_DIR/commands/templates|$HOME/.amazonq/commands"
+    ["cursor"]="$DOTFILES_DIR/commands/templates|$HOME/.cursor/commands"
 )
 
 # Load provider directories from config file if it exists

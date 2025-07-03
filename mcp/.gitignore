@@ -1,5 +1,3 @@
 # Generated files
-mcp.json
 
-# The source of truth is mcp.template.json
-# mcp.json is generated from it during setup
+# mcp.json is now checked in at mcp/mcp.json (vendor-agnostic location)
