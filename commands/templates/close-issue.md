@@ -23,10 +23,6 @@ If the issue needs implementation:
 ### 1. Set Up Development
 {{ INJECT:procedures/worktree-workflow.md }}
 
-**PRINCIPLE**: Create worktrees with explicit base_branch to ensure clean, predictable diffs.
-- Determine the appropriate base branch for your PR (usually origin/main, but could be a feature branch)
-- Use `mcp__git__git_worktree_add` with `base_branch` parameter to start from the right commit
-
 Apply to issue #{{ ISSUE_NUMBER }}:
 - Replace <NUMBER> with {{ ISSUE_NUMBER }}
 - Replace <description> with issue title slug
