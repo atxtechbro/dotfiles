@@ -2,6 +2,8 @@
 
 Suppose you need to work on multiple tasks simultaneously with complete code isolation between Claude Code instances. Git worktrees provide this isolation.
 
+**PRINCIPLE**: Start worktrees from the same commit GitHub will use for the PR diff (usually origin/main).
+
 **IMPORTANT**: Use git MCP tools instead of bash commands when possible. The `repo_path` parameter acts like `git -C` for worktrees.
 
 1. `mkdir -p ~/ppv/pillars/dotfiles/worktrees`
