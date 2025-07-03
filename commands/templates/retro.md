@@ -12,7 +12,7 @@ First, analyze the PR context and select the most appropriate consultant:
 1. Review the PR changes and challenges encountered
 2. Pick the consultant most relevant to the patterns observed
 3. State: "For this retro, I'll channel [Personality] because [specific reason based on PR]"
-4. Inject the selected personality: {{ INJECT:personalities/[selected].md }}
+4. Based on your selection, channel that personality's approach throughout the retro
 
 ## Retro Mindset
 **Exception to do-dont-explain**: This is a collaborative discussion and learning moment. Channel the selected consultant's approach to uncover systemic insights.
