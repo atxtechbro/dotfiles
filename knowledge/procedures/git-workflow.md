@@ -19,3 +19,13 @@
 
 ## Common Errors to Avoid
 - Don't thank self when closing your own PRs
+
+## Directory to Symlink Conversions
+When converting a directory to a symlink (or vice versa), it's safer to use different names or do it in separate commits to avoid git tree corruption.
+
+**Why**: Git can create invalid tree objects when the same path transitions from directory to symlink within a single commit, causing push failures with "duplicateEntries" errors.
+
+**Safe approaches**:
+1. Use different names (e.g., rename directory first, then create symlink)
+2. Split into separate commits (remove directory in one commit, add symlink in another)
+3. Create fresh branch from clean state if corruption occurs

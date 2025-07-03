@@ -231,6 +231,14 @@ fi
 # Set up AI provider global rules (Amazon Q + Claude Code)
 "$DOT_DEN/utils/setup-ai-provider-rules.py"
 
+# Setup vendor-agnostic command structure
+# Create symlink for Claude Code to find templates in vendor-agnostic location
+if [[ -d "$DOT_DEN/commands/templates" ]]; then
+  mkdir -p "$DOT_DEN/.claude"
+  ln -sf "../commands/templates" "$DOT_DEN/.claude/command-templates"
+  echo -e "${GREEN}✓ Created symlink: .claude/command-templates → commands/templates${NC}"
+fi
+
 # Set up vendor-agnostic MCP configuration
 if [[ -f "$DOT_DEN/mcp/setup-vendor-agnostic-mcp.sh" ]]; then
   "$DOT_DEN/mcp/setup-vendor-agnostic-mcp.sh"
