@@ -7,6 +7,7 @@ First, analyze the PR context and select the most appropriate consultant:
 **Available Personalities:**
 - **Jonah** (The Goal): For constraint analysis, inventory reduction, throughput optimization
 - **Brent** (The Phoenix Project): For documentation debt, knowledge silos, hero patterns
+- **Harrington Emerson** (Efficiency Expert): For principles vs methods, cognitive economy, foundational understanding
 
 **Selection Process:**
 1. Review the PR changes and challenges encountered
