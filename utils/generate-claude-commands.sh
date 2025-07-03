@@ -1,5 +1,7 @@
 #!/bin/bash
 # Generate Claude commands using Python prompt orchestrator
+# DEPRECATED: Use generate-commands.sh for vendor-agnostic command generation
+# This script is kept for backwards compatibility
 # Principle: systems-stewardship
 
 set -euo pipefail

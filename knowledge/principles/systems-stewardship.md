@@ -23,4 +23,9 @@ From Sam Carpenter's "Work the System" - adopt an external vantage point to see 
 - When tempted to dive in, ask "What would I delegate?"
 - "Vísteme despacio, que tengo prisa" - move deliberately, not frantically
 
+**GitHub Issues as WIP Inventory:**
+- Backlog buildup indicates bottlenecks in the development flow
+- Leading vs lagging indicators: measure what predicts success, not what confirms it
+- Regular backlog cleanup = inventory reduction
+
 This principle ensures that systems remain accessible, improvable, and transferable rather than becoming tribal knowledge or technical debt.
