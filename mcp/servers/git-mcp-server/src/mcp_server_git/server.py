@@ -110,6 +110,7 @@ class GitWorktreeAdd(BaseModel):
     worktree_path: str
     branch_name: str | None = None
     create_branch: bool = False
+    base_branch: str | None = None
 
 class GitWorktreeRemove(BaseModel):
     repo_path: str
@@ -288,7 +289,7 @@ TOOL_REGISTRY = {
     GitTools.CREATE_BRANCH: (GitCreateBranch, "Creates a new branch from an optional base branch"),
     GitTools.CHECKOUT: (GitCheckout, "Switches branches"),
     GitTools.SHOW: (GitShow, "Shows the contents of a commit"),
-    GitTools.WORKTREE_ADD: (GitWorktreeAdd, "Add a new worktree for parallel development"),
+    GitTools.WORKTREE_ADD: (GitWorktreeAdd, "Add a new worktree for parallel development from an optional base branch"),
     GitTools.WORKTREE_REMOVE: (GitWorktreeRemove, "Remove a worktree"),
     GitTools.WORKTREE_LIST: (GitWorktreeList, "List all worktrees"),
     GitTools.PUSH: (GitPush, "Push commits to remote repository (branch required, main blocked)"),
@@ -379,16 +380,26 @@ def git_show(repo: git.Repo, revision: str) -> str:
         output.append(d.diff.decode('utf-8'))
     return "".join(output)
 
-def git_worktree_add(repo: git.Repo, worktree_path: str, branch_name: str | None = None, create_branch: bool = False) -> str:
+def git_worktree_add(repo: git.Repo, worktree_path: str, branch_name: str | None = None, create_branch: bool = False, base_branch: str | None = None) -> str:
     """Add a new worktree"""
-    if create_branch and branch_name:
-        output = repo.git.worktree("add", "-b", branch_name, worktree_path)
-    elif branch_name:
-        output = repo.git.worktree("add", worktree_path, branch_name)
+    # If base_branch specified, create worktree from that branch/commit
+    if base_branch:
+        if create_branch and branch_name:
+            # Create new branch from base_branch
+            output = repo.git.worktree("add", "-b", branch_name, worktree_path, base_branch)
+        else:
+            # Create worktree directly from base_branch
+            output = repo.git.worktree("add", worktree_path, base_branch)
     else:
-        output = repo.git.worktree("add", worktree_path)
+        # Original behavior when no base_branch specified
+        if create_branch and branch_name:
+            output = repo.git.worktree("add", "-b", branch_name, worktree_path)
+        elif branch_name:
+            output = repo.git.worktree("add", worktree_path, branch_name)
+        else:
+            output = repo.git.worktree("add", worktree_path)
     
-    return f"Worktree added at {worktree_path}" + (f" on new branch {branch_name}" if create_branch else "")
+    return f"Worktree added at {worktree_path}" + (f" on new branch {branch_name}" if create_branch else "") + (f" from {base_branch}" if base_branch else "")
 
 def git_worktree_remove(repo: git.Repo, worktree_path: str, force: bool = False) -> str:
     """Remove a worktree"""
@@ -1774,7 +1785,8 @@ Format the output as markdown suitable for GitHub PR description."""
                         repo, 
                         arguments["worktree_path"],
                         arguments.get("branch_name"),
-                        arguments.get("create_branch", False)
+                        arguments.get("create_branch", False),
+                        arguments.get("base_branch")
                     )
                     log_tool_success("atxtechbro-git-mcp-server", name, f"Added worktree at {arguments['worktree_path']}", repo_path, arguments)
                     return [TextContent(
