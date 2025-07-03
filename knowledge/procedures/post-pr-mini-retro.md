@@ -58,4 +58,13 @@ The agent should:
 - How did choosing one principle over another create tension or trade-offs?
 - What decisions required balancing competing principles?
 
+## Personality-Driven Focus
+
+The `/retro` command will select an appropriate consultant personality based on PR context:
+- **Jonah**: When dealing with constraints, bottlenecks, or competing priorities
+- **Brent**: When heroic interventions occurred or knowledge gaps were exposed
+- Future personalities can be added to `.claude/personalities/` as needed
+
+This ensures each retro has a specific lens while maintaining a single, unified command.
+
 This retro helps identify the 20% of systems work that enables the 80% of feature work to flow more smoothly.
