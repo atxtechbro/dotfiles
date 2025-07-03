@@ -16,19 +16,46 @@ The "spilled coffee principle" states that anyone should be able to destroy thei
 - Symlinks should be managed by setup scripts rather than manual linking
 - Dependencies and installation steps should be well-documented
 
-**❌ Counterexample - What NOT to do:**
+**❌ Common Violations - Manual Terminal Heroics:**
+
+Like Brent from The Phoenix Project, we often become the constraint by being the "go-to hero" who fixes things manually. These commands are perfectly valid IN SCRIPTS, but become anti-patterns when typed directly in terminal:
+
 ```bash
-# Don't give one-off commands like this:
-defaults write com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers -array-add '{LSHandlerContentType="public.unix-executable";LSHandlerRoleAll="com.googlecode.iterm2";}'
+# IN TERMINAL (BAD - Makes you Brent, the bottleneck hero):
+dotfiles (main) $ ln -s mcp/mcp.json .mcp.json      # Works today, forgotten tomorrow
+dotfiles (main) $ mv .bashrc .bashrc.backup          # Your knowledge, lost when you leave
+dotfiles (main) $ chmod 600 ~/.bash_secrets          # New teammate: "Why doesn't this work?"
+dotfiles (main) $ mkdir -p ~/ppv/pillars             # "It worked on my machine..."
+dotfiles (main) $ echo "alias q='q'" >> ~/.bashrc   # Snowflake environment alert!
+dotfiles (main) $ curl -o tool.tar.gz https://...    # Downloaded where? What version?
+
+# The exact violation that inspired this documentation:
+dotfiles (feature/vendor-agnostic-mcp-692) $ ln -s mcp/mcp.json .mcp.json
+# ↑ I actually did this! Then immediately undid it and wrote a script instead.
 ```
 
-**✅ Instead - Add to setup script:**
+**The Brent Test**: If you get hit by a bus (or take vacation), can someone else recreate what you did? If it's only in your terminal history, you're being Brent.
+
+**✅ The Same Commands in Scripts (GOOD - No More Brent!):**
 ```bash
-# Add to setup.sh so it's reproducible
-configure_iterm_as_default_terminal() {
-    defaults write com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers -array-add '{LSHandlerContentType="public.unix-executable";LSHandlerRoleAll="com.googlecode.iterm2";}'
+# IN SCRIPTS (GOOD - Knowledge is codified, not tribal):
+
+# setup-vendor-agnostic-mcp.sh
+ln -s mcp/mcp.json "$REPO_ROOT/.mcp.json"  # Reproducible by anyone
+
+# setup.sh  
+mkdir -p "$HOME/ppv/pillars"                # Self-documenting
+chmod 600 ~/.bash_secrets                   # Security automated
+
+# install-tool.sh
+download_and_install_tool() {
+    curl -o "$TEMP_DIR/tool.tar.gz" https://...  # Version controlled
 }
 ```
+
+**The Phoenix Principle**: Move from "Brent did it" to "The system does it". Every terminal command that changes state should become code, removing key person dependencies.
+
+**The Litmus Test**: Can you destroy your laptop, get a new one, run `git clone && ./setup.sh`, and be back to exactly where you were? If not, you've been a hero instead of a steward.
 
 This principle ensures resilience and quick recovery from system failures or when setting up new environments.
 
