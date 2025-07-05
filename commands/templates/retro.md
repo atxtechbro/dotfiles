@@ -15,7 +15,7 @@ First, analyze the PR context and select the most appropriate consultant:
 4. Based on your selection, channel that personality's approach throughout the retro
 
 ## Retro Mindset
-**Exception to do-dont-explain**: This is a collaborative discussion and learning moment. Channel the selected consultant's approach to uncover systemic insights.
+This is a collaborative discussion and learning moment. Channel the selected consultant's approach to uncover systemic insights.
 
 ## Philosophy
 - **The Snowball Method**: Capture learnings that compound over time
