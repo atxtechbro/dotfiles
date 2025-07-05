@@ -198,6 +198,22 @@ The setup script automatically handles:
 
 Following the "Spilled Coffee Principle" - the setup script ensures you can be fully operational after running it once.
 
+### Parallel Development with Worktrees
+
+For working on multiple features simultaneously, we support git worktrees:
+
+```bash
+# Create a new worktree for your feature
+cd ~/ppv/pillars/dotfiles
+git worktree add -b feature/my-feature worktrees/feature/my-feature
+
+# Set up the worktree environment
+cd worktrees/feature/my-feature
+source setup.sh
+```
+
+Each worktree is self-contained with its own MCP servers, binaries, and dependencies. See [docs/worktree-development.md](docs/worktree-development.md) for detailed instructions.
+
 ## AI Provider Agnostic Context
 
 This repository automatically configures global context for multiple AI coding assistants from a single source of truth:
