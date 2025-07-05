@@ -246,6 +246,15 @@ else
   echo -e "${YELLOW}Vendor-agnostic MCP setup script not found. Skipping MCP configuration setup.${NC}"
 fi
 
+# Set up all MCP servers (works in worktrees)
+if [[ -f "$DOT_DEN/mcp/setup-all-mcp-servers.sh" ]]; then
+  echo -e "${DIVIDER}"
+  echo "Setting up MCP servers..."
+  "$DOT_DEN/mcp/setup-all-mcp-servers.sh"
+else
+  echo -e "${YELLOW}MCP server setup script not found. Skipping MCP server setup.${NC}"
+fi
+
 # Generate AI provider commands from templates
 if [[ -f "$DOT_DEN/utils/generate-commands.sh" ]]; then
   echo "Generating AI provider commands from templates..."
