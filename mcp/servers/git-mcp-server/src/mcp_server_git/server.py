@@ -39,6 +39,7 @@ READ_ONLY_TOOLS = {
     "git_remote",  # Will be limited to list action only
     "git_fetch",   # Safe - only downloads data
     "git_branch_delete",  # Will be limited to local branches only
+    "git_ls_files",  # Read-only file listing
 }
 
 WRITE_TOOLS = {
@@ -61,6 +62,10 @@ WRITE_TOOLS = {
     "git_clean",
     "git_bisect",
     "git_mv",
+    "git_config",  # Can read and write config
+    "git_init",
+    "git_clone",
+    "git_submodule",
 }
 
 # git_batch is special - it can be in both depending on the commands it contains
@@ -276,11 +281,63 @@ class GitTools(str, Enum):
     DESCRIBE = "git_describe"
     SHORTLOG = "git_shortlog"
     MV = "git_mv"
+    LS_FILES = "git_ls_files"
+    CONFIG = "git_config"
+    INIT = "git_init"
+    CLONE = "git_clone"
+    SUBMODULE = "git_submodule"
 
 class GitMv(BaseModel):
     repo_path: str
     source: str
     destination: str
+
+class GitLsFiles(BaseModel):
+    repo_path: str
+    cached: bool = False  # Show cached files in output
+    deleted: bool = False  # Show deleted files
+    modified: bool = False  # Show modified files
+    others: bool = False  # Show untracked files
+    ignored: bool = False  # Show ignored files
+    stage: bool = False  # Show staged contents
+    pattern: str | None = None  # Optional file pattern
+
+class GitConfig(BaseModel):
+    repo_path: str
+    action: str = "get"  # "get", "set", "unset", "list"
+    key: str | None = None  # Config key (e.g., "user.name")
+    value: str | None = None  # Value for set action
+    scope: str = "local"  # "local", "global", "system"
+    type: str | None = None  # Type casting: "bool", "int", "bool-or-int", "path", "expiry-date", "color"
+
+class GitInit(BaseModel):
+    repo_path: str  # Path where to initialize repo
+    bare: bool = False  # Create bare repository
+    initial_branch: str | None = None  # Name of initial branch
+    template: str | None = None  # Template directory
+    separate_git_dir: str | None = None  # Separate git directory
+
+class GitClone(BaseModel):
+    repo_path: str  # Where to clone to (parent directory)
+    url: str  # Repository URL or path
+    directory: str | None = None  # Target directory name
+    branch: str | None = None  # Specific branch to clone
+    depth: int | None = None  # Create shallow clone with history truncated
+    bare: bool = False  # Make bare repository
+    mirror: bool = False  # Mirror repository
+    recursive: bool = True  # Initialize submodules
+    no_checkout: bool = False  # No checkout of HEAD
+
+class GitSubmodule(BaseModel):
+    repo_path: str
+    action: str  # "add", "init", "update", "status", "deinit", "foreach", "sync"
+    path: str | None = None  # Submodule path
+    url: str | None = None  # Repository URL (for add)
+    branch: str | None = None  # Branch to track
+    recursive: bool = False  # Recursive operation
+    force: bool = False  # Force operation
+    init: bool = False  # Initialize submodules during update
+    command: str | None = None  # Command for foreach action
 
 # Tool registry for easy access
 TOOL_REGISTRY = {
@@ -318,6 +375,11 @@ TOOL_REGISTRY = {
     GitTools.DESCRIBE: (GitDescribe, "Generate human-readable names for commits based on tags"),
     GitTools.SHORTLOG: (GitShortlog, "Summarize git log by contributor"),
     GitTools.MV: (GitMv, "Move or rename a file, directory, or symlink"),
+    GitTools.LS_FILES: (GitLsFiles, "List files in the index and working tree"),
+    GitTools.CONFIG: (GitConfig, "Get and set repository or global options"),
+    GitTools.INIT: (GitInit, "Create an empty Git repository or reinitialize an existing one"),
+    GitTools.CLONE: (GitClone, "Clone a repository into a new directory"),
+    GitTools.SUBMODULE: (GitSubmodule, "Initialize, update or inspect submodules"),
 }
 
 def git_status(repo: git.Repo) -> str:
@@ -613,6 +675,16 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
         # Map shorthand commands to full tool names
         if tool == "mv":
             tool = "git_mv"
+        elif tool == "ls-files":
+            tool = "git_ls_files"
+        elif tool == "config":
+            tool = "git_config"
+        elif tool == "init":
+            tool = "git_init"
+        elif tool == "clone":
+            tool = "git_clone"
+        elif tool == "submodule":
+            tool = "git_submodule"
         
         try:
             if tool == "git_add":
@@ -672,6 +744,27 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
                 else:
                     # Standard format: args as object with source and destination
                     result = git_mv(repo, args.get("source"), args.get("destination"))
+            elif tool == "git_ls_files":
+                result = git_ls_files(repo, args.get("cached", False), args.get("deleted", False),
+                                    args.get("modified", False), args.get("others", False),
+                                    args.get("ignored", False), args.get("stage", False),
+                                    args.get("pattern"))
+            elif tool == "git_config":
+                result = git_config(repo, args.get("action", "get"), args.get("key"),
+                                  args.get("value"), args.get("scope", "local"), args.get("type"))
+            elif tool == "git_init":
+                result = git_init(repo, args.get("bare", False), args.get("initial_branch"),
+                                args.get("template"), args.get("separate_git_dir"))
+            elif tool == "git_clone":
+                result = git_clone(repo, args.get("url"), args.get("directory"),
+                                 args.get("branch"), args.get("depth"), args.get("bare", False),
+                                 args.get("mirror", False), args.get("recursive", True),
+                                 args.get("no_checkout", False))
+            elif tool == "git_submodule":
+                result = git_submodule(repo, args.get("action"), args.get("path"),
+                                     args.get("url"), args.get("branch"), args.get("recursive", False),
+                                     args.get("force", False), args.get("init", False),
+                                     args.get("command"))
             else:
                 result = f"Unknown tool: {tool}"
             
@@ -1373,6 +1466,365 @@ def git_mv(repo: git.Repo, source: str, destination: str) -> str:
             return f"Git mv error: {error_str}"
     except Exception as e:
         return f"Unexpected error during git mv: {str(e)}"
+
+def git_ls_files(repo: git.Repo, cached: bool = False, deleted: bool = False, 
+                 modified: bool = False, others: bool = False, ignored: bool = False,
+                 stage: bool = False, pattern: str | None = None) -> str:
+    """
+    List files in the index and working tree
+    """
+    try:
+        cmd_parts = ["ls-files"]
+        
+        # Add flags based on options
+        if cached:
+            cmd_parts.append("--cached")
+        if deleted:
+            cmd_parts.append("--deleted")
+        if modified:
+            cmd_parts.append("--modified")
+        if others:
+            cmd_parts.append("--others")
+        if ignored:
+            cmd_parts.append("--ignored")
+        if stage:
+            cmd_parts.append("--stage")
+        
+        # Add pattern if specified
+        if pattern:
+            cmd_parts.append(pattern)
+        
+        output = repo.git.execute(cmd_parts)
+        
+        if output:
+            files = output.strip().split('\n')
+            return f"Files ({len(files)}):\n" + "\n".join(f"  {file}" for file in files)
+        else:
+            return "No files found matching criteria"
+            
+    except git.GitCommandError as e:
+        return f"Git ls-files error: {str(e)}"
+    except Exception as e:
+        return f"Unexpected error during git ls-files: {str(e)}"
+
+def git_config(repo: git.Repo, action: str = "get", key: str | None = None,
+               value: str | None = None, scope: str = "local", 
+               type: str | None = None) -> str:
+    """
+    Get and set repository or global options
+    """
+    try:
+        if action == "get":
+            if not key:
+                return "Error: key required for get action"
+            
+            cmd_parts = ["config"]
+            if scope == "global":
+                cmd_parts.append("--global")
+            elif scope == "system":
+                cmd_parts.append("--system")
+            
+            if type:
+                cmd_parts.append(f"--type={type}")
+            
+            cmd_parts.append(key)
+            
+            try:
+                output = repo.git.execute(cmd_parts)
+                return f"{key} = {output}"
+            except git.GitCommandError as e:
+                if "key does not contain a section" in str(e):
+                    return f"Invalid key format: {key} (use format: section.key)"
+                return f"Config key not found: {key}"
+                
+        elif action == "set":
+            if not key or value is None:
+                return "Error: key and value required for set action"
+            
+            cmd_parts = ["config"]
+            if scope == "global":
+                cmd_parts.append("--global")
+            elif scope == "system":
+                cmd_parts.append("--system")
+            
+            if type:
+                cmd_parts.append(f"--type={type}")
+            
+            cmd_parts.extend([key, value])
+            
+            repo.git.execute(cmd_parts)
+            return f"Set {key} = {value} in {scope} config"
+            
+        elif action == "unset":
+            if not key:
+                return "Error: key required for unset action"
+            
+            cmd_parts = ["config"]
+            if scope == "global":
+                cmd_parts.append("--global")
+            elif scope == "system":
+                cmd_parts.append("--system")
+            
+            cmd_parts.extend(["--unset", key])
+            
+            repo.git.execute(cmd_parts)
+            return f"Unset {key} from {scope} config"
+            
+        elif action == "list":
+            cmd_parts = ["config", "--list"]
+            if scope == "global":
+                cmd_parts.append("--global")
+            elif scope == "system":
+                cmd_parts.append("--system")
+            
+            output = repo.git.execute(cmd_parts)
+            
+            if output:
+                configs = output.strip().split('\n')
+                return f"Configuration ({scope}):\n" + "\n".join(f"  {config}" for config in configs)
+            else:
+                return f"No configuration found in {scope} scope"
+                
+        else:
+            return f"Unknown config action: {action}. Valid actions: get, set, unset, list"
+            
+    except git.GitCommandError as e:
+        error_str = str(e)
+        if "permission denied" in error_str.lower():
+            return f"Permission denied: Cannot modify {scope} config"
+        return f"Git config error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during git config: {str(e)}"
+
+def git_init(repo_path: str, bare: bool = False, initial_branch: str | None = None,
+             template: str | None = None, separate_git_dir: str | None = None) -> str:
+    """
+    Create an empty Git repository or reinitialize an existing one
+    """
+    try:
+        # Build command
+        cmd_parts = ["init"]
+        
+        if bare:
+            cmd_parts.append("--bare")
+        
+        if initial_branch:
+            cmd_parts.extend(["--initial-branch", initial_branch])
+        
+        if template:
+            cmd_parts.extend(["--template", template])
+        
+        if separate_git_dir:
+            cmd_parts.extend(["--separate-git-dir", separate_git_dir])
+        
+        # Add the path
+        cmd_parts.append(repo_path)
+        
+        # Execute git init (using git module directly since we don't have a repo yet)
+        import subprocess
+        result = subprocess.run(["git"] + cmd_parts, capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            repo_type = "bare" if bare else "standard"
+            return f"Initialized {repo_type} Git repository in {repo_path}"
+        else:
+            return f"Git init error: {result.stderr}"
+            
+    except Exception as e:
+        return f"Unexpected error during git init: {str(e)}"
+
+def git_clone(repo_path: str, url: str, directory: str | None = None,
+              branch: str | None = None, depth: int | None = None,
+              bare: bool = False, mirror: bool = False, recursive: bool = True,
+              no_checkout: bool = False) -> str:
+    """
+    Clone a repository into a new directory
+    """
+    try:
+        # Build command
+        cmd_parts = ["clone"]
+        
+        if bare:
+            cmd_parts.append("--bare")
+        
+        if mirror:
+            cmd_parts.append("--mirror")
+        
+        if branch:
+            cmd_parts.extend(["--branch", branch])
+        
+        if depth is not None:
+            cmd_parts.extend(["--depth", str(depth)])
+        
+        if recursive:
+            cmd_parts.append("--recursive")
+        
+        if no_checkout:
+            cmd_parts.append("--no-checkout")
+        
+        # Add URL
+        cmd_parts.append(url)
+        
+        # Add target directory
+        if directory:
+            target_path = Path(repo_path) / directory
+        else:
+            # Extract directory name from URL
+            import re
+            match = re.search(r'/([^/]+?)(?:\.git)?$', url)
+            if match:
+                dir_name = match.group(1)
+            else:
+                dir_name = "repository"
+            target_path = Path(repo_path) / dir_name
+        
+        cmd_parts.append(str(target_path))
+        
+        # Execute git clone
+        import subprocess
+        result = subprocess.run(["git"] + cmd_parts, capture_output=True, text=True, cwd=repo_path)
+        
+        if result.returncode == 0:
+            clone_type = "mirror" if mirror else "bare" if bare else "standard"
+            return f"Successfully cloned {clone_type} repository from {url} to {target_path}"
+        else:
+            error = result.stderr
+            if "already exists and is not an empty directory" in error:
+                return f"Directory already exists: {target_path}"
+            elif "could not resolve host" in error:
+                return f"Network error: Could not resolve host"
+            elif "repository not found" in error.lower():
+                return f"Repository not found: {url}"
+            else:
+                return f"Git clone error: {error}"
+                
+    except Exception as e:
+        return f"Unexpected error during git clone: {str(e)}"
+
+def git_submodule(repo: git.Repo, action: str, path: str | None = None,
+                  url: str | None = None, branch: str | None = None,
+                  recursive: bool = False, force: bool = False,
+                  init: bool = False, command: str | None = None) -> str:
+    """
+    Initialize, update or inspect submodules
+    """
+    try:
+        if action == "add":
+            if not url or not path:
+                return "Error: url and path required for add action"
+            
+            cmd_parts = ["submodule", "add"]
+            
+            if branch:
+                cmd_parts.extend(["--branch", branch])
+            
+            if force:
+                cmd_parts.append("--force")
+            
+            cmd_parts.extend([url, path])
+            
+            output = repo.git.execute(cmd_parts)
+            return f"Added submodule '{path}' from {url}"
+            
+        elif action == "init":
+            cmd_parts = ["submodule", "init"]
+            
+            if path:
+                cmd_parts.append(path)
+            
+            output = repo.git.execute(cmd_parts)
+            return "Initialized submodule(s)"
+            
+        elif action == "update":
+            cmd_parts = ["submodule", "update"]
+            
+            if init:
+                cmd_parts.append("--init")
+            
+            if recursive:
+                cmd_parts.append("--recursive")
+            
+            if force:
+                cmd_parts.append("--force")
+            
+            if path:
+                cmd_parts.append(path)
+            
+            output = repo.git.execute(cmd_parts)
+            return "Updated submodule(s)"
+            
+        elif action == "status":
+            cmd_parts = ["submodule", "status"]
+            
+            if recursive:
+                cmd_parts.append("--recursive")
+            
+            if path:
+                cmd_parts.append(path)
+            
+            output = repo.git.execute(cmd_parts)
+            
+            if output:
+                return f"Submodule status:\n{output}"
+            else:
+                return "No submodules found"
+                
+        elif action == "deinit":
+            if not path:
+                return "Error: path required for deinit action"
+            
+            cmd_parts = ["submodule", "deinit"]
+            
+            if force:
+                cmd_parts.append("--force")
+            
+            cmd_parts.append(path)
+            
+            output = repo.git.execute(cmd_parts)
+            return f"Deinitialized submodule '{path}'"
+            
+        elif action == "foreach":
+            if not command:
+                return "Error: command required for foreach action"
+            
+            cmd_parts = ["submodule", "foreach"]
+            
+            if recursive:
+                cmd_parts.append("--recursive")
+            
+            cmd_parts.append(command)
+            
+            output = repo.git.execute(cmd_parts)
+            return f"Foreach output:\n{output}"
+            
+        elif action == "sync":
+            cmd_parts = ["submodule", "sync"]
+            
+            if recursive:
+                cmd_parts.append("--recursive")
+            
+            if path:
+                cmd_parts.append(path)
+            
+            output = repo.git.execute(cmd_parts)
+            return "Synchronized submodule(s) URLs"
+            
+        else:
+            return f"Unknown submodule action: {action}. Valid actions: add, init, update, status, deinit, foreach, sync"
+            
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "already exists in the index" in error_str:
+            return f"Submodule already exists: {path}"
+        elif "not a git repository" in error_str:
+            return "Not in a git repository"
+        elif "no submodule mapping" in error_str:
+            return f"No submodule found at path: {path}"
+        else:
+            return f"Git submodule error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during git submodule: {str(e)}"
 
 async def serve(repository: Path | None, read_only: bool = False) -> None:
     logger = logging.getLogger(__name__)
@@ -2115,6 +2567,88 @@ Format the output as markdown suitable for GitHub PR description."""
                         arguments["destination"]
                     )
                     log_tool_success("atxtechbro-git-mcp-server", name, f"Moved {arguments['source']} to {arguments['destination']}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.LS_FILES:
+                    result = git_ls_files(
+                        repo,
+                        arguments.get("cached", False),
+                        arguments.get("deleted", False),
+                        arguments.get("modified", False),
+                        arguments.get("others", False),
+                        arguments.get("ignored", False),
+                        arguments.get("stage", False),
+                        arguments.get("pattern")
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Listed files", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.CONFIG:
+                    result = git_config(
+                        repo,
+                        arguments.get("action", "get"),
+                        arguments.get("key"),
+                        arguments.get("value"),
+                        arguments.get("scope", "local"),
+                        arguments.get("type")
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Config action: {arguments.get('action', 'get')}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.INIT:
+                    result = git_init(
+                        repo,
+                        arguments.get("bare", False),
+                        arguments.get("initial_branch"),
+                        arguments.get("template"),
+                        arguments.get("separate_git_dir")
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Initialized repository", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.CLONE:
+                    result = git_clone(
+                        repo,
+                        arguments["url"],
+                        arguments.get("directory"),
+                        arguments.get("branch"),
+                        arguments.get("depth"),
+                        arguments.get("bare", False),
+                        arguments.get("mirror", False),
+                        arguments.get("recursive", True),
+                        arguments.get("no_checkout", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Cloned {arguments['url']}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.SUBMODULE:
+                    result = git_submodule(
+                        repo,
+                        arguments["action"],
+                        arguments.get("path"),
+                        arguments.get("url"),
+                        arguments.get("branch"),
+                        arguments.get("recursive", False),
+                        arguments.get("force", False),
+                        arguments.get("init", False),
+                        arguments.get("command")
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Submodule action: {arguments['action']}", repo_path, arguments)
                     return [TextContent(
                         type="text",
                         text=result
