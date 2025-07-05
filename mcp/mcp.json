@@ -17,6 +17,11 @@
       "args": [],
       "env": {}
     },
+    "github-auto": {
+      "command": "github-mcp-auto-wrapper.sh",
+      "args": [],
+      "env": {}
+    },
     "gitlab": {
       "command": "gitlab-mcp-wrapper.sh",
       "args": [],

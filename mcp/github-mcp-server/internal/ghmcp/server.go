@@ -51,6 +51,9 @@ type MCPServerConfig struct {
 
 	// Translator provides translated text for the server tooling
 	Translator translations.TranslationHelperFunc
+
+	// AutoApproval enables auto-approval for operations on private repos owned by authenticated user
+	AutoApproval bool
 }
 
 func NewMCPServer(cfg MCPServerConfig) (*server.MCPServer, error) {
@@ -136,8 +139,19 @@ func NewMCPServer(cfg MCPServerConfig) (*server.MCPServer, error) {
 	// Set up the tool handler registrar for batch execution
 	toolsets.SetToolHandlerRegistrar(github.RegisterToolHandler)
 
+	// Create auto-approval checker if enabled
+	var autoApprovalChecker *github.AutoApprovalChecker
+	if cfg.AutoApproval {
+		autoApprovalChecker = github.NewAutoApprovalChecker(true, getClient)
+		// Initialize the checker to cache the authenticated user
+		ctx := context.Background()
+		if err := autoApprovalChecker.Initialize(ctx); err != nil {
+			return nil, fmt.Errorf("failed to initialize auto-approval checker: %w", err)
+		}
+	}
+
 	// Create default toolsets
-	tsg := github.DefaultToolsetGroup(cfg.ReadOnly, cfg.WriteOnly, getClient, getGQLClient, getRawClient, cfg.Translator)
+	tsg := github.DefaultToolsetGroup(cfg.ReadOnly, cfg.WriteOnly, getClient, getGQLClient, getRawClient, cfg.Translator, autoApprovalChecker)
 	err = tsg.EnableToolsets(enabledToolsets)
 
 	if err != nil {
@@ -188,6 +202,9 @@ type StdioServerConfig struct {
 
 	// Path to the log file if not stderr
 	LogFilePath string
+
+	// AutoApproval enables auto-approval for operations on private repos owned by authenticated user
+	AutoApproval bool
 }
 
 // RunStdioServer is not concurrent safe.
@@ -207,6 +224,7 @@ func RunStdioServer(cfg StdioServerConfig) error {
 		ReadOnly:        cfg.ReadOnly,
 		WriteOnly:       cfg.WriteOnly,
 		Translator:      t,
+		AutoApproval:    cfg.AutoApproval,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create MCP server: %w", err)

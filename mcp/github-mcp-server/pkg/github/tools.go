@@ -7,6 +7,7 @@ import (
 	"github.com/github/github-mcp-server/pkg/toolsets"
 	"github.com/github/github-mcp-server/pkg/translations"
 	"github.com/google/go-github/v72/github"
+	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 	"github.com/shurcooL/githubv4"
 )
@@ -16,7 +17,16 @@ type GetGQLClientFn func(context.Context) (*githubv4.Client, error)
 
 var DefaultTools = []string{"all"}
 
-func DefaultToolsetGroup(readOnly bool, writeOnly bool, getClient GetClientFn, getGQLClient GetGQLClientFn, getRawClient raw.GetRawClientFn, t translations.TranslationHelperFunc) *toolsets.ToolsetGroup {
+// wrapWriteTool wraps a write tool with auto-approval checks if enabled
+func wrapWriteTool(tool func() (mcp.Tool, server.ToolHandlerFunc), operationType string, checker *AutoApprovalChecker) server.ServerTool {
+	t, h := tool()
+	if checker != nil && checker.IsEnabled() {
+		h = checker.WrapHandler(operationType, h)
+	}
+	return toolsets.NewServerTool(t, h)
+}
+
+func DefaultToolsetGroup(readOnly bool, writeOnly bool, getClient GetClientFn, getGQLClient GetGQLClientFn, getRawClient raw.GetRawClientFn, t translations.TranslationHelperFunc, autoApprovalChecker *AutoApprovalChecker) *toolsets.ToolsetGroup {
 	tsg := toolsets.NewToolsetGroup(readOnly, writeOnly)
 
 	// Define all available features with their default state (disabled)
@@ -33,12 +43,12 @@ func DefaultToolsetGroup(readOnly bool, writeOnly bool, getClient GetClientFn, g
 			toolsets.NewServerTool(GetTag(getClient, t)),
 		).
 		AddWriteTools(
-			toolsets.NewServerTool(CreateOrUpdateFile(getClient, t)),
-			toolsets.NewServerTool(CreateRepository(getClient, t)),
-			toolsets.NewServerTool(ForkRepository(getClient, t)),
-			toolsets.NewServerTool(CreateBranch(getClient, t)),
-			toolsets.NewServerTool(PushFiles(getClient, t)),
-			toolsets.NewServerTool(DeleteFile(getClient, t)),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return CreateOrUpdateFile(getClient, t) }, "create_or_update_file", autoApprovalChecker),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return CreateRepository(getClient, t) }, "create_repository", autoApprovalChecker),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return ForkRepository(getClient, t) }, "fork_repository", autoApprovalChecker),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return CreateBranch(getClient, t) }, "create_branch", autoApprovalChecker),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return PushFiles(getClient, t) }, "push_files", autoApprovalChecker),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return DeleteFile(getClient, t) }, "delete_file", autoApprovalChecker),
 		).
 		AddResourceTemplates(
 			toolsets.NewServerResourceTemplate(GetRepositoryResourceContent(getClient, getRawClient, t)),
@@ -55,10 +65,10 @@ func DefaultToolsetGroup(readOnly bool, writeOnly bool, getClient GetClientFn, g
 			toolsets.NewServerTool(GetIssueComments(getClient, t)),
 		).
 		AddWriteTools(
-			toolsets.NewServerTool(CreateIssue(getClient, t)),
-			toolsets.NewServerTool(AddIssueComment(getClient, t)),
-			toolsets.NewServerTool(UpdateIssue(getClient, t)),
-			toolsets.NewServerTool(AssignCopilotToIssue(getGQLClient, t)),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return CreateIssue(getClient, t) }, "create_issue", autoApprovalChecker),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return AddIssueComment(getClient, t) }, "add_issue_comment", autoApprovalChecker),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return UpdateIssue(getClient, t) }, "update_issue", autoApprovalChecker),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return AssignCopilotToIssue(getGQLClient, t) }, "assign_copilot_to_issue", autoApprovalChecker),
 		).AddPrompts(toolsets.NewServerPrompt(AssignCodingAgentPrompt(t)))
 	users := toolsets.NewToolset("users", "GitHub User related tools").
 		AddReadTools(
@@ -80,18 +90,18 @@ func DefaultToolsetGroup(readOnly bool, writeOnly bool, getClient GetClientFn, g
 			toolsets.NewServerTool(GetPullRequestDiff(getClient, t)),
 		).
 		AddWriteTools(
-			toolsets.NewServerTool(MergePullRequest(getClient, t)),
-			toolsets.NewServerTool(UpdatePullRequestBranch(getClient, t)),
-			toolsets.NewServerTool(CreatePullRequest(getClient, t)),
-			toolsets.NewServerTool(UpdatePullRequest(getClient, t)),
-			toolsets.NewServerTool(RequestCopilotReview(getClient, t)),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return MergePullRequest(getClient, t) }, "merge_pull_request", autoApprovalChecker),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return UpdatePullRequestBranch(getClient, t) }, "update_pull_request_branch", autoApprovalChecker),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return CreatePullRequest(getClient, t) }, "create_pull_request", autoApprovalChecker),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return UpdatePullRequest(getClient, t) }, "update_pull_request", autoApprovalChecker),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return RequestCopilotReview(getClient, t) }, "request_copilot_review", autoApprovalChecker),
 
 			// Reviews
-			toolsets.NewServerTool(CreateAndSubmitPullRequestReview(getGQLClient, t)),
-			toolsets.NewServerTool(CreatePendingPullRequestReview(getGQLClient, t)),
-			toolsets.NewServerTool(AddPullRequestReviewCommentToPendingReview(getGQLClient, t)),
-			toolsets.NewServerTool(SubmitPendingPullRequestReview(getGQLClient, t)),
-			toolsets.NewServerTool(DeletePendingPullRequestReview(getGQLClient, t)),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return CreateAndSubmitPullRequestReview(getGQLClient, t) }, "create_and_submit_pull_request_review", autoApprovalChecker),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return CreatePendingPullRequestReview(getGQLClient, t) }, "create_pending_pull_request_review", autoApprovalChecker),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return AddPullRequestReviewCommentToPendingReview(getGQLClient, t) }, "add_pull_request_review_comment", autoApprovalChecker),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return SubmitPendingPullRequestReview(getGQLClient, t) }, "submit_pending_pull_request_review", autoApprovalChecker),
+			wrapWriteTool(func() (mcp.Tool, server.ToolHandlerFunc) { return DeletePendingPullRequestReview(getGQLClient, t) }, "delete_pending_pull_request_review", autoApprovalChecker),
 		)
 	codeSecurity := toolsets.NewToolset("code_security", "Code security related tools, such as GitHub Code Scanning").
 		AddReadTools(
