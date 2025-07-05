@@ -21,12 +21,13 @@ Sometimes a principle or procedure may need re-evaluation:
 ## Current Items
 
 ### Principles
-- `do-dont-explain.md` - Testing Claude Code's natural behavior without explicit "act agentically" constraints
+(Currently empty)
 
 ## History
 
 When items are moved in or out of moratorium, document the decision here:
 
 - **2025-06-24**: `do-dont-explain.md` moved to moratorium to test Claude Code's behavior without this constraint (Issue #549)
+- **2025-07-05**: `do-dont-explain.md` deprecated and removed after 6+ months in moratorium (Issue #707)
 
 Principle: tracer-bullets
