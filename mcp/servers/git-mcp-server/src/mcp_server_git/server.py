@@ -39,6 +39,7 @@ READ_ONLY_TOOLS = {
     "git_remote",  # Will be limited to list action only
     "git_fetch",   # Safe - only downloads data
     "git_branch_delete",  # Will be limited to local branches only
+    "git_branch",  # Read-only list operation
 }
 
 WRITE_TOOLS = {
@@ -61,6 +62,9 @@ WRITE_TOOLS = {
     "git_clean",
     "git_bisect",
     "git_mv",
+    "git_rm",
+    "git_restore",
+    "git_tag",
 }
 
 # git_batch is special - it can be in both depending on the commands it contains
@@ -276,11 +280,46 @@ class GitTools(str, Enum):
     DESCRIBE = "git_describe"
     SHORTLOG = "git_shortlog"
     MV = "git_mv"
+    RM = "git_rm"
+    RESTORE = "git_restore"
+    TAG = "git_tag"
+    BRANCH = "git_branch"
 
 class GitMv(BaseModel):
     repo_path: str
     source: str
     destination: str
+
+class GitRm(BaseModel):
+    repo_path: str
+    files: list[str]
+    cached: bool = False  # Remove from index only
+    force: bool = False  # Override up-to-date check
+    recursive: bool = False  # Remove directory contents recursively
+
+class GitRestore(BaseModel):
+    repo_path: str
+    files: list[str]
+    source: str | None = None  # Restore from specific commit/branch
+    staged: bool = False  # Restore staged version
+    worktree: bool = True  # Restore working tree files
+
+class GitTag(BaseModel):
+    repo_path: str
+    action: str = "create"  # "create", "list", "delete", "verify"
+    tag_name: str | None = None  # Tag name for create/delete
+    message: str | None = None  # Annotation message
+    ref: str | None = None  # Object to tag (default: HEAD)
+    force: bool = False  # Replace existing tag
+    annotated: bool = True  # Create annotated tag
+    pattern: str | None = None  # Pattern for list
+
+class GitBranch(BaseModel):
+    repo_path: str
+    action: str = "list"  # "list" - we already have create/delete
+    all: bool = False  # List both remote and local branches
+    remotes: bool = False  # List remote branches only
+    pattern: str | None = None  # Pattern to match branch names
 
 # Tool registry for easy access
 TOOL_REGISTRY = {
@@ -318,6 +357,10 @@ TOOL_REGISTRY = {
     GitTools.DESCRIBE: (GitDescribe, "Generate human-readable names for commits based on tags"),
     GitTools.SHORTLOG: (GitShortlog, "Summarize git log by contributor"),
     GitTools.MV: (GitMv, "Move or rename a file, directory, or symlink"),
+    GitTools.RM: (GitRm, "Remove files from the working tree and from the index"),
+    GitTools.RESTORE: (GitRestore, "Restore working tree files"),
+    GitTools.TAG: (GitTag, "Create, list, delete or verify tags"),
+    GitTools.BRANCH: (GitBranch, "List branches (create/delete already available separately)"),
 }
 
 def git_status(repo: git.Repo) -> str:
@@ -613,6 +656,14 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
         # Map shorthand commands to full tool names
         if tool == "mv":
             tool = "git_mv"
+        elif tool == "rm":
+            tool = "git_rm"
+        elif tool == "restore":
+            tool = "git_restore"
+        elif tool == "tag":
+            tool = "git_tag"
+        elif tool == "branch":
+            tool = "git_branch"
         
         try:
             if tool == "git_add":
@@ -672,6 +723,19 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
                 else:
                     # Standard format: args as object with source and destination
                     result = git_mv(repo, args.get("source"), args.get("destination"))
+            elif tool == "git_rm":
+                result = git_rm(repo, args.get("files", []), args.get("cached", False), 
+                               args.get("force", False), args.get("recursive", False))
+            elif tool == "git_restore":
+                result = git_restore(repo, args.get("files", []), args.get("source"), 
+                                   args.get("staged", False), args.get("worktree", True))
+            elif tool == "git_tag":
+                result = git_tag(repo, args.get("action", "create"), args.get("tag_name"), 
+                               args.get("message"), args.get("ref"), args.get("force", False), 
+                               args.get("annotated", True), args.get("pattern"))
+            elif tool == "git_branch":
+                result = git_branch(repo, args.get("action", "list"), args.get("all", False), 
+                                  args.get("remotes", False), args.get("pattern"))
             else:
                 result = f"Unknown tool: {tool}"
             
@@ -1373,6 +1437,227 @@ def git_mv(repo: git.Repo, source: str, destination: str) -> str:
             return f"Git mv error: {error_str}"
     except Exception as e:
         return f"Unexpected error during git mv: {str(e)}"
+
+def git_rm(repo: git.Repo, files: list[str], cached: bool = False, force: bool = False, recursive: bool = False) -> str:
+    """
+    Remove files from the working tree and from the index
+    """
+    try:
+        # Build command flags
+        cmd_parts = []
+        if cached:
+            cmd_parts.append("--cached")  # Remove from index only
+        if force:
+            cmd_parts.append("--force")  # Override up-to-date check
+        if recursive:
+            cmd_parts.append("-r")  # Remove directories recursively
+        
+        # Add files to remove
+        cmd_parts.extend(files)
+        
+        # Execute git rm
+        output = repo.git.rm(*cmd_parts)
+        
+        # Format result message
+        if cached:
+            action = "removed from index"
+        else:
+            action = "removed"
+        
+        if len(files) == 1:
+            return f"Successfully {action}: {files[0]}"
+        else:
+            return f"Successfully {action} {len(files)} files"
+            
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "did not match any files" in error_str:
+            return f"No files matched the specified patterns"
+        elif "not removing" in error_str and "file has local modifications" in error_str:
+            return f"Cannot remove files with local modifications. Use force=true to override"
+        elif "not removing" in error_str and "file has staged content" in error_str:
+            return f"Cannot remove files with staged changes. Use force=true to override"
+        else:
+            return f"Git rm error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during git rm: {str(e)}"
+
+def git_restore(repo: git.Repo, files: list[str], source: str | None = None, staged: bool = False, worktree: bool = True) -> str:
+    """
+    Restore working tree files
+    """
+    try:
+        # Build command parts
+        cmd_parts = ["restore"]
+        
+        # Add source if specified
+        if source:
+            cmd_parts.extend(["--source", source])
+        
+        # Handle staged/worktree options
+        if staged and worktree:
+            cmd_parts.append("--staged")
+            cmd_parts.append("--worktree")
+        elif staged:
+            cmd_parts.append("--staged")
+        # worktree is default, no flag needed unless both are specified
+        
+        # Add files
+        cmd_parts.extend(files)
+        
+        # Execute git restore
+        output = repo.git.execute(cmd_parts)
+        
+        # Format result message
+        if len(files) == 1:
+            location = "staged version" if staged and not worktree else "working tree"
+            return f"Restored {files[0]} in {location}"
+        else:
+            location = "staged version" if staged and not worktree else "working tree"
+            return f"Restored {len(files)} files in {location}"
+            
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "pathspec" in error_str and "did not match" in error_str:
+            return f"No files matched the specified patterns"
+        elif "invalid reference" in error_str:
+            return f"Invalid source reference: {source}"
+        else:
+            return f"Git restore error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during git restore: {str(e)}"
+
+def git_tag(repo: git.Repo, action: str = "create", tag_name: str | None = None, 
+           message: str | None = None, ref: str | None = None, 
+           force: bool = False, annotated: bool = True, pattern: str | None = None) -> str:
+    """
+    Create, list, delete or verify tags
+    """
+    try:
+        if action == "list":
+            # List tags with optional pattern
+            if pattern:
+                output = repo.git.tag("-l", pattern)
+            else:
+                output = repo.git.tag("-l")
+            
+            if output:
+                tags = output.strip().split('\n')
+                return f"Tags ({len(tags)}):\n" + "\n".join(f"  - {tag}" for tag in tags)
+            else:
+                return "No tags found"
+                
+        elif action == "create":
+            if not tag_name:
+                return "Error: tag_name required for create action"
+            
+            cmd_parts = []
+            
+            if annotated and message:
+                cmd_parts.extend(["-a", tag_name, "-m", message])
+            elif annotated:
+                # Annotated tag without message will open editor, which we can't handle
+                return "Error: annotated tags require a message"
+            else:
+                # Lightweight tag
+                cmd_parts.append(tag_name)
+            
+            if force:
+                cmd_parts.append("-f")
+                
+            if ref:
+                cmd_parts.append(ref)
+            
+            output = repo.git.tag(*cmd_parts)
+            
+            tag_type = "annotated" if annotated else "lightweight"
+            return f"Created {tag_type} tag '{tag_name}'" + (f" at {ref}" if ref else "")
+            
+        elif action == "delete":
+            if not tag_name:
+                return "Error: tag_name required for delete action"
+            
+            output = repo.git.tag("-d", tag_name)
+            return f"Deleted tag '{tag_name}'"
+            
+        elif action == "verify":
+            if not tag_name:
+                return "Error: tag_name required for verify action"
+            
+            try:
+                output = repo.git.tag("-v", tag_name)
+                return f"Tag '{tag_name}' verification:\n{output}"
+            except git.GitCommandError as e:
+                if "cannot verify a non-tag object" in str(e):
+                    return f"Tag '{tag_name}' is not a signed tag"
+                raise
+                
+        else:
+            return f"Unknown tag action: {action}. Valid actions: list, create, delete, verify"
+            
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "already exists" in error_str:
+            return f"Tag '{tag_name}' already exists. Use force=true to replace"
+        elif "not found" in error_str:
+            return f"Tag '{tag_name}' not found"
+        else:
+            return f"Git tag error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during git tag: {str(e)}"
+
+def git_branch(repo: git.Repo, action: str = "list", all: bool = False, 
+               remotes: bool = False, pattern: str | None = None) -> str:
+    """
+    List branches (create/delete operations are handled by separate tools)
+    """
+    try:
+        if action != "list":
+            return f"Only 'list' action is supported. Use git_create_branch or git_branch_delete for other operations"
+        
+        # Build command parts for listing
+        cmd_parts = []
+        
+        if all:
+            cmd_parts.append("-a")  # List all branches (local and remote)
+        elif remotes:
+            cmd_parts.append("-r")  # List remote branches only
+        
+        # Add pattern if specified
+        if pattern:
+            cmd_parts.append(pattern)
+        
+        # Execute git branch
+        output = repo.git.branch(*cmd_parts)
+        
+        if output:
+            # Parse output and format nicely
+            lines = output.strip().split('\n')
+            branches = []
+            current_branch = None
+            
+            for line in lines:
+                line = line.strip()
+                if line.startswith('* '):
+                    current_branch = line[2:]
+                    branches.append(f"* {current_branch} (current)")
+                else:
+                    branches.append(f"  {line}")
+            
+            branch_type = "all" if all else "remote" if remotes else "local"
+            result = f"Branches ({branch_type}):\n"
+            result += "\n".join(branches)
+            return result
+        else:
+            return "No branches found"
+            
+    except git.GitCommandError as e:
+        return f"Git branch error: {str(e)}"
+    except Exception as e:
+        return f"Unexpected error during git branch: {str(e)}"
 
 async def serve(repository: Path | None, read_only: bool = False) -> None:
     logger = logging.getLogger(__name__)
@@ -2115,6 +2400,65 @@ Format the output as markdown suitable for GitHub PR description."""
                         arguments["destination"]
                     )
                     log_tool_success("atxtechbro-git-mcp-server", name, f"Moved {arguments['source']} to {arguments['destination']}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.RM:
+                    result = git_rm(
+                        repo,
+                        arguments["files"],
+                        arguments.get("cached", False),
+                        arguments.get("force", False),
+                        arguments.get("recursive", False)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Removed {len(arguments['files'])} file(s)", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.RESTORE:
+                    result = git_restore(
+                        repo,
+                        arguments["files"],
+                        arguments.get("source"),
+                        arguments.get("staged", False),
+                        arguments.get("worktree", True)
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Restored {len(arguments['files'])} file(s)", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.TAG:
+                    result = git_tag(
+                        repo,
+                        arguments.get("action", "create"),
+                        arguments.get("tag_name"),
+                        arguments.get("message"),
+                        arguments.get("ref"),
+                        arguments.get("force", False),
+                        arguments.get("annotated", True),
+                        arguments.get("pattern")
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Tag action: {arguments.get('action', 'create')}", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.BRANCH:
+                    result = git_branch(
+                        repo,
+                        arguments.get("action", "list"),
+                        arguments.get("all", False),
+                        arguments.get("remotes", False),
+                        arguments.get("pattern")
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, "Listed branches", repo_path, arguments)
                     return [TextContent(
                         type="text",
                         text=result
