@@ -64,6 +64,7 @@ var (
 				ExportTranslations:   viper.GetBool("export-translations"),
 				EnableCommandLogging: viper.GetBool("enable-command-logging"),
 				LogFilePath:          viper.GetString("log-file"),
+				AutoApproval:         viper.GetBool("auto-approval"),
 			}
 			return ghmcp.RunStdioServer(stdioServerConfig)
 		},
@@ -85,6 +86,7 @@ func init() {
 	rootCmd.PersistentFlags().Bool("enable-command-logging", false, "When enabled, the server will log all command requests and responses to the log file")
 	rootCmd.PersistentFlags().Bool("export-translations", false, "Save translations to a JSON file")
 	rootCmd.PersistentFlags().String("gh-host", "", "Specify the GitHub hostname (for GitHub Enterprise etc.)")
+	rootCmd.PersistentFlags().Bool("auto-approval", false, "Enable auto-approval for operations on private repos owned by authenticated user")
 
 	// Bind flag to viper
 	_ = viper.BindPFlag("toolsets", rootCmd.PersistentFlags().Lookup("toolsets"))
@@ -95,6 +97,7 @@ func init() {
 	_ = viper.BindPFlag("enable-command-logging", rootCmd.PersistentFlags().Lookup("enable-command-logging"))
 	_ = viper.BindPFlag("export-translations", rootCmd.PersistentFlags().Lookup("export-translations"))
 	_ = viper.BindPFlag("host", rootCmd.PersistentFlags().Lookup("gh-host"))
+	_ = viper.BindPFlag("auto-approval", rootCmd.PersistentFlags().Lookup("auto-approval"))
 
 	// Add subcommands
 	rootCmd.AddCommand(stdioCmd)
