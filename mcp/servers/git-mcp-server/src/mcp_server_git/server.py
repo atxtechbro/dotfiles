@@ -60,6 +60,7 @@ WRITE_TOOLS = {
     "git_reset_hard",
     "git_clean",
     "git_bisect",
+    "git_mv",
 }
 
 # git_batch is special - it can be in both depending on the commands it contains
@@ -274,6 +275,12 @@ class GitTools(str, Enum):
     BISECT = "git_bisect"
     DESCRIBE = "git_describe"
     SHORTLOG = "git_shortlog"
+    MV = "git_mv"
+
+class GitMv(BaseModel):
+    repo_path: str
+    source: str
+    destination: str
 
 # Tool registry for easy access
 TOOL_REGISTRY = {
@@ -310,6 +317,7 @@ TOOL_REGISTRY = {
     GitTools.BISECT: (GitBisect, "Binary search to find commit that introduced a bug (actions: start, bad, good, skip, reset, view)"),
     GitTools.DESCRIBE: (GitDescribe, "Generate human-readable names for commits based on tags"),
     GitTools.SHORTLOG: (GitShortlog, "Summarize git log by contributor"),
+    GitTools.MV: (GitMv, "Move or rename a file, directory, or symlink"),
 }
 
 def git_status(repo: git.Repo) -> str:
@@ -598,8 +606,13 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
     results = []
     
     for cmd in commands:
-        tool = cmd.get("tool")
+        # Support both 'tool' and 'command' keys for backward compatibility
+        tool = cmd.get("tool") or cmd.get("command")
         args = cmd.get("args", {})
+        
+        # Map shorthand commands to full tool names
+        if tool == "mv":
+            tool = "git_mv"
         
         try:
             if tool == "git_add":
@@ -651,6 +664,14 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
             elif tool == "git_shortlog":
                 result = git_shortlog(repo, args.get("revision_range"), args.get("numbered", True),
                                     args.get("summary", True), args.get("email", False))
+            elif tool == "git_mv":
+                # Handle both single args and array args for git_mv
+                if isinstance(args, list) and len(args) >= 2:
+                    # Legacy format: args as array [source, destination]
+                    result = git_mv(repo, args[0], args[1])
+                else:
+                    # Standard format: args as object with source and destination
+                    result = git_mv(repo, args.get("source"), args.get("destination"))
             else:
                 result = f"Unknown tool: {tool}"
             
@@ -1328,6 +1349,30 @@ def git_shortlog(repo: git.Repo, revision_range: str | None = None,
             return f"Shortlog error: {error_str}"
     except Exception as e:
         return f"Unexpected error during shortlog: {str(e)}"
+
+def git_mv(repo: git.Repo, source: str, destination: str) -> str:
+    """
+    Move or rename a file, directory, or symlink
+    """
+    try:
+        # Use git mv command
+        output = repo.git.mv(source, destination)
+        return f"Moved '{source}' to '{destination}'"
+    except git.GitCommandError as e:
+        error_str = str(e)
+        
+        if "bad source" in error_str:
+            return f"Source file not found: {source}"
+        elif "can not move directory" in error_str:
+            return f"Cannot move directory: {error_str}"
+        elif "destination exists" in error_str:
+            return f"Destination already exists: {destination}"
+        elif "not under version control" in error_str:
+            return f"File not under version control: {source}"
+        else:
+            return f"Git mv error: {error_str}"
+    except Exception as e:
+        return f"Unexpected error during git mv: {str(e)}"
 
 async def serve(repository: Path | None, read_only: bool = False) -> None:
     logger = logging.getLogger(__name__)
@@ -2058,6 +2103,18 @@ Format the output as markdown suitable for GitHub PR description."""
                         arguments.get("email", False)
                     )
                     log_tool_success("atxtechbro-git-mcp-server", name, "Shortlog completed", repo_path, arguments)
+                    return [TextContent(
+                        type="text",
+                        text=result
+                    )]
+
+                case GitTools.MV:
+                    result = git_mv(
+                        repo,
+                        arguments["source"],
+                        arguments["destination"]
+                    )
+                    log_tool_success("atxtechbro-git-mcp-server", name, f"Moved {arguments['source']} to {arguments['destination']}", repo_path, arguments)
                     return [TextContent(
                         type="text",
                         text=result
