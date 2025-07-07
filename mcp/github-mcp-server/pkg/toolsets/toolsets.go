@@ -204,7 +204,7 @@ func (t *Toolset) AddWriteTools(tools ...server.ServerTool) *Toolset {
 
 func (t *Toolset) AddReadTools(tools ...server.ServerTool) *Toolset {
 	for _, tool := range tools {
-		if !*tool.Tool.Annotations.ReadOnlyHint {
+		if tool.Tool.Annotations.ReadOnlyHint == nil || !*tool.Tool.Annotations.ReadOnlyHint {
 			panic(fmt.Sprintf("tool (%s) must be annotated as read-only", tool.Tool.Name))
 		}
 	}
