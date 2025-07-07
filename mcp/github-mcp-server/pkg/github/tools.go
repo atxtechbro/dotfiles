@@ -146,7 +146,7 @@ func DefaultToolsetGroup(readOnly bool, writeOnly bool, getClient GetClientFn, g
 
 	// Add batch toolset for chained operations
 	batch := toolsets.NewToolset("batch", "Batch execution of multiple GitHub operations").
-		AddReadTools(
+		AddWriteTools(
 			toolsets.NewServerTool(GitHubBatch(getClient, getGQLClient, getRawClient, t)),
 		)
 
