@@ -1,14 +1,7 @@
 Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 
-## Core Principles
+## Core Principle: Target-First Development
 {{ INJECT:principles/tracer-bullets.md }}
-
-### Test-Driven Development Principles
-{{ INJECT:principles/verifiable-intent.md }}
-{{ INJECT:principles/incremental-certainty.md }}
-{{ INJECT:principles/failure-first-learning.md }}
-{{ INJECT:principles/isolated-iteration.md }}
-{{ INJECT:principles/progressive-refinement.md }}
 
 ## Step 1: Analyze the Issue
 Use `mcp__github__get_issue` to read issue #{{ ISSUE_NUMBER }} and determine:
@@ -35,19 +28,25 @@ Apply to issue #{{ ISSUE_NUMBER }}:
 - Replace <description> with issue title slug
 
 ### 2. Implement Solution
-Apply the principles to guide your implementation:
-- **Verifiable Intent**: Define clear success criteria for the issue resolution
-- **Failure-First Learning**: Understand how to detect when the issue is truly fixed
-- **Incremental Certainty**: Build solution through verified steps, committing stable states
-- **Isolated Iteration**: Keep testing criteria stable while evolving implementation
-- **Progressive Refinement**: Start simple, add complexity as needed
+Apply tracer bullets methodology:
 
-Natural behaviors that should emerge:
-- Create appropriate verification methods (tests, checks, validations)
-- See verifications fail before implementing
-- Use TodoWrite to track verified progress
-- Commit only working code that advances toward the goal
-- Follow existing patterns while innovating where beneficial
+**First, establish your target:**
+- Define clear success criteria for the issue resolution
+- Understand what failure looks like (how to detect when it's NOT fixed)
+- Create verification methods (tests, checks, validations) that can detect hits/misses
+
+**Then iterate with tracer rounds:**
+- Fire and miss: See verifications fail (confirms target detection works)
+- Adjust aim: Modify implementation while keeping target stable
+- Fire again: Run verifications to check progress
+- Use TodoWrite to track verified hits on target
+- Each commit is a confirmed hit - only commit code that moves toward the target
+
+**Natural behaviors that emerge:**
+- Test-first development (you need a target before you can aim)
+- Incremental progress through verified steps
+- Progressive refinement from rough to precise shots
+- Clear trajectory visible through commit history
 
 {{ INJECT:procedures/git-workflow.md }}
 
