@@ -1,6 +1,6 @@
 Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 
-## Core Principles
+## Core Principle: Target-First Development
 {{ INJECT:principles/tracer-bullets.md }}
 
 ## Step 1: Analyze the Issue
@@ -28,10 +28,25 @@ Apply to issue #{{ ISSUE_NUMBER }}:
 - Replace <description> with issue title slug
 
 ### 2. Implement Solution
-- Use TodoWrite to track implementation tasks
-- Follow existing patterns in codebase
-- Test changes as you go
-- Run lint/typecheck if available
+Apply tracer bullets methodology:
+
+**First, establish your target:**
+- Define clear success criteria for the issue resolution
+- Understand what failure looks like (how to detect when it's NOT fixed)
+- Create verification methods (tests, checks, validations) that can detect hits/misses
+
+**Then iterate with tracer rounds:**
+- Fire and miss: See verifications fail (confirms target detection works)
+- Adjust aim: Modify implementation while keeping target stable
+- Fire again: Run verifications to check progress
+- Use TodoWrite to track verified hits on target
+- Each commit is a confirmed hit - only commit code that moves toward the target
+
+**Natural behaviors that emerge:**
+- Test-first development (you need a target before you can aim)
+- Incremental progress through verified steps
+- Progressive refinement from rough to precise shots
+- Clear trajectory visible through commit history
 
 {{ INJECT:procedures/git-workflow.md }}
 
