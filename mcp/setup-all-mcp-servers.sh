@@ -47,9 +47,28 @@ failed_setups=()
 for script in "${setup_scripts[@]}"; do
     if [ -f "$MCP_DIR/$script" ]; then
         echo -e "\n${GREEN}Running $script...${NC}"
-        if ! "$MCP_DIR/$script"; then
-            echo -e "${RED}Failed to run $script${NC}"
-            failed_setups+=("$script")
+        
+        # Special handling for Google Drive setup with timeout
+        if [[ "$script" == "setup-gdrive-mcp.sh" ]]; then
+            echo -e "${YELLOW}Note: Google Drive setup has a 30-second timeout to prevent hanging${NC}"
+            if timeout 30s "$MCP_DIR/$script"; then
+                echo -e "${GREEN}Google Drive setup completed${NC}"
+            else
+                exit_code=$?
+                if [ $exit_code -eq 124 ]; then
+                    echo -e "${YELLOW}Google Drive setup timed out after 30 seconds - continuing setup${NC}"
+                    echo -e "${YELLOW}You can run 'mcp/setup-gdrive-mcp.sh' manually later if needed${NC}"
+                else
+                    echo -e "${RED}Google Drive setup failed with error code $exit_code${NC}"
+                fi
+                failed_setups+=("$script (timeout/error)")
+            fi
+        else
+            # Normal execution for other scripts
+            if ! "$MCP_DIR/$script"; then
+                echo -e "${RED}Failed to run $script${NC}"
+                failed_setups+=("$script")
+            fi
         fi
     else
         echo -e "${YELLOW}Warning: $script not found${NC}"
