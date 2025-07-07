@@ -192,7 +192,7 @@ func (t *Toolset) SetWriteOnly() {
 func (t *Toolset) AddWriteTools(tools ...server.ServerTool) *Toolset {
 	// Silently ignore if the toolset is read-only to avoid any breach of that contract
 	for _, tool := range tools {
-		if *tool.Tool.Annotations.ReadOnlyHint {
+		if tool.Tool.Annotations.ReadOnlyHint != nil && *tool.Tool.Annotations.ReadOnlyHint {
 			panic(fmt.Sprintf("tool (%s) is incorrectly annotated as read-only", tool.Tool.Name))
 		}
 	}
