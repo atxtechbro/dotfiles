@@ -654,7 +654,59 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
         args = cmd.get("args", {})
         
         # Map shorthand commands to full tool names
-        if tool == "mv":
+        if tool == "status":
+            tool = "git_status"
+        elif tool == "add":
+            tool = "git_add"
+        elif tool == "commit":
+            tool = "git_commit"
+        elif tool == "push":
+            tool = "git_push"
+        elif tool == "pull":
+            tool = "git_pull"
+        elif tool == "fetch":
+            tool = "git_fetch"
+        elif tool == "merge":
+            tool = "git_merge"
+        elif tool == "diff":
+            tool = "git_diff"
+        elif tool == "diff_unstaged":
+            tool = "git_diff_unstaged"
+        elif tool == "diff_staged":
+            tool = "git_diff_staged"
+        elif tool == "log":
+            tool = "git_log"
+        elif tool == "create_branch":
+            tool = "git_create_branch"
+        elif tool == "checkout":
+            tool = "git_checkout"
+        elif tool == "show":
+            tool = "git_show"
+        elif tool == "reset":
+            tool = "git_reset"
+        elif tool == "rebase":
+            tool = "git_rebase"
+        elif tool == "stash":
+            tool = "git_stash"
+        elif tool == "stash_pop":
+            tool = "git_stash_pop"
+        elif tool == "cherry_pick":
+            tool = "git_cherry_pick"
+        elif tool == "revert":
+            tool = "git_revert"
+        elif tool == "reset_hard":
+            tool = "git_reset_hard"
+        elif tool == "branch_delete":
+            tool = "git_branch_delete"
+        elif tool == "clean":
+            tool = "git_clean"
+        elif tool == "bisect":
+            tool = "git_bisect"
+        elif tool == "describe":
+            tool = "git_describe"
+        elif tool == "shortlog":
+            tool = "git_shortlog"
+        elif tool == "mv":
             tool = "git_mv"
         elif tool == "rm":
             tool = "git_rm"
@@ -664,6 +716,18 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
             tool = "git_tag"
         elif tool == "branch":
             tool = "git_branch"
+        elif tool == "reflog":
+            tool = "git_reflog"
+        elif tool == "blame":
+            tool = "git_blame"
+        elif tool == "remote":
+            tool = "git_remote"
+        elif tool == "worktree_add":
+            tool = "git_worktree_add"
+        elif tool == "worktree_remove":
+            tool = "git_worktree_remove"
+        elif tool == "worktree_list":
+            tool = "git_worktree_list"
         
         try:
             if tool == "git_add":
@@ -680,6 +744,26 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
                 result = git_merge(repo, args.get("branch"), args.get("message"), args.get("strategy"), args.get("abort", False))
             elif tool == "git_status":
                 result = git_status(repo)
+            elif tool == "git_diff":
+                result = git_diff(repo, args.get("target"))
+            elif tool == "git_diff_unstaged":
+                result = git_diff_unstaged(repo)
+            elif tool == "git_diff_staged":
+                result = git_diff_staged(repo)
+            elif tool == "git_log":
+                result = git_log(repo, args.get("max_count", 10))
+            elif tool == "git_show":
+                result = git_show(repo, args.get("revision"))
+            elif tool == "git_reset":
+                result = git_reset(repo)
+            elif tool == "git_remote":
+                result = git_remote(repo, args.get("action"), args.get("name"), args.get("url"))
+            elif tool == "git_worktree_add":
+                result = git_worktree_add(repo, args.get("worktree_path"), args.get("branch_name"), args.get("create_branch", False))
+            elif tool == "git_worktree_remove":
+                result = git_worktree_remove(repo, args.get("worktree_path"), args.get("force", False))
+            elif tool == "git_worktree_list":
+                result = git_worktree_list(repo)
             elif tool == "git_create_branch":
                 result = git_create_branch(repo, args.get("branch_name"), args.get("base_branch"))
             elif tool == "git_checkout":
