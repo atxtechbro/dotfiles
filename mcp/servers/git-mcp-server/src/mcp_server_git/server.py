@@ -782,6 +782,10 @@ def git_batch(repo: git.Repo, commands: list[dict]) -> list[dict]:
                 result = git_reflog(repo, args.get("max_count", 30), args.get("ref"))
             elif tool == "git_blame":
                 result = git_blame(repo, args.get("file_path"), args.get("line_range"))
+            elif tool == "git_cherry_pick":
+                result = git_cherry_pick(repo, args.get("commits"), args.get("no_commit", False), 
+                                       args.get("mainline_parent"), args.get("continue_pick", False), 
+                                       args.get("skip", False), args.get("abort", False))
             elif tool == "git_revert":
                 result = git_revert(repo, args.get("commits"), args.get("no_commit", False), args.get("no_edit", False))
             elif tool == "git_reset_hard":

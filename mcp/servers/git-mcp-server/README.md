@@ -18,6 +18,10 @@ Provides Git operations to AI agents via the MCP protocol with comprehensive too
 
 All standard Git operations: status, diff, commit, add, branch, checkout, push, pull, merge, rebase, stash, cherry-pick, and more. See `server.py` for the complete list.
 
+### Recent Fixes
+
+- **git_cherry_pick in git_batch**: Fixed missing handler for cherry-pick operations in batch mode (PR #739)
+
 ## Maintenance
 
 - Dependencies are in `.venv/` managed by the setup script
