@@ -16,15 +16,21 @@ Once you have a target, use tracer rounds to zero in:
 - **Walk fire onto target**: Start with rough attempts, progressively refine precision
 
 ## Feedback Mechanisms
-- **Pull requests as tracer rounds**: Each PR is the observable unit where feedback happens - not individual commits
-- **Commit early and often**: Commits show trajectory toward the PR target, building the complete picture
+- **Pull requests as tracer rounds**: First shot establishes the feedback loop - not expected to hit target immediately
+- **Subsequent adjustments via commits**: Once PR shows we're "close enough", fine-tune with commits to the same PR
+- **Commit early and often**: Commits show trajectory, both initial attempt and adjustments after feedback
 - **OSE perspective**: From "Outside and Slightly Elevated" we review complete changes, not micro-edits
 - **Human checkpoint at PR level**: The human sees the full context and provides course correction
 - **AI-human feedback loop**: Core to this approach - neither operates in isolation
+- **The full sequence**:
+  1. PR establishes initial feedback loop (first tracer)
+  2. Human feedback indicates adjustments needed
+  3. Commits to same PR refine based on feedback (subsequent tracers)
+  4. Iterate until target is hit
 - **Balance with other principles**: 
   - Start with "go slow to go fast" (proper orientation)
   - Build toward PR with multiple commits (trajectory)
-  - Review at PR level (elevated perspective)
+  - Review and adjust at appropriate altitude
 
 ## Target-First Development
 This principle naturally leads to test-driven behaviors:
