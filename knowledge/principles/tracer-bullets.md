@@ -2,11 +2,14 @@
 
 Like military tracer rounds that help soldiers adjust their aim in real-time, each iteration provides immediate feedback to guide the next action. But first, you need a target.
 
+This approach acknowledges that even experts often discover what they want through seeing attempts - "I'll know it when I see it" is valid. Rather than spending extensive time specifying exact requirements upfront, tracer bullets allow the vision to emerge through rapid iterations of "a little to the left, a little to the right."
+
 ## Establishing the Target
 Before firing any rounds, define what you're aiming at:
 - **Clear success criteria**: What does "hitting the target" look like? (tests, expected outputs, acceptance criteria)
 - **Negative space mapping**: Understanding what failure looks like helps define the target's boundaries
 - **Measurable outcomes**: Targets must be observable - you need to know when you've hit or missed
+- **Emergent clarity**: The target itself may become clearer through iterations - expert intuition often needs concrete attempts to crystallize
 
 ## Iterative Targeting
 Once you have a target, use tracer rounds to zero in:
