@@ -16,11 +16,16 @@ Once you have a target, use tracer rounds to zero in:
 - **Walk fire onto target**: Start with rough attempts, progressively refine precision
 
 ## Feedback Mechanisms
-- **Commit early and often**: Each commit is a tracer round showing trajectory
-- **Short feedback loops over long planning**: Rapid iteration beats extensive upfront design
-- **Human checkpoint pauses**: Stop for feedback when encountering blockers or at natural decision points
+- **Pull requests as tracer rounds**: Each PR is the observable unit where feedback happens - not individual commits
+- **Commit early and often**: Commits show trajectory toward the PR target, building the complete picture
+- **OSE perspective**: From "Outside and Slightly Elevated" we review complete changes, not micro-edits
+- **Short feedback loops over long planning**: Rapid PR iterations beat extensive upfront design
+- **Human checkpoint at PR level**: The human sees the full context and provides course correction
 - **AI-human feedback loop**: Core to this approach - neither operates in isolation
-- **Stopping conditions**: Maintain control with maximum iterations or clear completion criteria
+- **Balance with other principles**: 
+  - Start with "go slow to go fast" (proper orientation)
+  - Build toward PR with multiple commits (trajectory)
+  - Review at PR level (elevated perspective)
 
 ## Target-First Development
 This principle naturally leads to test-driven behaviors:
@@ -32,3 +37,11 @@ This principle naturally leads to test-driven behaviors:
 6. Confirm stability (multiple hits = reliable solution)
 
 This principle enables effective development in unfamiliar territory by providing constant course correction through environmental feedback - but it all starts with having a clear target to aim at.
+
+## Relationship to Other Principles
+- **Go slow to go fast**: Proper orientation prevents ghost commits in PRs
+- **OSE (Outside and Slightly Elevated)**: Review at PR level, not edit-by-edit
+- **Versioning mindset**: Each PR iteration improves on the last
+- **Systems stewardship**: PRs become teachable units of change
+
+The PR is where principles converge - it's the right altitude for meaningful feedback.

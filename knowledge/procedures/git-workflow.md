@@ -10,6 +10,8 @@
 - Use `Principle: <slug>` trailer when work resonates with a specific principle (e.g., `Principle: subtraction-creates-value`, `Principle: versioning-mindset`, `Principle: systems-stewardship`)
 - Commit early and often with meaningful changes
   → [tracer-bullets](../principles/tracer-bullets.md) → [versioning-mindset](../principles/versioning-mindset.md)
+- Remember: Commits build toward PRs - that's where feedback happens
+  → [systems-stewardship](../principles/systems-stewardship.md) (OSE perspective)
 
 ## Branch Management
 
