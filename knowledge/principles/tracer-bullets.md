@@ -4,6 +4,8 @@ Like military tracer rounds that help soldiers adjust their aim in real-time, ea
 
 This approach acknowledges that even experts often discover what they want through seeing attempts - "I'll know it when I see it" is valid. Rather than spending extensive time specifying exact requirements upfront, tracer bullets allow the vision to emerge through rapid iterations of "a little to the left, a little to the right."
 
+The metaphor has limits: unlike military targeting, this is collaborative convergence toward a shared understanding. Both the implementation and the target evolve together through feedback - it's not adversarial, it's co-creative.
+
 ## Establishing the Target
 Before firing any rounds, define what you're aiming at:
 - **Clear success criteria**: What does "hitting the target" look like? (tests, expected outputs, acceptance criteria)
@@ -15,7 +17,6 @@ Before firing any rounds, define what you're aiming at:
 Once you have a target, use tracer rounds to zero in:
 - **Ground truth at each step**: Gain concrete feedback from the environment (tool results, code execution, system responses)
 - **Progress assessment**: Each iteration should get closer - watch for diminishing returns
-- **Adjust aim, not target**: Keep success criteria stable while refining your approach (though targets may evolve as understanding deepens)
 - **Walk fire onto target**: Start with rough attempts, progressively refine precision
 - **Proximity awareness**: Recognize feedback patterns like "a little to the left" or "90% there" - these guide refinement without over-specification
 - **Course correction over stubbornness**: If attempts regress, be willing to reset and try a different angle
