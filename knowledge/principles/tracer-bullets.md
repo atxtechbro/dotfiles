@@ -14,9 +14,11 @@ Before firing any rounds, define what you're aiming at:
 ## Iterative Targeting
 Once you have a target, use tracer rounds to zero in:
 - **Ground truth at each step**: Gain concrete feedback from the environment (tool results, code execution, system responses)
-- **Progress assessment**: Each cycle/loop/iteration should feel like getting closer to the target
-- **Adjust aim, not target**: Keep success criteria stable while refining your approach
+- **Progress assessment**: Each iteration should get closer - watch for diminishing returns
+- **Adjust aim, not target**: Keep success criteria stable while refining your approach (though targets may evolve as understanding deepens)
 - **Walk fire onto target**: Start with rough attempts, progressively refine precision
+- **Proximity awareness**: Recognize feedback patterns like "a little to the left" or "90% there" - these guide refinement without over-specification
+- **Course correction over stubbornness**: If attempts regress, be willing to reset and try a different angle
 
 ## Feedback Mechanisms
 - **Observable units of change**: Feedback happens at the level where changes become meaningful - typically PRs
