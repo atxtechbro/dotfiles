@@ -18,6 +18,9 @@ VM prioritizes making code malleable through the right level of abstraction. Not
 - Flexible systems sometimes mean having less system, not more
 - Provider-agnostic approaches as manufacturing flexibility
 
+**Subtraction as Iteration:**
+Removing code, features, or documentation IS iteration. Each commit—whether adding or removing—moves the system forward. See also: [Subtraction Creates Value](subtraction-creates-value.md).
+
 **Example progression:**
 1. Hardcoded solution for specific use case
 2. Discover patterns through use
