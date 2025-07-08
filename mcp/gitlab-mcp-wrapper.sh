@@ -34,6 +34,7 @@ mcp_check_env_var "GITLAB" "GITLAB_URL" "Add: export GITLAB_URL=\"https://gitlab
 mcp_check_env_var "GITLAB" "GITLAB_PERSONAL_ACCESS_TOKEN" "Add: export GITLAB_PERSONAL_ACCESS_TOKEN=\"your_personal_access_token\""
 
 # Pass through any environment variables from the MCP config
+export GITLAB_API_URL="${GITLAB_URL}/api/v4"
 export GITLAB_READ_ONLY_MODE="${GITLAB_READ_ONLY_MODE:-false}"
 export USE_GITLAB_WIKI="${USE_GITLAB_WIKI:-true}"
 export USE_MILESTONE="${USE_MILESTONE:-true}"
