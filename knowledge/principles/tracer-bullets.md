@@ -19,7 +19,6 @@ Once you have a target, use tracer rounds to zero in:
 - **Pull requests as tracer rounds**: Each PR is the observable unit where feedback happens - not individual commits
 - **Commit early and often**: Commits show trajectory toward the PR target, building the complete picture
 - **OSE perspective**: From "Outside and Slightly Elevated" we review complete changes, not micro-edits
-- **Short feedback loops over long planning**: Rapid PR iterations beat extensive upfront design
 - **Human checkpoint at PR level**: The human sees the full context and provides course correction
 - **AI-human feedback loop**: Core to this approach - neither operates in isolation
 - **Balance with other principles**: 
