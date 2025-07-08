@@ -14,10 +14,15 @@
 
 **Core principle: Working on main creates future work**. Every commit on main that should be on a feature branch guarantees recovery work: cherry-picking, rebasing, or complex git surgery. This violates the subtraction principle - we're adding unnecessary future tasks.
 
+**Go slow to go fast**: The recovery tax compounds invisibly. A stale starting point pollutes every subsequent action - your PR carries ghost commits, review gets clouded by unintended diffs, context windows fill with noise. The principle isn't about git mechanics but about preserving clarity of intent. When we rush past orientation, we mortgage our future attention.
+
 ### Quick orientation checks (prevent future cleanup)
 1. `mcp__git__git_status` - Where am I? What's already changed?
 2. Check current branch - Am I on main? Do I have uncommitted work?
-3. If changes exist on main - commit them properly or stash before branching
+3. **Is main current?** - `git fetch && git status` - Behind origin/main means your PR will include unwanted commits
+4. If changes exist on main - commit them properly or stash before branching
+
+Starting from a stale foundation guarantees the recovery tax - double work to achieve what orientation would have prevented.
 
 ### Standards (not methods)
 - Branch naming: `type/description` (e.g., `feature/add-authentication`, `fix/login-bug`)
