@@ -9,6 +9,7 @@
 - Good scope choices add context about what component is being modified (e.g., api, ui, auth, config, docs)
 - Use `Principle: <slug>` trailer when work resonates with a specific principle (e.g., `Principle: subtraction-creates-value`, `Principle: versioning-mindset`, `Principle: systems-stewardship`)
 - Commit early and often with meaningful changes
+  → [tracer-bullets](../principles/tracer-bullets.md) → [versioning-mindset](../principles/versioning-mindset.md)
 
 ## Branch Management
 
@@ -18,8 +19,10 @@
 
 ### Quick orientation checks (prevent future cleanup)
 1. `mcp__git__git_status` - Where am I? What's already changed?
+   → [subtraction-creates-value](../principles/subtraction-creates-value.md) (avoid recovery tax)
 2. Check current branch - Am I on main? Do I have uncommitted work?
 3. **Is main current?** - `git fetch && git status` - Behind origin/main means your PR will include unwanted commits
+   → [subtraction-creates-value](../principles/subtraction-creates-value.md)
 4. If changes exist on main - commit them properly or stash before branching
 
 Starting from a stale foundation guarantees the recovery tax - double work to achieve what orientation would have prevented.
@@ -28,6 +31,7 @@ Starting from a stale foundation guarantees the recovery tax - double work to ac
 - Branch naming: `type/description` (e.g., `feature/add-authentication`, `fix/login-bug`)
 - Issue suffix: `type/description-123` (e.g., `feature/add-authentication-512`)
 - Order: Check surroundings → create branch → switch → work → commit
+  → [subtraction-creates-value](../principles/subtraction-creates-value.md) (prevent recovery work)
 
 These standards make intent visible and prevent the recovery tax.
 
