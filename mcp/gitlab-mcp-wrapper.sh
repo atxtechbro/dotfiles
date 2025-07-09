@@ -3,15 +3,16 @@
 # =========================================================
 # GITLAB MCP WRAPPER SCRIPT
 # =========================================================
-# PURPOSE: Runtime wrapper that executes the MCP GitLab server
+# PURPOSE: Runtime wrapper that executes the in-house GitLab MCP server
 # This script is called by the MCP system during normal operation
 # 
-# RELATIONSHIP: This wrapper enforces work machine restrictions
-# and delegates to npx to run the GitLab MCP server
+# RELATIONSHIP: This wrapper runs our custom glab-based MCP server
+# instead of the npm package for better pipeline debugging
 # =========================================================
 
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+GITLAB_MCP_DIR="${SCRIPT_DIR}/servers/gitlab-mcp-server"
 
 # Source MCP logging utilities
 source "$SCRIPT_DIR/utils/mcp-logging.sh"
@@ -23,22 +24,18 @@ if [[ "$WORK_MACHINE" != "true" ]]; then
     exit 1
 fi
 
-# Check if npx is available
-mcp_check_command "GITLAB" "npx" "Install npm/npx: sudo apt-get install npm"
+# Check if the GitLab MCP server is installed
+if [ ! -d "${GITLAB_MCP_DIR}/.venv" ]; then
+    echo "Error: GitLab MCP server is not installed. Please run:"
+    echo "  ${SCRIPT_DIR}/setup-gitlab-mcp.sh"
+    exit 1
+fi
 
-# Source secrets file
-mcp_source_secrets "GITLAB"
+# Check if glab is available
+mcp_check_command "GITLAB" "glab" "Install glab: brew install glab"
 
-# Check if required GitLab environment variables are set
-mcp_check_env_var "GITLAB" "GITLAB_URL" "Add: export GITLAB_URL=\"https://gitlab.example.com\""
-mcp_check_env_var "GITLAB" "GITLAB_PERSONAL_ACCESS_TOKEN" "Add: export GITLAB_PERSONAL_ACCESS_TOKEN=\"your_personal_access_token\""
+# Source secrets file (optional for glab-based server)
+mcp_source_secrets "GITLAB" || true
 
-# Pass through any environment variables from the MCP config
-export GITLAB_API_URL="${GITLAB_URL}/api/v4"
-export GITLAB_READ_ONLY_MODE="${GITLAB_READ_ONLY_MODE:-false}"
-export USE_GITLAB_WIKI="${USE_GITLAB_WIKI:-true}"
-export USE_MILESTONE="${USE_MILESTONE:-true}"
-export USE_PIPELINE="${USE_PIPELINE:-true}"
-
-# Run the GitLab MCP server via npx
-mcp_exec_with_logging "GITLAB" npx gitlab-mcp
+# Run the in-house GitLab MCP server
+mcp_exec_with_logging "GITLAB" "${GITLAB_MCP_DIR}/.venv/bin/python" -m gitlab_mcp_server
