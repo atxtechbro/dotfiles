@@ -1,43 +1,43 @@
 #!/bin/bash
-# Chrome update helper - ensures Chrome is properly updated
+# Chrome update helper - direct and simple
 
-echo "Checking for Chrome updates..."
+echo "Chrome Update Tool"
+echo "=================="
 
-# Check current version
-if command -v google-chrome &> /dev/null; then
-    CHROME_CMD="google-chrome"
-else
-    CHROME_CMD="google-chrome-stable"
-fi
-
-CURRENT_VERSION=$($CHROME_CMD --version 2>/dev/null | grep -oP '\d+\.\d+\.\d+\.\d+' || echo "unknown")
-echo "Current Chrome version: $CURRENT_VERSION"
+# Show current installed version
+INSTALLED=$(dpkg -l | grep google-chrome-stable | awk '{print $3}')
+echo "Installed: $INSTALLED"
 
 # Update package lists
-echo "Updating package lists..."
+echo -e "\nUpdating package lists..."
 sudo apt update
 
-# Check available version
-AVAILABLE_VERSION=$(apt-cache policy google-chrome-stable | grep "Candidate:" | awk '{print $2}' | cut -d'-' -f1)
-echo "Available version: $AVAILABLE_VERSION"
+# Show available version
+AVAILABLE=$(apt-cache policy google-chrome-stable | grep "Candidate:" | awk '{print $2}')
+echo "Available: $AVAILABLE"
+
+if [[ "$INSTALLED" == "$AVAILABLE" ]]; then
+    echo -e "\n✅ Chrome is already up to date!"
+    exit 0
+fi
 
 # Check if Chrome is running
-if pgrep -x "chrome" > /dev/null || pgrep -x "google-chrome" > /dev/null; then
-    echo ""
-    echo "⚠️  Chrome is currently running!"
-    echo "Please close all Chrome windows before updating."
-    echo ""
-    read -p "Press Enter after closing Chrome, or Ctrl+C to cancel..."
+if pgrep -f "chrome" > /dev/null; then
+    echo -e "\n⚠️  Chrome appears to be running."
+    echo "For best results, close Chrome before updating."
+    read -p "Press Enter to continue anyway, or Ctrl+C to cancel..."
 fi
 
 # Perform the update
-echo "Installing update..."
+echo -e "\nUpdating Chrome..."
 sudo apt install -y google-chrome-stable
 
-# Verify the update
-INSTALLED_VERSION=$(dpkg -s google-chrome-stable | grep "Version:" | awk '{print $2}' | cut -d'-' -f1)
-echo ""
-echo "✅ Chrome package updated to: $INSTALLED_VERSION"
-echo ""
-echo "Please start Chrome to use the new version."
-echo "Note: Chrome --version will show the old version until Chrome is restarted."
+# Show result
+NEW_VERSION=$(dpkg -l | grep google-chrome-stable | awk '{print $3}')
+echo -e "\n✅ Chrome package updated to: $NEW_VERSION"
+
+if pgrep -f "chrome" > /dev/null; then
+    echo -e "\n⚠️  Chrome is still running. Restart it to use the new version."
+else
+    echo -e "\nYou can now start Chrome with the new version."
+fi

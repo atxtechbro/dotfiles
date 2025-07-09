@@ -18,10 +18,20 @@ install_or_update_chrome() {
     if command -v apt &> /dev/null; then
       log_info "Using apt..."
       (
-        # Add Google Chrome repository
-        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo tee /etc/apt/trusted.gpg.d/google.asc >/dev/null
-        echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list > /dev/null
-        sudo apt update 2>/dev/null
+        # Check if Chrome repo already exists
+        if [[ ! -f /etc/apt/sources.list.d/google-chrome.list ]]; then
+          log_info "Adding Chrome repository..."
+          # Add Google Chrome repository
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list > /dev/null
+        else
+          log_info "Chrome repository already configured"
+        fi
+        
+        # Always update package lists
+        sudo apt update
+        
+        # Install or upgrade Chrome
         sudo apt install -y google-chrome-stable
       ) || log_warning "apt install failed"
     
