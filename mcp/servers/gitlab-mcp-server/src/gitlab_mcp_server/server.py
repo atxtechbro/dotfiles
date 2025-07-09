@@ -1112,6 +1112,308 @@ async def list_tools() -> List[Tool]:
                 },
                 "required": ["title"]
             }
+        ),
+        
+        # Phase 5: Advanced Merge Request Operations
+        Tool(
+            name="gitlab_create_merge_request",
+            description="Create a new merge request",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Merge request title"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Merge request description"
+                    },
+                    "source_branch": {
+                        "type": "string",
+                        "description": "Source branch name"
+                    },
+                    "target_branch": {
+                        "type": "string",
+                        "description": "Target branch name (default: main)"
+                    },
+                    "assignees": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Assignee usernames"
+                    },
+                    "reviewers": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Reviewer usernames"
+                    },
+                    "labels": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Merge request labels"
+                    },
+                    "milestone": {
+                        "type": "string",
+                        "description": "Milestone title"
+                    },
+                    "draft": {
+                        "type": "boolean",
+                        "description": "Create as draft merge request"
+                    },
+                    "squash": {
+                        "type": "boolean",
+                        "description": "Squash commits when merging"
+                    },
+                    "remove_source_branch": {
+                        "type": "boolean",
+                        "description": "Remove source branch after merge"
+                    }
+                },
+                "required": ["title", "source_branch"]
+            }
+        ),
+        Tool(
+            name="gitlab_update_merge_request",
+            description="Update an existing merge request",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "mr_id": {
+                        "type": "integer",
+                        "description": "Merge request ID"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "New title"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "New description"
+                    },
+                    "target_branch": {
+                        "type": "string",
+                        "description": "New target branch"
+                    },
+                    "assignees": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Assignee usernames"
+                    },
+                    "reviewers": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Reviewer usernames"
+                    },
+                    "labels": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Merge request labels"
+                    },
+                    "state": {
+                        "type": "string",
+                        "description": "State (opened, closed, merged)"
+                    },
+                    "milestone": {
+                        "type": "string",
+                        "description": "Milestone title"
+                    }
+                },
+                "required": ["mr_id"]
+            }
+        ),
+        Tool(
+            name="gitlab_merge_merge_request",
+            description="Merge a merge request",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "mr_id": {
+                        "type": "integer",
+                        "description": "Merge request ID"
+                    },
+                    "merge_commit_message": {
+                        "type": "string",
+                        "description": "Custom merge commit message"
+                    },
+                    "squash": {
+                        "type": "boolean",
+                        "description": "Squash commits when merging"
+                    },
+                    "remove_source_branch": {
+                        "type": "boolean",
+                        "description": "Remove source branch after merge"
+                    }
+                },
+                "required": ["mr_id"]
+            }
+        ),
+        Tool(
+            name="gitlab_close_merge_request",
+            description="Close a merge request",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "mr_id": {
+                        "type": "integer",
+                        "description": "Merge request ID"
+                    }
+                },
+                "required": ["mr_id"]
+            }
+        ),
+        Tool(
+            name="gitlab_reopen_merge_request",
+            description="Reopen a closed merge request",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "mr_id": {
+                        "type": "integer",
+                        "description": "Merge request ID"
+                    }
+                },
+                "required": ["mr_id"]
+            }
+        ),
+        Tool(
+            name="gitlab_list_mr_comments",
+            description="List comments on a merge request",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "mr_id": {
+                        "type": "integer",
+                        "description": "Merge request ID"
+                    },
+                    "sort": {
+                        "type": "string",
+                        "description": "Sort order (asc, desc)"
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Number of comments to return"
+                    }
+                },
+                "required": ["mr_id"]
+            }
+        ),
+        Tool(
+            name="gitlab_create_mr_comment",
+            description="Create a comment on a merge request",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "mr_id": {
+                        "type": "integer",
+                        "description": "Merge request ID"
+                    },
+                    "body": {
+                        "type": "string",
+                        "description": "Comment text"
+                    }
+                },
+                "required": ["mr_id", "body"]
+            }
+        ),
+        Tool(
+            name="gitlab_get_mr_diff",
+            description="Get merge request diff",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "mr_id": {
+                        "type": "integer",
+                        "description": "Merge request ID"
+                    }
+                },
+                "required": ["mr_id"]
+            }
+        ),
+        Tool(
+            name="gitlab_get_mr_changes",
+            description="Get merge request changes (files modified)",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "mr_id": {
+                        "type": "integer",
+                        "description": "Merge request ID"
+                    }
+                },
+                "required": ["mr_id"]
+            }
+        ),
+        Tool(
+            name="gitlab_approve_merge_request",
+            description="Approve a merge request",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "mr_id": {
+                        "type": "integer",
+                        "description": "Merge request ID"
+                    }
+                },
+                "required": ["mr_id"]
+            }
+        ),
+        Tool(
+            name="gitlab_unapprove_merge_request",
+            description="Remove approval from a merge request",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "mr_id": {
+                        "type": "integer",
+                        "description": "Merge request ID"
+                    }
+                },
+                "required": ["mr_id"]
+            }
         )
     ]
 
@@ -1777,6 +2079,171 @@ async def handle_create_project_hook(args: Dict[str, Any]) -> List[TextContent]:
         cmd.extend(["--field", f"tag_push_events={str(args['tag_push_events']).lower()}"])
     if args.get("pipeline_events"):
         cmd.extend(["--field", f"pipeline_events={str(args['pipeline_events']).lower()}"])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+# Phase 4: Comprehensive Issue Management Handlers
+
+async def handle_create_issue(args: Dict[str, Any]) -> List[TextContent]:
+    """Create a new issue."""
+    cmd = ["issue", "create", "--title", args["title"]]
+    
+    if args.get("project"):
+        cmd.extend(["--repo", args["project"]])
+    if args.get("description"):
+        cmd.extend(["--description", args["description"]])
+    if args.get("labels"):
+        cmd.extend(["--label", ",".join(args["labels"])])
+    if args.get("assignees"):
+        cmd.extend(["--assignee", ",".join(args["assignees"])])
+    if args.get("milestone"):
+        cmd.extend(["--milestone", args["milestone"]])
+    if args.get("due_date"):
+        cmd.extend(["--due-date", args["due_date"]])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_update_issue(args: Dict[str, Any]) -> List[TextContent]:
+    """Update an existing issue."""
+    issue_id = args["issue_id"]
+    cmd = ["issue", "update", str(issue_id)]
+    
+    if args.get("project"):
+        cmd.extend(["--repo", args["project"]])
+    if args.get("title"):
+        cmd.extend(["--title", args["title"]])
+    if args.get("description"):
+        cmd.extend(["--description", args["description"]])
+    if args.get("labels"):
+        cmd.extend(["--label", ",".join(args["labels"])])
+    if args.get("assignees"):
+        cmd.extend(["--assignee", ",".join(args["assignees"])])
+    if args.get("state"):
+        cmd.extend(["--state", args["state"]])
+    if args.get("milestone"):
+        cmd.extend(["--milestone", args["milestone"]])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_close_issue(args: Dict[str, Any]) -> List[TextContent]:
+    """Close an issue."""
+    issue_id = args["issue_id"]
+    cmd = ["issue", "close", str(issue_id)]
+    
+    if args.get("project"):
+        cmd.extend(["--repo", args["project"]])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_reopen_issue(args: Dict[str, Any]) -> List[TextContent]:
+    """Reopen a closed issue."""
+    issue_id = args["issue_id"]
+    cmd = ["issue", "reopen", str(issue_id)]
+    
+    if args.get("project"):
+        cmd.extend(["--repo", args["project"]])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_list_issue_comments(args: Dict[str, Any]) -> List[TextContent]:
+    """List comments on an issue."""
+    issue_id = args["issue_id"]
+    cmd = ["api", f"projects/:id/issues/{issue_id}/notes"]
+    
+    if args.get("project"):
+        cmd.extend(["--repo", args["project"]])
+    if args.get("sort"):
+        cmd.extend(["--field", f"sort={args['sort']}"])
+    if args.get("limit"):
+        cmd.extend(["--field", f"per_page={args['limit']}"])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_create_issue_comment(args: Dict[str, Any]) -> List[TextContent]:
+    """Create a comment on an issue."""
+    issue_id = args["issue_id"]
+    body = args["body"]
+    cmd = ["api", f"projects/:id/issues/{issue_id}/notes", "--method", "POST"]
+    cmd.extend(["--field", f"body={body}"])
+    
+    if args.get("project"):
+        cmd.extend(["--repo", args["project"]])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_list_project_labels(args: Dict[str, Any]) -> List[TextContent]:
+    """List project labels."""
+    cmd = ["api", "projects/:id/labels"]
+    
+    if args.get("project"):
+        cmd.extend(["--repo", args["project"]])
+    if args.get("search"):
+        cmd.extend(["--field", f"search={args['search']}"])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_create_project_label(args: Dict[str, Any]) -> List[TextContent]:
+    """Create a new project label."""
+    name = args["name"]
+    color = args["color"]
+    cmd = ["api", "projects/:id/labels", "--method", "POST"]
+    cmd.extend(["--field", f"name={name}"])
+    cmd.extend(["--field", f"color={color}"])
+    
+    if args.get("project"):
+        cmd.extend(["--repo", args["project"]])
+    if args.get("description"):
+        cmd.extend(["--field", f"description={args['description']}"])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_list_project_milestones(args: Dict[str, Any]) -> List[TextContent]:
+    """List project milestones."""
+    cmd = ["api", "projects/:id/milestones"]
+    
+    if args.get("project"):
+        cmd.extend(["--repo", args["project"]])
+    if args.get("state"):
+        cmd.extend(["--field", f"state={args['state']}"])
+    if args.get("search"):
+        cmd.extend(["--field", f"search={args['search']}"])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_create_project_milestone(args: Dict[str, Any]) -> List[TextContent]:
+    """Create a new project milestone."""
+    title = args["title"]
+    cmd = ["api", "projects/:id/milestones", "--method", "POST"]
+    cmd.extend(["--field", f"title={title}"])
+    
+    if args.get("project"):
+        cmd.extend(["--repo", args["project"]])
+    if args.get("description"):
+        cmd.extend(["--field", f"description={args['description']}"])
+    if args.get("due_date"):
+        cmd.extend(["--field", f"due_date={args['due_date']}"])
+    if args.get("start_date"):
+        cmd.extend(["--field", f"start_date={args['start_date']}"])
     
     result = await run_glab_command(cmd)
     return [TextContent(type="text", text=json.dumps(result, indent=2))]
