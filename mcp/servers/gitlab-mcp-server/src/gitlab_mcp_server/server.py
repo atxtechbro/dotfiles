@@ -543,6 +543,575 @@ async def list_tools() -> List[Tool]:
                 },
                 "required": ["file_path"]
             }
+        ),
+        
+        # Phase 2: User & Group Management
+        Tool(
+            name="gitlab_get_user",
+            description="Get user details by username or user ID",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string",
+                        "description": "Username or user ID"
+                    }
+                },
+                "required": ["username"]
+            }
+        ),
+        Tool(
+            name="gitlab_list_users",
+            description="List users with optional filtering",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "search": {
+                        "type": "string",
+                        "description": "Search term for username or email"
+                    },
+                    "active": {
+                        "type": "boolean",
+                        "description": "Filter active users only"
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Number of users to return (default: 20)"
+                    }
+                }
+            }
+        ),
+        Tool(
+            name="gitlab_get_current_user",
+            description="Get current authenticated user details",
+            inputSchema={
+                "type": "object",
+                "properties": {}
+            }
+        ),
+        Tool(
+            name="gitlab_list_groups",
+            description="List groups with optional filtering",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "search": {
+                        "type": "string",
+                        "description": "Search term for group name"
+                    },
+                    "owned": {
+                        "type": "boolean",
+                        "description": "Show only owned groups"
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Number of groups to return (default: 20)"
+                    }
+                }
+            }
+        ),
+        Tool(
+            name="gitlab_get_group",
+            description="Get group details by path or group ID",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "group": {
+                        "type": "string",
+                        "description": "Group path or group ID"
+                    }
+                },
+                "required": ["group"]
+            }
+        ),
+        Tool(
+            name="gitlab_list_group_members",
+            description="List members of a group",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "group": {
+                        "type": "string",
+                        "description": "Group path or group ID"
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Number of members to return (default: 20)"
+                    }
+                },
+                "required": ["group"]
+            }
+        ),
+        Tool(
+            name="gitlab_list_project_members",
+            description="List members of a project",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Number of members to return (default: 20)"
+                    }
+                }
+            }
+        ),
+        
+        # Phase 3: Advanced Repository Operations
+        Tool(
+            name="gitlab_fork_project",
+            description="Fork a project to user's namespace or a group",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project')"
+                    },
+                    "namespace": {
+                        "type": "string",
+                        "description": "Target namespace (group or user) for the fork"
+                    }
+                },
+                "required": ["project"]
+            }
+        ),
+        Tool(
+            name="gitlab_list_commits",
+            description="List commits in a project or branch",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "branch": {
+                        "type": "string",
+                        "description": "Branch name (default: main)"
+                    },
+                    "author": {
+                        "type": "string",
+                        "description": "Filter by author username"
+                    },
+                    "since": {
+                        "type": "string",
+                        "description": "Filter commits since date (ISO format)"
+                    },
+                    "until": {
+                        "type": "string",
+                        "description": "Filter commits until date (ISO format)"
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Number of commits to return (default: 20)"
+                    }
+                }
+            }
+        ),
+        Tool(
+            name="gitlab_get_commit",
+            description="Get commit details by SHA",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "sha": {
+                        "type": "string",
+                        "description": "Commit SHA"
+                    }
+                },
+                "required": ["sha"]
+            }
+        ),
+        Tool(
+            name="gitlab_compare_branches",
+            description="Compare two branches or commits",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "from": {
+                        "type": "string",
+                        "description": "Source branch or commit SHA"
+                    },
+                    "to": {
+                        "type": "string",
+                        "description": "Target branch or commit SHA"
+                    }
+                },
+                "required": ["from", "to"]
+            }
+        ),
+        Tool(
+            name="gitlab_list_repository_tree",
+            description="List repository tree (files and directories)",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "path": {
+                        "type": "string",
+                        "description": "Path within repository (default: root)"
+                    },
+                    "ref": {
+                        "type": "string",
+                        "description": "Branch or commit reference (default: main)"
+                    },
+                    "recursive": {
+                        "type": "boolean",
+                        "description": "Get all files recursively"
+                    }
+                }
+            }
+        ),
+        Tool(
+            name="gitlab_get_repository_archive",
+            description="Download repository archive (zip/tar.gz)",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "format": {
+                        "type": "string",
+                        "description": "Archive format (zip, tar.gz, tar.bz2)"
+                    },
+                    "sha": {
+                        "type": "string",
+                        "description": "Commit SHA or branch name"
+                    }
+                }
+            }
+        ),
+        Tool(
+            name="gitlab_list_project_hooks",
+            description="List project webhooks",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    }
+                }
+            }
+        ),
+        Tool(
+            name="gitlab_create_project_hook",
+            description="Create project webhook",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "url": {
+                        "type": "string",
+                        "description": "Webhook URL"
+                    },
+                    "push_events": {
+                        "type": "boolean",
+                        "description": "Trigger on push events"
+                    },
+                    "issues_events": {
+                        "type": "boolean",
+                        "description": "Trigger on issues events"
+                    },
+                    "merge_requests_events": {
+                        "type": "boolean",
+                        "description": "Trigger on merge request events"
+                    },
+                    "tag_push_events": {
+                        "type": "boolean",
+                        "description": "Trigger on tag push events"
+                    },
+                    "pipeline_events": {
+                        "type": "boolean",
+                        "description": "Trigger on pipeline events"
+                    }
+                },
+                "required": ["url"]
+            }
+        ),
+        
+        # Phase 4: Comprehensive Issue Management
+        Tool(
+            name="gitlab_create_issue",
+            description="Create a new issue",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Issue title"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Issue description"
+                    },
+                    "labels": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Issue labels"
+                    },
+                    "assignees": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Assignee usernames"
+                    },
+                    "milestone": {
+                        "type": "string",
+                        "description": "Milestone title"
+                    },
+                    "due_date": {
+                        "type": "string",
+                        "description": "Due date (YYYY-MM-DD format)"
+                    }
+                },
+                "required": ["title"]
+            }
+        ),
+        Tool(
+            name="gitlab_update_issue",
+            description="Update an existing issue",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "issue_id": {
+                        "type": "integer",
+                        "description": "Issue ID"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "New issue title"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "New issue description"
+                    },
+                    "labels": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Issue labels"
+                    },
+                    "assignees": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Assignee usernames"
+                    },
+                    "state": {
+                        "type": "string",
+                        "description": "Issue state (opened, closed)"
+                    },
+                    "milestone": {
+                        "type": "string",
+                        "description": "Milestone title"
+                    }
+                },
+                "required": ["issue_id"]
+            }
+        ),
+        Tool(
+            name="gitlab_close_issue",
+            description="Close an issue",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "issue_id": {
+                        "type": "integer",
+                        "description": "Issue ID"
+                    }
+                },
+                "required": ["issue_id"]
+            }
+        ),
+        Tool(
+            name="gitlab_reopen_issue",
+            description="Reopen a closed issue",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "issue_id": {
+                        "type": "integer",
+                        "description": "Issue ID"
+                    }
+                },
+                "required": ["issue_id"]
+            }
+        ),
+        Tool(
+            name="gitlab_list_issue_comments",
+            description="List comments on an issue",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "issue_id": {
+                        "type": "integer",
+                        "description": "Issue ID"
+                    },
+                    "sort": {
+                        "type": "string",
+                        "description": "Sort order (asc, desc)"
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Number of comments to return"
+                    }
+                },
+                "required": ["issue_id"]
+            }
+        ),
+        Tool(
+            name="gitlab_create_issue_comment",
+            description="Create a comment on an issue",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "issue_id": {
+                        "type": "integer",
+                        "description": "Issue ID"
+                    },
+                    "body": {
+                        "type": "string",
+                        "description": "Comment text"
+                    }
+                },
+                "required": ["issue_id", "body"]
+            }
+        ),
+        Tool(
+            name="gitlab_list_project_labels",
+            description="List project labels",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "search": {
+                        "type": "string",
+                        "description": "Search term for label names"
+                    }
+                }
+            }
+        ),
+        Tool(
+            name="gitlab_create_project_label",
+            description="Create a new project label",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Label name"
+                    },
+                    "color": {
+                        "type": "string",
+                        "description": "Label color (hex format, e.g., #FF0000)"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Label description"
+                    }
+                },
+                "required": ["name", "color"]
+            }
+        ),
+        Tool(
+            name="gitlab_list_project_milestones",
+            description="List project milestones",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "state": {
+                        "type": "string",
+                        "description": "Filter by state (active, closed, all)"
+                    },
+                    "search": {
+                        "type": "string",
+                        "description": "Search term for milestone titles"
+                    }
+                }
+            }
+        ),
+        Tool(
+            name="gitlab_create_project_milestone",
+            description="Create a new project milestone",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "Project path (e.g., 'group/project'). Optional if in git repo."
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Milestone title"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Milestone description"
+                    },
+                    "due_date": {
+                        "type": "string",
+                        "description": "Due date (YYYY-MM-DD format)"
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "description": "Start date (YYYY-MM-DD format)"
+                    }
+                },
+                "required": ["title"]
+            }
         )
     ]
 
@@ -607,6 +1176,62 @@ async def call_tool(name: str, arguments: Dict[str, Any]) -> List[TextContent]:
             return await handle_get_merge_request(arguments)
         elif name == "gitlab_get_file":
             return await handle_get_file(arguments)
+        
+        # Phase 2: User & Group Management
+        elif name == "gitlab_get_user":
+            return await handle_get_user(arguments)
+        elif name == "gitlab_list_users":
+            return await handle_list_users(arguments)
+        elif name == "gitlab_get_current_user":
+            return await handle_get_current_user(arguments)
+        elif name == "gitlab_list_groups":
+            return await handle_list_groups(arguments)
+        elif name == "gitlab_get_group":
+            return await handle_get_group(arguments)
+        elif name == "gitlab_list_group_members":
+            return await handle_list_group_members(arguments)
+        elif name == "gitlab_list_project_members":
+            return await handle_list_project_members(arguments)
+        
+        # Phase 3: Advanced Repository Operations
+        elif name == "gitlab_fork_project":
+            return await handle_fork_project(arguments)
+        elif name == "gitlab_list_commits":
+            return await handle_list_commits(arguments)
+        elif name == "gitlab_get_commit":
+            return await handle_get_commit(arguments)
+        elif name == "gitlab_compare_branches":
+            return await handle_compare_branches(arguments)
+        elif name == "gitlab_list_repository_tree":
+            return await handle_list_repository_tree(arguments)
+        elif name == "gitlab_get_repository_archive":
+            return await handle_get_repository_archive(arguments)
+        elif name == "gitlab_list_project_hooks":
+            return await handle_list_project_hooks(arguments)
+        elif name == "gitlab_create_project_hook":
+            return await handle_create_project_hook(arguments)
+        
+        # Phase 4: Comprehensive Issue Management
+        elif name == "gitlab_create_issue":
+            return await handle_create_issue(arguments)
+        elif name == "gitlab_update_issue":
+            return await handle_update_issue(arguments)
+        elif name == "gitlab_close_issue":
+            return await handle_close_issue(arguments)
+        elif name == "gitlab_reopen_issue":
+            return await handle_reopen_issue(arguments)
+        elif name == "gitlab_list_issue_comments":
+            return await handle_list_issue_comments(arguments)
+        elif name == "gitlab_create_issue_comment":
+            return await handle_create_issue_comment(arguments)
+        elif name == "gitlab_list_project_labels":
+            return await handle_list_project_labels(arguments)
+        elif name == "gitlab_create_project_label":
+            return await handle_create_project_label(arguments)
+        elif name == "gitlab_list_project_milestones":
+            return await handle_list_project_milestones(arguments)
+        elif name == "gitlab_create_project_milestone":
+            return await handle_create_project_milestone(arguments)
         else:
             raise ValueError(f"Unknown tool: {name}")
     except Exception as e:
@@ -944,6 +1569,214 @@ async def handle_delete_tag(args: Dict[str, Any]) -> List[TextContent]:
     
     if args.get("project"):
         cmd.extend(["--repo", args["project"]])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+# Phase 2: User & Group Management Handlers
+
+async def handle_get_user(args: Dict[str, Any]) -> List[TextContent]:
+    """Get user details."""
+    username = args["username"]
+    cmd = ["api", f"users/{username}"]
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_list_users(args: Dict[str, Any]) -> List[TextContent]:
+    """List users with optional filtering."""
+    cmd = ["api", "users"]
+    
+    if args.get("search"):
+        cmd.extend(["--field", f"search={args['search']}"])
+    if args.get("active"):
+        cmd.extend(["--field", "active=true"])
+    if args.get("limit"):
+        cmd.extend(["--field", f"per_page={args['limit']}"])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_get_current_user(args: Dict[str, Any]) -> List[TextContent]:
+    """Get current authenticated user details."""
+    cmd = ["api", "user"]
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_list_groups(args: Dict[str, Any]) -> List[TextContent]:
+    """List groups with optional filtering."""
+    cmd = ["api", "groups"]
+    
+    if args.get("search"):
+        cmd.extend(["--field", f"search={args['search']}"])
+    if args.get("owned"):
+        cmd.extend(["--field", "owned=true"])
+    if args.get("limit"):
+        cmd.extend(["--field", f"per_page={args['limit']}"])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_get_group(args: Dict[str, Any]) -> List[TextContent]:
+    """Get group details."""
+    group = args["group"]
+    cmd = ["api", f"groups/{group}"]
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_list_group_members(args: Dict[str, Any]) -> List[TextContent]:
+    """List members of a group."""
+    group = args["group"]
+    cmd = ["api", f"groups/{group}/members"]
+    
+    if args.get("limit"):
+        cmd.extend(["--field", f"per_page={args['limit']}"])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_list_project_members(args: Dict[str, Any]) -> List[TextContent]:
+    """List members of a project."""
+    cmd = ["api", "projects/:id/members"]
+    
+    if args.get("project"):
+        cmd.extend(["--repo", args["project"]])
+    if args.get("limit"):
+        cmd.extend(["--field", f"per_page={args['limit']}"])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+# Phase 3: Advanced Repository Operations Handlers
+
+async def handle_fork_project(args: Dict[str, Any]) -> List[TextContent]:
+    """Fork a project to user's namespace or a group."""
+    project = args["project"]
+    cmd = ["api", f"projects/{project.replace('/', '%2F')}/fork", "--method", "POST"]
+    
+    if args.get("namespace"):
+        cmd.extend(["--field", f"namespace={args['namespace']}"])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_list_commits(args: Dict[str, Any]) -> List[TextContent]:
+    """List commits in a project or branch."""
+    cmd = ["api", "projects/:id/repository/commits"]
+    
+    if args.get("project"):
+        cmd.extend(["--repo", args["project"]])
+    if args.get("branch"):
+        cmd.extend(["--field", f"ref_name={args['branch']}"])
+    if args.get("author"):
+        cmd.extend(["--field", f"author={args['author']}"])
+    if args.get("since"):
+        cmd.extend(["--field", f"since={args['since']}"])
+    if args.get("until"):
+        cmd.extend(["--field", f"until={args['until']}"])
+    if args.get("limit"):
+        cmd.extend(["--field", f"per_page={args['limit']}"])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_get_commit(args: Dict[str, Any]) -> List[TextContent]:
+    """Get commit details by SHA."""
+    sha = args["sha"]
+    cmd = ["api", f"projects/:id/repository/commits/{sha}"]
+    
+    if args.get("project"):
+        cmd.extend(["--repo", args["project"]])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_compare_branches(args: Dict[str, Any]) -> List[TextContent]:
+    """Compare two branches or commits."""
+    from_ref = args["from"]
+    to_ref = args["to"]
+    cmd = ["api", f"projects/:id/repository/compare?from={from_ref}&to={to_ref}"]
+    
+    if args.get("project"):
+        cmd.extend(["--repo", args["project"]])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_list_repository_tree(args: Dict[str, Any]) -> List[TextContent]:
+    """List repository tree (files and directories)."""
+    cmd = ["api", "projects/:id/repository/tree"]
+    
+    if args.get("project"):
+        cmd.extend(["--repo", args["project"]])
+    if args.get("path"):
+        cmd.extend(["--field", f"path={args['path']}"])
+    if args.get("ref"):
+        cmd.extend(["--field", f"ref={args['ref']}"])
+    if args.get("recursive"):
+        cmd.extend(["--field", "recursive=true"])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_get_repository_archive(args: Dict[str, Any]) -> List[TextContent]:
+    """Download repository archive (zip/tar.gz)."""
+    format_type = args.get("format", "zip")
+    cmd = ["api", f"projects/:id/repository/archive.{format_type}"]
+    
+    if args.get("project"):
+        cmd.extend(["--repo", args["project"]])
+    if args.get("sha"):
+        cmd.extend(["--field", f"sha={args['sha']}"])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_list_project_hooks(args: Dict[str, Any]) -> List[TextContent]:
+    """List project webhooks."""
+    cmd = ["api", "projects/:id/hooks"]
+    
+    if args.get("project"):
+        cmd.extend(["--repo", args["project"]])
+    
+    result = await run_glab_command(cmd)
+    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+
+async def handle_create_project_hook(args: Dict[str, Any]) -> List[TextContent]:
+    """Create project webhook."""
+    url = args["url"]
+    cmd = ["api", "projects/:id/hooks", "--method", "POST"]
+    cmd.extend(["--field", f"url={url}"])
+    
+    if args.get("project"):
+        cmd.extend(["--repo", args["project"]])
+    if args.get("push_events"):
+        cmd.extend(["--field", f"push_events={str(args['push_events']).lower()}"])
+    if args.get("issues_events"):
+        cmd.extend(["--field", f"issues_events={str(args['issues_events']).lower()}"])
+    if args.get("merge_requests_events"):
+        cmd.extend(["--field", f"merge_requests_events={str(args['merge_requests_events']).lower()}"])
+    if args.get("tag_push_events"):
+        cmd.extend(["--field", f"tag_push_events={str(args['tag_push_events']).lower()}"])
+    if args.get("pipeline_events"):
+        cmd.extend(["--field", f"pipeline_events={str(args['pipeline_events']).lower()}"])
     
     result = await run_glab_command(cmd)
     return [TextContent(type="text", text=json.dumps(result, indent=2))]
