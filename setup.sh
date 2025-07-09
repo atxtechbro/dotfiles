@@ -539,18 +539,6 @@ else
     echo -e "${RED}urlview installation script not found at $DOT_DEN/utils/install-urlview.sh${NC}"
 fi
 
-# Google Chrome installation
-echo -e "${DIVIDER}"
-echo -e "${GREEN}Setting up Google Chrome...${NC}"
-if [[ -f "$DOT_DEN/utils/install-chrome.sh" ]]; then
-    source "$DOT_DEN/utils/install-chrome.sh"
-    if [ $? -eq 0 ]; then
-        echo -e "${GREEN}✓ Google Chrome setup complete${NC}"
-    fi
-else
-    echo -e "${RED}Chrome installation script not found at $DOT_DEN/utils/install-chrome.sh${NC}"
-fi
-
 # Check if user is in docker group (Linux only)
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   if groups | grep -q docker; then
