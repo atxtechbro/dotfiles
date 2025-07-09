@@ -1,0 +1,43 @@
+#!/bin/bash
+# Chrome update helper - ensures Chrome is properly updated
+
+echo "Checking for Chrome updates..."
+
+# Check current version
+if command -v google-chrome &> /dev/null; then
+    CHROME_CMD="google-chrome"
+else
+    CHROME_CMD="google-chrome-stable"
+fi
+
+CURRENT_VERSION=$($CHROME_CMD --version 2>/dev/null | grep -oP '\d+\.\d+\.\d+\.\d+' || echo "unknown")
+echo "Current Chrome version: $CURRENT_VERSION"
+
+# Update package lists
+echo "Updating package lists..."
+sudo apt update
+
+# Check available version
+AVAILABLE_VERSION=$(apt-cache policy google-chrome-stable | grep "Candidate:" | awk '{print $2}' | cut -d'-' -f1)
+echo "Available version: $AVAILABLE_VERSION"
+
+# Check if Chrome is running
+if pgrep -x "chrome" > /dev/null || pgrep -x "google-chrome" > /dev/null; then
+    echo ""
+    echo "⚠️  Chrome is currently running!"
+    echo "Please close all Chrome windows before updating."
+    echo ""
+    read -p "Press Enter after closing Chrome, or Ctrl+C to cancel..."
+fi
+
+# Perform the update
+echo "Installing update..."
+sudo apt install -y google-chrome-stable
+
+# Verify the update
+INSTALLED_VERSION=$(dpkg -s google-chrome-stable | grep "Version:" | awk '{print $2}' | cut -d'-' -f1)
+echo ""
+echo "✅ Chrome package updated to: $INSTALLED_VERSION"
+echo ""
+echo "Please start Chrome to use the new version."
+echo "Note: Chrome --version will show the old version until Chrome is restarted."

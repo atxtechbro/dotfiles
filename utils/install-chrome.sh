@@ -94,9 +94,21 @@ setup_chrome() {
       UPDATE_AVAILABLE=$(apt list --upgradable 2>/dev/null | grep -i google-chrome || true)
       if [[ -n "$UPDATE_AVAILABLE" ]]; then
         log_info "Update available, installing..."
-        sudo apt install -y google-chrome-stable
-        NEW_VERSION=$($CHROME_CMD --version 2>/dev/null | grep -oP '\d+\.\d+\.\d+\.\d+' || echo "unknown")
-        log_success "Updated: $CURRENT_VERSION → $NEW_VERSION"
+        
+        # Check if Chrome is running and warn user
+        if pgrep -x "chrome" > /dev/null || pgrep -x "google-chrome" > /dev/null; then
+          log_warning "Chrome is currently running. Please close it for the update to take effect."
+          echo "You can close Chrome and run this again, or the update will apply next time Chrome starts."
+        fi
+        
+        # Force update
+        sudo apt update 2>/dev/null
+        sudo apt install -y --only-upgrade google-chrome-stable
+        
+        # Get new version (from package info since Chrome might still show old version until restarted)
+        NEW_VERSION=$(apt list --installed 2>/dev/null | grep google-chrome-stable | cut -d' ' -f2 | cut -d'-' -f1)
+        log_success "Updated package: $CURRENT_VERSION → $NEW_VERSION"
+        log_info "Restart Chrome to use the new version"
       else
         log_success "Already latest: $CURRENT_VERSION"
       fi
