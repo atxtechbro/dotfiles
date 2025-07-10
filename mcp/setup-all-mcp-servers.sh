@@ -40,7 +40,7 @@ setup_scripts=(
     "setup-filesystem-mcp.sh"
     "setup-gitlab-mcp.sh"
     "setup-brave-search-mcp.sh"
-    "setup-gdrive-mcp.sh"
+    # "setup-gdrive-mcp.sh"  # Temporarily disabled - doesn't work currently
 )
 
 failed_setups=()
