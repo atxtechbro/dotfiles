@@ -89,7 +89,7 @@ install_aws_cli_linux() {
         curl -s "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"
     else
         echo -e "${RED}Unsupported architecture: $arch${NC}"
-        cd -
+        cd - >/dev/null 2>&1
         rm -rf "$temp_dir"
         return 1
     fi
@@ -99,7 +99,7 @@ install_aws_cli_linux() {
     sudo ./aws/install --update
     
     # Cleanup
-    cd -
+    cd - >/dev/null 2>&1
     rm -rf "$temp_dir"
 }
 
