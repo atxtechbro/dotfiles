@@ -43,34 +43,9 @@ setup_bedrock_exports() {
     fi
     
     if [[ -f "$local_file" ]]; then
-        echo -e "${YELLOW}Bedrock exports file already exists at $local_file${NC}"
-        echo "Would you like to:"
-        echo "  1) Keep existing file"
-        echo "  2) View existing file"
-        echo "  3) Create from template (backup existing)"
-        read -p "Choose [1-3]: " choice
-        
-        case $choice in
-            1)
-                echo -e "${GREEN}Keeping existing Bedrock configuration${NC}"
-                return 0
-                ;;
-            2)
-                echo -e "${BLUE}Current Bedrock configuration:${NC}"
-                cat "$local_file"
-                echo
-                return 0
-                ;;
-            3)
-                backup_file="$local_file.backup.$(date +%Y%m%d_%H%M%S)"
-                cp "$local_file" "$backup_file"
-                echo -e "${GREEN}Backed up existing file to $backup_file${NC}"
-                ;;
-            *)
-                echo -e "${YELLOW}Invalid choice. Keeping existing file.${NC}"
-                return 0
-                ;;
-        esac
+        echo -e "${GREEN}Bedrock exports file already exists at $local_file${NC}"
+        echo -e "${GREEN}Keeping existing configuration${NC}"
+        return 0
     fi
     
     # Create new file from template
@@ -95,36 +70,20 @@ setup_aws_config() {
     fi
     
     if [[ -f "$aws_config_file" ]]; then
-        echo -e "${YELLOW}AWS config already exists at $aws_config_file${NC}"
-        echo "Would you like to:"
-        echo "  1) Keep existing file"
-        echo "  2) View Bedrock profile template"
-        echo "  3) Append Bedrock profile template to existing config"
-        read -p "Choose [1-3]: " choice
+        echo -e "${GREEN}AWS config already exists at $aws_config_file${NC}"
         
-        case $choice in
-            1)
-                echo -e "${GREEN}Keeping existing AWS configuration${NC}"
-                return 0
-                ;;
-            2)
-                echo -e "${BLUE}Bedrock profile template:${NC}"
-                cat "$template_file"
-                echo
-                return 0
-                ;;
-            3)
-                echo "" >> "$aws_config_file"
-                echo "# Added by dotfiles setup-bedrock-claude.sh on $(date)" >> "$aws_config_file"
-                cat "$template_file" >> "$aws_config_file"
-                echo -e "${GREEN}Appended Bedrock profile template to AWS config${NC}"
-                echo -e "${YELLOW}Please edit $aws_config_file to customize the profile${NC}"
-                ;;
-            *)
-                echo -e "${YELLOW}Invalid choice. Keeping existing file.${NC}"
-                return 0
-                ;;
-        esac
+        # Check if bedrock_profile already exists
+        if grep -q "profile bedrock_profile" "$aws_config_file" 2>/dev/null; then
+            echo -e "${GREEN}Bedrock profile already configured${NC}"
+            return 0
+        else
+            # Append the template
+            echo "" >> "$aws_config_file"
+            echo "# Added by dotfiles setup-bedrock-claude.sh on $(date)" >> "$aws_config_file"
+            cat "$template_file" >> "$aws_config_file"
+            echo -e "${GREEN}Appended Bedrock profile template to AWS config${NC}"
+            echo -e "${YELLOW}Please edit $aws_config_file to customize the profile${NC}"
+        fi
     else
         # Create new config from template
         cp "$template_file" "$aws_config_file"

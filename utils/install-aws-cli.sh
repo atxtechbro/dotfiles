@@ -69,7 +69,7 @@ install_aws_cli_macos() {
         sudo installer -pkg AWSCLIV2.pkg -target /
         
         # Cleanup
-        cd -
+        cd - >/dev/null 2>&1
         rm -rf "$temp_dir"
     fi
 }
@@ -107,22 +107,12 @@ install_aws_cli_linux() {
 update_aws_cli() {
     echo -e "${BLUE}Checking for AWS CLI updates...${NC}"
     
-    # Get latest version from GitHub API
-    local latest_version=$(curl -s https://api.github.com/repos/aws/aws-cli/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    # Skip update check - just report current version
     local current_version=$(get_aws_version)
+    echo -e "${GREEN}✓ AWS CLI version $current_version${NC}"
     
-    if [[ -z "$latest_version" ]]; then
-        echo -e "${YELLOW}Could not determine latest AWS CLI version${NC}"
-        return 0
-    fi
-    
-    if version_gt "$latest_version" "$current_version"; then
-        echo -e "${YELLOW}AWS CLI update available: $current_version → $latest_version${NC}"
-        echo "Updating AWS CLI..."
-        install_aws_cli
-    else
-        echo -e "${GREEN}✓ AWS CLI is up to date (version $current_version)${NC}"
-    fi
+    # Don't do automatic updates - they can be disruptive
+    return 0
 }
 
 # Main execution

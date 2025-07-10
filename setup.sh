@@ -375,20 +375,14 @@ if command -v aws >/dev/null 2>&1; then
   if [[ -f "$HOME/.bash_exports.bedrock.local" ]]; then
     echo -e "${GREEN}✓ AWS Bedrock exports already configured${NC}"
   else
-    echo "AWS CLI is available. Would you like to set up Claude Code with AWS Bedrock?"
+    echo "AWS CLI is available. Setting up Claude Code with AWS Bedrock..."
     echo "This allows running Claude Code through your organization's AWS account."
-    read -p "Setup AWS Bedrock integration? (y/N): " -n 1 -r
-    echo
     
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-      if [[ -f "$DOT_DEN/utils/setup-bedrock-claude.sh" ]]; then
-        bash "$DOT_DEN/utils/setup-bedrock-claude.sh"
-      else
-        echo -e "${YELLOW}Warning: Bedrock setup script not found${NC}"
-      fi
+    # Always set up Bedrock if AWS CLI is available and config doesn't exist
+    if [[ -f "$DOT_DEN/utils/setup-bedrock-claude.sh" ]]; then
+      bash "$DOT_DEN/utils/setup-bedrock-claude.sh"
     else
-      echo "Skipping AWS Bedrock setup. You can run it later with:"
-      echo "  bash $DOT_DEN/utils/setup-bedrock-claude.sh"
+      echo -e "${YELLOW}Warning: Bedrock setup script not found${NC}"
     fi
   fi
 else
