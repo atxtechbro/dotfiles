@@ -355,8 +355,8 @@ echo "Setting up AWS CLI..."
 
 # Install or update AWS CLI
 if [[ -f "$DOT_DEN/utils/install-aws-cli.sh" ]]; then
-  source "$DOT_DEN/utils/install-aws-cli.sh"
-  setup_aws_cli || {
+  # Run in subshell to avoid sourcing issues
+  bash "$DOT_DEN/utils/install-aws-cli.sh" || {
     echo -e "${YELLOW}Warning: AWS CLI installation had issues${NC}"
   }
 else
