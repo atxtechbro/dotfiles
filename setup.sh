@@ -349,6 +349,20 @@ else
   echo -e "${YELLOW}Warning: .claude/settings.json not found. Skipping settings symlink.${NC}"
 fi
 
+# AWS CLI setup (required for Bedrock integration)
+echo -e "${DIVIDER}"
+echo "Setting up AWS CLI..."
+
+# Install or update AWS CLI
+if [[ -f "$DOT_DEN/utils/install-aws-cli.sh" ]]; then
+  source "$DOT_DEN/utils/install-aws-cli.sh"
+  setup_aws_cli || {
+    echo -e "${YELLOW}Warning: AWS CLI installation had issues${NC}"
+  }
+else
+  echo -e "${YELLOW}AWS CLI installation script not found${NC}"
+fi
+
 # AWS Bedrock integration for Claude Code (optional)
 echo -e "${DIVIDER}"
 echo "Checking AWS Bedrock integration..."
