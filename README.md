@@ -244,6 +244,18 @@ To modify a slash command:
 
 **Principle**: This vendor-agnostic approach follows `systems-stewardship` - building reusable patterns across tools.
 
+### AWS Bedrock Integration (Enterprise Claude Code)
+
+Run Claude Code through AWS Bedrock for enterprise environments with proper IAM controls and cost tracking:
+
+- **Quick Setup**: Run `source setup.sh` and answer 'y' when prompted for Bedrock setup
+- **Manual Setup**: Run `bash utils/setup-bedrock-claude.sh`
+- **Configuration**: Templates in `aws/` directory and `.bash_exports.bedrock.template`
+- **Usage**: `claude-bedrock` command with automatic AWS SSO authentication
+- **Documentation**: See [Claude Bedrock Setup Guide](docs/claude-bedrock-setup.md) for detailed instructions
+
+The integration supports multiple AWS profiles, automatic SSO session management, and fallback to standard Claude Code when Bedrock is unavailable.
+
 ## Secret Management
 
 Sensitive information like API tokens are stored in `~/.bash_secrets` (not tracked in git).

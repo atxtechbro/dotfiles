@@ -140,6 +140,11 @@ if [ -f ~/.bash_exports ]; then
     . ~/.bash_exports
 fi
 
+# Load Bedrock exports if available (for Claude Code AWS Bedrock integration)
+if [ -f ~/.bash_exports.bedrock.local ]; then
+    . ~/.bash_exports.bedrock.local
+fi
+
 # Load secrets file if it exists
 if [ -f ~/.bash_secrets ]; then
     . ~/.bash_secrets

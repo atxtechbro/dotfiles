@@ -349,6 +349,39 @@ else
   echo -e "${YELLOW}Warning: .claude/settings.json not found. Skipping settings symlink.${NC}"
 fi
 
+# AWS Bedrock integration for Claude Code (optional)
+echo -e "${DIVIDER}"
+echo "Checking AWS Bedrock integration..."
+
+# Check if AWS CLI is installed
+if command -v aws >/dev/null 2>&1; then
+  echo -e "${GREEN}✓ AWS CLI is installed${NC}"
+  
+  # Check if Bedrock setup has already been done
+  if [[ -f "$HOME/.bash_exports.bedrock.local" ]]; then
+    echo -e "${GREEN}✓ AWS Bedrock exports already configured${NC}"
+  else
+    echo "AWS CLI is available. Would you like to set up Claude Code with AWS Bedrock?"
+    echo "This allows running Claude Code through your organization's AWS account."
+    read -p "Setup AWS Bedrock integration? (y/N): " -n 1 -r
+    echo
+    
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      if [[ -f "$DOT_DEN/utils/setup-bedrock-claude.sh" ]]; then
+        bash "$DOT_DEN/utils/setup-bedrock-claude.sh"
+      else
+        echo -e "${YELLOW}Warning: Bedrock setup script not found${NC}"
+      fi
+    else
+      echo "Skipping AWS Bedrock setup. You can run it later with:"
+      echo "  bash $DOT_DEN/utils/setup-bedrock-claude.sh"
+    fi
+  fi
+else
+  echo -e "${YELLOW}AWS CLI not found. Skipping Bedrock integration.${NC}"
+  echo "To use Claude Code with AWS Bedrock, install AWS CLI first:"
+  echo "  https://aws.amazon.com/cli/"
+fi
 
 # Node.js setup with NVM
 echo -e "${DIVIDER}"

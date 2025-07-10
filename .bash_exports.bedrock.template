@@ -1,0 +1,27 @@
+#!/bin/bash
+# AWS Bedrock Configuration for Claude Code
+# Copy this to ~/.bash_exports.bedrock.local and customize with your specific values
+
+# Enable Bedrock integration
+export CLAUDE_CODE_USE_BEDROCK=1
+
+# AWS Region for Bedrock (required)
+export AWS_REGION=us-east-1
+
+# Optional: Override region for small/fast model (Haiku)
+# export ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION=us-west-2
+
+# AWS Profile to use (customize this with your profile name)
+export AWS_PROFILE=bedrock_profile
+
+# Model configuration
+# Using inference profile IDs (recommended)
+export ANTHROPIC_MODEL='us.anthropic.claude-3-7-sonnet-20250219-v1:0'
+export ANTHROPIC_SMALL_FAST_MODEL='us.anthropic.claude-3-5-haiku-20241022-v1:0'
+
+# Alternative: Using application inference profile ARNs
+# export ANTHROPIC_MODEL='arn:aws:bedrock:us-east-1:YOUR_ACCOUNT_ID:application-inference-profile/YOUR_PROFILE_ID'
+# export ANTHROPIC_SMALL_FAST_MODEL='arn:aws:bedrock:us-east-1:YOUR_ACCOUNT_ID:application-inference-profile/YOUR_PROFILE_ID'
+
+# Optional: Additional AWS configurations
+# export AWS_SESSION_DURATION=8h  # SSO session duration

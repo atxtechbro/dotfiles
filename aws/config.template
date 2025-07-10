@@ -1,0 +1,20 @@
+# AWS SSO Configuration Template for Bedrock Access
+# Copy this to ~/.aws/config and customize with your organization's values
+
+# Example profile for Claude Code Bedrock access
+[profile bedrock_profile]
+sso_start_url  = https://your-org.awsapps.com/start
+sso_region     = us-east-1
+sso_account_id = YOUR_ACCOUNT_ID
+sso_role_name  = YOUR_ROLE_NAME
+region         = us-east-1
+cli_pager      =
+
+# You can add multiple profiles for different environments
+# [profile bedrock_dev]
+# sso_start_url  = https://your-org.awsapps.com/start
+# sso_region     = us-east-1
+# sso_account_id = YOUR_DEV_ACCOUNT_ID
+# sso_role_name  = YOUR_DEV_ROLE_NAME
+# region         = us-east-1
+# cli_pager      =
