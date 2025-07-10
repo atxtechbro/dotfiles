@@ -244,6 +244,17 @@ To modify a slash command:
 
 **Principle**: This vendor-agnostic approach follows `systems-stewardship` - building reusable patterns across tools.
 
+### Claude Code Settings
+
+Global Claude Code settings are managed through `.claude/settings.json`. This file is symlinked to `~/.claude/settings.json` by the setup script, ensuring settings persist across all projects.
+
+To add or modify Claude Code settings:
+1. Edit `.claude/settings.json` in the dotfiles repo
+2. Run `source setup.sh` to update the symlink
+3. Settings apply globally to all Claude Code sessions
+
+Current configured settings include co-authorship attribution, MCP servers, permissions, and more.
+
 ## Secret Management
 
 Sensitive information like API tokens are stored in `~/.bash_secrets` (not tracked in git).
