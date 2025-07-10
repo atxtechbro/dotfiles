@@ -81,5 +81,6 @@
     "filesystem",
     "gdrive",
     "gitlab"
-  ]
+  ],
+  "includeCoAuthoredBy": false
 }
