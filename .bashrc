@@ -140,7 +140,12 @@ if [ -f ~/.bash_exports ]; then
     . ~/.bash_exports
 fi
 
-# Load Bedrock exports if available (for Claude Code AWS Bedrock integration)
+# Load default Claude Code configuration first (non-Bedrock)
+if [ -f ~/.bash_exports.claude.local ]; then
+    . ~/.bash_exports.claude.local
+fi
+
+# Load Bedrock exports if available (overrides defaults for enterprise users)
 if [ -f ~/.bash_exports.bedrock.local ]; then
     . ~/.bash_exports.bedrock.local
 fi

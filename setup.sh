@@ -363,9 +363,25 @@ else
   echo -e "${YELLOW}AWS CLI installation script not found${NC}"
 fi
 
-# AWS Bedrock integration for Claude Code (optional)
+# Claude Code configuration setup
 echo -e "${DIVIDER}"
-echo "Checking AWS Bedrock integration..."
+echo "Setting up Claude Code configuration..."
+
+# Step 1: Always establish non-Bedrock defaults first
+if [[ ! -f "$HOME/.bash_exports.claude.local" ]]; then
+  echo -e "${BLUE}Creating default Claude Code configuration (non-Bedrock)...${NC}"
+  if [[ -f "$DOT_DEN/.bash_exports.claude.template" ]]; then
+    cp "$DOT_DEN/.bash_exports.claude.template" "$HOME/.bash_exports.claude.local"
+    echo -e "${GREEN}✓ Created default Claude Code configuration${NC}"
+  else
+    echo -e "${YELLOW}Warning: Claude template not found${NC}"
+  fi
+else
+  echo -e "${GREEN}✓ Claude Code configuration already exists${NC}"
+fi
+
+# Step 2: AWS Bedrock integration (optional, opt-in only)
+echo -e "${BLUE}Checking AWS Bedrock integration (optional)...${NC}"
 
 # Check if AWS CLI is installed
 if command -v aws >/dev/null 2>&1; then
@@ -374,20 +390,26 @@ if command -v aws >/dev/null 2>&1; then
   # Check if Bedrock setup has already been done
   if [[ -f "$HOME/.bash_exports.bedrock.local" ]]; then
     echo -e "${GREEN}✓ AWS Bedrock exports already configured${NC}"
+    echo -e "${YELLOW}Note: Bedrock config will override default Claude settings when sourced${NC}"
   else
-    echo "AWS CLI is available. Setting up Claude Code with AWS Bedrock..."
+    echo "AWS CLI is available. You can optionally set up Claude Code with AWS Bedrock."
     echo "This allows running Claude Code through your organization's AWS account."
-    
-    # Always set up Bedrock if AWS CLI is available and config doesn't exist
-    if [[ -f "$DOT_DEN/utils/setup-bedrock-claude.sh" ]]; then
-      bash "$DOT_DEN/utils/setup-bedrock-claude.sh"
+    echo ""
+    read -p "Would you like to set up AWS Bedrock integration? (y/N): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      if [[ -f "$DOT_DEN/utils/setup-bedrock-claude.sh" ]]; then
+        bash "$DOT_DEN/utils/setup-bedrock-claude.sh"
+      else
+        echo -e "${YELLOW}Warning: Bedrock setup script not found${NC}"
+      fi
     else
-      echo -e "${YELLOW}Warning: Bedrock setup script not found${NC}"
+      echo -e "${GREEN}✓ Skipping Bedrock setup - using default Claude Code configuration${NC}"
     fi
   fi
 else
-  echo -e "${YELLOW}AWS CLI not found. Skipping Bedrock integration.${NC}"
-  echo "To use Claude Code with AWS Bedrock, install AWS CLI first:"
+  echo -e "${YELLOW}AWS CLI not found. Using default Claude Code configuration.${NC}"
+  echo "To use Claude Code with AWS Bedrock later, install AWS CLI first:"
   echo "  https://aws.amazon.com/cli/"
 fi
 

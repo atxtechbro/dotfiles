@@ -1,0 +1,18 @@
+#!/bin/bash
+# Default Claude Code Configuration Template (Non-Bedrock)
+# Copy this to ~/.bash_exports.claude.local and customize as needed
+
+# Explicitly disable Bedrock integration (this is the default)
+export CLAUDE_CODE_USE_BEDROCK=0
+
+# Clear any AWS-related environment variables that might interfere
+unset AWS_REGION
+unset AWS_PROFILE
+unset ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION
+
+# Standard model configuration - customize as needed
+export ANTHROPIC_MODEL='claude-3-opus-latest'
+export ANTHROPIC_SMALL_FAST_MODEL='claude-3-5-haiku-20241022'
+
+# Ensure we're using the standard Anthropic API
+unset ANTHROPIC_BASE_URL

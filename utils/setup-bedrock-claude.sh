@@ -127,7 +127,12 @@ main() {
     fi
     
     echo
+    echo
     echo -e "${GREEN}Bedrock setup complete!${NC}"
+    echo
+    echo -e "${BLUE}Important:${NC} This Bedrock configuration will override the default Claude Code setup."
+    echo "- Default: ~/.bash_exports.claude.local (standard Anthropic API)"
+    echo "- Bedrock: ~/.bash_exports.bedrock.local (AWS Bedrock - loaded after defaults)"
     echo
     echo "Next steps:"
     echo "1. Edit ~/.bash_exports.bedrock.local with your AWS account details"
@@ -136,6 +141,7 @@ main() {
     echo "4. Run: source ~/.bashrc"
     echo "5. Run: claude-bedrock (or just 'claude' with Bedrock env vars set)"
     echo
+    echo "To temporarily use default Claude Code, run: source ~/.bash_exports.claude.local"
     echo "For more information, see: docs/claude-bedrock-setup.md"
 }
 

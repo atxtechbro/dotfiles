@@ -244,9 +244,18 @@ To modify a slash command:
 
 **Principle**: This vendor-agnostic approach follows `systems-stewardship` - building reusable patterns across tools.
 
-### AWS Bedrock Integration (Enterprise Claude Code)
+### Claude Code Configuration
 
-Run Claude Code through AWS Bedrock for enterprise environments with proper IAM controls and cost tracking:
+Claude Code is configured to work out-of-the-box with the standard Anthropic API using Claude Opus as the default model:
+
+- **Default Setup**: Run `source setup.sh` for immediate Claude Code functionality
+- **Model**: Claude 3 Opus Latest (configurable via `ANTHROPIC_MODEL`)
+- **Configuration**: Stored in `~/.bash_exports.claude.local` (created from template)
+- **No AWS Required**: Works immediately with your Anthropic API key
+
+### AWS Bedrock Integration (Optional Enterprise Feature)
+
+For enterprise environments, you can optionally run Claude Code through AWS Bedrock with proper IAM controls and cost tracking:
 
 - **Quick Setup**: Run `source setup.sh` and answer 'y' when prompted for Bedrock setup
 - **Manual Setup**: Run `bash utils/setup-bedrock-claude.sh`
