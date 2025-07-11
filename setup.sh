@@ -660,6 +660,17 @@ echo -e "${GREEN}✅ Dotfiles setup complete!${NC}"
 echo "Your development environment is now configured and ready to use."
 echo -e "${DIVIDER}"
 
+# Reload environment configuration to ensure current session has correct settings
+echo "Reloading environment configuration..."
+if [[ -f ~/.bash_exports.claude.local ]]; then
+    source ~/.bash_exports.claude.local
+    echo -e "${GREEN}✓ Claude Code configured for standard Anthropic API${NC}"
+    echo "  CLAUDE_CODE_USE_BEDROCK: ${CLAUDE_CODE_USE_BEDROCK:-not set}"
+    echo "  ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-not set}"
+else
+    echo -e "${YELLOW}Warning: Claude Code default configuration not found${NC}"
+fi
+
 # Clear the error trap to prevent it from persisting in the shell session
 trap - ERR
 
