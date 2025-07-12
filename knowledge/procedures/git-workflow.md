@@ -37,6 +37,10 @@ Starting from a stale foundation guarantees the recovery tax - double work to ac
 
 These standards make intent visible and prevent the recovery tax.
 
+## Post-Merge Best Practice
+After merging a PR, switch to the base branch and pull latest to avoid working on stale code.
+→ [versioning-mindset](../principles/versioning-mindset.md) (stay current with ground truth)
+
 ## Common Errors to Avoid
 - Don't thank self when closing your own PRs
 

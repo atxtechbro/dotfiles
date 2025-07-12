@@ -40,8 +40,8 @@ setup_scripts=(
     "setup-filesystem-mcp.sh"
     "setup-gitlab-mcp.sh"
     "setup-brave-search-mcp.sh"
-    "setup-gdrive-mcp.sh"
     "setup-playwright-mcp.sh"
+    # "setup-gdrive-mcp.sh"  # Commented out to improve setup time - run manually when needed
 )
 
 failed_setups=()
