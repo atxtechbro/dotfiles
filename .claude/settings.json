@@ -60,17 +60,6 @@
     "MCP_TOOL_TIMEOUT": "60000",
     "MAX_MCP_OUTPUT_TOKENS": "25000"
   },
-  "theme": "dark-daltonized",
-  "editorMode": "normal",
-  "autoUpdates": true,
-  "verbose": true,
-  "preferredNotifChannel": "terminal_bell",
-  "diffTool": "auto",
-  "parallelTasksCount": 1,
-  "todoFeatureEnabled": true,
-  "messageIdleNotifThresholdMs": 60000,
-  "autoConnectIde": false,
-  "autoCompactEnabled": true,
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
     "awslabs.aws-documentation-mcp-server",
