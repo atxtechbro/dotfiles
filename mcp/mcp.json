@@ -48,6 +48,11 @@
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
       }
+    },
+    "playwright": {
+      "command": "playwright-mcp-wrapper.sh",
+      "args": [],
+      "env": {}
     }
   }
 }
