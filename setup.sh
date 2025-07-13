@@ -246,10 +246,14 @@ else
   echo -e "${YELLOW}Vendor-agnostic MCP setup script not found. Skipping MCP configuration setup.${NC}"
 fi
 
-# Set up all MCP servers (works in worktrees)
-if [[ -f "$DOT_DEN/mcp/setup-all-mcp-servers.sh" ]]; then
+# Set up all MCP servers (global installation)
+if [[ -f "$DOT_DEN/mcp/setup-global-mcp-servers.sh" ]]; then
   echo -e "${DIVIDER}"
-  echo "Setting up MCP servers..."
+  echo "Setting up global MCP servers..."
+  "$DOT_DEN/mcp/setup-global-mcp-servers.sh"
+elif [[ -f "$DOT_DEN/mcp/setup-all-mcp-servers.sh" ]]; then
+  echo -e "${DIVIDER}"
+  echo "Setting up MCP servers (local fallback)..."
   "$DOT_DEN/mcp/setup-all-mcp-servers.sh"
 else
   echo -e "${YELLOW}MCP server setup script not found. Skipping MCP server setup.${NC}"
@@ -347,6 +351,46 @@ if [[ -f "$DOT_DEN/.claude/settings.json" ]]; then
   echo -e "${GREEN}✓ Claude Code global settings symlinked to ~/.claude/settings.json${NC}"
 else
   echo -e "${YELLOW}Warning: .claude/settings.json not found. Skipping settings symlink.${NC}"
+fi
+
+# Setup global Claude personalities
+if [[ -d "$DOT_DEN/.claude/personalities" ]]; then
+  echo "Setting up global Claude personalities..."
+  # Create global personalities directory
+  mkdir -p "$HOME/.claude/personalities"
+  
+  # Copy personality files to global location
+  cp -r "$DOT_DEN/.claude/personalities/"* "$HOME/.claude/personalities/" 2>/dev/null || true
+  
+  echo -e "${GREEN}✓ Claude personalities copied to ~/.claude/personalities/${NC}"
+  echo "  Available personalities:"
+  for personality in "$HOME/.claude/personalities"/*.md; do
+    if [[ -f "$personality" ]] && [[ "$(basename "$personality")" != "README.md" ]]; then
+      echo "  - $(basename "$personality" .md)"
+    fi
+  done
+else
+  echo -e "${YELLOW}Warning: .claude/personalities directory not found. Skipping personalities setup.${NC}"
+fi
+
+# Setup global command templates
+if [[ -d "$DOT_DEN/commands/templates" ]]; then
+  echo "Setting up global command templates..."
+  # Create global command templates directory
+  mkdir -p "$HOME/.claude/command-templates"
+  
+  # Copy command templates to global location
+  cp -r "$DOT_DEN/commands/templates/"* "$HOME/.claude/command-templates/" 2>/dev/null || true
+  
+  echo -e "${GREEN}✓ Command templates copied to ~/.claude/command-templates/${NC}"
+  echo "  Available templates:"
+  for template in "$HOME/.claude/command-templates"/*.md; do
+    if [[ -f "$template" ]]; then
+      echo "  - $(basename "$template" .md)"
+    fi
+  done
+else
+  echo -e "${YELLOW}Warning: commands/templates directory not found. Skipping command templates setup.${NC}"
 fi
 
 
