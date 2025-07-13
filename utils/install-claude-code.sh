@@ -114,13 +114,15 @@ configure_claude_mcp() {
     fi
     
     echo -e "\n${BLUE}MCP Configuration Notes:${NC}"
-    echo -e "  • Dotfiles provides: $DOT_DEN/.mcp.json"
+    echo -e "  • Global MCP config: $DOT_DEN/mcp/mcp.json"
     echo -e "  • Work-only servers (Atlassian, GitLab) require WORK_MACHINE=true"
-    echo -e "  • To use in other projects: Copy .mcp.json to that project's root"
+    echo -e "  • ${GREEN}Global access enabled:${NC} 'claude' alias includes --mcp-config automatically"
+    echo -e "  • MCP servers available from ANY directory after running setup.sh"
     echo -e "\n${YELLOW}Claude Code MCP commands:${NC}"
     echo -e "  • List servers: claude mcp list"
-    echo -e "  • Add local override: claude mcp add <name> <command>"
-    echo -e "  • Force config file: claude --mcp-config /path/to/mcp.json"
+    echo -e "  • Add user-scoped server: claude mcp add <name> <command> -s user"
+    echo -e "  • Check MCP info: claude-mcp-info"
+    echo -e "  • Use strict global config: claude-global <command>"
 }
 
 # Run setup if script is executed directly (not sourced)
