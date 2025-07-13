@@ -2,8 +2,9 @@
 # Include this file in your .bashrc or .bash_aliases
 
 # Source the cross-platform clipboard utility
-if [[ -f "$HOME/ppv/pillars/dotfiles/utils/clipboard.sh" ]]; then
-    source "$HOME/ppv/pillars/dotfiles/utils/clipboard.sh"
+DOT_DEN="${DOT_DEN:-$HOME/ppv/pillars/dotfiles}"
+if [[ -f "$DOT_DEN/utils/clipboard.sh" ]]; then
+    source "$DOT_DEN/utils/clipboard.sh"
 fi
 
 # Copy command output to clipboard

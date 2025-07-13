@@ -15,11 +15,18 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/utils/mcp-logging.sh"
 
 # Path to the Git MCP server directory
-SERVER_DIR="$SCRIPT_DIR/servers/git-mcp-server"
+# Check global installation first, then fall back to local
+GLOBAL_SERVER_DIR="$HOME/.mcp/servers/git-mcp-server"
+LOCAL_SERVER_DIR="$SCRIPT_DIR/servers/git-mcp-server"
 
-# Check if server directory exists
-if [[ ! -d "$SERVER_DIR" ]]; then
-  mcp_log_error "GIT" "Server directory not found: $SERVER_DIR" "Run setup-git-mcp.sh to install the Git MCP server"
+if [[ -d "$GLOBAL_SERVER_DIR" ]]; then
+  SERVER_DIR="$GLOBAL_SERVER_DIR"
+  mcp_log_debug "GIT" "Using global server at: $SERVER_DIR"
+elif [[ -d "$LOCAL_SERVER_DIR" ]]; then
+  SERVER_DIR="$LOCAL_SERVER_DIR"
+  mcp_log_debug "GIT" "Using local server at: $SERVER_DIR"
+else
+  mcp_log_error "GIT" "Server directory not found in global ($GLOBAL_SERVER_DIR) or local ($LOCAL_SERVER_DIR) locations" "Run setup-git-mcp.sh or setup-global-mcp-servers.sh to install the Git MCP server"
   exit 1
 fi
 

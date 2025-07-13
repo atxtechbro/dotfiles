@@ -63,7 +63,7 @@ The agent should:
 The `/retro` command will select an appropriate consultant personality based on PR context:
 - **Jonah**: When dealing with constraints, bottlenecks, or competing priorities
 - **Brent**: When heroic interventions occurred or knowledge gaps were exposed
-- Future personalities can be added to `.claude/personalities/` as needed
+- Future personalities can be added to `~/.claude/personalities/` as needed
 
 This ensures each retro has a specific lens while maintaining a single, unified command.
 

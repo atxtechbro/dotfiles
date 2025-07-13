@@ -140,9 +140,10 @@ setup_neovim_config() {
     mkdir -p ~/.config
     
     # Link Neovim configuration if dotfiles are available
-    if [[ -d "$HOME/ppv/pillars/dotfiles/nvim" ]]; then
+    DOT_DEN="${DOT_DEN:-$HOME/ppv/pillars/dotfiles}"
+    if [[ -d "$DOT_DEN/nvim" ]]; then
         rm -rf ~/.config/nvim
-        ln -sfn "$HOME/ppv/pillars/dotfiles/nvim" ~/.config/nvim
+        ln -sfn "$DOT_DEN/nvim" ~/.config/nvim
         log_success "Config linked"
     else
         log_warning "nvim config not found"

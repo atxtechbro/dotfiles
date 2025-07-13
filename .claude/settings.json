@@ -100,7 +100,7 @@
       "mcp__gdrive",
       "mcp__gitlab",
       
-      "Bash(/home/linuxmint-lp/ppv/pillars/dotfiles/utils/generate-claude-commands.sh:*)",
+      "Bash(generate-commands:*)",
       "Bash(./utils/configure-claude-code-settings.sh:*)",
       "Bash(check-mcp-logs:*)",
       "Bash(python:*)",
