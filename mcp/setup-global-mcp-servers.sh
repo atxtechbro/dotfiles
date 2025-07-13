@@ -82,63 +82,17 @@ for wrapper in "$SCRIPT_DIR"/*-wrapper.sh; do
     fi
 done
 
-# Create a global mcp.json that references global locations
+# Create a global mcp.json from template
 echo -e "\n${GREEN}Creating global MCP configuration...${NC}"
-cat > "$GLOBAL_MCP_DIR/mcp.json" << 'EOF'
-{
-  "mcpServers": {
-    "git": {
-      "command": "~/.mcp/wrappers/git-mcp-wrapper.sh",
-      "args": [],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
-    "github-read": {
-      "command": "~/.mcp/wrappers/github-mcp-read-wrapper.sh",
-      "args": [],
-      "env": {}
-    },
-    "github-write": {
-      "command": "~/.mcp/wrappers/github-mcp-write-wrapper.sh",
-      "args": [],
-      "env": {}
-    },
-    "gitlab": {
-      "command": "~/.mcp/wrappers/gitlab-mcp-wrapper.sh",
-      "args": [],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR",
-        "GITLAB_READ_ONLY_MODE": "false",
-        "USE_GITLAB_WIKI": "true",
-        "USE_MILESTONE": "true",
-        "USE_PIPELINE": "true"
-      }
-    },
-    "brave-search": {
-      "command": "~/.mcp/wrappers/brave-search-mcp-wrapper.sh",
-      "args": [],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
-    "filesystem": {
-      "command": "~/.mcp/wrappers/filesystem-mcp-wrapper.sh",
-      "args": [],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
-    "gdrive": {
-      "command": "~/.mcp/wrappers/gdrive-mcp-wrapper.sh",
-      "args": [],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    }
-  }
-}
-EOF
+CONFIG_TEMPLATE="$SCRIPT_DIR/config/global-mcp-template.json"
+
+if [[ -f "$CONFIG_TEMPLATE" ]]; then
+    cp "$CONFIG_TEMPLATE" "$GLOBAL_MCP_DIR/mcp.json"
+    echo "Global MCP configuration created from template"
+else
+    echo -e "${RED}Error: Configuration template not found at $CONFIG_TEMPLATE${NC}"
+    exit 1
+fi
 
 # Add global MCP wrappers to PATH
 echo -e "\n${GREEN}Adding global MCP to PATH...${NC}"
