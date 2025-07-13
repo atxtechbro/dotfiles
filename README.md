@@ -130,6 +130,31 @@ At an even higher level, this is all about **creating value by serving others**.
 
 This serving mindset acknowledges the tension as a pendulum rather than trying to eliminate it. Like Ecclesiastes 3:1 says, there's a season for everything - sometimes lean into systems work to build leverage, sometimes focus purely on delivery. The key is conscious awareness and feedback loops, always returning to: "How does this serve others better?"
 
+### Global-First Configuration
+
+This principle establishes that configurations in dotfiles should default to global application unless explicitly marked otherwise. This aligns with the fundamental purpose of a dotfiles repository - to provide consistent configuration across your entire system.
+
+**Core Principle**: When implementing features, bias toward global configuration over local. Dotfiles are for global configuration.
+
+**Implementation Guidelines**:
+- **Default**: Make configurations global (system-wide)
+- **Exception**: If a configuration must be local, document why and add a plan to make it global
+- **Pattern**: Use aliases, symlinks, or tool-specific global config locations
+
+**Examples**:
+- ✅ MCP configuration via `claude` alias with `--mcp-config` (global by default)
+- ✅ Bash aliases sourced from `~/.bashrc` (apply everywhere)
+- ⚠️  Claude Code settings migration to `~/.claude/settings.json` (work in progress, see #577)
+
+**Documentation Distinction**:
+- **README.md**: Repository-specific documentation and principles (this file)
+- **knowledge/ directory**: Global context that applies across ALL repositories
+  - Automatically included in AI assistant context windows
+  - Contains principles, procedures, and patterns used everywhere
+  - Think of it as "portable wisdom" that travels with you
+
+When in doubt, ask: "Should this apply everywhere I code?" If yes → global configuration. If it's specific to how this dotfiles repo works → document it here in README.md.
+
 ## Repository Design Patterns
 
 This repository follows specific organizational patterns to maintain consistency and clarity:
