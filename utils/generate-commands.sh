@@ -19,11 +19,23 @@ PROMPT_ORCHESTRATOR="$SCRIPT_DIR/prompt_orchestrator.py"
 PROVIDER_CONFIG="$DOTFILES_DIR/.config/provider_dirs.conf"
 
 # Default provider directories if no config file exists
-# Use the vendor-agnostic commands/templates directory for all providers
+# Check global templates first, then fall back to local templates
+GLOBAL_TEMPLATES="$HOME/.claude/command-templates"
+LOCAL_TEMPLATES="$DOTFILES_DIR/commands/templates"
+
+# Use global templates if they exist, otherwise fall back to local
+if [[ -d "$GLOBAL_TEMPLATES" ]] && [[ "$(find "$GLOBAL_TEMPLATES" -name "*.md" -type f 2>/dev/null | wc -l)" -gt 0 ]]; then
+    TEMPLATE_SOURCE="$GLOBAL_TEMPLATES"
+    echo "Using global command templates from: $GLOBAL_TEMPLATES"
+else
+    TEMPLATE_SOURCE="$LOCAL_TEMPLATES"
+    echo "Using local command templates from: $LOCAL_TEMPLATES"
+fi
+
 declare -A DEFAULT_PROVIDER_DIRS=(
-    ["claude"]="$DOTFILES_DIR/commands/templates|$HOME/.claude/commands"
-    ["amazonq"]="$DOTFILES_DIR/commands/templates|$HOME/.amazonq/commands"
-    ["cursor"]="$DOTFILES_DIR/commands/templates|$HOME/.cursor/commands"
+    ["claude"]="$TEMPLATE_SOURCE|$HOME/.claude/commands"
+    ["amazonq"]="$TEMPLATE_SOURCE|$HOME/.amazonq/commands"
+    ["cursor"]="$TEMPLATE_SOURCE|$HOME/.cursor/commands"
 )
 
 # Load provider directories from config file if it exists
