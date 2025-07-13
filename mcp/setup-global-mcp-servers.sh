@@ -143,7 +143,7 @@ EOF
 # Add global MCP wrappers to PATH
 echo -e "\n${GREEN}Adding global MCP to PATH...${NC}"
 if ! grep -q "export PATH=\"\$HOME/.mcp/wrappers:\$PATH\"" ~/.bashrc; then
-    echo 'export PATH="$HOME/.mcp/wrappers:$PATH"' >> ~/.bashrc
+    echo "export PATH=\"\$HOME/.mcp/wrappers:\$PATH\"" >> ~/.bashrc
     echo "Added ~/.mcp/wrappers to PATH in ~/.bashrc"
 fi
 
