@@ -8,6 +8,10 @@ A living log of notable changes, decisions, and modifications to the dotfiles se
 - Added `.bash_aliases.d/claude-mcp.sh` - provides global MCP access without manual copying (Spilled Coffee)
 - Enhanced `install-claude-code.sh` docs - clarified global MCP configuration approach (Systems Stewardship)
 - Added README section for Global MCP Configuration - documented commands and usage (Transparency in Agent Work)
+- **Global Claude Settings**: Enhanced wrapper to apply env vars and permissions from settings.json globally (#794)
+- Unified MCP and settings into single wrapper - exports env vars and passes allowed tools (Invent and Simplify)
+- Added `claude-test-settings` function - verify global settings are applied correctly (Tracer Bullets)
+- Workaround for Claude Code not reading ~/.claude/settings.json yet (Systems Stewardship)
 
 ## 2025-06-22
 

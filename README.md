@@ -255,31 +255,42 @@ To add or modify Claude Code settings:
 
 Current configured settings include co-authorship attribution, MCP servers, permissions, and more.
 
-## Global MCP Configuration
+## Global Claude Code Configuration
 
-The dotfiles provide global access to MCP (Model Context Protocol) servers from any directory on your system. After running `source setup.sh`, MCP servers are automatically available through the `claude` command alias.
+The dotfiles provide global configuration for Claude Code, including MCP servers, environment variables, and permissions. After running `source setup.sh`, these settings are automatically applied to all Claude sessions.
 
 ### How it works
 
-1. **Central Configuration**: MCP servers are defined in `mcp/mcp.json`
-2. **Global Alias**: The `claude` command is aliased to include `--mcp-config` automatically
-3. **Work Anywhere**: No need to copy `.mcp.json` files to each project directory
+1. **MCP Servers**: Defined in `mcp/mcp.json` and applied via `--mcp-config`
+2. **Settings**: Environment variables and permissions from `.claude/settings.json` 
+3. **Unified Wrapper**: The `claude` command applies both MCP and settings globally
+4. **Work Anywhere**: No need to copy configuration files to each project
 
 ### Available Commands
 
 ```bash
-# Standard claude command (includes global MCP config automatically)
+# Standard claude command (includes all global settings)
 claude "What files are in this directory?"
 
-# Check current MCP configuration
-claude-mcp-info
+# Check all global configurations
+claude-global-info
 
-# Use strict global config (ignores any local .mcp.json files)
-claude-global "Run a command with only global MCP servers"
+# Test if settings are being applied
+claude-test-settings
 
-# Add user-scoped servers (persists across all projects)
-claude mcp add my-server -s user /path/to/server
+# Use strict global config (ignores any local files)
+claude-global "Run with only global settings"
 ```
+
+### Global Settings Applied
+
+The following settings from `.claude/settings.json` are applied globally:
+
+- **Environment Variables**: Token limits, timeouts, and feature flags
+- **Permissions**: Allowed tools and commands
+- **MCP Servers**: Enabled servers from the configuration
+
+Note: Some settings like `includeCoAuthoredBy` require Claude Code to complete its migration to `settings.json`.
 
 ### MCP Servers Included
 
