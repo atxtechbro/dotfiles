@@ -24,7 +24,7 @@ claude-mcp-info() {
         jq -r '.mcpServers | keys[]' "$GLOBAL_MCP_CONFIG" 2>/dev/null | sed 's/^/  - /' || echo "  (unable to parse config)"
     else
         echo "✗ Config file not found!"
-        echo "  Run 'source ~/ppv/pillars/dotfiles/setup.sh' to set up MCP configuration"
+        echo "  Run 'source \$DOT_DEN/setup.sh' to set up MCP configuration"
     fi
 }
 
