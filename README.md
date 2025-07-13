@@ -255,6 +255,45 @@ To add or modify Claude Code settings:
 
 Current configured settings include co-authorship attribution, MCP servers, permissions, and more.
 
+## Global MCP Configuration
+
+The dotfiles provide global access to MCP (Model Context Protocol) servers from any directory on your system. After running `source setup.sh`, MCP servers are automatically available through the `claude` command alias.
+
+### How it works
+
+1. **Central Configuration**: MCP servers are defined in `mcp/mcp.json`
+2. **Global Alias**: The `claude` command is aliased to include `--mcp-config` automatically
+3. **Work Anywhere**: No need to copy `.mcp.json` files to each project directory
+
+### Available Commands
+
+```bash
+# Standard claude command (includes global MCP config automatically)
+claude "What files are in this directory?"
+
+# Check current MCP configuration
+claude-mcp-info
+
+# Use strict global config (ignores any local .mcp.json files)
+claude-global "Run a command with only global MCP servers"
+
+# Add user-scoped servers (persists across all projects)
+claude mcp add my-server -s user /path/to/server
+```
+
+### MCP Servers Included
+
+The dotfiles include pre-configured MCP servers for:
+- Git operations (git-mcp-server)
+- GitHub integration (github-mcp-server with read/write split)
+- GitLab integration (requires glab CLI)
+- Brave Search API
+- Filesystem operations
+- Google Drive access
+- Atlassian tools (work machines only)
+
+Work-specific servers (Atlassian, GitLab) require `WORK_MACHINE=true` in `~/.bash_exports.local`.
+
 ## Secret Management
 
 Sensitive information like API tokens are stored in `~/.bash_secrets` (not tracked in git).
