@@ -23,6 +23,8 @@ From Sam Carpenter's "Work the System" - adopt an external vantage point to see 
 - When tempted to dive in, ask "What would I delegate?"
 - "Vísteme despacio, que tengo prisa" - move deliberately, not frantically
 - **Never let a crisis go to waste**: Each failure becomes input for stronger procedures and prevention systems
+- **Leave cookie crumbs**: Document architectural decisions inline where future engineers encounter them. Git commit messages fade into history; inline comments create discoverable breadcrumbs for faster resolution.
+- **Gitignore as architectural documentation**: Every gitignore entry embeds meaning about system structure. `# Setup-generated symlinks (avoid duplicating tracked content)` tells the story of why `.claude/command-templates` exists. Each line is a clue to underlying architecture, not just file exclusion.
 
 **GitHub Issues as WIP Inventory:**
 - Backlog buildup indicates bottlenecks in the development flow
