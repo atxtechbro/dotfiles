@@ -21,6 +21,8 @@
 CLAUDE.local.md
 # Claude Code local settings (personal overrides, not for source control per Anthropic docs)
 .claude/settings.local.json
+# Setup-generated symlinks (avoid duplicating tracked content)
+.claude/command-templates
 
 # Private SSH keys
 id_rsa
@@ -77,6 +79,9 @@ build/
 # MCP client directories
 mcp/clients/
 .nrepl-port
+
+# MCP server convenience symlinks (setup-generated executables)
+mcp/servers/*/git_mcp_server.py
 
 # Screenshots directory
 # Keep the directory structure but ignore all screenshot files

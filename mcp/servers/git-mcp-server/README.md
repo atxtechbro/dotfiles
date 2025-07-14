@@ -26,4 +26,5 @@ All standard Git operations: status, diff, commit, add, branch, checkout, push, 
 
 - Dependencies are in `.venv/` managed by the setup script
 - To modify: edit files in `src/mcp_server_git/` and restart your MCP client
+- `git_mcp_server.py` is a setup-generated symlink to `src/mcp_server_git/__main__.py` and is gitignored
 - Part of the dotfiles Snowball Method for continuous improvement
