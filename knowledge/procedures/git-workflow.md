@@ -13,6 +13,33 @@
 - Remember: Commits build toward PRs - that's where feedback happens
   → [systems-stewardship](../principles/systems-stewardship.md) (OSE perspective)
 
+## Documentation Over Git History
+
+**Cookie Crumbs Principle**: Document the "why" in files, not just in commit messages. Git history is hard to search and easily lost; procedure documentation is discoverable and persistent.
+
+**What belongs in documentation vs git history:**
+- **Documentation**: Why decisions were made, what alternatives were considered, what problems solutions address
+- **Git history**: What changed, when it changed, immediate context for the change
+
+**Branch naming rationale example:**
+- ❌ Git commit: "use type/description pattern for branches"
+- ✅ Documentation: "Branch naming follows `type/description` pattern because it groups related work in branch lists and makes intent visible before opening the PR"
+
+**Implementation pattern:**
+- Document the decision and reasoning in the procedure file
+- Reference the procedure in commit messages rather than re-explaining
+- Use commit trailers to link to relevant principles
+
+**Example commit message:**
+```
+feat(workflow): implement cookie crumbs documentation pattern
+
+Refs: knowledge/procedures/post-pr-mini-retro.md
+Principle: systems-stewardship
+```
+
+This ensures future developers can discover the "why" through normal documentation browsing, not archaeological git diving.
+
 ## Branch Management
 
 **Core principle: Working on main creates future work**. Every commit on main that should be on a feature branch guarantees recovery work: cherry-picking, rebasing, or complex git surgery. This violates the subtraction principle - we're adding unnecessary future tasks.
@@ -36,6 +63,11 @@ Starting from a stale foundation guarantees the recovery tax - double work to ac
   → [subtraction-creates-value](../principles/subtraction-creates-value.md) (prevent recovery work)
 
 These standards make intent visible and prevent the recovery tax.
+
+**Why these specific standards?** (Cookie crumbs)
+- `type/description` groups related work in branch lists and makes intent visible before opening PRs
+- Issue suffix links work to specific problems without cluttering the main description
+- The prescribed order prevents the recovery tax by ensuring clean starting points
 
 ## Post-Merge Best Practice
 After merging a PR, switch to the base branch and pull latest to avoid working on stale code.

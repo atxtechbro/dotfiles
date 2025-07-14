@@ -24,6 +24,21 @@ From Sam Carpenter's "Work the System" - adopt an external vantage point to see 
 - "Vísteme despacio, que tengo prisa" - move deliberately, not frantically
 - **Never let a crisis go to waste**: Each failure becomes input for stronger procedures and prevention systems
 
+**Cookie Crumbs Documentation Pattern:**
+Leave decision breadcrumbs throughout procedures - the "why" behind choices that seem obvious now but won't be obvious in 6 months. This prevents future confusion and reduces the need to reverse-engineer past decisions.
+
+- Document the context that led to specific choices
+- Explain why alternatives were rejected
+- Note assumptions that informed the decision
+- Reference the problem state that necessitated the solution
+- Leave traces of the decision-making process, not just the final outcome
+
+**Example applications:**
+- In git workflow: Why we chose specific branch naming patterns
+- In tool selection: What problems each tool solves vs alternatives
+- In procedure design: What failure modes each step prevents
+- In automation: What manual processes were replaced and why
+
 **GitHub Issues as WIP Inventory:**
 - Backlog buildup indicates bottlenecks in the development flow
 - Leading vs lagging indicators: measure what predicts success, not what confirms it

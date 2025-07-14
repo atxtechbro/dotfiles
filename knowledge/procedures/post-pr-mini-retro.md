@@ -60,6 +60,14 @@ The agent should:
 - How did choosing one principle over another create tension or trade-offs?
 - What decisions required balancing competing principles?
 
+**Cookie Crumbs Documentation:**
+- What decisions were made that seemed obvious in the moment but might need explanation later?
+- Which alternative approaches were considered and why were they rejected?
+- What context or constraints influenced key decisions that might not be apparent from the final code?
+- What assumptions were made that should be documented for future reference?
+- What "why" questions would your future self (or a teammate) ask about this implementation?
+- Which parts of the solution address specific failure modes or edge cases that aren't immediately obvious?
+
 ## Personality-Driven Focus
 
 The `/retro` command will select an appropriate consultant personality based on PR context:
