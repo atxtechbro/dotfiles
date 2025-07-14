@@ -19,18 +19,14 @@ Suppose you need to work on multiple tasks simultaneously with complete code iso
 3. **CRITICAL**: Do NOT run `source setup.sh` from worktree - creates broken symlinks
    - Only use worktree for isolated development, not environment setup
    - setup.sh automatically detects and fixes broken symlinks from deleted worktrees
-4. **CRITICAL**: ALL file operations must use worktree paths
+4. **Set working directory**: Use full worktree path (e.g., `/home/user/ppv/pillars/dotfiles/worktrees/feature-X/`) as prefix for ALL file operations to prevent empty PRs
 5. Work in worktree: Pass worktree path as `repo_path` to MCP tools
-6. **Before commit**: Verify files exist in worktree directory
-7. **CRITICAL**: Check diff vs origin/main - `mcp__git__git_diff target: origin/main`
-8. **After PR creation**: Immediately verify PR has content with `mcp__github-read__get_pull_request_files`
-9. Cleanup: Use `mcp__git__git_worktree_remove`
+6. **CRITICAL**: Check diff vs origin/main - `mcp__git__git_diff target: origin/main`
+7. Cleanup: Use `mcp__git__git_worktree_remove`
 
 ## Known Failure Modes (From Crisis Learning)
 - **Dirty main**: Worktree inherits untracked files → empty PR
 - **Wrong base commit**: Local main ahead of origin → PR shows no diff
 - **Wrong file paths**: Files created in main, not worktree → empty commits
-- **MCP git tool failures**: False success reporting on failed commits
 - **[OSE Principle](../principles/ose.md)**: Only GitHub PR diff matters for review - must verify before creating PR
-- **CRITICAL DISCOVERY**: MCP git tools fundamentally broken - use GitHub API direct push instead
 - **Broken symlinks**: Running setup.sh from worktree creates symlinks that break when worktree is deleted

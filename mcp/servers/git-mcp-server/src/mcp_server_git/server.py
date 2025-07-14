@@ -380,8 +380,28 @@ def git_commit(repo: git.Repo, message: str) -> str:
     return f"Changes committed successfully with hash {commit.hexsha}"
 
 def git_add(repo: git.Repo, files: list[str]) -> str:
+    # Validate that all files exist in the repository before attempting to stage them.
+    # This prevents the "empty PR" problem where git claims success even when files
+    # don't exist in the worktree, leading to commits with no actual changes.
+    repo_path = str(Path(repo.working_dir))
+    
+    # Validate paths for security (prevent path traversal)
+    for file in files:
+        file_path = os.path.normpath(os.path.join(repo_path, file))
+        if not file_path.startswith(repo_path):
+            raise ValueError(f"Invalid file path: {file}")
+    
+    # Find missing files using list comprehension
+    missing_files = [
+        file for file in files 
+        if not os.path.exists(os.path.normpath(os.path.join(repo_path, file)))
+    ]
+    
+    if missing_files:
+        raise FileNotFoundError(f"Files not found in repository: {', '.join(missing_files)}")
+    
     repo.index.add(files)
-    return "Files staged successfully"
+    return f"Files staged successfully: {', '.join(files)}"
 
 def git_reset(repo: git.Repo) -> str:
     repo.index.reset()
