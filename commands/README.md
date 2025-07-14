@@ -25,7 +25,7 @@ commands/
 
 - **Always edit the actual template files** in `commands/templates/`
 - **Never edit via symlinks** (e.g., `.claude/command-templates/`)
-- Symlinks are created automatically by `setup.sh`
+- Symlinks are created automatically by `setup.sh` and gitignored to avoid content duplication
 
 ## Adding New Commands
 
