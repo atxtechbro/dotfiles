@@ -31,6 +31,6 @@ Suppose you need to work on multiple tasks simultaneously with complete code iso
 - **Wrong base commit**: Local main ahead of origin → PR shows no diff
 - **Wrong file paths**: Files created in main, not worktree → empty commits
 - **MCP git tool failures**: False success reporting on failed commits
-- **OSE Principle**: Only GitHub PR diff matters for review - must verify before creating PR
+- **[OSE Principle](../principles/ose.md)**: Only GitHub PR diff matters for review - must verify before creating PR
 - **CRITICAL DISCOVERY**: MCP git tools fundamentally broken - use GitHub API direct push instead
 - **Broken symlinks**: Running setup.sh from worktree creates symlinks that break when worktree is deleted
