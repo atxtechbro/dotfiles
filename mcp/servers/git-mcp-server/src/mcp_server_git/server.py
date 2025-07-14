@@ -383,11 +383,17 @@ def git_add(repo: git.Repo, files: list[str]) -> str:
     # Validate that all files exist in the repository before attempting to stage them.
     # This prevents the "empty PR" problem where git claims success even when files
     # don't exist in the worktree, leading to commits with no actual changes.
-    repo_path = Path(repo.working_dir)
+    repo_path = str(Path(repo.working_dir))
     missing_files = []
     
     for file in files:
-        if not (repo_path / file).exists():
+        # Safely construct and normalize the file path
+        file_path = os.path.normpath(os.path.join(repo_path, file))
+        # Prevent path traversal attacks
+        if not file_path.startswith(repo_path):
+            raise ValueError(f"Invalid file path: {file}")
+        
+        if not os.path.exists(file_path):
             missing_files.append(file)
     
     if missing_files:
