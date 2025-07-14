@@ -26,7 +26,7 @@ The productivity gains from OSE aren't just subjective - they're mathematical. Y
 - Single-threaded mental model: one change at a time
 - Cognitive overhead of remembering file locations, syntax, implementation details
 
-**Macro Level (OSE Agent Management):**
+**Macro Level ([tmux-git-worktrees-claude-code](../procedures/tmux-git-worktrees-claude-code.md)):**
 - Manage tasks at the system level
 - Compose complex tasks from multiple subtasks
 - Execute multiple tasks in parallel using AI agents
