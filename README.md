@@ -63,6 +63,10 @@ This principle ensures resilience and quick recovery from system failures or whe
 
 See [Snowball Method](knowledge/principles/snowball-method.md) - compound returns through stacking daily wins. This principle ensures that our development environment continuously improves over time through 1% better every day.
 
+## Development Workflow
+
+This system avoids traditional IDEs to enable **macro-level task management** instead of micro-level file editing. Using [tmux + git worktrees + Claude Code CLI](knowledge/procedures/tmux-git-worktrees-claude-code.md), you manage multiple AI agents simultaneously across parallel tasks - the foundation for 1000x AI engineer productivity. See [throughput definition](knowledge/principles/throughput-definition.md) and [OSE principle](knowledge/principles/ose.md).
+
 ## Modular Shell Configuration
 
 This repository uses a modular approach to shell configuration:
@@ -116,7 +120,7 @@ Following "Remember the Big Picture" from The Pragmatic Programmer - don't get s
 - **80% work**: Integrating systems, automation (Spilled Coffee Principle), core global rules
 - **20% systems optimization**: Refining configurations, optimizing workflows, meta-work
 
-Avoid obsessing over obscure details like perfect neovim configs or tmux panel layouts. The goal is systems that enable work, not systems as an end in themselves.
+Avoid obsessing over obscure details like perfect editor configs or tmux panel layouts. The goal is systems that enable work, not systems as an end in themselves.
 
 At an even higher level, this is all about **creating value by serving others**. Systems optimization plants seeds for higher leverage to serve better, but must be balanced with actually delivering that service. The "up high and slightly elevated" manager's perspective maintains this balance - constantly checking: "Am I committing real value? Are deliverables moving forward?"
 
@@ -157,7 +161,7 @@ At the root level, configurations are organized by platform or environment:
 
 - `arch-linux/` - Configurations specific to Arch Linux systems
 - `raspberry-pi/` - Configurations for Raspberry Pi devices
-- `nvim/` - Neovim-specific configurations
+- `nvim/` - Text editor configurations (legacy/optional)
 - etc.
 
 This structural organization makes it clear which files apply to which environments.
