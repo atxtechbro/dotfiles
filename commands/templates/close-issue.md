@@ -8,6 +8,7 @@ Use `mcp__github__get_issue` to read issue #{{ ISSUE_NUMBER }} and determine:
 - Is this already resolved? → Quick close
 - Does this need implementation? → Full workflow
 - Is this invalid/duplicate? → Close with explanation
+- **Repository check**: If issue requires git operations in a different repo, STOP and ask human to restart session there. Claude Code cannot `cd` outside initial directory tree, breaking git workflows.
 - Check recent merged PRs for similar patterns → `mcp__github__list_pull_requests` (state: "closed")
 - Get issue comments with `mcp__github__get_issue_comments` to enrich understanding
 
