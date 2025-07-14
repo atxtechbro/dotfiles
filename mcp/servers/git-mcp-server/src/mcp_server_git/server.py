@@ -380,8 +380,18 @@ def git_commit(repo: git.Repo, message: str) -> str:
     return f"Changes committed successfully with hash {commit.hexsha}"
 
 def git_add(repo: git.Repo, files: list[str]) -> str:
+    repo_path = Path(repo.working_dir)
+    missing_files = []
+    
+    for file in files:
+        if not (repo_path / file).exists():
+            missing_files.append(file)
+    
+    if missing_files:
+        raise FileNotFoundError(f"Files not found in repository: {', '.join(missing_files)}")
+    
     repo.index.add(files)
-    return "Files staged successfully"
+    return f"Files staged successfully: {', '.join(files)}"
 
 def git_reset(repo: git.Repo) -> str:
     repo.index.reset()
