@@ -380,6 +380,9 @@ def git_commit(repo: git.Repo, message: str) -> str:
     return f"Changes committed successfully with hash {commit.hexsha}"
 
 def git_add(repo: git.Repo, files: list[str]) -> str:
+    # Validate that all files exist in the repository before attempting to stage them.
+    # This prevents the "empty PR" problem where git claims success even when files
+    # don't exist in the worktree, leading to commits with no actual changes.
     repo_path = Path(repo.working_dir)
     missing_files = []
     
