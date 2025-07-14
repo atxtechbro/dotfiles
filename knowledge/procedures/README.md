@@ -2,6 +2,7 @@
 
 Actionable processes and workflows that evolve with experience.
 
+- `cookie-crumbs-documentation.md` - Documentation pattern for knowledge preservation
 - `fs-write-full-paths.md` - Always use absolute paths in fs_write operations
 - `git-workflow.md` - Git conventions and branch management
 - `post-pr-mini-retro.md` - Systems improvement retro after feature PRs
