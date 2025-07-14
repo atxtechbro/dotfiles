@@ -47,7 +47,8 @@ if [[ "$DOT_DEN" == *"/worktrees/"* ]]; then
     echo -e "${YELLOW}WARNING: Running setup.sh from a worktree directory!${NC}"
     echo -e "${YELLOW}This will create symlinks that break when the worktree is deleted.${NC}"
     echo -e "${YELLOW}Consider running from the main repository instead.${NC}"
-    echo -e "${YELLOW}Continuing anyway - broken symlinks will be automatically fixed...${NC}"
+    # Remove user interaction and continue with the script
+    echo -e "${YELLOW}Proceeding with setup - broken symlinks will be handled automatically.${NC}"
 fi
 
 # Add MCP directory to PATH for easier access to MCP scripts
