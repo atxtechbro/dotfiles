@@ -356,7 +356,7 @@ TOOL_REGISTRY = {
     GitTools.BISECT: (GitBisect, "Binary search to find commit that introduced a bug (actions: start, bad, good, skip, reset, view)"),
     GitTools.DESCRIBE: (GitDescribe, "Generate human-readable names for commits based on tags"),
     GitTools.SHORTLOG: (GitShortlog, "Summarize git log by contributor"),
-    GitTools.MV: (GitMv, "Move or rename a file, directory, or symlink"),
+    GitTools.MV: (GitMv, "Move or rename files within a git repository. The standard tool for reorganizing tracked files while maintaining version history."),
     GitTools.RM: (GitRm, "Remove files from the working tree and from the index"),
     GitTools.RESTORE: (GitRestore, "Restore working tree files"),
     GitTools.TAG: (GitTag, "Create, list, delete or verify tags"),
@@ -1524,7 +1524,7 @@ def git_shortlog(repo: git.Repo, revision_range: str | None = None,
 
 def git_mv(repo: git.Repo, source: str, destination: str) -> str:
     """
-    Move or rename a file, directory, or symlink
+    Move or rename files within a git repository. The standard tool for reorganizing tracked files while maintaining version history.
     """
     try:
         # Use git mv command
