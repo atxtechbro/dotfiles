@@ -11,6 +11,8 @@ Use `mcp__github__get_issue` to read issue #{{ ISSUE_NUMBER }} and determine:
 - Check recent merged PRs for similar patterns → `mcp__github__list_pull_requests` (state: "closed")
 - Get issue comments with `mcp__github__get_issue_comments` to enrich understanding
 
+**Clarity opportunity**: If the issue contains vague language ("doesn't work", "should handle", "it depends"), consider exploring with EARS patterns to surface hidden assumptions and edge cases. This often reveals interesting test scenarios and sparks productive conversations about the real requirements. See [EARS Requirements](knowledge/procedures/ears-requirements.md) for conversation-driven discovery techniques.
+
 ## Quick Close Path
 If the issue is already resolved, invalid, or duplicate:
 1. Add explanatory comment with `mcp__github__add_issue_comment`
