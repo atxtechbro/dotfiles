@@ -384,17 +384,18 @@ def git_add(repo: git.Repo, files: list[str]) -> str:
     # This prevents the "empty PR" problem where git claims success even when files
     # don't exist in the worktree, leading to commits with no actual changes.
     repo_path = str(Path(repo.working_dir))
-    missing_files = []
     
+    # Validate paths for security (prevent path traversal)
     for file in files:
-        # Safely construct and normalize the file path
         file_path = os.path.normpath(os.path.join(repo_path, file))
-        # Prevent path traversal attacks
         if not file_path.startswith(repo_path):
             raise ValueError(f"Invalid file path: {file}")
-        
-        if not os.path.exists(file_path):
-            missing_files.append(file)
+    
+    # Find missing files using list comprehension
+    missing_files = [
+        file for file in files 
+        if not os.path.exists(os.path.normpath(os.path.join(repo_path, file)))
+    ]
     
     if missing_files:
         raise FileNotFoundError(f"Files not found in repository: {', '.join(missing_files)}")
