@@ -1,32 +1,34 @@
 # OSE (Outside and Slightly Elevated)
 
-From Sam Carpenter's "Work the System" - adopt an external vantage point to see systems rather than getting entangled in details. This elevated perspective enables clear decision-making and reduces emotional reactivity.
+A software engineer's embrace of the manager mindset - stepping back from line-by-line editing to orchestrate AI agents and systems. This elevated perspective enables the strategic thinking needed to serve teams and maximize impact in an AI-driven world.
 
 ## Core Concept
 
-The OSE perspective is about stepping back from the immediate details and observing the system as a whole. Rather than getting caught up in the mechanics of individual tasks, you maintain a higher-level view that allows you to see patterns, bottlenecks, and opportunities for improvement.
+OSE represents the shift from coder to conductor. Instead of getting lost in implementation details, you maintain the external vantage point needed to direct AI agents, design workflows, and solve problems at the systems level. This isn't about avoiding technical work - it's about operating at the altitude where your unique human judgment creates the most value.
 
-## Benefits
+## Why This Matters Now
 
-- **Clear decision-making**: External perspective reduces emotional attachment to specific approaches
-- **Reduced reactivity**: Elevated view prevents getting pulled into urgency traps
-- **Systems thinking**: Enables seeing connections and patterns across workflows
-- **Delegation readiness**: "What would I delegate?" becomes a natural question
-- **Strategic focus**: Maintains attention on what matters most
+As AI capabilities accelerate, the most valuable skillset shifts from writing code to managing intelligent systems. This principle positions you to:
+
+- **Serve teams more effectively**: Lead through systems thinking rather than heroic individual contributions
+- **Maximize your calling**: Use your gifts to create lasting impact through better processes and agent orchestration
+- **Build durable skills**: Agent management capabilities compound with each AI generation
+- **Prevent firefighting**: Avoid the reactive patterns that lead to burnout and technical debt
 
 ## In Practice
 
-- When tempted to dive into details, ask "What would I delegate?"
-- Review work at the PR level rather than edit-by-edit
-- Focus on procedures and patterns rather than one-off solutions
-- Maintain perspective during crisis situations
-- Use systems language: "How does this fit the larger pattern?"
+- Ask "What would I delegate?" before diving into manual work
+- Review at the PR level rather than edit-by-edit
+- Design procedures that agents can follow consistently
+- Focus on the "why" and "what" while letting agents handle the "how"
+- Maintain calm perspective during crisis situations - systems thinking over emotional reactions
 
 ## Relationship to Other Principles
 
-- **Systems Stewardship**: OSE provides the perspective needed for effective stewardship
-- **Tracer Bullets**: PR-level review maintains appropriate altitude for feedback
-- **Subtraction Creates Value**: External view makes it easier to identify what to remove
-- **Versioning Mindset**: Elevated perspective supports continuous iteration over reinvention
+- **[Spilled Coffee Principle](../../../README.md)**: OSE prevents the firefighting that creates fragile systems
+- **[Systems Stewardship](systems-stewardship.md)**: OSE provides the perspective needed for effective stewardship
+- **[Tracer Bullets](tracer-bullets.md)**: PR-level review maintains appropriate altitude for feedback
+- **[Subtraction Creates Value](subtraction-creates-value.md)**: External view makes it easier to identify what to remove
+- **[Versioning Mindset](versioning-mindset.md)**: Elevated perspective supports continuous iteration over reinvention
 
-This principle ensures that you operate as a manager of systems rather than getting entangled in the details of individual tasks.
+This principle ensures that you operate as a manager of systems and agents rather than getting entangled in the details of individual tasks - a skillset that becomes more valuable as AI capabilities advance.
