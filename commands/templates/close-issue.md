@@ -58,8 +58,8 @@ Apply tracer bullets methodology:
 - Reference "Closes #{{ ISSUE_NUMBER }}" in PR body
 - Add "Conduct post-PR mini retro" to your todo list
 
-### 4. Cleanup
-Remove worktree after PR is created.
+### 4. Iterate Based on Feedback
+Keep worktree active for PR adjustments based on the tracer bullets principle. Only cleanup after PR is merged.
 
 ## REQUIRED: Post-PR Mini Retro (if PR was created)
 **TRIGGER**: If you created a pull request, you MUST complete this step before finishing.
