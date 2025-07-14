@@ -16,12 +16,15 @@ Suppose you need to work on multiple tasks simultaneously with complete code iso
 2. Create worktree from CLEAN origin/main:
    - **New branch**: Use `mcp__git__git_worktree_add` with `create_branch: true`
    - **Existing branch**: Use `mcp__git__git_worktree_add` with branch name
-3. **CRITICAL**: ALL file operations must use worktree paths
-4. Work in worktree: Pass worktree path as `repo_path` to MCP tools
-5. **Before commit**: Verify files exist in worktree directory
-6. **CRITICAL**: Check diff vs origin/main - `mcp__git__git_diff target: origin/main`
-7. **After PR creation**: Immediately verify PR has content with `mcp__github-read__get_pull_request_files`
-8. Cleanup: Use `mcp__git__git_worktree_remove`
+3. **CRITICAL**: Do NOT run `source setup.sh` from worktree - creates broken symlinks
+   - Only use worktree for isolated development, not environment setup
+   - setup.sh automatically detects and fixes broken symlinks from deleted worktrees
+4. **CRITICAL**: ALL file operations must use worktree paths
+5. Work in worktree: Pass worktree path as `repo_path` to MCP tools
+6. **Before commit**: Verify files exist in worktree directory
+7. **CRITICAL**: Check diff vs origin/main - `mcp__git__git_diff target: origin/main`
+8. **After PR creation**: Immediately verify PR has content with `mcp__github-read__get_pull_request_files`
+9. Cleanup: Use `mcp__git__git_worktree_remove`
 
 ## Known Failure Modes (From Crisis Learning)
 - **Dirty main**: Worktree inherits untracked files → empty PR
@@ -30,3 +33,4 @@ Suppose you need to work on multiple tasks simultaneously with complete code iso
 - **MCP git tool failures**: False success reporting on failed commits
 - **OSE Principle**: Only GitHub PR diff matters for review - must verify before creating PR
 - **CRITICAL DISCOVERY**: MCP git tools fundamentally broken - use GitHub API direct push instead
+- **Broken symlinks**: Running setup.sh from worktree creates symlinks that break when worktree is deleted
