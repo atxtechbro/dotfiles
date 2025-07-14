@@ -2,6 +2,8 @@
 
 After submitting a pull request for feature-related workflows, conduct a mini retro focused on systems improvement. This supports the Snowball Method by capturing learnings and dedicating 20% of time to systems improvement.
 
+**Wring out the towel**: Extract every drop of learning from each experience - the insights that seem obvious in hindsight are often the most valuable to document. **Never let a crisis go to waste**: Each failure or unexpected challenge becomes raw material for stronger systems and procedures.
+
 ## IMPORTANT: Agent-Led Collaborative Process
 
 **The agent drives the retro while actively inviting human participation:**

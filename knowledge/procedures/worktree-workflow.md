@@ -11,9 +11,9 @@ Suppose you need to work on multiple tasks simultaneously with complete code iso
    - **New branch**: Use `mcp__git__git_worktree_add` with `create_branch: true`
    - **Existing branch**: Use `mcp__git__git_worktree_add` with branch name
 3. Initialize worktree environment (if working on dotfiles repo): 
-   - `cd` into worktree and run `source setup.sh`
-   - This ensures PATH and environment are configured for the worktree context
-   - Skip this step for other repositories that don't have setup.sh
+   - **CRITICAL**: Do NOT run `source setup.sh` from worktree - creates broken symlinks
+   - Only use worktree for isolated development, not environment setup
+   - setup.sh automatically detects and fixes broken symlinks from deleted worktrees
 4. Work in worktree: Pass worktree path as `repo_path` to MCP tools (no `cd` needed!)
 5. Commit, push, create PR as normal
 6. Ask for any pr feedback and address if any

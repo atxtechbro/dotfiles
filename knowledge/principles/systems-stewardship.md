@@ -22,6 +22,7 @@ From Sam Carpenter's "Work the System" - adopt an external vantage point to see 
 - Make systems malleable for future iteration (VM)
 - When tempted to dive in, ask "What would I delegate?"
 - "Vísteme despacio, que tengo prisa" - move deliberately, not frantically
+- **Never let a crisis go to waste**: Each failure becomes input for stronger procedures and prevention systems
 
 **GitHub Issues as WIP Inventory:**
 - Backlog buildup indicates bottlenecks in the development flow
