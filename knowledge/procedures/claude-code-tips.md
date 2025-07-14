@@ -1,6 +1,6 @@
 # Claude Code Tips
 
-One-liner discoveries for efficient Claude Code usage.
+Force multiplier discoveries for 1000x Claude Code productivity. Default to one-liners, but force multipliers that enable exponential productivity gains deserve the space they need - they pay for themselves in tokens.
 
 ## Keyboard Shortcuts
 
