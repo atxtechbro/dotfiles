@@ -10,3 +10,10 @@ Prioritize transparency by explicitly showing the agent's planning steps and dec
 - Use post-PR cycles as opportunities for agent-human knowledge transfer
 
 This principle ensures that human understanding grows alongside agent capability, creating a virtuous learning cycle where both parties improve through shared visibility into the work process.
+
+## MCP Tool File Path Transparency
+
+**Bad:** `../../../file.md` - forces mental path resolution
+**Good:** `/Users/morgan.joyce/ppv/pillars/dotfiles/file.md` - immediate clarity
+
+Use full paths in tool calls for user verification.
