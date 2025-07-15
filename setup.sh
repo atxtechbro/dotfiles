@@ -59,6 +59,9 @@ export PATH="$DOT_DEN/mcp/servers:$PATH"
 # Export flag to tell subscripts we're running from the main setup
 export SETUP_SCRIPT_RUNNING=true
 
+# Disable Claude Code Bedrock usage by default
+export CLAUDE_CODE_USE_BEDROCK=0
+
 echo -e "${DIVIDER}"
 echo -e "${GREEN}Setting up dotfiles...${NC}"
 echo -e "${DIVIDER}"
