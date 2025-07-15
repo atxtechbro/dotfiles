@@ -315,6 +315,22 @@ The dotfiles include pre-configured MCP servers for:
 
 Work-specific servers (Atlassian, GitLab) require `WORK_MACHINE=true` in `~/.bash_exports.local`.
 
+### Troubleshooting Claude Code
+
+#### macOS Opus Model Access Issue
+
+If you're on macOS and see "Claude Pro users are not currently able to use Opus 4" despite having a Claude Max subscription:
+
+```bash
+# Run the automated fix script
+./utils/fix-claude-code-macos-auth.sh
+
+# Verify Opus is accessible after restart
+./utils/fix-claude-code-macos-auth.sh --verify
+```
+
+This is a known issue tracked in [anthropics/claude-code#3566](https://github.com/anthropics/claude-code/issues/3566).
+
 ## Secret Management
 
 Sensitive information like API tokens are stored in `~/.bash_secrets` (not tracked in git).
