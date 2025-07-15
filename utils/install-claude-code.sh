@@ -84,6 +84,9 @@ setup_claude_code() {
     # Configure MCP servers for Claude Code
     configure_claude_mcp
     
+    # Check for macOS authentication issues
+    check_macos_auth_issues
+    
     return 0
 }
 
@@ -123,6 +126,35 @@ configure_claude_mcp() {
     echo -e "  • Add user-scoped server: claude mcp add <name> <command> -s user"
     echo -e "  • Check MCP info: claude-mcp-info"
     echo -e "  • Use strict global config: claude-global <command>"
+}
+
+check_macos_auth_issues() {
+    # Only check on macOS
+    if [[ "$OSTYPE" != "darwin"* ]]; then
+        return 0
+    fi
+    
+    # Check if Claude Code is installed and accessible
+    if ! command -v claude &> /dev/null; then
+        return 0
+    fi
+    
+    # Get the directory where this script is located
+    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    DOT_DEN="$(dirname "$SCRIPT_DIR")"
+    
+    # Try to detect if Opus model is accessible
+    # Suppress all output and just check for the specific error
+    local model_check=$(claude --model opus 2>&1 || true)
+    
+    if echo "$model_check" | grep -q "Invalid model.*Pro users"; then
+        echo -e "\n${YELLOW}⚠️  Claude Code macOS Authentication Issue Detected${NC}"
+        echo -e "${YELLOW}You appear to be affected by the Opus model access bug.${NC}"
+        echo -e "${YELLOW}This prevents Claude Max users from accessing Opus on macOS.${NC}"
+        echo -e "\nTo fix this issue, run:"
+        echo -e "  ${GREEN}$DOT_DEN/utils/fix-claude-code-macos-auth.sh${NC}"
+        echo -e "\nFor more info, see: https://github.com/anthropics/claude-code/issues/3566"
+    fi
 }
 
 # Run setup if script is executed directly (not sourced)
