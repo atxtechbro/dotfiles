@@ -23,3 +23,8 @@ fi
 # Amazon Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
 [[ -f "${HOME}/.local/share/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/.local/share/amazon-q/shell/zshrc.post.zsh"
+
+# Claude Code Bedrock prevention (use 0 instead of false for Unix convention)
+export CLAUDE_CODE_USE_BEDROCK=0
+export CLAUDE_USE_BEDROCK=0
+export DISABLE_BEDROCK=1
