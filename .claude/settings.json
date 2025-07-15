@@ -1,4 +1,15 @@
 {
+  "env": {
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8192",
+    "BASH_DEFAULT_TIMEOUT_MS": "120000",
+    "BASH_MAX_TIMEOUT_MS": "600000",
+    "BASH_MAX_OUTPUT_LENGTH": "50000",
+    "DISABLE_COST_WARNINGS": "1",
+    "MCP_TIMEOUT": "30000",
+    "MCP_TOOL_TIMEOUT": "60000",
+    "MAX_MCP_OUTPUT_TOKENS": "25000"
+  },
+  "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
       "Bash(find:*)",
@@ -8,11 +19,9 @@
       "Bash(mkdir:*)",
       "Bash(mkdir -p:*)",
       "Bash(source:*)",
-      
       "LS",
       "Read",
       "Write",
-      
       "Bash(git add:*)",
       "Bash(git checkout:*)",
       "Bash(git cherry-pick:*)",
@@ -21,18 +30,15 @@
       "Bash(git mv:*)",
       "Bash(git rebase:*)",
       "Bash(git rm:*)",
-      
       "Bash(gh pr list:*)",
       "Bash(gh pr view:*)",
       "Bash(gh repo list:*)",
       "Bash(gh search commits:*)",
-      
       "Bash(claude config --help)",
       "Bash(claude config get --global verbose)",
       "Bash(claude config list --global)",
       "Bash(claude config list)",
       "Bash(claude config set --help)",
-      
       "mcp__git-read",
       "mcp__git__git_status",
       "mcp__git__git_diff",
@@ -99,24 +105,12 @@
       "mcp__atlassian",
       "mcp__gdrive",
       "mcp__gitlab",
-      
       "Bash(/home/linuxmint-lp/ppv/pillars/dotfiles/utils/generate-claude-commands.sh:*)",
       "Bash(./utils/configure-claude-code-settings.sh:*)",
       "Bash(check-mcp-logs:*)",
       "Bash(python:*)",
-      
       "WebFetch(domain:docs.anthropic.com)"
     ]
-  },
-  "env": {
-    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8192",
-    "BASH_DEFAULT_TIMEOUT_MS": "120000",
-    "BASH_MAX_TIMEOUT_MS": "600000",
-    "BASH_MAX_OUTPUT_LENGTH": "50000",
-    "DISABLE_COST_WARNINGS": "1",
-    "MCP_TIMEOUT": "30000",
-    "MCP_TOOL_TIMEOUT": "60000",
-    "MAX_MCP_OUTPUT_TOKENS": "25000"
   },
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
@@ -129,5 +123,5 @@
     "gdrive",
     "gitlab"
   ],
-  "includeCoAuthoredBy": false
+  "model": "opus"
 }
