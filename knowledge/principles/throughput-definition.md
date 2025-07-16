@@ -1,12 +1,12 @@
 # Throughput Definition
 
 ## The Goal
-My throughput is measured by my ability to manage AI agents to complete assigned work while maintaining a competitive skills portfolio in the software engineering marketplace.
+My throughput is measured by my ability to manage AI agents to become the 100x-1000x developer through parallel execution and systems orchestration.
 
 ## Core Metrics
 1. **AI Agent Management Capability**: Directing agents across any framework/language
-2. **Marketplace Positioning**: Top 2% earning potential through strategic skill development
-3. **Systems Thinking Application**: Managing workflows, not just writing code
+2. **Productivity Multiplier**: Achieve 100x-1000x productivity through parallel AI orchestration
+3. **Systems Thinking Application**: Managing workflows at the macro level, not micro-editing code
 4. **Life Stewardship**: Using these systems to manage all aspects of life, stewarding gifts from God to serve others
 
 ## Strategic Insight
