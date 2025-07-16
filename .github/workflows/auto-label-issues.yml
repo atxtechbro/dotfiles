@@ -20,8 +20,9 @@ jobs:
         run: |
           mkdir -p /tmp/claude-prompts
           
-          # Load the issue triage prompt template and inject current issue details
-          cat "${{ github.workspace }}/.github/workflow-prompts/issue-triage.md" | \
+          ISSUE_AUTO_LABEL="${{ github.workspace }}/.github/workflow-prompts/issue-triage.md"
+          
+          cat "$ISSUE_AUTO_LABEL" | \
             sed "s|{{ REPO }}|${{ github.repository }}|g" | \
             sed "s|{{ ISSUE_NUMBER }}|${{ github.event.issue.number }}|g" \
             > /tmp/claude-prompts/triage-prompt.txt
