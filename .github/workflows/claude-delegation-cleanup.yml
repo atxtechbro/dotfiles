@@ -1,39 +1,82 @@
 name: Claude Delegation Label Cleanup
+description: Clean up labels when issues are delegated to Claude
 on:
   issue_comment:
     types: [created, edited]
 
 jobs:
-  remove-labels-on-delegation:
+  cleanup-labels:
     if: contains(github.event.comment.body, '@claude')
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 5
+    permissions:
+      issues: write
+
     steps:
-      - name: Remove labels after Claude delegation
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            // Remove all labels except those with ongoing behavioral significance
-            const issue = context.payload.issue;
-            const keepLabels = ['ai-generate', 'spike']; // Labels that affect workflows
-            
-            const currentLabels = issue.labels.map(l => l.name);
-            const labelsToRemove = currentLabels.filter(l => !keepLabels.includes(l));
-            
-            for (const label of labelsToRemove) {
-              await github.rest.issues.removeLabel({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                name: label
-              });
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create cleanup prompt
+        run: |
+          mkdir -p /tmp/claude-prompts
+          cat > /tmp/claude-prompts/cleanup-prompt.txt << 'EOF'
+          You're helping with label cleanup when an issue is delegated to Claude.
+
+          IMPORTANT: Your only actions should be to remove labels and optionally add ONE comment.
+
+          Issue Information:
+          - REPO: ${{ github.repository }}
+          - ISSUE_NUMBER: ${{ github.event.issue.number }}
+          - COMMENT: Someone just mentioned @claude in a comment
+
+          TASK:
+
+          1. Use mcp__github__get_issue to check the current labels on the issue
+
+          2. Remove all labels EXCEPT these behavioral ones that affect workflows:
+             - ai-generate (triggers automated PR generation)
+             - spike (indicates research/exploration work)
+             
+          3. After removing labels, add ONE comment:
+             - Use mcp__github__add_issue_comment
+             - Message: "🤖 Labels cleaned up after Claude delegation (subtraction creates value)"
+
+          RATIONALE:
+          When work is delegated to Claude, most labels become unnecessary cognitive overhead.
+          We keep only labels that have ongoing behavioral significance in our workflows.
+          This follows the "subtraction creates value" principle.
+
+          IMPORTANT:
+          - Only use mcp__github__update_issue to modify labels
+          - Only use mcp__github__add_issue_comment for the cleanup message
+          - Do not engage with users beyond the single cleanup message
+          EOF
+
+      - name: Setup GitHub MCP Server
+        run: |
+          mkdir -p /tmp/mcp-config
+          cat > /tmp/mcp-config/mcp-servers.json << 'EOF'
+          {
+            "mcpServers": {
+              "github": {
+                "command": "node",
+                "args": ["${{ github.workspace }}/mcp/servers/github-mcp-server/dist/index.js"],
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
             }
-            
-            // Add a comment noting the delegation
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue.number,
-              body: '🤖 Labels cleaned up after Claude delegation (subtraction creates value)'
-            });
+          }
+          EOF
+
+      - name: Run Claude Code for Label Cleanup
+        uses: anthropics/claude-code-action@beta
+        with:
+          prompt_file: /tmp/claude-prompts/cleanup-prompt.txt
+          allowed_tools: "mcp__github__get_issue,mcp__github__update_issue,mcp__github__add_issue_comment"
+          timeout_minutes: "5"
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          model: claude-sonnet-4-20250514
+          mcp_config: /tmp/mcp-config/mcp-servers.json
+          claude_env: |
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
