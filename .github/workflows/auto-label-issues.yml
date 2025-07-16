@@ -34,12 +34,12 @@ jobs:
 
           2. Next, use the GitHub tools to get context about the issue:
              - You have access to these tools:
-               - mcp__github__get_issue: Use this to retrieve the current issue's details including title, description, and existing labels
-               - mcp__github__get_issue_comments: Use this to read any discussion or additional context provided in the comments
-               - mcp__github__update_issue: Use this to apply labels to the issue (do not use this for commenting)
-               - mcp__github__search_issues: Use this to find similar issues that might provide context for proper categorization and to identify potential duplicate issues
-               - mcp__github__list_issues: Use this to understand patterns in how other issues are labeled
-             - Start by using mcp__github__get_issue to get the issue details
+               - mcp__github-write__get_issue: Use this to retrieve the current issue's details including title, description, and existing labels
+               - mcp__github-write__get_issue_comments: Use this to read any discussion or additional context provided in the comments
+               - mcp__github-write__update_issue: Use this to apply labels to the issue (do not use this for commenting)
+               - mcp__github-write__search_issues: Use this to find similar issues that might provide context for proper categorization and to identify potential duplicate issues
+               - mcp__github-write__list_issues: Use this to understand patterns in how other issues are labeled
+             - Start by using mcp__github-write__get_issue to get the issue details
 
           3. Analyze the issue content, considering:
              - Core principles mentioned (versioning-mindset, subtraction-creates-value, ose, snowball-method, tracer-bullets, systems-stewardship, throughput-definition)
@@ -55,7 +55,7 @@ jobs:
              - Consider if this is a spike (research/exploration task)
 
           5. Apply the selected labels:
-             - Use mcp__github__update_issue to apply your selected labels
+             - Use mcp__github-write__update_issue to apply your selected labels
              - DO NOT post any comments explaining your decision
              - DO NOT communicate directly with users
              - If no labels are clearly applicable, do not apply any labels
@@ -64,7 +64,7 @@ jobs:
           - Be thorough in your analysis
           - Only select labels from the provided list
           - DO NOT post any comments to the issue
-          - Your ONLY action should be to apply labels using mcp__github__update_issue
+          - Your ONLY action should be to apply labels using mcp__github-write__update_issue
           - Focus on principles over implementation details
           EOF
 
@@ -89,7 +89,7 @@ jobs:
         uses: anthropics/claude-code-action@beta
         with:
           prompt_file: /tmp/claude-prompts/triage-prompt.txt
-          allowed_tools: "Bash(gh label list),mcp__github__get_issue,mcp__github__get_issue_comments,mcp__github__update_issue,mcp__github__search_issues,mcp__github__list_issues"
+          allowed_tools: "Bash(gh label list),mcp__github-write__get_issue,mcp__github-write__get_issue_comments,mcp__github-write__update_issue,mcp__github-write__search_issues,mcp__github-write__list_issues"
           timeout_minutes: "5"
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           model: claude-sonnet-4-20250514

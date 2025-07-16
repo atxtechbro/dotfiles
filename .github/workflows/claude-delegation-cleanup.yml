@@ -31,14 +31,14 @@ jobs:
 
           TASK:
 
-          1. Use mcp__github__get_issue to check the current labels on the issue
+          1. Use mcp__github-write__get_issue to check the current labels on the issue
 
           2. Remove all labels EXCEPT these behavioral ones that affect workflows:
              - ai-generate (triggers automated PR generation)
              - spike (indicates research/exploration work)
              
           3. After removing labels, add ONE comment:
-             - Use mcp__github__add_issue_comment
+             - Use mcp__github-write__add_issue_comment
              - Message: "🤖 Labels cleaned up after Claude delegation (subtraction creates value)"
 
           RATIONALE:
@@ -47,8 +47,8 @@ jobs:
           This follows the "subtraction creates value" principle.
 
           IMPORTANT:
-          - Only use mcp__github__update_issue to modify labels
-          - Only use mcp__github__add_issue_comment for the cleanup message
+          - Only use mcp__github-write__update_issue to modify labels
+          - Only use mcp__github-write__add_issue_comment for the cleanup message
           - Do not engage with users beyond the single cleanup message
           EOF
 
@@ -73,7 +73,7 @@ jobs:
         uses: anthropics/claude-code-action@beta
         with:
           prompt_file: /tmp/claude-prompts/cleanup-prompt.txt
-          allowed_tools: "mcp__github__get_issue,mcp__github__update_issue,mcp__github__add_issue_comment"
+          allowed_tools: "mcp__github-write__get_issue,mcp__github-write__update_issue,mcp__github-write__add_issue_comment"
           timeout_minutes: "5"
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           model: claude-sonnet-4-20250514
