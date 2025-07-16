@@ -1,84 +1,98 @@
-name: Auto Label Issues
+name: Dotfiles Issue Triage
+description: Automatically triage GitHub issues using Claude Code
 on:
   issues:
     types: [opened, edited]
-  issue_comment:
-    types: [created, edited]
 
 jobs:
-  label-issues:
-    if: github.event_name == 'issues'
+  triage-issue:
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+
     steps:
-      - name: List available labels
-        id: list-labels
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const labels = await github.paginate(github.rest.issues.listLabelsForRepo, {
-              owner: context.repo.owner,
-              repo: context.repo.repo
-            });
-            const labelNames = labels.map(l => l.name).join(', ');
-            core.setOutput('labels', labelNames);
-            console.log(`Available labels: ${labelNames}`);
-      
-      - name: Intelligent issue labeling with Claude
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create triage prompt
+        run: |
+          mkdir -p /tmp/claude-prompts
+          cat > /tmp/claude-prompts/triage-prompt.txt << 'EOF'
+          You're an issue triage assistant for GitHub issues. Your task is to analyze the issue and select appropriate labels from the provided list.
+
+          IMPORTANT: Don't post any comments or messages to the issue. Your only action should be to apply labels.
+
+          Issue Information:
+          - REPO: ${{ github.repository }}
+          - ISSUE_NUMBER: ${{ github.event.issue.number }}
+
+          TASK OVERVIEW:
+
+          1. First, fetch the list of labels available in this repository by running: `gh label list`. Run exactly this command with nothing else.
+
+          2. Next, use the GitHub tools to get context about the issue:
+             - You have access to these tools:
+               - mcp__github__get_issue: Use this to retrieve the current issue's details including title, description, and existing labels
+               - mcp__github__get_issue_comments: Use this to read any discussion or additional context provided in the comments
+               - mcp__github__update_issue: Use this to apply labels to the issue (do not use this for commenting)
+               - mcp__github__search_issues: Use this to find similar issues that might provide context for proper categorization and to identify potential duplicate issues
+               - mcp__github__list_issues: Use this to understand patterns in how other issues are labeled
+             - Start by using mcp__github__get_issue to get the issue details
+
+          3. Analyze the issue content, considering:
+             - Core principles mentioned (versioning-mindset, subtraction-creates-value, ose, snowball-method, tracer-bullets, systems-stewardship, throughput-definition)
+             - The issue title and description
+             - The type of issue (bug report, feature request, spike, etc.)
+             - Technical areas mentioned
+             - Components affected
+
+          4. Select appropriate labels from the available labels list:
+             - Focus on principle-based labels when applicable
+             - If issue was edited, remove labels that no longer apply
+             - Be minimal - only add labels that add value
+             - Consider if this is a spike (research/exploration task)
+
+          5. Apply the selected labels:
+             - Use mcp__github__update_issue to apply your selected labels
+             - DO NOT post any comments explaining your decision
+             - DO NOT communicate directly with users
+             - If no labels are clearly applicable, do not apply any labels
+
+          IMPORTANT GUIDELINES:
+          - Be thorough in your analysis
+          - Only select labels from the provided list
+          - DO NOT post any comments to the issue
+          - Your ONLY action should be to apply labels using mcp__github__update_issue
+          - Focus on principles over implementation details
+          EOF
+
+      - name: Setup GitHub MCP Server
+        run: |
+          mkdir -p /tmp/mcp-config
+          cat > /tmp/mcp-config/mcp-servers.json << 'EOF'
+          {
+            "mcpServers": {
+              "github": {
+                "command": "node",
+                "args": ["${{ github.workspace }}/mcp/servers/github-mcp-server/dist/index.js"],
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            }
+          }
+          EOF
+
+      - name: Run Claude Code for Issue Triage
         uses: anthropics/claude-code-action@beta
         with:
+          prompt_file: /tmp/claude-prompts/triage-prompt.txt
+          allowed_tools: "Bash(gh label list),mcp__github__get_issue,mcp__github__get_issue_comments,mcp__github__update_issue,mcp__github__search_issues,mcp__github__list_issues"
+          timeout_minutes: "5"
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           model: claude-sonnet-4-20250514
-          prompt: |
-            Analyze this new issue and suggest appropriate labels:
-            
-            Issue #${{ github.event.issue.number }}: ${{ github.event.issue.title }}
-            
-            Body: ${{ github.event.issue.body }}
-            
-            Available labels in this repository:
-            ${{ steps.list-labels.outputs.labels }}
-            
-            Instructions:
-            1. Select only labels that are truly relevant to the issue content
-            2. Prefer behavioral labels (spike, ai-generate) when applicable
-            3. Add labels and a brief comment explaining your choices
-            4. Be minimal - only add labels that add value
-            
-            Remember: Less is more. Only label if it helps categorize meaningfully.
-
-  remove-labels-on-delegation:
-    if: github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Remove labels after Claude delegation
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            // Remove all labels except those with ongoing behavioral significance
-            const issue = context.payload.issue;
-            const keepLabels = ['ai-generate', 'spike']; // Labels that affect workflows
-            
-            const currentLabels = issue.labels.map(l => l.name);
-            const labelsToRemove = currentLabels.filter(l => !keepLabels.includes(l));
-            
-            for (const label of labelsToRemove) {
-              await github.rest.issues.removeLabel({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                name: label
-              });
-            }
-            
-            // Add a comment noting the delegation
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue.number,
-              body: '🤖 Labels cleaned up after Claude delegation (subtraction creates value)'
-            });
+          mcp_config: /tmp/mcp-config/mcp-servers.json
+          claude_env: |
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
