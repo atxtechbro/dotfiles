@@ -1,0 +1,75 @@
+name: Auto Label Issues
+on:
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
+
+jobs:
+  label-issues:
+    if: github.event_name == 'issues'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Label new issues
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+            const labels = [];
+            
+            // Add labels based on content (minimal approach)
+            const content = (issue.title + ' ' + issue.body).toLowerCase();
+            
+            // Only add behavioral labels that trigger actions
+            if (content.includes('spike') || content.includes('research')) {
+              labels.push('spike');
+            }
+            if (content.includes('generate pr') || content.includes('automated pr')) {
+              labels.push('ai-generate');
+            }
+            
+            // Apply labels if any were identified
+            if (labels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: labels
+              });
+            }
+
+  remove-labels-on-delegation:
+    if: github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Remove labels after Claude delegation
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // Remove all labels except those with ongoing behavioral significance
+            const issue = context.payload.issue;
+            const keepLabels = ['ai-generate', 'spike']; // Labels that affect workflows
+            
+            const currentLabels = issue.labels.map(l => l.name);
+            const labelsToRemove = currentLabels.filter(l => !keepLabels.includes(l));
+            
+            for (const label of labelsToRemove) {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                name: label
+              });
+            }
+            
+            // Add a comment noting the delegation
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: '🤖 Labels cleaned up after Claude delegation (subtraction creates value)'
+            });
