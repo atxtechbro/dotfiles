@@ -1,0 +1,67 @@
+name: Test Claude Emoji Reaction
+# Manual trigger workflow for testing the emoji reaction functionality
+
+on:
+  workflow_dispatch:
+    inputs:
+      comment_id:
+        description: 'Comment ID to react to'
+        required: true
+        type: string
+      issue_number:
+        description: 'Issue/PR number containing the comment'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  test-reaction:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test emoji reaction
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            console.log('=== Test Claude Emoji Reaction ===');
+            console.log(`Comment ID: ${{ inputs.comment_id }}`);
+            console.log(`Issue/PR: #${{ inputs.issue_number }}`);
+            
+            try {
+              // First, verify the comment exists
+              const comment = await github.rest.issues.getComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: ${{ inputs.comment_id }}
+              });
+              console.log(`✅ Found comment by @${comment.data.user.login}`);
+              
+              // Add the reaction
+              const reaction = await github.rest.reactions.createForIssueComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: ${{ inputs.comment_id }},
+                content: 'eyes'
+              });
+              
+              console.log(`✅ Successfully added eyeball reaction!`);
+              console.log(`Reaction ID: ${reaction.data.id}`);
+              console.log(`Direct link: ${comment.data.html_url}`);
+              
+            } catch (error) {
+              console.error(`❌ Error: ${error.message}`);
+              console.error(`Status: ${error.status}`);
+              console.error(JSON.stringify(error.response?.data, null, 2));
+              
+              // Check permissions
+              console.log('\n=== Debugging Information ===');
+              console.log('Token permissions:', process.env.GITHUB_TOKEN ? 'Token exists' : 'No token');
+              console.log('Repository:', `${context.repo.owner}/${context.repo.repo}`);
+              console.log('Actor:', context.actor);
+              
+              throw error;
+            }
