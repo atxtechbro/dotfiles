@@ -12,7 +12,7 @@ The dotfiles repository maintains a single source of truth for development princ
 
 **Configuration Location**: `~/.aws/amazonq/global_context.json`
 **Rules Location**: `~/.amazonq/rules/` (symlinked to `knowledge/`)
-**Setup Script**: `utils/setup-amazonq-rules.py`
+**Setup Script**: `utils/setup-amazonq-rules.sh`
 
 Amazon Q uses:
 - Global context configuration file that specifies paths to include
@@ -37,7 +37,7 @@ Claude Code uses:
 │   ├── principles/              # Core development principles
 │   └── procedures/              # Actionable processes
 ├── utils/
-│   └── setup-amazonq-rules.py  # Amazon Q configuration
+│   └── setup-amazonq-rules.sh  # Amazon Q configuration
 ├── .bash_aliases.d/
 │   └── claude-mcp.sh          # Claude alias with --add-dir
 └── setup.sh                    # Sources aliases and runs setup scripts
@@ -104,7 +104,7 @@ No regeneration or manual updates needed!
 ### Amazon Q Not Loading Context
 1. Check if `~/.amazonq/rules/` is properly symlinked
 2. Verify `~/.aws/amazonq/global_context.json` exists
-3. Re-run `utils/setup-amazonq-rules.py`
+3. Re-run `utils/setup-amazonq-rules.sh`
 
 ### Claude Code Not Loading Context
 1. Check if alias is loaded: `alias claude`
