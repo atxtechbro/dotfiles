@@ -251,8 +251,8 @@ if [[ -f ~/.bash_exports ]]; then
   echo -e "${GREEN}✓ Environment variables loaded successfully${NC}"
 fi
 
-# Set up AI provider global rules (Amazon Q + Claude Code)
-"$DOT_DEN/utils/setup-ai-provider-rules.py"
+# Set up Amazon Q global rules (Claude Code now uses --add-dir flag via alias)
+"$DOT_DEN/utils/setup-amazonq-rules.sh"
 
 # Setup vendor-agnostic command structure
 # Create symlink for Claude Code to find templates in vendor-agnostic location
