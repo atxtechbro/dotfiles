@@ -10,27 +10,10 @@ See `knowledge/` directory for principles and procedures that apply across all p
 - Primary workflow: GitHub Pull Requests
 - See README.md for repository-specific principles
 
-## Critical: Claude Self-Invocation
-When invoking claude commands from within Claude Code:
-- **ALWAYS use**: `claude -p <command>` 
-- **NEVER use**: `claude <command>`
+## Critical: Non-Interactive Execution Only
+See `knowledge/procedures/non-interactive-execution.md` for the fundamental principle.
 
-This prevents nested interactive session conflicts since we're already in an interactive Claude session and our `claude` alias includes `--mcp-config` and `--add-dir` flags.
-
-Examples:
-```bash
-# Testing functionality
-claude -p "test the new MCP server"
-
-# Checking configuration
-claude -p config get theme
-
-# Running diagnostics
-claude -p doctor
-
-# Setting up tokens
-claude -p setup-token
-```
+Key insight: You (Claude) are BY DEFINITION already in an interactive session. You literally CANNOT provide interactive input to any command. This includes `claude` commands which must use `-p` flag.
 
 ## For AI Providers
 - **Amazon Q**: Uses symlinked `~/.amazonq/rules/` → `knowledge/`
