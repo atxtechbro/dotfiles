@@ -4,7 +4,7 @@ Force multiplier discoveries for 1000x Claude Code productivity. Default to one-
 
 ## Command Execution
 
-- **Non-interactive only**: See `non-interactive-execution.md`. Examples: `claude -p setup-token`, `git commit -m "msg"`, `npm install -y`
+- **Non-interactive only**: See `../constraints/physical/non-interactive-execution.md`. Examples: `claude -p setup-token`, `git commit -m "msg"`, `npm install -y`
 
 ## Installation & Uninstallation
 
