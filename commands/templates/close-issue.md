@@ -8,6 +8,7 @@ Use `mcp__github__get_issue` to read issue #{{ ISSUE_NUMBER }} and determine:
 - Is this already resolved? → Quick close
 - Does this need implementation? → Full workflow
 - Is this invalid/duplicate? → Close with explanation
+- **Is this a spike?** → Spike workflow (no PR)
 - **Repository check**: If issue requires git operations in a different repo, STOP and ask human to restart session there. Claude Code cannot `cd` outside initial directory tree, breaking git workflows.
 - Check recent merged PRs for similar patterns → `mcp__github__list_pull_requests` (state: "closed")
 - Get issue comments with `mcp__github__get_issue_comments` to enrich understanding
@@ -19,6 +20,14 @@ If the issue is already resolved, invalid, or duplicate:
 1. Add explanatory comment with `mcp__github__add_issue_comment`
 2. Close with `mcp__github__update_issue` (state: "closed")
 3. Done!
+
+## Spike Workflow Path
+If the issue has the "spike" label:
+1. Research. Prototype. Document findings.
+2. Comment findings with `mcp__github__add_issue_comment`
+3. Discuss with human
+4. Close issue when done
+5. **NO PR** - spikes deliver knowledge, not code
 
 ## Full Implementation Path
 If the issue needs implementation:
@@ -68,6 +77,7 @@ Keep worktree active for PR adjustments based on the tracer bullets principle. O
 {{ INJECT:procedures/post-pr-mini-retro.md }}
 
 ## Decision Matrix
+- **Spike label** → Spike workflow (research only)
 - **Bug report with clear reproduction** → Implementation path
 - **Feature request approved by maintainer** → Implementation path  
 - **Question already answered** → Quick close with link
