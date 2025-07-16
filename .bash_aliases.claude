@@ -1,0 +1,14 @@
+# Claude Code aliases and functions
+# Provides easy access to Claude Bedrock integration toggle and status
+
+# Claude status checker - lightweight and fast
+alias claude-status='~/ppv/pillars/dotfiles/utils/claude-status.sh'
+
+# Enable AWS Bedrock integration for company usage
+alias enable-bedrock='source ~/ppv/pillars/dotfiles/utils/enable-bedrock.sh'
+
+# Disable AWS Bedrock integration, revert to personal Claude Pro Max
+alias disable-bedrock='source ~/ppv/pillars/dotfiles/utils/disable-bedrock.sh'
+
+# Quick test command
+alias claude-test='claude -p "What is the capital of Texas?"'
