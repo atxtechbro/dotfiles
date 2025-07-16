@@ -21,13 +21,13 @@ Amazon Q uses:
 
 ### Claude Code
 
-**Configuration Location**: `~/CLAUDE.local.md` and `~/ppv/pillars/dotfiles/CLAUDE.local.md`
-**Setup Script**: `utils/setup-claude-rules.py`
+**Configuration Location**: Command-line alias in `.bash_aliases.d/claude-mcp.sh`
+**Setup Method**: `--add-dir` flag in alias
 
 Claude Code uses:
-- `CLAUDE.local.md` files that contain the full context (personal, not committed)
-- Recursive directory traversal to discover these files
-- Content is generated from the knowledge base and embedded directly
+- Native directory discovery via `--add-dir "$DOT_DEN/knowledge"` flag
+- Real-time access to knowledge files (no compilation needed)
+- Alias ensures knowledge directory is always included in context
 
 ## Architecture
 
@@ -37,14 +37,15 @@ Claude Code uses:
 │   ├── principles/              # Core development principles
 │   └── procedures/              # Actionable processes
 ├── utils/
-│   ├── setup-amazonq-rules.py  # Amazon Q configuration
-│   └── setup-claude-rules.py   # Claude Code configuration
-└── setup.sh                    # Calls both setup scripts
+│   └── setup-amazonq-rules.py  # Amazon Q configuration
+├── .bash_aliases.d/
+│   └── claude-mcp.sh          # Claude alias with --add-dir
+└── setup.sh                    # Sources aliases and runs setup scripts
 
 # Generated configurations:
 ~/.amazonq/rules/               # Symlink to knowledge/
 ~/.aws/amazonq/global_context.json
-~/CLAUDE.local.md              # Generated from knowledge/
+# Claude: No generated files needed - uses --add-dir flag
 ```
 
 ## Key Design Decisions
@@ -54,15 +55,16 @@ All principles and procedures are maintained in `knowledge/` directory. This pre
 
 ### Provider-Specific Adaptation
 Each AI provider has different context mechanisms:
-- **Amazon Q**: Prefers file discovery with symlinks
-- **Claude Code**: Uses embedded content in memory files
+- **Amazon Q**: Uses symlinks for file discovery
+- **Claude Code**: Uses --add-dir flag for directory inclusion
 
 ### Automated Setup
 Both systems are configured automatically by `setup.sh`, following the Spilled Coffee Principle.
 
-### Personal vs Shared Context
-- **Amazon Q**: Uses symlinks, so changes to knowledge/ are immediately available
-- **Claude Code**: Uses generated files that need regeneration when knowledge/ changes
+### Real-time Updates
+Both providers now support real-time updates:
+- **Amazon Q**: Symlinks mean changes to knowledge/ are immediately available
+- **Claude Code**: --add-dir flag means changes to knowledge/ are immediately available
 
 ## Usage
 
@@ -75,12 +77,11 @@ This automatically configures both Amazon Q and Claude Code.
 
 ### Updating Context
 
-**For Amazon Q**: Changes to `knowledge/` are immediately available (symlinked).
+Changes to `knowledge/` are immediately available for both providers:
+- **Amazon Q**: Via symlink
+- **Claude Code**: Via --add-dir flag
 
-**For Claude Code**: Re-run the setup script to regenerate the context files:
-```bash
-~/ppv/pillars/dotfiles/utils/setup-claude-rules.py
-```
+No regeneration or manual updates needed!
 
 ### Adding New Principles or Procedures
 
@@ -95,8 +96,8 @@ This automatically configures both Amazon Q and Claude Code.
 - Rules directory: `~/.amazonq/rules/` → `~/ppv/pillars/dotfiles/knowledge/`
 
 ### Claude Code
-- Home directory: `~/CLAUDE.local.md` (for all projects)
-- Dotfiles repo: `~/ppv/pillars/dotfiles/CLAUDE.local.md` (when working in dotfiles)
+- Alias configuration: `~/.bash_aliases.d/claude-mcp.sh`
+- Knowledge accessed via: `--add-dir` flag in alias
 
 ## Troubleshooting
 
@@ -106,14 +107,12 @@ This automatically configures both Amazon Q and Claude Code.
 3. Re-run `utils/setup-amazonq-rules.py`
 
 ### Claude Code Not Loading Context
-1. Check if `~/CLAUDE.local.md` exists
-2. Verify you're working in a directory where Claude Code can discover the file
-3. Re-run `utils/setup-claude-rules.py`
+1. Check if alias is loaded: `alias claude`
+2. Verify knowledge directory exists: `ls -la $DOT_DEN/knowledge`
+3. Re-source aliases: `source ~/.bashrc`
 
-### Context Out of Sync
-If you modify `knowledge/` files:
-- Amazon Q: Changes are automatic (symlinked)
-- Claude Code: Run `utils/setup-claude-rules.py` to regenerate
+### Context Updates
+Changes to `knowledge/` files are automatically available for both providers - no action needed!
 
 ## Future Providers
 
