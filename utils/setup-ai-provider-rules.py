@@ -133,172 +133,21 @@ class AmazonQSetup(AIProviderSetup):
                 print(f"  {f.relative_to(self.target_rules)}")
             return False
 
-class ClaudeCodeSetup(AIProviderSetup):
-    """Claude Code specific setup"""
-    
-    def __init__(self):
-        super().__init__("Claude Code")
-        self.home_claude_file = Path.home() / "CLAUDE.local.md"
-        self.dotfiles_claude_file = self.dotfiles_dir / "CLAUDE.local.md"
-    
-    def _setup_provider_specific(self):
-        """Claude Code uses generated content files"""
-        # Generate content that references all knowledge files
-        claude_content = self._generate_claude_content()
-        
-        # Handle existing files
-        self._backup_existing_file(self.home_claude_file)
-        
-        # Write new CLAUDE.local.md files
-        self.home_claude_file.write_text(claude_content)
-        print("✅ Claude Code global rules configured")
-        
-        # Also create in dotfiles directory for when working in that repo
-        self.dotfiles_claude_file.write_text(claude_content)
-        print("✅ Global context configuration installed")
-        
-        return True
-    
-    def _validate_setup(self):
-        """Claude Code validation - section count assertion"""
-        source_files = self._get_source_files()
-        
-        # Count embedded content sections in generated files
-        claude_content = self.home_claude_file.read_text()
-        generated_sections = claude_content.count("### ")  # Each file becomes a section
-        
-        print(f"\nValidation:")
-        print(f"Source files: {len(source_files)}")
-        print(f"Generated sections: {generated_sections}")
-        
-        if generated_sections == len(source_files) and self.home_claude_file.exists() and self.dotfiles_claude_file.exists():
-            print("✅ File count assertion passed")
-            print("✅ Claude Code global rules setup complete")
-            return True
-        else:
-            print("❌ File count assertion failed!")
-            print("Source files:")
-            for f in source_files:
-                print(f"  {f.relative_to(self.source_rules)}")
-            print(f"Expected {len(source_files)} sections, got {generated_sections}")
-            return False
-    
-    def _generate_claude_content(self):
-        """Generate CLAUDE.local.md content that includes all knowledge files"""
-        
-        content = []
-        content.append("# Global Development Context")
-        content.append("")
-        content.append("This file provides global context for Claude Code across all projects.")
-        content.append("It references the centralized knowledge base from the dotfiles repository.")
-        content.append("")
-        
-        # Add main knowledge README first
-        main_readme = self.source_rules / "README.md"
-        if main_readme.exists():
-            try:
-                readme_content = main_readme.read_text().strip()
-                content.append("### Knowledge Base Overview")
-                content.append("")
-                content.append(readme_content)
-                content.append("")
-            except Exception as e:
-                print(f"Warning: Could not read {main_readme}: {e}")
-        
-        # Add principles
-        principles_dir = self.source_rules / "principles"
-        if principles_dir.exists():
-            content.append("## Core Principles")
-            content.append("")
-            
-            # Add principles README first
-            principles_readme = principles_dir / "README.md"
-            if principles_readme.exists():
-                try:
-                    readme_content = principles_readme.read_text().strip()
-                    content.append("### Principles Overview")
-                    content.append("")
-                    content.append(readme_content)
-                    content.append("")
-                except Exception as e:
-                    print(f"Warning: Could not read {principles_readme}: {e}")
-            
-            # Read and include each principle file
-            for principle_file in sorted(principles_dir.glob("*.md")):
-                if principle_file.name == "README.md":
-                    continue
-                
-                try:
-                    principle_content = principle_file.read_text().strip()
-                    content.append(f"### {principle_file.stem.replace('-', ' ').title()}")
-                    content.append("")
-                    content.append(principle_content)
-                    content.append("")
-                except Exception as e:
-                    print(f"Warning: Could not read {principle_file}: {e}")
-        
-        # Add procedures
-        procedures_dir = self.source_rules / "procedures"
-        if procedures_dir.exists():
-            content.append("## Development Procedures")
-            content.append("")
-            
-            # Add procedures README first
-            procedures_readme = procedures_dir / "README.md"
-            if procedures_readme.exists():
-                try:
-                    readme_content = procedures_readme.read_text().strip()
-                    content.append("### Procedures Overview")
-                    content.append("")
-                    content.append(readme_content)
-                    content.append("")
-                except Exception as e:
-                    print(f"Warning: Could not read {procedures_readme}: {e}")
-            
-            # Read and include each procedure file
-            for procedure_file in sorted(procedures_dir.glob("*.md")):
-                if procedure_file.name == "README.md":
-                    continue
-                
-                try:
-                    procedure_content = procedure_file.read_text().strip()
-                    content.append(f"### {procedure_file.stem.replace('-', ' ').title()}")
-                    content.append("")
-                    content.append(procedure_content)
-                    content.append("")
-                except Exception as e:
-                    print(f"Warning: Could not read {procedure_file}: {e}")
-        
-        # Add footer with source information
-        content.append("---")
-        content.append("")
-        content.append("*This file is automatically generated from the dotfiles knowledge base.*")
-        content.append(f"*Source: {self.source_rules}*")
-        content.append(f"*Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*")
-        
-        return "\n".join(content)
-
 def main():
     """Main entry point - can setup individual providers or all"""
     import argparse
     
     parser = argparse.ArgumentParser(description="Setup AI provider rules")
-    parser.add_argument("--provider", choices=["amazonq", "claude", "all"], 
-                       default="all", help="Which provider to setup")
+    parser.add_argument("--provider", choices=["amazonq"], 
+                       default="amazonq", help="Which provider to setup")
     
     args = parser.parse_args()
     
     success = True
     
-    if args.provider in ["amazonq", "all"]:
+    if args.provider == "amazonq":
         amazonq_setup = AmazonQSetup()
-        success &= amazonq_setup.setup_rules()
-        if args.provider == "all":
-            print()  # Add spacing between providers
-    
-    if args.provider in ["claude", "all"]:
-        claude_setup = ClaudeCodeSetup()
-        success &= claude_setup.setup_rules()
+        success = amazonq_setup.setup_rules()
     
     sys.exit(0 if success else 1)
 
