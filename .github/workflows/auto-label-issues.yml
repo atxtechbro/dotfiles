@@ -16,13 +16,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create triage prompt
+      - name: Prepare prompt with issue details
         run: |
           mkdir -p /tmp/claude-prompts
-          # Substitute variables in the prompt template
-          sed -e "s/{{ REPO }}/${{ github.repository }}/g" \
-              -e "s/{{ ISSUE_NUMBER }}/${{ github.event.issue.number }}/g" \
-              "${{ github.workspace }}/.github/workflow-prompts/issue-triage.md" > /tmp/claude-prompts/triage-prompt.txt
+          
+          # Load the issue triage prompt template and inject current issue details
+          cat "${{ github.workspace }}/.github/workflow-prompts/issue-triage.md" | \
+            sed "s|{{ REPO }}|${{ github.repository }}|g" | \
+            sed "s|{{ ISSUE_NUMBER }}|${{ github.event.issue.number }}|g" \
+            > /tmp/claude-prompts/triage-prompt.txt
 
       - name: Setup GitHub MCP Server
         run: |
