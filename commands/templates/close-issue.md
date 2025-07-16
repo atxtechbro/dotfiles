@@ -22,7 +22,7 @@ If the issue is already resolved, invalid, or duplicate:
 3. Done!
 
 ## Spike Workflow Path
-If the issue has the "spike" label:
+If the issue is a spike:
 1. Research. Prototype. Document findings.
 2. Comment findings with `mcp__github__add_issue_comment`
 3. Discuss with human
