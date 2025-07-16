@@ -1,7 +1,7 @@
 name: Auto Label Issues
 on:
   issues:
-    types: [opened]
+    types: [opened, edited]
   issue_comment:
     types: [created]
 
