@@ -15,6 +15,24 @@ YELLOW='\033[0;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
+# Function to compare semantic versions
+version_compare() {
+    local v1=$1
+    local v2=$2
+    
+    # Convert versions to comparable format (remove dots, pad with zeros)
+    local v1_num=$(echo "$v1" | awk -F. '{printf "%03d%03d%03d", $1, $2, $3}')
+    local v2_num=$(echo "$v2" | awk -F. '{printf "%03d%03d%03d", $1, $2, $3}')
+    
+    if [ "$v1_num" -gt "$v2_num" ]; then
+        echo "newer"
+    elif [ "$v1_num" -lt "$v2_num" ]; then
+        echo "older"
+    else
+        echo "same"
+    fi
+}
+
 setup_claude_code() {
     echo "Checking Claude Code CLI status..."
     
@@ -49,18 +67,24 @@ setup_claude_code() {
             echo -e "${GREEN}✓ Claude Code is already up to date (version: $CURRENT_VERSION)${NC}"
             return 0
         else
-            echo "Updating Claude Code from $CURRENT_VERSION to $LATEST_VERSION..."
-            if ! npm update -g @anthropic-ai/claude-code; then
-                echo -e "${RED}Failed to update Claude Code. Please try again or check your npm installation.${NC}"
-                return 1
-            fi
+            # Use proper version comparison to prevent downgrades
+            VERSION_COMPARISON=$(version_compare "$CURRENT_VERSION" "$LATEST_VERSION")
             
-            # Verify update
-            NEW_VERSION=$(claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
-            if [ "$NEW_VERSION" = "$LATEST_VERSION" ]; then
+            if [ "$VERSION_COMPARISON" = "newer" ]; then
+                echo -e "${GREEN}✓ Claude Code local version is newer (local: $CURRENT_VERSION, npm: $LATEST_VERSION)${NC}"
+                return 0
+            elif [ "$VERSION_COMPARISON" = "older" ]; then
+                echo "Updating Claude Code from $CURRENT_VERSION to $LATEST_VERSION..."
+                if ! npm update -g @anthropic-ai/claude-code; then
+                    echo -e "${RED}Failed to update Claude Code. Please try again or check your npm installation.${NC}"
+                    return 1
+                fi
+                
+                NEW_VERSION=$(claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
                 echo -e "${GREEN}✓ Claude Code successfully updated to version $NEW_VERSION${NC}"
             else
-                echo -e "${YELLOW}Update completed but version verification failed.${NC}"
+                echo -e "${GREEN}✓ Claude Code is already up to date (version: $CURRENT_VERSION)${NC}"
+                return 0
             fi
         fi
     else
