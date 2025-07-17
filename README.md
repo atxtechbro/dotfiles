@@ -72,10 +72,14 @@ This system avoids traditional IDEs to enable **macro-level task management** in
 This repository uses a modular approach to shell configuration:
 
 ```bash
-# Source modular alias files
-for alias_file in ~/ppv/pillars/dotfiles/.bash_aliases.*; do
-  [ -f "$alias_file" ] && source "$alias_file"
-done
+# Load modular alias files from .bash_aliases.d directory
+if [ -d "$HOME/.bash_aliases.d" ]; then
+  for module in "$HOME/.bash_aliases.d"/*.sh; do
+    if [ -f "$module" ]; then
+      source "$module"
+    fi
+  done
+fi
 ```
 
 This pattern provides:
@@ -83,7 +87,7 @@ This pattern provides:
 - **Lazy loading** – Files sourced only when they exist
 - **Namespace hygiene** – Avoids cluttering global namespace
 
-Modules follow the naming convention `.bash_aliases.<tool-name>` and are automatically loaded when present.
+Modules are stored in `.bash_aliases.d/<tool-name>.sh` and are automatically loaded when present.
 
 ## P.P.V System: Pillars, Pipelines, and Vaults
 
