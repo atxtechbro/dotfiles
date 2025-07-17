@@ -6,6 +6,7 @@ Foundational truths that guide development across all projects.
 - `throughput-definition.md` - **The North Star**: AI agent management capability for top 2% positioning
 
 ## Operating Principles
+- `ai-provider-agnosticism.md` - **Crisis-Proven**: Interchangeable AI providers for service outage resilience
 - `invent-and-simplify.md` - Constant reinvention and simplifying assumptions
 - `ose.md` - Outside and Slightly Elevated perspective for clear decision-making
 - `snowball-method.md` - Continuous knowledge accumulation and compounding improvements
