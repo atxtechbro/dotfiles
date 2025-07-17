@@ -1,7 +1,9 @@
-# Claude Code Assistant workflow - handles both:
-# - Issue implementation: Creates branches, implements solutions, opens PRs
-# - PR review: Provides feedback on existing PRs
-# The anthropics/claude-code-action intelligently detects context and switches modes
+# Claude Code Assistant workflow
+# Uses the anthropics/claude-code-action@beta which primarily handles:
+# - PR review: Provides excellent feedback on existing PRs ✅
+# - Issue implementation: Limited success (often completes but doesn't create PRs) ⚠️
+# 
+# For reliable issue implementation, use claude-issue-implementation.yml instead
 
 name: Claude Code Assistant
 on:
