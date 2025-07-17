@@ -246,7 +246,7 @@ This repository automatically configures global context for multiple AI coding a
 - **Amazon Q Developer CLI**: Uses symlinked rules directory (`~/.amazonq/rules/`)
 - **Claude Code**: Uses generated `CLAUDE.local.md` files with embedded context
 
-All context is sourced from the `knowledge/` directory and automatically configured by the setup script. See [AI Provider Agnostic Context](docs/ai-provider-agnostic-context.md) for details.
+All context is sourced from the `knowledge/` directory and automatically configured by the setup script.
 
 ### Slash Commands (Vendor-Agnostic)
 

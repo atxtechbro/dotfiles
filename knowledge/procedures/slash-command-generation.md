@@ -3,7 +3,7 @@
 How slash commands actually work (note to future self who will forget):
 
 1. **Templates** in `.claude/command-templates/` - the source files
-2. **Generator** (`utils/generate-claude-commands.sh`) - runs during setup.sh
+2. **Generator** (`utils/generate-commands.sh`, fallback: `utils/generate-claude-commands.sh`) - runs during setup.sh
 3. **Output** in `~/.claude/commands/` - what Claude Code actually reads
 
 When you type `/close-issue 123`:
