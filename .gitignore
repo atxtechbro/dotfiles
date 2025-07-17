@@ -17,6 +17,10 @@
 # Machine-specific configuration
 .bash_exports.local
 
+# Company-specific documentation (stays local)
+flywire-notes/
+**/flywire-notes/
+
 # Claude Code personal configuration
 CLAUDE.local.md
 # Claude Code local settings (personal overrides, not for source control per Anthropic docs)
