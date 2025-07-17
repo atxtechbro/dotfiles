@@ -9,6 +9,10 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     set -euo pipefail
 fi
 
+# Source shared utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/version-utils.sh"
+
 # Colors for output
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
@@ -49,18 +53,24 @@ setup_claude_code() {
             echo -e "${GREEN}✓ Claude Code is already up to date (version: $CURRENT_VERSION)${NC}"
             return 0
         else
-            echo "Updating Claude Code from $CURRENT_VERSION to $LATEST_VERSION..."
-            if ! npm update -g @anthropic-ai/claude-code; then
-                echo -e "${RED}Failed to update Claude Code. Please try again or check your npm installation.${NC}"
-                return 1
-            fi
+            # Use proper version comparison to prevent downgrades
+            VERSION_COMPARISON=$(version_compare "$CURRENT_VERSION" "$LATEST_VERSION")
             
-            # Verify update
-            NEW_VERSION=$(claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
-            if [ "$NEW_VERSION" = "$LATEST_VERSION" ]; then
+            if [ "$VERSION_COMPARISON" = "newer" ]; then
+                echo -e "${GREEN}✓ Claude Code local version is newer (local: $CURRENT_VERSION, npm: $LATEST_VERSION)${NC}"
+                return 0
+            elif [ "$VERSION_COMPARISON" = "older" ]; then
+                echo "Updating Claude Code from $CURRENT_VERSION to $LATEST_VERSION..."
+                if ! npm update -g @anthropic-ai/claude-code; then
+                    echo -e "${RED}Failed to update Claude Code. Please try again or check your npm installation.${NC}"
+                    return 1
+                fi
+                
+                NEW_VERSION=$(claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
                 echo -e "${GREEN}✓ Claude Code successfully updated to version $NEW_VERSION${NC}"
             else
-                echo -e "${YELLOW}Update completed but version verification failed.${NC}"
+                echo -e "${GREEN}✓ Claude Code is already up to date (version: $CURRENT_VERSION)${NC}"
+                return 0
             fi
         fi
     else

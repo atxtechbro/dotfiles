@@ -1,13 +1,14 @@
 #!/bin/bash
 # GitHub CLI Installation and Update Utility
 
-# Source common logging functions
+# Source common utilities
 if [[ -n "${BASH_SOURCE[0]:-}" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 else
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 fi
 source "${SCRIPT_DIR}/logging.sh"
+source "${SCRIPT_DIR}/version-utils.sh"
 
 install_or_update_gh_cli() {
   log_info "Installing GitHub CLI..."
@@ -67,26 +68,29 @@ install_or_update_gh_cli() {
 setup_gh_cli() {
   # Check if GitHub CLI is installed
   if command -v gh &> /dev/null; then
-    CURRENT_VERSION=$(gh --version | head -n 1 | cut -d' ' -f3)
+    CURRENT_VERSION=$(extract_version "gh" "$(gh --version)")
     log_info "Current: $CURRENT_VERSION"
     
     # Get the latest available version from GitHub
     LATEST_VERSION=$(curl -s https://api.github.com/repos/cli/cli/releases/latest | grep -o '"tag_name": "v[^"]*' | cut -d'"' -f4 | tr -d 'v')
     
-    # Check if update is needed
-    if [[ -n "$LATEST_VERSION" && "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
+    # Check if update is needed using semantic version comparison
+    if [[ -n "$LATEST_VERSION" ]]; then
+      VERSION_STATUS=$(version_compare "$CURRENT_VERSION" "$LATEST_VERSION")
+      if [[ "$VERSION_STATUS" == "older" ]]; then
       log_info "Updating to: $LATEST_VERSION"
       install_or_update_gh_cli
       
       if [ $? -eq 0 ]; then
-        NEW_VERSION=$(gh --version | head -n 1 | cut -d' ' -f3)
-        if [[ "$CURRENT_VERSION" != "$NEW_VERSION" ]]; then
+        NEW_VERSION=$(extract_version "gh" "$(gh --version)")
+        UPDATE_STATUS=$(version_compare "$CURRENT_VERSION" "$NEW_VERSION")
+        if [[ "$UPDATE_STATUS" == "older" ]]; then
           log_success "Updated: $CURRENT_VERSION → $NEW_VERSION"
         else
           log_warning "Update failed, still: $CURRENT_VERSION"
         fi
       fi
-    else
+      else
       log_success "Already latest: $CURRENT_VERSION"
     fi
   else

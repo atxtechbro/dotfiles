@@ -2,6 +2,10 @@
 # tmux Installation and Update Utility
 # Handles installation and updates across different operating systems
 
+# Source shared utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/version-utils.sh"
+
 # Colors for output
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -13,7 +17,7 @@ install_or_update_tmux() {
     
     # Check if tmux is installed
     if command -v tmux &> /dev/null; then
-        CURRENT_VERSION=$(tmux -V | cut -d' ' -f2)
+        CURRENT_VERSION=$(extract_version "tmux" "$(tmux -V)")
         echo "Current tmux version: $CURRENT_VERSION"
         
         # Try to get latest version (this is approximate since tmux doesn't have a simple API)
@@ -24,8 +28,9 @@ install_or_update_tmux() {
             # macOS with Homebrew
             if command -v brew &> /dev/null; then
                 brew upgrade tmux || brew install tmux
-                NEW_VERSION=$(tmux -V | cut -d' ' -f2)
-                if [[ "$CURRENT_VERSION" != "$NEW_VERSION" ]]; then
+                NEW_VERSION=$(extract_version "tmux" "$(tmux -V)")
+                VERSION_STATUS=$(version_compare "$CURRENT_VERSION" "$NEW_VERSION")
+                if [[ "$VERSION_STATUS" == "older" ]]; then
                     echo -e "${GREEN}✓ tmux updated from $CURRENT_VERSION to $NEW_VERSION${NC}"
                 else
                     echo -e "${GREEN}✓ tmux is already up to date ($CURRENT_VERSION)${NC}"

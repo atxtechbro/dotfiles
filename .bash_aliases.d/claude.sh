@@ -1,12 +1,23 @@
-# Claude model switch aliases
-# Include this file in your .bashrc or .bash_aliases
+# Claude Bedrock integration and MCP configuration
 
-# Switch to Claude 3.5 Haiku model
-alias claude-haiku="export ANTHROPIC_MODEL=claude-3-5-haiku-latest"
+# Define the global MCP config location
+DOT_DEN="${DOT_DEN:-$HOME/ppv/pillars/dotfiles}"
+GLOBAL_MCP_CONFIG="$DOT_DEN/mcp/mcp.json"
 
-# Switch to Claude 3.7 Sonnet model
-alias claude-sonnet="export ANTHROPIC_MODEL=claude-3-7-sonnet-latest"
+# Debug logging for work machine detection
+echo "🔍 Claude Config Debug:"
+echo "  WORK_MACHINE variable: '${WORK_MACHINE:-<unset>}'"
+echo "  Evaluation result: '${WORK_MACHINE:-false}'"
 
-# Switch to Claude 3 Opus model
-alias claude-opus="export ANTHROPIC_MODEL=claude-3-opus-latest"
+# Conditional Bedrock integration - only on work machines
+if [ "${WORK_MACHINE:-false}" = "true" ]; then
+    echo "🏢 Work machine detected - Bedrock integration enabled"
+    alias claude='AWS_PROFILE=ai_codegen CLAUDE_CODE_USE_BEDROCK=1 claude --mcp-config "$GLOBAL_MCP_CONFIG" --add-dir "$DOT_DEN/knowledge"'
+else
+    echo "🏠 Personal machine detected - Using Claude Pro Max only"
+    alias claude='claude --mcp-config "$GLOBAL_MCP_CONFIG" --add-dir "$DOT_DEN/knowledge"'
+fi
+
+# Quick test command (works on both work and personal)
+alias claude-test='claude -p "What is the capital of Texas?"'
 

@@ -17,6 +17,10 @@
 # Machine-specific configuration
 .bash_exports.local
 
+# Company-specific documentation (stays local)
+flywire-notes/
+**/flywire-notes/
+
 # Claude Code personal configuration
 CLAUDE.local.md
 # Claude Code local settings (personal overrides, not for source control per Anthropic docs)
@@ -63,10 +67,12 @@ env/
 .env/
 mcp/servers/aws-docs/venv/
 
-# Python
-__pycache__/
+# Python cache and compiled files
+**/__pycache__/
 *.py[cod]
 *$py.class
+*.pyc
+*.pyo
 *.so
 .Python
 *.egg-info/

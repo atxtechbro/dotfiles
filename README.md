@@ -72,10 +72,14 @@ This system avoids traditional IDEs to enable **macro-level task management** in
 This repository uses a modular approach to shell configuration:
 
 ```bash
-# Source modular alias files
-for alias_file in ~/ppv/pillars/dotfiles/.bash_aliases.*; do
-  [ -f "$alias_file" ] && source "$alias_file"
-done
+# Load modular alias files from .bash_aliases.d directory
+if [ -d "$HOME/.bash_aliases.d" ]; then
+  for module in "$HOME/.bash_aliases.d"/*.sh; do
+    if [ -f "$module" ]; then
+      source "$module"
+    fi
+  done
+fi
 ```
 
 This pattern provides:
@@ -83,7 +87,7 @@ This pattern provides:
 - **Lazy loading** – Files sourced only when they exist
 - **Namespace hygiene** – Avoids cluttering global namespace
 
-Modules follow the naming convention `.bash_aliases.<tool-name>` and are automatically loaded when present.
+Modules are stored in `.bash_aliases.d/<tool-name>.sh` and are automatically loaded when present.
 
 ## P.P.V System: Pillars, Pipelines, and Vaults
 
@@ -239,10 +243,29 @@ Each worktree is self-contained with its own MCP servers, binaries, and dependen
 
 This repository automatically configures global context for multiple AI coding assistants from a single source of truth:
 
-- **Amazon Q Developer CLI**: Uses symlinked rules directory (`~/.amazonq/rules/`)
-- **Claude Code**: Uses generated `CLAUDE.local.md` files with embedded context
+- **Amazon Q Developer CLI**: Uses automatic MCP import (`q mcp import --file mcp/mcp.json global --force`)
+- **Claude Code**: Uses direct config reference (`--mcp-config mcp/mcp.json`)
 
-All context is sourced from the `knowledge/` directory and automatically configured by the setup script.
+All context is sourced from the `knowledge/` directory and MCP servers are configured identically across providers.
+
+### Provider Symmetry
+
+Both AI providers use identical MCP server configurations through different integration methods:
+
+```bash
+# Single source of truth
+GLOBAL_MCP_CONFIG="$DOT_DEN/mcp/mcp.json"
+
+# Claude Code: Direct file reference
+alias claude='claude --mcp-config "$GLOBAL_MCP_CONFIG" --add-dir "$DOT_DEN/knowledge"'
+
+# Amazon Q: Automatic import
+alias q='q mcp import --file "$GLOBAL_MCP_CONFIG" global --force >/dev/null 2>&1; command q'
+```
+
+**Crisis Resilience**: When Claude Code experiences 500 "Overloaded" errors, Amazon Q provides identical MCP server access and capabilities. This provider agnosticism ensures uninterrupted workflow during service outages.
+
+**Available MCP Servers**: Both providers get access to git operations, GitHub integration, filesystem operations, knowledge directory context, and work-specific servers (when `WORK_MACHINE=true`).
 
 ### Slash Commands (Vendor-Agnostic)
 

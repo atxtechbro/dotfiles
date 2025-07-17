@@ -71,10 +71,14 @@ Apply tracer bullets methodology:
 ### 4. Iterate Based on Feedback
 Keep worktree active for PR adjustments based on the tracer bullets principle. Only cleanup after PR is merged.
 
-## REQUIRED: Post-PR Mini Retro (if PR was created)
-**TRIGGER**: If you created a pull request, you MUST complete this step before finishing.
+## Final Step: Retro
+Let's retro this context and wring out the gleanings.
 
-{{ INJECT:procedures/post-pr-mini-retro.md }}
+{{ INJECT:knowledge/principles/continuous-improvement.md }}
+
+**What would you like to focus on?**
+- Do you have a specific aspect you want to double-click on?
+- Or would you like me to suggest the top 3 areas I predict you'll find most valuable to explore?
 
 ## Decision Matrix
 - **Spike label** → Spike workflow (research only)
