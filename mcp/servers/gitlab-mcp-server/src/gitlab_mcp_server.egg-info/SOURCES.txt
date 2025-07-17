@@ -3,7 +3,15 @@ README.md
 pyproject.toml
 src/gitlab_mcp_server/__init__.py
 src/gitlab_mcp_server/__main__.py
+src/gitlab_mcp_server/basic_handlers.py
+src/gitlab_mcp_server/issue_handlers.py
+src/gitlab_mcp_server/merge_request_handlers.py
+src/gitlab_mcp_server/pipeline_handlers.py
+src/gitlab_mcp_server/project_handlers.py
+src/gitlab_mcp_server/repository_handlers.py
 src/gitlab_mcp_server/server.py
+src/gitlab_mcp_server/user_group_handlers.py
+src/gitlab_mcp_server/utils.py
 src/gitlab_mcp_server.egg-info/PKG-INFO
 src/gitlab_mcp_server.egg-info/SOURCES.txt
 src/gitlab_mcp_server.egg-info/dependency_links.txt
