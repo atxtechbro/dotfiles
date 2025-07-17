@@ -7,6 +7,7 @@ Foundational truths that guide development across all projects.
 
 ## Operating Principles
 - `ai-provider-agnosticism.md` - **Crisis-Proven**: Interchangeable AI providers for service outage resilience
+- `continuous-improvement.md` - Extract gleanings from every experience for systems strengthening
 - `invent-and-simplify.md` - Constant reinvention and simplifying assumptions
 - `no-leaks.md` - Keep company details private while enabling rich AI context via gitignored documentation
 - `ose.md` - Outside and Slightly Elevated perspective for clear decision-making
