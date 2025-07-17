@@ -9,29 +9,15 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     set -euo pipefail
 fi
 
+# Source shared utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/version-utils.sh"
+
 # Colors for output
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
-
-# Function to compare semantic versions
-version_compare() {
-    local v1=$1
-    local v2=$2
-    
-    # Convert versions to comparable format (remove dots, pad with zeros)
-    local v1_num=$(echo "$v1" | awk -F. '{printf "%03d%03d%03d", $1, $2, $3}')
-    local v2_num=$(echo "$v2" | awk -F. '{printf "%03d%03d%03d", $1, $2, $3}')
-    
-    if [ "$v1_num" -gt "$v2_num" ]; then
-        echo "newer"
-    elif [ "$v1_num" -lt "$v2_num" ]; then
-        echo "older"
-    else
-        echo "same"
-    fi
-}
 
 setup_claude_code() {
     echo "Checking Claude Code CLI status..."
