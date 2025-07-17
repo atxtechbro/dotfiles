@@ -7,10 +7,6 @@ GLOBAL_MCP_CONFIG="$DOT_DEN/mcp/mcp.json"
 
 # Conditional Bedrock integration - only on work machines
 if [ "${WORK_MACHINE:-false}" = "true" ]; then
-    # Claude with Bedrock (work machines only)
-    # Uses ai_codegen profile and enables Bedrock integration
-    alias claude-bedrock='AWS_PROFILE=ai_codegen CLAUDE_CODE_USE_BEDROCK=1 claude'
-    
     # Make claude default to Bedrock on work machines - includes MCP config and knowledge directory
     alias claude='AWS_PROFILE=ai_codegen CLAUDE_CODE_USE_BEDROCK=1 claude --mcp-config "$GLOBAL_MCP_CONFIG" --add-dir "$DOT_DEN/knowledge"'
     
@@ -18,7 +14,6 @@ if [ "${WORK_MACHINE:-false}" = "true" ]; then
 else
     # Personal machines - Claude Pro Max with MCP config and knowledge directory
     alias claude='claude --mcp-config "$GLOBAL_MCP_CONFIG" --add-dir "$DOT_DEN/knowledge"'
-    alias claude-bedrock='echo "❌ Bedrock not available on personal machines. Use claude instead."'
     
     echo "🏠 Personal machine detected - Using Claude Pro Max only"
 fi
