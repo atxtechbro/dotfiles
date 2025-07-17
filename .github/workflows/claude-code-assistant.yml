@@ -1,4 +1,9 @@
-name: Claude PR Review
+# Claude Code Assistant workflow - handles both:
+# - Issue implementation: Creates branches, implements solutions, opens PRs
+# - PR review: Provides feedback on existing PRs
+# The anthropics/claude-code-action intelligently detects context and switches modes
+
+name: Claude Code Assistant
 on:
   issue_comment:
     types: [created]
@@ -11,12 +16,12 @@ permissions:
   pull-requests: write
 
 jobs:
-  claude-review:
+  claude-assistant:
     if: contains(github.event.comment.body, '@claude')
     runs-on: ubuntu-latest
 
     steps:
-      - name: Acknowledge review request
+      - name: Acknowledge request
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
