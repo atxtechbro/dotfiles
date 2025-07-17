@@ -10,14 +10,7 @@ alias claude-sonnet="export ANTHROPIC_MODEL=claude-3-7-sonnet-latest"
 # Switch to Claude 3 Opus model
 alias claude-opus="export ANTHROPIC_MODEL=claude-3-opus-latest"
 
-# Claude status checker - lightweight and fast
-alias claude-status='~/ppv/pillars/dotfiles/utils/claude-status.sh'
 
-# Enable AWS Bedrock integration for company usage
-alias enable-bedrock='source ~/ppv/pillars/dotfiles/utils/enable-bedrock.sh'
-
-# Disable AWS Bedrock integration, revert to personal Claude Pro Max
-alias disable-bedrock='source ~/ppv/pillars/dotfiles/utils/disable-bedrock.sh'
 
 # Conditional Bedrock integration - only on work machines
 if [ "${WORK_MACHINE:-false}" = "true" ]; then
