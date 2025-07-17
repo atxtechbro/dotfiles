@@ -31,7 +31,7 @@ commands/
 
 1. Create your template in `commands/templates/your-command.md`
 2. Use the `{{ INJECT:path/to/file.md }}` syntax for dynamic content
-3. Run `utils/generate-claude-commands.sh` to generate provider-specific versions
+3. Run `utils/generate-commands.sh` to generate provider-specific versions
 
 ## Why This Architecture?
 

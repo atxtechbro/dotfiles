@@ -19,9 +19,10 @@ The dotfiles repository provides an AI provider-agnostic system for managing MCP
   - `knowledge/principles/` - Foundational development principles
   - `knowledge/procedures/` - Actionable development procedures
 
-### 3. AI Provider Rules
-- **File**: `AI-RULES.md` - Repository-specific AI context
-- **Symlinks**: `CLAUDE.md` → `AI-RULES.md`, `AmazonQ.md` → `AI-RULES.md`
+### 3. AI Provider Context
+- **Source**: `knowledge/` directory automatically configured for each provider
+- **Amazon Q**: Uses symlinked rules directory (`~/.amazonq/rules/`)
+- **Claude Code**: Uses generated `CLAUDE.local.md` files with embedded context
 
 ## Adding a New MCP Client
 
