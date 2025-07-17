@@ -1,6 +1,25 @@
 # Claude Issue Implementation Workflow
 # Achieves OSE (Outside and Slightly Elevated) throughput by automatically implementing issues
 # Comment @claude on any issue → Claude implements it → PR created → Zero manual intervention
+#
+# How it works:
+# 1. Uses Claude Code CLI directly (not the beta action)
+# 2. Runs /close-issue command with SDK's -p flag for programmatic access
+# 3. Copies knowledge base and command templates for full context
+# 4. Creates PR and verifies it was created successfully
+#
+# Key differences from claude-code-assistant.yml:
+# - This workflow: Uses CLI/SDK for reliable issue implementation
+# - Other workflow: Uses beta action (good for PR reviews, unreliable for issues)
+#
+# Authentication:
+# - Requires CLAUDE_CODE_OAUTH_TOKEN or ANTHROPIC_API_KEY secret
+# - GITHUB_TOKEN is provided automatically
+#
+# SDK Usage:
+# The -p flag is specifically designed for CI and non-interactive contexts
+# It provides programmatic, low-level access to Claude Code
+# Reference: https://docs.anthropic.com/en/docs/claude-code/sdk
 
 name: Claude Issue Implementation
 on:
