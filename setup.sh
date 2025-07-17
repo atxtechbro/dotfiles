@@ -372,6 +372,9 @@ else
   echo -e "${YELLOW}Warning: .claude/settings.json not found. Skipping settings symlink.${NC}"
 fi
 
+# Note: GitHub domain auto-approval is configured in .claude/settings.json
+# This provides enterprise-level permissions via the global settings symlink
+
 
 # Node.js setup with NVM
 echo -e "${DIVIDER}"
