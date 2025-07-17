@@ -67,10 +67,12 @@ env/
 .env/
 mcp/servers/aws-docs/venv/
 
-# Python
-__pycache__/
+# Python cache and compiled files
+**/__pycache__/
 *.py[cod]
 *$py.class
+*.pyc
+*.pyo
 *.so
 .Python
 *.egg-info/
