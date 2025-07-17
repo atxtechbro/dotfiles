@@ -28,5 +28,20 @@ Suppose you need to work on multiple tasks simultaneously with complete code iso
 - **Dirty main**: Worktree inherits untracked files → empty PR
 - **Wrong base commit**: Local main ahead of origin → PR shows no diff
 - **Wrong file paths**: Files created in main, not worktree → empty commits
+- **git_batch silent failure**: `mcp__git__git_batch` may report success but leave changes uncommitted in worktrees → empty PRs
 - **[OSE Principle](../principles/ose.md)**: Only GitHub PR diff matters for review - must verify before creating PR
 - **Broken symlinks**: Running setup.sh from worktree creates symlinks that break when worktree is deleted
+
+## Defensive Verification Patterns
+
+**After git_batch operations**:
+1. **Verify commit**: Run `mcp__git__git_status` to confirm working directory is clean
+2. **Check actual changes**: Run `mcp__git__git_diff target: origin/main` to verify changes exist
+3. **Validate commit content**: Ensure commit message and file changes match expectations
+
+**Before creating PRs**:
+1. **Confirm non-empty diff**: `mcp__git__git_diff target: origin/main` must show actual changes
+2. **Verify commit history**: Check that commits contain expected content, not empty commits
+3. **Status verification**: Working directory should be clean if commits were successful
+
+**Tracer bullets detection**: These verifications provide immediate feedback to catch silent failures before they create empty PRs.
