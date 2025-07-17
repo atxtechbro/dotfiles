@@ -1,0 +1,139 @@
+# Claude Issue Implementation Workflow
+# Achieves OSE (Outside and Slightly Elevated) throughput by automatically implementing issues
+# Comment @claude on any issue → Claude implements it → PR created → Zero manual intervention
+
+name: Claude Issue Implementation
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write      # Create branches and commits
+  issues: write        # Read issues and add comments
+  pull-requests: write # Create pull requests
+
+jobs:
+  implement-issue:
+    # Only trigger on issue comments (not PR comments) containing @claude
+    if: github.event.issue.pull_request == null && contains(github.event.comment.body, '@claude')
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Acknowledge implementation request
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            try {
+              // Add rocket reaction to show Claude is implementing
+              const reaction = await github.rest.reactions.createForIssueComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: context.payload.comment.id,
+                content: 'rocket'
+              });
+              
+              console.log(`✅ Added rocket reaction to comment ${context.payload.comment.id}`);
+            } catch (error) {
+              console.error(`❌ Failed to add reaction: ${error.message}`);
+              // Don't fail the workflow
+            }
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0  # Full history for proper git operations
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Claude Code CLI
+        run: |
+          echo "📦 Installing Claude Code CLI..."
+          npm install -g @anthropic-ai/claude-code
+          claude --version
+
+      - name: Setup Git Identity
+        run: |
+          git config --global user.name "Claude Assistant"
+          git config --global user.email "claude-assistant[bot]@users.noreply.github.com"
+
+      - name: Copy Knowledge Base
+        run: |
+          # Claude needs access to the knowledge base for context
+          echo "📚 Setting up knowledge base..."
+          mkdir -p ~/.claude
+          if [ -d "knowledge" ]; then
+            echo "Copying knowledge directory..."
+            cp -r knowledge ~/.claude/
+          fi
+          
+          # Copy command templates
+          if [ -d "commands/templates" ]; then
+            echo "Copying command templates..."
+            cp -r commands/templates ~/.claude/command-templates
+          elif [ -d ".claude/command-templates" ]; then
+            echo "Copying .claude command templates..."
+            cp -r .claude/command-templates ~/.claude/
+          fi
+
+      - name: Run close-issue command with SDK
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          echo "🚀 Running Claude Code SDK to implement issue #${{ github.event.issue.number }}..."
+          
+          # Using the SDK with -p flag for programmatic access
+          # This is designed for CI and non-interactive contexts
+          claude -p \
+            "/close-issue ${{ github.event.issue.number }}" \
+            --allowedTools 'Bash(git log:*),mcp__git__*,mcp__github-write__*' \
+            --output-format json
+
+      - name: Check for created PR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // Check if Claude created a PR
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              sort: 'created',
+              direction: 'desc',
+              per_page: 5
+            });
+            
+            // Look for a PR that references this issue
+            const issuePR = prs.find(pr => 
+              pr.body && pr.body.includes(`#${{ github.event.issue.number }}`)
+            );
+            
+            if (issuePR) {
+              console.log(`✅ PR #${issuePR.number} created successfully!`);
+              
+              // Add a comment on the issue
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: ${{ github.event.issue.number }},
+                body: `🚀 Claude has created PR #${issuePR.number} to implement this issue!\n\nThis is OSE in action - automatic issue implementation with zero manual intervention.`
+              });
+            } else {
+              console.log('⚠️ No PR found - Claude may still be working or encountered an issue');
+            }
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: claude-logs-${{ github.run_id }}
+          path: |
+            ~/.claude/logs/
+            ~/.mcp-tool-calls.log
