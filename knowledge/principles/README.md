@@ -16,4 +16,5 @@ Foundational truths that guide development across all projects.
 - `systems-stewardship.md` - Maintaining systems through patterns and documentation
 - `tracer-bullets.md` - Rapid feedback-driven development with ground truth
 - `transparency-in-agent-work.md` - Make agent reasoning visible during reviews
+- `vendor-agnosticism.md` - Design every system layer to be replaceable
 - `versioning-mindset.md` (VM) - Iteration over reinvention
