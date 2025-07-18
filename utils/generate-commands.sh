@@ -20,11 +20,10 @@ PROVIDER_CONFIG="$DOTFILES_DIR/.config/provider_dirs.conf"
 
 # Default provider directories if no config file exists
 # Use the vendor-agnostic commands/templates directory for all providers
-declare -A DEFAULT_PROVIDER_DIRS=(
-    ["claude"]="$DOTFILES_DIR/commands/templates|$HOME/.claude/commands"
-    ["amazonq"]="$DOTFILES_DIR/commands/templates|$HOME/.amazonq/commands"
-    ["cursor"]="$DOTFILES_DIR/commands/templates|$HOME/.cursor/commands"
-)
+declare -A DEFAULT_PROVIDER_DIRS
+DEFAULT_PROVIDER_DIRS["claude"]="$DOTFILES_DIR/commands/templates|$HOME/.claude/commands"
+DEFAULT_PROVIDER_DIRS["amazonq"]="$DOTFILES_DIR/commands/templates|$HOME/.amazonq/commands"
+DEFAULT_PROVIDER_DIRS["cursor"]="$DOTFILES_DIR/commands/templates|$HOME/.cursor/commands"
 
 # Load provider directories from config file if it exists
 declare -A PROVIDER_DIRS
