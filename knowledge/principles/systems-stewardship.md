@@ -25,6 +25,37 @@ The principle of maintaining and improving systems through consistent patterns, 
 - **Leave cookie crumbs**: Document architectural decisions inline where future engineers encounter them. Git commit messages fade into history; inline comments create discoverable breadcrumbs for faster resolution.
 - **Gitignore as architectural documentation**: Every gitignore entry embeds meaning about system structure. `# Setup-generated symlinks (avoid duplicating tracked content)` tells the story of why `.claude/command-templates` exists. Each line is a clue to underlying architecture, not just file exclusion.
 
+**Flywire-Notes Pattern: Tree-Like Memory Systems**
+
+The flywire-notes pattern creates secure, hierarchical context systems that enrich AI interactions while maintaining strict security boundaries. This gitignored scratchpad approach enables rich local knowledge bases without contaminating version control.
+
+```
+root/
+├── flywire-notes/          # Company-wide context
+│   └── config.sh           # Shared across all repos
+├── project1/
+│   └── flywire-notes/      # Project-specific notes  
+│       └── api-keys.md     # Never leaves this machine
+└── project2/
+    └── flywire-notes/      # Different project context
+        └── architecture.md # Pulled into AI memory safely
+```
+
+**Benefits:**
+- **Tree-like inheritance**: Child directories inherit parent context naturally
+- **Security by design**: Global gitignore prevents accidental commits of sensitive data
+- **Rich AI context**: Local knowledge bases enhance agent capability without leaking secrets
+- **Maintainable patterns**: Consistent structure across projects reduces cognitive load
+- **No Leaks principle**: Implementation maintains strict separation between public and private information
+
+**Implementation strategy:**
+- Add `flywire-notes/` to global gitignore configuration
+- Establish consistent directory structure across all repositories
+- Use descriptive filenames that indicate content sensitivity level
+- Document sensitive vs. shareable content boundaries clearly
+
+This pattern demonstrates systems stewardship by creating reusable, secure patterns that compound in value through standardization while preserving knowledge and preventing information leakage.
+
 **GitHub Issues as WIP Inventory:**
 - Backlog buildup indicates bottlenecks in the development flow
 - Leading vs lagging indicators: measure what predicts success, not what confirms it
