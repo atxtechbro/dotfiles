@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 from enum import Enum
 from pathlib import Path
 from typing import Sequence
@@ -1836,6 +1837,17 @@ async def serve(repository: Path | None, read_only: bool = False) -> None:
                         required=False
                     )
                 ]
+            ),
+            Prompt(
+                name="close-issue",
+                description="Complete and implement a GitHub issue with git workflow",
+                arguments=[
+                    PromptArgument(
+                        name="issue_number",
+                        description="GitHub issue number to close",
+                        required=True
+                    )
+                ]
             )
         ]
 
@@ -2021,6 +2033,77 @@ Format the output as markdown suitable for GitHub PR description."""
                 ]
             )
         
+        elif name == "close-issue":
+            # Extract issue number from arguments
+            issue_number = arguments.get("issue_number") if arguments else None
+            
+            if not issue_number:
+                return GetPromptResult(
+                    description="Error: issue_number is required",
+                    messages=[
+                        PromptMessage(
+                            role="user",
+                            content=TextContent(
+                                type="text",
+                                text="Error: issue_number argument is required for close-issue prompt"
+                            )
+                        )
+                    ]
+                )
+            
+            # Read the close-issue template
+            try:
+                # Try to get dotfiles path from environment or use relative path
+                dot_den = os.getenv("DOT_DEN")
+                if dot_den:
+                    dotfiles_path = Path(dot_den)
+                else:
+                    # Try to find dotfiles relative to current working directory
+                    cwd = Path.cwd()
+                    if "dotfiles" in str(cwd):
+                        # Find the dotfiles root
+                        dotfiles_path = cwd
+                        while dotfiles_path.name != "dotfiles" and dotfiles_path.parent != dotfiles_path:
+                            dotfiles_path = dotfiles_path.parent
+                    else:
+                        # Fallback to home directory location
+                        dotfiles_path = Path.home() / "ppv" / "pillars" / "dotfiles"
+                
+                template_path = dotfiles_path / ".claude" / "command-templates" / "close-issue.md"
+                with open(template_path, 'r') as f:
+                    template_content = f.read()
+                
+                # Replace the placeholder with the actual issue number
+                prompt_text = template_content.replace("{{ ISSUE_NUMBER }}", str(issue_number))
+                
+                # Process INJECT directives
+                inject_pattern = r'\{\{ INJECT:([^}]+) \}\}'
+                
+                def process_inject(match):
+                    inject_path = match.group(1)
+                    knowledge_base = dotfiles_path / "knowledge"
+                    full_path = knowledge_base / inject_path
+                    try:
+                        with open(full_path, 'r') as f:
+                            return f.read()
+                    except Exception:
+                        return f"[Unable to inject {inject_path}]"
+                
+                prompt_text = re.sub(inject_pattern, process_inject, prompt_text)
+                
+            except Exception as e:
+                prompt_text = f"Error reading close-issue template: {str(e)}"
+            
+            return GetPromptResult(
+                description=f"Complete and implement GitHub issue #{issue_number}",
+                messages=[
+                    PromptMessage(
+                        role="user",
+                        content=TextContent(type="text", text=prompt_text)
+                    )
+                ]
+            )
+        
         else:
             return GetPromptResult(
                 description=f"Unknown prompt: {name}",
@@ -2029,7 +2112,7 @@ Format the output as markdown suitable for GitHub PR description."""
                         role="user",
                         content=TextContent(
                             type="text",
-                            text=f"Unknown prompt: {name}. Available prompts: commit-message, pr-description"
+                            text=f"Unknown prompt: {name}. Available prompts: commit-message, pr-description, close-issue"
                         )
                     )
                 ]
