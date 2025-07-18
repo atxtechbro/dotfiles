@@ -338,6 +338,15 @@ The dotfiles include pre-configured MCP servers for:
 
 Work-specific servers (Atlassian, GitLab) require `WORK_MACHINE=true` in `~/.bash_exports.local`.
 
+### Claude Model Preferences
+
+Personal machines automatically use the Opus model (claude-opus-4-20250514) for maximum capability. This is controlled by the `WORK_MACHINE` environment variable:
+
+- **Personal machines**: Set `WORK_MACHINE="false"` in `~/.bash_exports.local` → Opus model by default
+- **Work machines**: Set `WORK_MACHINE="true"` → Standard model selection
+
+No manual model switching required - the correct model is automatically selected based on your machine type.
+
 ## Secret Management
 
 Sensitive information like API tokens are stored in `~/.bash_secrets` (not tracked in git).
