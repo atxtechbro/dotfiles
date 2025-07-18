@@ -27,11 +27,6 @@
       "Bash(git stash:*)",
       "Bash(git ls-files:*)",
       
-      "Bash(gh pr list:*)",
-      "Bash(gh pr view:*)",
-      "Bash(gh repo list:*)",
-      "Bash(gh search commits:*)",
-      
       "Bash(claude config --help)",
       "Bash(claude config get --global verbose)",
       "Bash(claude config list --global)",
