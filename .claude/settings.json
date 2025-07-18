@@ -14,8 +14,6 @@
       "Write",
       "Edit",
       
-      "Bash(git add:*)",
-      "Bash(git checkout:*)",
       "Bash(git cherry-pick:*)",
       "Bash(git commit:*)",
       "Bash(git diff:*)",
