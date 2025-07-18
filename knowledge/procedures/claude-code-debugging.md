@@ -2,11 +2,40 @@
 
 **Rule: Always use `claude-debug` when debugging Claude Code issues.**
 
+## Claude Code Verbose Logging Methods
+
+Based on Anthropic documentation and GitHub issues:
+
+### Method 1: --verbose flag (Recommended)
+```bash
+# Use --verbose flag with print mode for debugging
+claude -p --verbose "your prompt here"
+```
+
+### Method 2: Environment Variables
+```bash
+# Set DEBUG environment variable (legacy)
+DEBUG=1 claude "your prompt"
+
+# Or use CLAUDE_DEBUG (newer)
+CLAUDE_DEBUG=1 claude "your prompt"
+
+# For API-level debugging
+ANTHROPIC_LOG=debug claude "your prompt"
+```
+
+### Method 3: Enhanced Debug Aliases
+```bash
+# Use our enhanced debug aliases
+claude-debug "your prompt"     # DEBUG=1 + FASTMCP_LOG_LEVEL=DEBUG + -p
+claude-verbose "your prompt"   # All debug flags + interactive mode
+```
+
 ## Debug Environment Setup
 
 Use `claude-debug` alias for enhanced debugging:
 ```bash
-# Enables DEBUG=1 and non-interactive mode (-p)
+# Enables DEBUG=1, FASTMCP_LOG_LEVEL=DEBUG and non-interactive mode (-p)
 claude-debug "your prompt here"
 ```
 
