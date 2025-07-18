@@ -2069,7 +2069,7 @@ Format the output as markdown suitable for GitHub PR description."""
                         # Fallback to home directory location
                         dotfiles_path = Path.home() / "ppv" / "pillars" / "dotfiles"
                 
-                template_path = dotfiles_path / ".claude" / "command-templates" / "close-issue.md"
+                template_path = dotfiles_path / "commands" / "templates" / "close-issue.md"
                 with open(template_path, 'r') as f:
                     template_content = f.read()
                 
