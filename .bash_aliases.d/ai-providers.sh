@@ -1,4 +1,10 @@
 DOT_DEN="${DOT_DEN:-$HOME/ppv/pillars/dotfiles}"
 
-alias claude='claude --mcp-config "$DOT_DEN/mcp/mcp.json" --add-dir "$DOT_DEN/knowledge"'
+# Claude alias with automatic Opus model on personal machines
+if [[ "${WORK_MACHINE}" != "true" ]]; then
+    alias claude='claude --model claude-opus-4-20250514 --mcp-config "$DOT_DEN/mcp/mcp.json" --add-dir "$DOT_DEN/knowledge"'
+else
+    alias claude='claude --mcp-config "$DOT_DEN/mcp/mcp.json" --add-dir "$DOT_DEN/knowledge"'
+fi
+
 alias q='q --mcp-config "$DOT_DEN/mcp/mcp.json" --add-dir "$DOT_DEN/knowledge"'
