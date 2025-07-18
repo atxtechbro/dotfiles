@@ -106,7 +106,6 @@
       "mcp__github-read__list_secret_scanning_alerts",
       "mcp__github-read__get_secret_scanning_alert",
       "mcp__github-write__create_pull_request",
-      "mcp__github-write__create_issue",
       "mcp__github-write__add_issue_comment",
       "mcp__github-write__update_issue",
       "mcp__brave-search",
