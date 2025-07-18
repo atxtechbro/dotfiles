@@ -13,6 +13,11 @@ export RUST_BACKTRACE=full
 # Add MCP wrapper scripts to PATH for cross-machine portability
 export PATH="$PATH:$HOME/ppv/pillars/dotfiles/mcp"
 
+# Source company-specific configuration from flywire-notes (gitignored)
+if [ -f "$HOME/ppv/pillars/dotfiles/flywire-notes/bash-config.sh" ]; then
+    source "$HOME/ppv/pillars/dotfiles/flywire-notes/bash-config.sh"
+fi
+
 # Load machine-specific exports if they exist
 if [ -f ~/.bash_exports.local ]; then
     . ~/.bash_exports.local
