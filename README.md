@@ -288,14 +288,6 @@ To modify a slash command:
 
 **Principle**: This vendor-agnostic approach follows `systems-stewardship` - building reusable patterns across tools.
 
-### Amazon Q Prompts
-
-Amazon Q uses **prompts** (with `@` prefix) instead of slash commands. See [docs/amazon-q-prompts.md](docs/amazon-q-prompts.md) for complete usage guide:
-
-- **List prompts**: `/prompts` 
-- **Execute prompt**: `@close-issue 934` (note the `@` prefix)
-- **Same functionality**: Both providers use identical MCP servers
-
 ### Claude Code Settings
 
 Global Claude Code settings are managed through `.claude/settings.json`. This file is symlinked to `~/.claude/settings.json` by the setup script, ensuring settings persist across all projects.
@@ -345,6 +337,15 @@ The dotfiles include pre-configured MCP servers for:
 - Atlassian tools (work machines only)
 
 Work-specific servers (Atlassian, GitLab) require `WORK_MACHINE=true` in `~/.bash_exports.local`.
+
+### Claude Model Preferences
+
+Personal machines automatically use the Opus model (claude-opus-4-20250514) for maximum capability. This is controlled by the `WORK_MACHINE` environment variable:
+
+- **Personal machines**: Set `WORK_MACHINE="false"` in `~/.bash_exports.local` → Opus model by default
+- **Work machines**: Set `WORK_MACHINE="true"` → Standard model selection
+
+No manual model switching required - the correct model is automatically selected based on your machine type.
 
 ## Secret Management
 
