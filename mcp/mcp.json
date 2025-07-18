@@ -28,6 +28,13 @@
         "USE_PIPELINE": "true"
       }
     },
+    "atlassian": {
+      "command": "atlassian-mcp-wrapper.sh",
+      "args": [],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      }
+    },
     "brave-search": {
       "command": "brave-search-mcp-wrapper.sh",
       "args": [],
