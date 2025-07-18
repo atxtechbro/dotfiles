@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -300,6 +301,17 @@ func CreateOrUpdateFile(getClient GetClientFn, t translations.TranslationHelperF
 			if err != nil {
 				return mcp.NewToolResultError(err.Error()), nil
 			}
+			
+			// Check for company-notes patterns (security: prevent accidental leaks)
+			normalizedPath := strings.ReplaceAll(path, "\\", "/")
+			if matched, _ := filepath.Match("*-notes/*", normalizedPath); matched {
+				return mcp.NewToolResultError(fmt.Sprintf("Cannot create/update *-notes/ files (no-leaks principle): %s", path)), nil
+			}
+			// Also check if the path itself is a notes directory
+			if matched, _ := filepath.Match("*-notes", normalizedPath); matched {
+				return mcp.NewToolResultError(fmt.Sprintf("Cannot create/update *-notes/ files (no-leaks principle): %s", path)), nil
+			}
+			
 			content, err := RequiredParam[string](request, "content")
 			if err != nil {
 				return mcp.NewToolResultError(err.Error()), nil
@@ -1077,6 +1089,16 @@ func PushFiles(getClient GetClientFn, t translations.TranslationHelperFunc) (too
 				content, ok := fileMap["content"].(string)
 				if !ok {
 					return mcp.NewToolResultError("each file must have content"), nil
+				}
+
+				// Check for company-notes patterns (security: prevent accidental leaks)
+				normalizedPath := strings.ReplaceAll(path, "\\", "/")
+				if matched, _ := filepath.Match("*-notes/*", normalizedPath); matched {
+					return mcp.NewToolResultError(fmt.Sprintf("Cannot push *-notes/ files (no-leaks principle): %s", path)), nil
+				}
+				// Also check if the path itself is a notes directory
+				if matched, _ := filepath.Match("*-notes", normalizedPath); matched {
+					return mcp.NewToolResultError(fmt.Sprintf("Cannot push *-notes/ files (no-leaks principle): %s", path)), nil
 				}
 
 				// Create a tree entry for the file
