@@ -50,7 +50,7 @@ esac
 # should be on the output of commands, not on the prompt
 #force_color_prompt=yes
 
-if [ -n "$force_color_prompt" ]; then
+if [ -n "${force_color_prompt:-}" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
 	# We have color support; assume it's compliant with Ecma-48
 	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
@@ -151,7 +151,7 @@ DOT_DEN="$HOME/ppv/pillars/dotfiles"
 export PATH="$DOT_DEN/bin:$PATH"
 
 # Skip auto-tmux and directory change for SSH connections
-if [[ -n "$SSH_CONNECTION" ]]; then
+if [[ -n "${SSH_CONNECTION:-}" ]]; then
     # When connecting via SSH, don't auto-change directory or start tmux
     # This prevents recursive loops when connecting to localhost
     :
