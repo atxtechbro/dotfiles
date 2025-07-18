@@ -1,69 +1,52 @@
 # Vendor Agnosticism
 
-Switch between AI providers fluidly. Claude Code and Amazon Q working together, not competing.
+Design systems to work with multiple providers. Never depend on just one.
 
-## Core Insight
+## Core Principle
 
-The real power isn't choosing one AI provider - it's using multiple providers interchangeably throughout your day. Claude Code for deep thinking, Amazon Q for AWS tasks, back to Claude when Q hits limits. Fluid, natural switching.
+Build abstraction layers that let you switch providers based on availability, cost, or capability. Start with what matters most: your AI coding assistants.
 
-## Why This Works
+## Example: Claude Code & Amazon Q
 
-**Claude Code** and **Amazon Q CLI** both:
-- Use the same MCP server ecosystem
-- Support identical slash commands
-- Access the same files and tools
-- Remember conversation context
-
-The only difference? The conversation interface.
-
-## Natural Switching Patterns
+Both use the same MCP ecosystem, making switching seamless:
 
 ```bash
-# Morning: Complex architecture design
-claude-code  # Claude's reasoning shines here
+# Morning: Complex reasoning task
+claude-code  # Claude excels at deep thinking
 
-# Afternoon: AWS deployment setup  
-qchat  # Q knows AWS services deeply
+# Afternoon: AWS configuration  
+qchat  # Amazon Q knows AWS deeply
 
-# Evening: Bug investigation
-claude-code  # Back to Claude for detective work
-
-# Late night: Quick fixes
-qchat  # Q still has fresh context
+# Either hits limits or goes down?
+# Switch to the other instantly
 ```
 
-## The Key: Shared Abstractions
+Why this works:
+- Same slash commands (`/close-issue`, `/retro`)
+- Same MCP tools (`mcp__git__*`, `mcp__github__*`)
+- Same file access
+- Different strengths
 
-### Slash Commands Work Everywhere
-- `/close-issue 919` - Same in both
-- `/retro` - Same reflection process
-- `/compact` - Same quick mode
+Benefits:
+- **No downtime**: Always have a working AI
+- **400k context**: 200k + 200k tokens
+- **Cost control**: Use free tiers of both
+- **Right tool**: Match provider to task
 
-### MCP Tools Stay Consistent
-- `mcp__git__*` - Same git operations
-- `mcp__filesystem__*` - Same file access
-- `mcp__github__*` - Same GitHub integration
+## Beyond AI: The Pattern Applies Everywhere
 
-## Practical Benefits
+- **Git hosting**: GitHub down? Push to GitLab mirror
+- **Cloud providers**: AWS outage? Failover to GCP
+- **Package registries**: npm down? Use local cache
 
-1. **Never blocked**: One down? Use the other
-2. **Context management**: 200k + 200k = 400k tokens
-3. **Cost optimization**: Free tiers of both
-4. **Strength matching**: Right tool for each task
+The key: thin abstraction layers that make switching configuration, not code changes.
 
 ## Implementation
 
-Just install both and go:
+Start small. Get two AI providers working:
 ```bash
 ./utils/install-claude-code.sh
 ./utils/install-amazon-q.sh
-./mcp/generate-mcp-config.sh
 ```
 
-Then switch naturally based on:
-- What's working
-- What's cheaper  
-- What's better for this specific task
-- Which has cleaner context
-
-No complex abstractions. No frameworks. Just two tools that work the same way, ready when you need them.
+Then expand the pattern as needed. No complex frameworks - just options when you need them.
