@@ -393,6 +393,19 @@ def git_add(repo: git.Repo, files: list[str]) -> str:
         if not file_path.startswith(repo_path):
             raise ValueError(f"Invalid file path: {file}")
     
+    # Check for company-notes patterns (security: prevent accidental leaks)
+    import fnmatch
+    blocked_patterns = []
+    for file in files:
+        # Normalize path separators
+        normalized_file = file.replace('\\', '/')
+        # Check if file matches *-notes/* pattern (e.g., company-notes/, flywire-notes/, etc.)
+        if fnmatch.fnmatch(normalized_file, "*-notes/*") or fnmatch.fnmatch(normalized_file, "*-notes"):
+            blocked_patterns.append(file)
+    
+    if blocked_patterns:
+        raise ValueError(f"Cannot add *-notes/ files (no-leaks principle): {', '.join(blocked_patterns)}")
+    
     # Find missing files using list comprehension
     missing_files = [
         file for file in files 
