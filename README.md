@@ -338,9 +338,27 @@ The dotfiles include pre-configured MCP servers for:
 
 Work-specific servers (Atlassian, GitLab) require `WORK_MACHINE=true` in `~/.bash_exports.local`.
 
-## Secret Management
+## Dynamic Work Machine Detection
 
-Sensitive information like API tokens are stored in `~/.bash_secrets` (not tracked in git).
+The dotfiles automatically detect work vs personal machines based on the operating system:
+
+- **macOS**: Automatically detected as work machine (`WORK_MACHINE=true`)
+- **Linux/Other**: Automatically detected as personal machine (`WORK_MACHINE=false`)
+
+This dynamic detection:
+- **Eliminates manual configuration** - no need to set environment variables
+- **Prevents configuration drift** - always works correctly on any machine
+- **Enables work-specific features** automatically on macOS (Atlassian MCP, GitLab MCP, Bedrock integration)
+- **Maintains security** by keeping work tools only on work machines
+
+### Debug Work Machine Detection
+
+```bash
+# Check current detection status
+work_machine_debug
+```
+
+This replaces the previous manual `WORK_MACHINE` configuration in `~/.bash_exports.local`.
 
 ```bash
 # Create your personal secrets file from the example template

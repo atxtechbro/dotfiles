@@ -615,6 +615,14 @@ if [[ -f ~/.bash_aliases ]]; then
   echo -e "${GREEN}✓ Bash aliases loaded successfully${NC}"
 fi
 
+# Initialize dynamic work machine detection
+echo "Initializing dynamic work machine detection..."
+if [[ -f "$DOT_DEN/.bash_aliases.d/work-machine-detection.sh" ]]; then
+  source "$DOT_DEN/.bash_aliases.d/work-machine-detection.sh"
+  work_machine_debug
+  echo -e "${GREEN}✓ Work machine detection initialized${NC}"
+fi
+
 echo -e "${DIVIDER}"
 echo -e "${GREEN}✅ Dotfiles setup complete!${NC}"
 echo "Your development environment is now configured and ready to use."
