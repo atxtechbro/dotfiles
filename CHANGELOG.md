@@ -2,6 +2,13 @@
 
 A living log of notable changes, decisions, and modifications to the dotfiles setup.
 
+## 2025-07-13
+
+- **Global MCP Configuration**: Created claude alias to include --mcp-config, enabling MCP servers from any directory (#791)
+- Added `.bash_aliases.d/claude-mcp.sh` - provides global MCP access without manual copying (Spilled Coffee)
+- Enhanced `install-claude-code.sh` docs - clarified global MCP configuration approach (Systems Stewardship)
+- Added README section for Global MCP Configuration - documented commands and usage (Transparency in Agent Work)
+
 ## 2025-06-22
 
 - **Claude Code Integration**: Added Claude Code CLI support after purchasing Claude Max plan

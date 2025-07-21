@@ -61,25 +61,25 @@ This principle ensures resilience and quick recovery from system failures or whe
 
 ### The Snowball Method
 
-The "snowball method" focuses on continuous knowledge accumulation and compounding improvements. Like a snowball rolling downhill, gathering more snow and momentum, this principle emphasizes:
+See [Snowball Method](knowledge/principles/snowball-method.md) - compound returns through stacking daily wins. This principle ensures that our development environment continuously improves over time through 1% better every day.
 
-- Persistent context: Each development session builds on accumulated knowledge from previous sessions
-- Virtuous cycle: Tools and systems become more effective the more they're used
-- Knowledge persistence: Documentation, configuration, and context are preserved and enhanced over time
-- Compounding returns: Small improvements accumulate and multiply rather than remaining isolated
-- Reduced cognitive load: Less need to "re-learn" or "re-discover" previous solutions
+## Development Workflow
 
-This principle ensures that our development environment continuously improves over time.
+This system avoids traditional IDEs to enable **macro-level task management** instead of micro-level file editing. Using [tmux + git worktrees + Claude Code CLI](knowledge/procedures/tmux-git-worktrees-claude-code.md), you manage multiple AI agents simultaneously across parallel tasks - the foundation for 1000x AI engineer productivity. See [throughput definition](knowledge/principles/throughput-definition.md) and [OSE principle](knowledge/principles/ose.md).
 
 ## Modular Shell Configuration
 
 This repository uses a modular approach to shell configuration:
 
 ```bash
-# Source modular alias files
-for alias_file in ~/ppv/pillars/dotfiles/.bash_aliases.*; do
-  [ -f "$alias_file" ] && source "$alias_file"
-done
+# Load modular alias files from .bash_aliases.d directory
+if [ -d "$HOME/.bash_aliases.d" ]; then
+  for module in "$HOME/.bash_aliases.d"/*.sh; do
+    if [ -f "$module" ]; then
+      source "$module"
+    fi
+  done
+fi
 ```
 
 This pattern provides:
@@ -87,7 +87,7 @@ This pattern provides:
 - **Lazy loading** – Files sourced only when they exist
 - **Namespace hygiene** – Avoids cluttering global namespace
 
-Modules follow the naming convention `.bash_aliases.<tool-name>` and are automatically loaded when present.
+Modules are stored in `.bash_aliases.d/<tool-name>.sh` and are automatically loaded when present.
 
 ## P.P.V System: Pillars, Pipelines, and Vaults
 
@@ -124,11 +124,36 @@ Following "Remember the Big Picture" from The Pragmatic Programmer - don't get s
 - **80% work**: Integrating systems, automation (Spilled Coffee Principle), core global rules
 - **20% systems optimization**: Refining configurations, optimizing workflows, meta-work
 
-Avoid obsessing over obscure details like perfect neovim configs or tmux panel layouts. The goal is systems that enable work, not systems as an end in themselves.
+Avoid obsessing over obscure details like perfect editor configs or tmux panel layouts. The goal is systems that enable work, not systems as an end in themselves.
 
 At an even higher level, this is all about **creating value by serving others**. Systems optimization plants seeds for higher leverage to serve better, but must be balanced with actually delivering that service. The "up high and slightly elevated" manager's perspective maintains this balance - constantly checking: "Am I committing real value? Are deliverables moving forward?"
 
 This serving mindset acknowledges the tension as a pendulum rather than trying to eliminate it. Like Ecclesiastes 3:1 says, there's a season for everything - sometimes lean into systems work to build leverage, sometimes focus purely on delivery. The key is conscious awareness and feedback loops, always returning to: "How does this serve others better?"
+
+### Global-First Configuration
+
+This principle establishes that configurations in dotfiles should default to global application unless explicitly marked otherwise. This aligns with the fundamental purpose of a dotfiles repository - to provide consistent configuration across your entire system.
+
+**Core Principle**: When implementing features, bias toward global configuration over local. Dotfiles are for global configuration.
+
+**Implementation Guidelines**:
+- **Default**: Make configurations global (system-wide)
+- **Exception**: If a configuration must be local, document why and add a plan to make it global
+- **Pattern**: Use aliases, symlinks, or tool-specific global config locations
+
+**Examples**:
+- ✅ MCP configuration via `claude` alias with `--mcp-config` (global by default)
+- ✅ Bash aliases sourced from `~/.bashrc` (apply everywhere)
+- ⚠️  Claude Code settings migration to `~/.claude/settings.json` (work in progress, see #577)
+
+**Documentation Distinction**:
+- **README.md**: Repository-specific documentation and principles (this file)
+- **knowledge/ directory**: Global context that applies across ALL repositories
+  - Automatically included in AI assistant context windows
+  - Contains principles, procedures, and patterns used everywhere
+  - Think of it as "portable wisdom" that travels with you
+
+When in doubt, ask: "Should this apply everywhere I code?" If yes → global configuration. If it's specific to how this dotfiles repo works → document it here in README.md.
 
 ## Repository Design Patterns
 
@@ -140,7 +165,7 @@ At the root level, configurations are organized by platform or environment:
 
 - `arch-linux/` - Configurations specific to Arch Linux systems
 - `raspberry-pi/` - Configurations for Raspberry Pi devices
-- `nvim/` - Neovim-specific configurations
+- `nvim/` - Text editor configurations (legacy/optional)
 - etc.
 
 This structural organization makes it clear which files apply to which environments.
@@ -218,10 +243,29 @@ Each worktree is self-contained with its own MCP servers, binaries, and dependen
 
 This repository automatically configures global context for multiple AI coding assistants from a single source of truth:
 
-- **Amazon Q Developer CLI**: Uses symlinked rules directory (`~/.amazonq/rules/`)
-- **Claude Code**: Uses generated `CLAUDE.local.md` files with embedded context
+- **Amazon Q Developer CLI**: Uses automatic MCP import (`q mcp import --file mcp/mcp.json global --force`)
+- **Claude Code**: Uses direct config reference (`--mcp-config mcp/mcp.json`)
 
-All context is sourced from the `knowledge/` directory and automatically configured by the setup script. See [AI Provider Agnostic Context](docs/ai-provider-agnostic-context.md) for details.
+All context is sourced from the `knowledge/` directory and MCP servers are configured identically across providers.
+
+### Provider Symmetry
+
+Both AI providers use identical MCP server configurations through different integration methods:
+
+```bash
+# Single source of truth
+GLOBAL_MCP_CONFIG="$DOT_DEN/mcp/mcp.json"
+
+# Claude Code: Direct file reference
+alias claude='claude --mcp-config "$GLOBAL_MCP_CONFIG" --add-dir "$DOT_DEN/knowledge"'
+
+# Amazon Q: Automatic import
+alias q='q mcp import --file "$GLOBAL_MCP_CONFIG" global --force >/dev/null 2>&1; command q'
+```
+
+**Crisis Resilience**: When Claude Code experiences 500 "Overloaded" errors, Amazon Q provides identical MCP server access and capabilities. This provider agnosticism ensures uninterrupted workflow during service outages.
+
+**Available MCP Servers**: Both providers get access to git operations, GitHub integration, filesystem operations, knowledge directory context, and work-specific servers (when `WORK_MACHINE=true`).
 
 ### Slash Commands (Vendor-Agnostic)
 
@@ -254,6 +298,54 @@ To add or modify Claude Code settings:
 3. Settings apply globally to all Claude Code sessions
 
 Current configured settings include co-authorship attribution, MCP servers, permissions, and more.
+
+## Global MCP Configuration
+
+The dotfiles provide global access to MCP (Model Context Protocol) servers from any directory on your system. After running `source setup.sh`, MCP servers are automatically available through the `claude` command alias.
+
+### How it works
+
+1. **Central Configuration**: MCP servers are defined in `mcp/mcp.json`
+2. **Global Alias**: The `claude` command is aliased to include `--mcp-config` automatically
+3. **Work Anywhere**: No need to copy `.mcp.json` files to each project directory
+
+### Available Commands
+
+```bash
+# Standard claude command (includes global MCP config automatically)
+claude "What files are in this directory?"
+
+# Check current MCP configuration
+claude-mcp-info
+
+# Use strict global config (ignores any local .mcp.json files)
+claude-global "Run a command with only global MCP servers"
+
+# Add user-scoped servers (persists across all projects)
+claude mcp add my-server -s user /path/to/server
+```
+
+### MCP Servers Included
+
+The dotfiles include pre-configured MCP servers for:
+- Git operations (git-mcp-server)
+- GitHub integration (github-mcp-server with read/write split)
+- GitLab integration (requires glab CLI)
+- Brave Search API
+- Filesystem operations
+- Google Drive access
+- Atlassian tools (work machines only)
+
+Work-specific servers (Atlassian, GitLab) require `WORK_MACHINE=true` in `~/.bash_exports.local`.
+
+### Claude Model Preferences
+
+Personal machines automatically use the Opus model (claude-opus-4-20250514) for maximum capability. This is controlled by the `WORK_MACHINE` environment variable:
+
+- **Personal machines**: Set `WORK_MACHINE="false"` in `~/.bash_exports.local` → Opus model by default
+- **Work machines**: Set `WORK_MACHINE="true"` → Standard model selection
+
+No manual model switching required - the correct model is automatically selected based on your machine type.
 
 ## Secret Management
 

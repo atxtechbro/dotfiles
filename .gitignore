@@ -17,10 +17,16 @@
 # Machine-specific configuration
 .bash_exports.local
 
+# Company-specific documentation (stays local)
+flywire-notes/
+**/flywire-notes/
+
 # Claude Code personal configuration
 CLAUDE.local.md
 # Claude Code local settings (personal overrides, not for source control per Anthropic docs)
 .claude/settings.local.json
+# Setup-generated symlinks (avoid duplicating tracked content)
+.claude/command-templates
 
 # Private SSH keys
 id_rsa
@@ -61,10 +67,12 @@ env/
 .env/
 mcp/servers/aws-docs/venv/
 
-# Python
-__pycache__/
+# Python cache and compiled files
+**/__pycache__/
 *.py[cod]
 *$py.class
+*.pyc
+*.pyo
 *.so
 .Python
 *.egg-info/
@@ -77,6 +85,9 @@ build/
 # MCP client directories
 mcp/clients/
 .nrepl-port
+
+# MCP server convenience symlinks (setup-generated executables)
+mcp/servers/*/git_mcp_server.py
 
 # Screenshots directory
 # Keep the directory structure but ignore all screenshot files

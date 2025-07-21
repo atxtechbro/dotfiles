@@ -83,6 +83,10 @@
     NoSyncIgnoreSystemWindowRestoration = 1;
     NoSyncNeverRemindPrefsChangesLostForFile = 1;
     NoSyncSuppressClipboardAccessDeniedWarning = 1;
+    OpenArrangementAtStartup = 0;
+    OpenBookmark = 0;
+    OpenNoWindowsAtStartup = 0;
+    RestoreWindowContents = 0;
     RightOptionKey = 2;
     SoundForEsc = 0;
     SuppressRestartAnnouncement = 1;

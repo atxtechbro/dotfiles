@@ -8,6 +8,10 @@
 # is available without manual intervention
 # =========================================================
 
+# Source shared utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/version-utils.sh"
+
 # Function to install GitLab CLI based on the detected OS
 install_glab() {
     local OS=$(uname -s | tr '[:upper:]' '[:lower:]')
@@ -156,7 +160,7 @@ update_glab() {
     echo "Checking for GitLab CLI updates..."
     
     # Get current version
-    CURRENT_VERSION=$(glab --version | head -n 1 | grep -oP 'glab \K[0-9]+\.[0-9]+\.[0-9]+')
+    CURRENT_VERSION=$(extract_version "glab" "$(glab --version)")
     
     # Get latest version from GitLab API
     LATEST_VERSION=$(curl -s https://gitlab.com/api/v4/projects/34675721/releases | jq -r '.[0].tag_name' | sed 's/^v//')
@@ -166,14 +170,18 @@ update_glab() {
         return 1
     fi
     
-    # Compare versions
-    if [ "$CURRENT_VERSION" = "$LATEST_VERSION" ]; then
+    # Compare versions using semantic version comparison
+    VERSION_STATUS=$(version_compare "$CURRENT_VERSION" "$LATEST_VERSION")
+    if [ "$VERSION_STATUS" = "same" ]; then
         echo -e "${GREEN}✓ GitLab CLI is already up to date ($CURRENT_VERSION)${NC}"
         return 0
-    else
+    elif [ "$VERSION_STATUS" = "older" ]; then
         echo "Updating GitLab CLI from $CURRENT_VERSION to $LATEST_VERSION..."
         install_glab
         return $?
+    else
+        echo -e "${YELLOW}⚠ Current version ($CURRENT_VERSION) is newer than latest release ($LATEST_VERSION)${NC}"
+        return 0
     fi
 }
 

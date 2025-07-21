@@ -11,7 +11,7 @@
 - Commit early and often with meaningful changes
   → [tracer-bullets](../principles/tracer-bullets.md) → [versioning-mindset](../principles/versioning-mindset.md)
 - Remember: Commits build toward PRs - that's where feedback happens
-  → [systems-stewardship](../principles/systems-stewardship.md) (OSE perspective)
+  → [systems-stewardship](../principles/systems-stewardship.md) ([OSE](../principles/ose.md) perspective)
 
 ## Branch Management
 

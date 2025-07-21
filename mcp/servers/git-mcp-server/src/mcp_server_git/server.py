@@ -1,4 +1,6 @@
 import logging
+import os
+import re
 from enum import Enum
 from pathlib import Path
 from typing import Sequence
@@ -356,7 +358,7 @@ TOOL_REGISTRY = {
     GitTools.BISECT: (GitBisect, "Binary search to find commit that introduced a bug (actions: start, bad, good, skip, reset, view)"),
     GitTools.DESCRIBE: (GitDescribe, "Generate human-readable names for commits based on tags"),
     GitTools.SHORTLOG: (GitShortlog, "Summarize git log by contributor"),
-    GitTools.MV: (GitMv, "Move or rename a file, directory, or symlink"),
+    GitTools.MV: (GitMv, "Move or rename files within a git repository. The standard tool for reorganizing tracked files while maintaining version history."),
     GitTools.RM: (GitRm, "Remove files from the working tree and from the index"),
     GitTools.RESTORE: (GitRestore, "Restore working tree files"),
     GitTools.TAG: (GitTag, "Create, list, delete or verify tags"),
@@ -380,8 +382,41 @@ def git_commit(repo: git.Repo, message: str) -> str:
     return f"Changes committed successfully with hash {commit.hexsha}"
 
 def git_add(repo: git.Repo, files: list[str]) -> str:
+    # Validate that all files exist in the repository before attempting to stage them.
+    # This prevents the "empty PR" problem where git claims success even when files
+    # don't exist in the worktree, leading to commits with no actual changes.
+    repo_path = str(Path(repo.working_dir))
+    
+    # Validate paths for security (prevent path traversal)
+    for file in files:
+        file_path = os.path.normpath(os.path.join(repo_path, file))
+        if not file_path.startswith(repo_path):
+            raise ValueError(f"Invalid file path: {file}")
+    
+    # Check for company-notes patterns (security: prevent accidental leaks)
+    import fnmatch
+    blocked_patterns = []
+    for file in files:
+        # Normalize path separators
+        normalized_file = file.replace('\\', '/')
+        # Check if file matches *-notes/* pattern (e.g., company-notes/, flywire-notes/, etc.)
+        if fnmatch.fnmatch(normalized_file, "*-notes/*") or fnmatch.fnmatch(normalized_file, "*-notes"):
+            blocked_patterns.append(file)
+    
+    if blocked_patterns:
+        raise ValueError(f"Cannot add *-notes/ files (no-leaks principle): {', '.join(blocked_patterns)}")
+    
+    # Find missing files using list comprehension
+    missing_files = [
+        file for file in files 
+        if not os.path.exists(os.path.normpath(os.path.join(repo_path, file)))
+    ]
+    
+    if missing_files:
+        raise FileNotFoundError(f"Files not found in repository: {', '.join(missing_files)}")
+    
     repo.index.add(files)
-    return "Files staged successfully"
+    return f"Files staged successfully: {', '.join(files)}"
 
 def git_reset(repo: git.Repo) -> str:
     repo.index.reset()
@@ -1504,7 +1539,7 @@ def git_shortlog(repo: git.Repo, revision_range: str | None = None,
 
 def git_mv(repo: git.Repo, source: str, destination: str) -> str:
     """
-    Move or rename a file, directory, or symlink
+    Move or rename files within a git repository. The standard tool for reorganizing tracked files while maintaining version history.
     """
     try:
         # Use git mv command
@@ -1815,6 +1850,17 @@ async def serve(repository: Path | None, read_only: bool = False) -> None:
                         required=False
                     )
                 ]
+            ),
+            Prompt(
+                name="close-issue",
+                description="Complete and implement a GitHub issue with git workflow",
+                arguments=[
+                    PromptArgument(
+                        name="issue_number",
+                        description="GitHub issue number to close",
+                        required=True
+                    )
+                ]
             )
         ]
 
@@ -2000,6 +2046,77 @@ Format the output as markdown suitable for GitHub PR description."""
                 ]
             )
         
+        elif name == "close-issue":
+            # Extract issue number from arguments
+            issue_number = arguments.get("issue_number") if arguments else None
+            
+            if not issue_number:
+                return GetPromptResult(
+                    description="Error: issue_number is required",
+                    messages=[
+                        PromptMessage(
+                            role="user",
+                            content=TextContent(
+                                type="text",
+                                text="Error: issue_number argument is required for close-issue prompt"
+                            )
+                        )
+                    ]
+                )
+            
+            # Read the close-issue template
+            try:
+                # Try to get dotfiles path from environment or use relative path
+                dot_den = os.getenv("DOT_DEN")
+                if dot_den:
+                    dotfiles_path = Path(dot_den)
+                else:
+                    # Try to find dotfiles relative to current working directory
+                    cwd = Path.cwd()
+                    if "dotfiles" in str(cwd):
+                        # Find the dotfiles root
+                        dotfiles_path = cwd
+                        while dotfiles_path.name != "dotfiles" and dotfiles_path.parent != dotfiles_path:
+                            dotfiles_path = dotfiles_path.parent
+                    else:
+                        # Fallback to home directory location
+                        dotfiles_path = Path.home() / "ppv" / "pillars" / "dotfiles"
+                
+                template_path = dotfiles_path / "commands" / "templates" / "close-issue.md"
+                with open(template_path, 'r') as f:
+                    template_content = f.read()
+                
+                # Replace the placeholder with the actual issue number
+                prompt_text = template_content.replace("{{ ISSUE_NUMBER }}", str(issue_number))
+                
+                # Process INJECT directives
+                inject_pattern = r'\{\{ INJECT:([^}]+) \}\}'
+                
+                def process_inject(match):
+                    inject_path = match.group(1)
+                    knowledge_base = dotfiles_path / "knowledge"
+                    full_path = knowledge_base / inject_path
+                    try:
+                        with open(full_path, 'r') as f:
+                            return f.read()
+                    except Exception:
+                        return f"[Unable to inject {inject_path}]"
+                
+                prompt_text = re.sub(inject_pattern, process_inject, prompt_text)
+                
+            except Exception as e:
+                prompt_text = f"Error reading close-issue template: {str(e)}"
+            
+            return GetPromptResult(
+                description=f"Complete and implement GitHub issue #{issue_number}",
+                messages=[
+                    PromptMessage(
+                        role="user",
+                        content=TextContent(type="text", text=prompt_text)
+                    )
+                ]
+            )
+        
         else:
             return GetPromptResult(
                 description=f"Unknown prompt: {name}",
@@ -2008,7 +2125,7 @@ Format the output as markdown suitable for GitHub PR description."""
                         role="user",
                         content=TextContent(
                             type="text",
-                            text=f"Unknown prompt: {name}. Available prompts: commit-message, pr-description"
+                            text=f"Unknown prompt: {name}. Available prompts: commit-message, pr-description, close-issue"
                         )
                     )
                 ]

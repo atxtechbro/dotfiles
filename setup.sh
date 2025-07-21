@@ -42,6 +42,15 @@ DOT_DEN="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Export DOT_DEN as a global variable for other scripts to use
 export DOT_DEN
 
+# Critical: Warn if running from worktree to prevent broken symlinks
+if [[ "$DOT_DEN" == *"/worktrees/"* ]]; then
+    echo -e "${YELLOW}WARNING: Running setup.sh from a worktree directory!${NC}"
+    echo -e "${YELLOW}This will create symlinks that break when the worktree is deleted.${NC}"
+    echo -e "${YELLOW}Consider running from the main repository instead.${NC}"
+    # Remove user interaction and continue with the script
+    echo -e "${YELLOW}Proceeding with setup - broken symlinks will be handled automatically.${NC}"
+fi
+
 # Add MCP directory to PATH for easier access to MCP scripts
 export PATH="$DOT_DEN/mcp:$PATH"
 # Add MCP servers directory to PATH
@@ -49,6 +58,9 @@ export PATH="$DOT_DEN/mcp/servers:$PATH"
 
 # Export flag to tell subscripts we're running from the main setup
 export SETUP_SCRIPT_RUNNING=true
+
+# Disable Claude Code Bedrock usage by default
+export CLAUDE_CODE_USE_BEDROCK=0
 
 echo -e "${DIVIDER}"
 echo -e "${GREEN}Setting up dotfiles...${NC}"
@@ -135,6 +147,17 @@ fi
 
 # Create symlinks for other configuration files
 echo "Creating symlinks for config files..."
+
+# Critical: Detect and fix broken symlinks from deleted worktrees
+echo "Checking for broken symlinks from deleted worktrees..."
+for config_file in .bashrc .bash_aliases .bash_profile .bash_exports .tmux.conf .zprofile .zshrc .zsh_prompt; do
+    home_link="$HOME/$config_file"
+    if [[ -L "$home_link" && ! -e "$home_link" ]]; then
+        echo "Removing broken symlink: $home_link"
+        rm -f "$home_link"
+    fi
+done
+
 ln -sf "$DOT_DEN/.bashrc" ~/.bashrc
 ln -sf "$DOT_DEN/.bash_aliases" ~/.bash_aliases
 ln -sf "$DOT_DEN/.bash_profile" ~/.bash_profile
@@ -228,8 +251,8 @@ if [[ -f ~/.bash_exports ]]; then
   echo -e "${GREEN}✓ Environment variables loaded successfully${NC}"
 fi
 
-# Set up AI provider global rules (Amazon Q + Claude Code)
-"$DOT_DEN/utils/setup-ai-provider-rules.py"
+# Set up Amazon Q global rules (Claude Code now uses --add-dir flag via alias)
+"$DOT_DEN/utils/setup-amazonq-rules.sh"
 
 # Setup vendor-agnostic command structure
 # Create symlink for Claude Code to find templates in vendor-agnostic location

@@ -17,3 +17,8 @@ export PATH="$PATH:$HOME/ppv/pillars/dotfiles/mcp"
 if [ -f ~/.bash_exports.local ]; then
     . ~/.bash_exports.local
 fi
+
+# Source company-specific configuration from flywire-notes (gitignored)
+if [ -f "$HOME/ppv/pillars/dotfiles/flywire-notes/bash-config.sh" ]; then
+    source "$HOME/ppv/pillars/dotfiles/flywire-notes/bash-config.sh"
+fi

@@ -41,7 +41,7 @@ This principle enables effective development in unfamiliar territory by providin
 
 ## Relationship to Other Principles
 - **Go slow to go fast**: Proper orientation prevents ghost commits in PRs
-- **OSE (Outside and Slightly Elevated)**: Review at PR level, not edit-by-edit
+- **[OSE](ose.md)**: Review at PR level, not edit-by-edit
 - **Versioning mindset**: Each PR iteration improves on the last
 - **Systems stewardship**: PRs become teachable units of change
 
