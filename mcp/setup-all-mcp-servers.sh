@@ -109,7 +109,6 @@ echo -e "\n${GREEN}Verifying server binaries:${NC}"
 binaries=(
     "servers/github"
     "servers/git-mcp-server/.venv/bin/python"
-    "servers/filesystem-mcp-server/node_modules/.bin/filesystem-server"
 )
 
 for binary in "${binaries[@]}"; do
