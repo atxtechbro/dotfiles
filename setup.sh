@@ -278,6 +278,14 @@ else
   echo -e "${YELLOW}MCP server setup script not found. Skipping MCP server setup.${NC}"
 fi
 
+# Set up GitLab MCP authentication (work machines only)
+if [[ -f "$DOT_DEN/utils/setup-gitlab-mcp-auth.sh" ]]; then
+  echo -e "${DIVIDER}"
+  "$DOT_DEN/utils/setup-gitlab-mcp-auth.sh"
+else
+  echo -e "${YELLOW}GitLab MCP auth setup script not found. Skipping GitLab authentication.${NC}"
+fi
+
 # Generate AI provider commands from templates
 if [[ -f "$DOT_DEN/utils/generate-commands.sh" ]]; then
   echo "Generating AI provider commands from templates..."
