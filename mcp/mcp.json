@@ -18,14 +18,18 @@
       "env": {}
     },
     "gitlab": {
-      "command": "gitlab-mcp-wrapper.sh",
-      "args": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "@zereight/mcp-gitlab"
+      ],
       "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR",
+        "GITLAB_API_URL": "https://gitlab.flywire.tech/api/v4",
         "GITLAB_READ_ONLY_MODE": "false",
         "USE_GITLAB_WIKI": "true",
         "USE_MILESTONE": "true",
-        "USE_PIPELINE": "true"
+        "USE_PIPELINE": "true",
+        "FASTMCP_LOG_LEVEL": "ERROR"
       }
     },
     "atlassian": {
@@ -59,7 +63,7 @@
     "playwright": {
       "command": "npx",
       "args": [
-        "@microsoft/playwright-mcp@latest"
+        "@playwright/mcp@latest"
       ],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
