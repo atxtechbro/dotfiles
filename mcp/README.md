@@ -23,7 +23,7 @@ This standardized approach makes it easy to add more MCP servers in the future f
 |-------------|-------------|----------------------|---------------------|---------------|-------------------|-------------------|
 | AWS Documentation | AWS documentation search | None required | PyPI packages via UVX | - | No | No |
 | GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script | [Our Fork](https://github.com/atxtechbro/github-mcp-server?tab=readme-ov-file#github-mcp-server) | No | Yes |
-| GitLab | GitLab API integration | `GITLAB_PERSONAL_ACCESS_TOKEN` from `.bash_secrets` | Direct npx (no wrapper needed) | https://github.com/zereight/gitlab-mcp | No | No |
+| GitLab | GitLab API integration | `GITLAB_PERSONAL_ACCESS_TOKEN` from `.bash_secrets` | External npm package | https://github.com/zereight/gitlab-mcp | No | No |
 | Atlassian | Jira and Confluence integration | API tokens from `.bash_secrets` | Custom setup script | - | No | Yes |
 | Brave Search | Web search via Brave | API key from `.bash_secrets` | Docker container | - | No | Yes |
 | Filesystem | Local filesystem operations | None required | Built from source | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/filesystem#filesystem-mcp-server) | No | Yes |
@@ -41,6 +41,7 @@ Each MCP integration has its own setup method:
 - `setup-gdrive-mcp.sh` - Sets up Google Drive integration
 - `setup-github-mcp.sh` - Sets up GitHub integration from source
 - `setup-git-mcp.sh` - Sets up Git integration from source
+- `setup-gitlab-mcp.sh` - Sets up external GitLab integration
 
 For custom integrations, run the appropriate setup script:
 

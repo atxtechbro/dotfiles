@@ -1,2 +1,0 @@
-[console_scripts]
-gitlab-mcp-server = gitlab_mcp_server.__main__:main

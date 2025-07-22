@@ -1,18 +1,17 @@
 #!/bin/bash
 
 # =========================================================
-# GITLAB MCP WRAPPER SCRIPT
+# GITLAB MCP WRAPPER SCRIPT - EXTERNAL SERVER
 # =========================================================
-# PURPOSE: Runtime wrapper that executes the in-house GitLab MCP server
+# PURPOSE: Runtime wrapper that executes the external GitLab MCP server
 # This script is called by the MCP system during normal operation
 # 
-# RELATIONSHIP: This wrapper runs our custom glab-based MCP server
-# instead of the npm package for better pipeline debugging
+# RELATIONSHIP: This wrapper runs the @zereight/mcp-gitlab external server
+# instead of our custom implementation for reduced maintenance overhead
 # =========================================================
 
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-GITLAB_MCP_DIR="${SCRIPT_DIR}/servers/gitlab-mcp-server"
 
 # Source MCP logging utilities
 source "$SCRIPT_DIR/utils/mcp-logging.sh"
@@ -24,18 +23,22 @@ if [[ "$WORK_MACHINE" != "true" ]]; then
     exit 1
 fi
 
-# Check if the GitLab MCP server is installed
-if [ ! -d "${GITLAB_MCP_DIR}/.venv" ]; then
-    echo "Error: GitLab MCP server is not installed. Please run:"
-    echo "  ${SCRIPT_DIR}/setup-gitlab-mcp.sh"
+# Check if the external GitLab MCP server is installed
+if ! command -v mcp-gitlab >/dev/null 2>&1; then
+    echo "Error: External GitLab MCP server is not installed. Please run:"
+    echo "  npm install -g @zereight/mcp-gitlab"
     exit 1
 fi
 
-# Check if glab is available
-mcp_check_command "GITLAB" "glab" "Install glab: brew install glab"
+# Source secrets file for GitLab token
+mcp_source_secrets "GITLAB"
 
-# Source secrets file (optional for glab-based server)
-mcp_source_secrets "GITLAB" || true
+# Validate required environment variables
+if [[ -z "$GITLAB_PERSONAL_ACCESS_TOKEN" ]]; then
+    echo "Error: GITLAB_PERSONAL_ACCESS_TOKEN not found in environment" >&2
+    echo "Please add GITLAB_PERSONAL_ACCESS_TOKEN to ~/.bash_secrets" >&2
+    exit 1
+fi
 
-# Run the in-house GitLab MCP server
-mcp_exec_with_logging "GITLAB" "${GITLAB_MCP_DIR}/.venv/bin/python" -m gitlab_mcp_server
+# Run the external GitLab MCP server
+mcp_exec_with_logging "GITLAB" mcp-gitlab
