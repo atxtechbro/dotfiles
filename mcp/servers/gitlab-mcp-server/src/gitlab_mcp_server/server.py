@@ -81,5 +81,13 @@ async def call_tool(name: str, arguments: Dict[str, Any]) -> List[TextContent]:
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
+async def main():
+    """Main entry point for the GitLab MCP server."""
+    options = app.create_initialization_options()
+    async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
+        await app.run(read_stream, write_stream, options, raise_exceptions=True)
+
+
 if __name__ == "__main__":
-    mcp.server.stdio.run_stdio_server(app)
+    import asyncio
+    asyncio.run(main())
