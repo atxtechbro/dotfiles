@@ -76,14 +76,6 @@ for script in "${setup_scripts[@]}"; do
     fi
 done
 
-# Generate MCP configuration for all clients
-if [ -f "$MCP_DIR/generate-mcp-config.sh" ]; then
-    echo -e "\n${GREEN}Generating MCP configurations...${NC}"
-    "$MCP_DIR/generate-mcp-config.sh"
-else
-    echo -e "${YELLOW}Warning: generate-mcp-config.sh not found${NC}"
-fi
-
 # Create servers directory if it doesn't exist
 mkdir -p "$MCP_DIR/servers"
 
