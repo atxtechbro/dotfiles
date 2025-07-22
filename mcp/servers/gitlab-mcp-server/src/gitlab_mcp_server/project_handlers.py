@@ -278,14 +278,22 @@ async def handle_project_tool(name: str, arguments: Dict[str, Any]) -> List[Text
 
 async def handle_list_projects(args: Dict[str, Any]) -> List[TextContent]:
     """List accessible projects."""
-    cmd = ["api", "projects"]
+    # Build the API endpoint with query parameters
+    endpoint = "projects"
+    query_params = []
     
     if args.get("group"):
-        cmd.extend(["--field", f"search={args['group']}"])
+        query_params.append(f"search={args['group']}")
     if args.get("owned"):
-        cmd.extend(["--field", "owned=true"])
+        query_params.append("owned=true")
     if args.get("limit"):
-        cmd.extend(["--field", f"per_page={args['limit']}"])
+        query_params.append(f"per_page={args['limit']}")
+    
+    # Construct the full endpoint with query parameters
+    if query_params:
+        endpoint = f"{endpoint}?{'&'.join(query_params)}"
+    
+    cmd = ["api", endpoint]
     
     result = await run_glab_command(cmd)
     return [TextContent(type="text", text=json.dumps(result, indent=2))]

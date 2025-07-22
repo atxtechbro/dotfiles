@@ -286,6 +286,12 @@ else
   echo -e "${YELLOW}GitLab MCP auth setup script not found. Skipping GitLab authentication.${NC}"
 fi
 
+# Harden glab configuration for Flywire-only access (work machines only)
+if [[ "$WORK_MACHINE" == "true" && -f "$DOT_DEN/utils/setup-glab-flywire-only.sh" ]]; then
+  echo -e "${DIVIDER}"
+  "$DOT_DEN/utils/setup-glab-flywire-only.sh"
+fi
+
 # Generate AI provider commands from templates
 if [[ -f "$DOT_DEN/utils/generate-commands.sh" ]]; then
   echo "Generating AI provider commands from templates..."
