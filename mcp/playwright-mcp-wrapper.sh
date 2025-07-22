@@ -20,8 +20,8 @@ echo "Starting Microsoft Playwright MCP server..." | tee -a "$LOG_FILE"
 echo "$(date): Playwright MCP server started" >> "$LOG_FILE"
 
 # Execute the Playwright MCP server
-# The exec replaces this shell process with the MCP server process
-exec playwright-mcp "$@"
-
-# This part will only execute if exec fails
-echo "$(date): Playwright MCP server exited with code $?" >> "$LOG_FILE"
+playwright-mcp "$@"
+exit_code=$?
+# Log the exit code
+echo "$(date): Playwright MCP server exited with code $exit_code" >> "$LOG_FILE"
+exit $exit_code
