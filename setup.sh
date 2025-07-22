@@ -281,11 +281,7 @@ fi
 # GitLab MCP authentication now handled by @zereight/mcp-gitlab package
 # No additional auth setup needed beyond GITLAB_PERSONAL_ACCESS_TOKEN in ~/.bash_secrets
 
-# Harden glab configuration for Flywire-only access (work machines only)
-if [[ "$WORK_MACHINE" == "true" && -f "$DOT_DEN/utils/setup-glab-flywire-only.sh" ]]; then
-  echo -e "${DIVIDER}"
-  "$DOT_DEN/utils/setup-glab-flywire-only.sh"
-fi
+# GitLab MCP server works via GITLAB_PERSONAL_ACCESS_TOKEN - no glab CLI setup needed
 
 # Generate AI provider commands from templates
 if [[ -f "$DOT_DEN/utils/generate-commands.sh" ]]; then
