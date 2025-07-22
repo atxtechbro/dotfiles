@@ -110,7 +110,6 @@ binaries=(
     "servers/github"
     "servers/git-mcp-server/.venv/bin/python"
     "servers/filesystem-mcp-server/node_modules/.bin/filesystem-server"
-    "servers/gitlab-mcp-server/.venv/bin/python"
 )
 
 for binary in "${binaries[@]}"; do
