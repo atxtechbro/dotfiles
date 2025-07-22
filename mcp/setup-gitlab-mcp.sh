@@ -35,3 +35,11 @@ echo "  - User and group management"
 echo ""
 echo "Authentication is handled via GITLAB_PERSONAL_ACCESS_TOKEN environment variable."
 echo "Make sure this is set in your ~/.bash_secrets file."
+
+# Check if GITLAB_PERSONAL_ACCESS_TOKEN is set
+if [ -z "${GITLAB_PERSONAL_ACCESS_TOKEN}" ]; then
+    echo "Warning: GITLAB_PERSONAL_ACCESS_TOKEN is not set. Please set it before using the GitLab MCP server."
+    exit 1
+fi
+
+echo "GITLAB_PERSONAL_ACCESS_TOKEN is set. You're ready to use the GitLab MCP server."
