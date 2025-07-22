@@ -57,8 +57,10 @@
       }
     },
     "playwright": {
-      "command": "playwright-mcp-wrapper.sh",
-      "args": [],
+      "command": "npx",
+      "args": [
+        "@microsoft/playwright-mcp@latest"
+      ],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
       }
