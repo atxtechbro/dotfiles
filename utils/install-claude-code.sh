@@ -10,8 +10,9 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 fi
 
 # Source shared utilities
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/version-utils.sh"
+# Get the directory of this script file specifically
+UTILS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${UTILS_DIR}/version-utils.sh"
 
 # Colors for output
 GREEN='\033[0;32m'
