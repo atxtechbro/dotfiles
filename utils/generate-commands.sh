@@ -18,28 +18,39 @@ PROMPT_ORCHESTRATOR="$SCRIPT_DIR/prompt_orchestrator.py"
 # Configuration file for provider directories (if exists)
 PROVIDER_CONFIG="$DOTFILES_DIR/.config/provider_dirs.conf"
 
-# Default provider directories if no config file exists
-# Use the vendor-agnostic commands/templates directory for all providers
-declare -A DEFAULT_PROVIDER_DIRS
-DEFAULT_PROVIDER_DIRS["claude"]="$DOTFILES_DIR/commands/templates|$HOME/.claude/commands"
-DEFAULT_PROVIDER_DIRS["amazonq"]="$DOTFILES_DIR/commands/templates|$HOME/.amazonq/commands"
-DEFAULT_PROVIDER_DIRS["cursor"]="$DOTFILES_DIR/commands/templates|$HOME/.cursor/commands"
+# Default provider configurations (bash 3.2 compatible)
+# Format: "provider:template_dir|output_dir"
+DEFAULT_PROVIDERS=(
+    "claude:$DOTFILES_DIR/commands/templates|$HOME/.claude/commands"
+    "amazonq:$DOTFILES_DIR/commands/templates|$HOME/.amazonq/commands"
+    "cursor:$DOTFILES_DIR/commands/templates|$HOME/.cursor/commands"
+)
+
+# Function to get provider config
+get_provider_config() {
+    local provider="$1"
+    for config in "${PROVIDER_CONFIGS[@]}"; do
+        if [[ "$config" == "$provider:"* ]]; then
+            echo "${config#*:}"
+            return 0
+        fi
+    done
+    return 1
+}
 
 # Load provider directories from config file if it exists
-declare -A PROVIDER_DIRS
+PROVIDER_CONFIGS=()
 if [[ -f "$PROVIDER_CONFIG" ]]; then
     echo "Loading provider configuration from $PROVIDER_CONFIG..."
     while IFS='=' read -r provider paths; do
         # Skip comments and empty lines
         [[ "$provider" =~ ^#.*$ || -z "$provider" ]] && continue
-        PROVIDER_DIRS["$provider"]="$paths"
+        PROVIDER_CONFIGS+=("$provider:$paths")
     done < "$PROVIDER_CONFIG"
 else
     # Use default configuration
     echo "No provider configuration found, using defaults..."
-    for provider in "${!DEFAULT_PROVIDER_DIRS[@]}"; do
-        PROVIDER_DIRS["$provider"]="${DEFAULT_PROVIDER_DIRS[$provider]}"
-    done
+    PROVIDER_CONFIGS=("${DEFAULT_PROVIDERS[@]}")
 fi
 
 # Check if prompt orchestrator exists
@@ -52,8 +63,10 @@ fi
 TEMPLATES_PROCESSED=0
 
 # Process templates for each provider
-for provider in "${!PROVIDER_DIRS[@]}"; do
-    IFS='|' read -r template_dir output_dir <<< "${PROVIDER_DIRS[$provider]}"
+for config in "${PROVIDER_CONFIGS[@]}"; do
+    provider="${config%%:*}"
+    paths="${config#*:}"
+    IFS='|' read -r template_dir output_dir <<< "$paths"
     
     # Skip if template directory doesn't exist
     if [[ ! -d "$template_dir" ]]; then
