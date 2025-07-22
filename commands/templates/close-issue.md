@@ -74,7 +74,7 @@ Keep worktree active for PR adjustments based on the tracer bullets principle. O
 ## Final Step: Retro
 Let's retro this context and wring out the gleanings.
 
-{{ INJECT:knowledge/principles/continuous-improvement.md }}
+{{ INJECT:principles/continuous-improvement.md }}
 
 **What would you like to focus on?**
 - Do you have a specific aspect you want to double-click on?
