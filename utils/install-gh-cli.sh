@@ -78,20 +78,21 @@ setup_gh_cli() {
     if [[ -n "$LATEST_VERSION" ]]; then
       VERSION_STATUS=$(version_compare "$CURRENT_VERSION" "$LATEST_VERSION")
       if [[ "$VERSION_STATUS" == "older" ]]; then
-      log_info "Updating to: $LATEST_VERSION"
-      install_or_update_gh_cli
-      
-      if [ $? -eq 0 ]; then
-        NEW_VERSION=$(extract_version "gh" "$(gh --version)")
-        UPDATE_STATUS=$(version_compare "$CURRENT_VERSION" "$NEW_VERSION")
-        if [[ "$UPDATE_STATUS" == "older" ]]; then
-          log_success "Updated: $CURRENT_VERSION → $NEW_VERSION"
-        else
-          log_warning "Update failed, still: $CURRENT_VERSION"
+        log_info "Updating to: $LATEST_VERSION"
+        install_or_update_gh_cli
+        
+        if [ $? -eq 0 ]; then
+          NEW_VERSION=$(extract_version "gh" "$(gh --version)")
+          UPDATE_STATUS=$(version_compare "$CURRENT_VERSION" "$NEW_VERSION")
+          if [[ "$UPDATE_STATUS" == "older" ]]; then
+            log_success "Updated: $CURRENT_VERSION → $NEW_VERSION"
+          else
+            log_warning "Update failed, still: $CURRENT_VERSION"
+          fi
         fi
-      fi
       else
-      log_success "Already latest: $CURRENT_VERSION"
+        log_success "Already latest: $CURRENT_VERSION"
+      fi
     fi
   else
     log_info "Installing gh..."
