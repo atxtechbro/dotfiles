@@ -129,6 +129,9 @@
     "MCP_TOOL_TIMEOUT": "60000",
     "MAX_MCP_OUTPUT_TOKENS": "25000"
   },
+  "disabledTools": [
+    "Bash(cd:*)"
+  ],
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
     "awslabs.aws-documentation-mcp-server",
