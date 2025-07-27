@@ -40,18 +40,36 @@ prefetch_issue_data() {
         return 1
     fi
     
-    # Export issue metadata
-    export ISSUE_STATE=$(echo "$issue_json" | jq -r .state)
-    export ISSUE_TITLE=$(echo "$issue_json" | jq -r .title)
-    export ISSUE_BODY=$(echo "$issue_json" | jq -r .body // "")
-    export ISSUE_LABELS=$(echo "$issue_json" | jq -r '.labels[].name' 2>/dev/null | tr '\n' ',' | sed 's/,$//')
-    export ISSUE_ASSIGNEES=$(echo "$issue_json" | jq -r '.assignees[].login' 2>/dev/null | tr '\n' ',' | sed 's/,$//')
+    # Export issue metadata with error handling
+    if ! export ISSUE_STATE=$(echo "$issue_json" | jq -r .state 2>/dev/null); then
+        echo "Error: Failed to parse issue state"
+        return 1
+    fi
+    if ! export ISSUE_TITLE=$(echo "$issue_json" | jq -r .title 2>/dev/null); then
+        echo "Error: Failed to parse issue title"
+        return 1
+    fi
+    if ! export ISSUE_BODY=$(echo "$issue_json" | jq -r '.body // ""' 2>/dev/null); then
+        echo "Error: Failed to parse issue body"
+        return 1
+    fi
+    if ! export ISSUE_LABELS=$(echo "$issue_json" | jq -r '.labels[].name' 2>/dev/null | tr '\n' ',' | sed 's/,$//'); then
+        echo "Error: Failed to parse issue labels"
+        return 1
+    fi
+    if ! export ISSUE_ASSIGNEES=$(echo "$issue_json" | jq -r '.assignees[].login' 2>/dev/null | tr '\n' ',' | sed 's/,$//'); then
+        echo "Error: Failed to parse issue assignees"
+        return 1
+    fi
     
     # Fetch comments separately
     if comments_json=$(gh issue comment list "$issue_number" --json author,body,createdAt 2>/dev/null); then
         # Export as JSON string for agent parsing
         export ISSUE_COMMENTS="$comments_json"
-        local comment_count=$(echo "$comments_json" | jq '. | length')
+        if ! comment_count=$(echo "$comments_json" | jq '. | length' 2>/dev/null); then
+            echo "Warning: Failed to parse comment count, but comments were fetched"
+            comment_count="unknown"
+        fi
         echo "  ✓ Fetched issue data and $comment_count comment(s)"
     else
         export ISSUE_COMMENTS="[]"
