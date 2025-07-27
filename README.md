@@ -157,14 +157,7 @@ When in doubt, ask: "Should this apply everywhere I code?" If yes → global con
 
 ### Design by Contract
 
-Following the [PR Readability Contract](knowledge/principles/pr-readability-contract.md) principle, assume `source setup.sh` was run successfully. This specific contract means:
-
-- All tools mentioned in setup.sh are installed
-- Environment variables are configured
-- Symlinks are created
-- MCP servers are available
-
-Skip defensive checks for these prerequisites. Trust the contract: setup.sh did its job.
+Per [PR Readability Contract](knowledge/principles/pr-readability-contract.md): assume `source setup.sh` succeeded - skip all defensive checks.
 
 ## Repository Design Patterns
 
