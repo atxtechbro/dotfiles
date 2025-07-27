@@ -17,21 +17,6 @@
       "args": [],
       "env": {}
     },
-    "gitlab": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@zereight/mcp-gitlab"
-      ],
-      "env": {
-        "GITLAB_API_URL": "https://gitlab.flywire.tech/api/v4",
-        "GITLAB_READ_ONLY_MODE": "false",
-        "USE_GITLAB_WIKI": "true",
-        "USE_MILESTONE": "true",
-        "USE_PIPELINE": "true",
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
     "atlassian": {
       "command": "atlassian-mcp-wrapper.sh",
       "args": [],
