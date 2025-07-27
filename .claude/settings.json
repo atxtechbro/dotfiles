@@ -1,11 +1,5 @@
 {
   "permissions": {
-    // Global Claude Code permissions configuration
-    // These permissions align with the OSE (Outside and Slightly Elevated) principle:
-    // - cd command allows agents to navigate and maintain perspective across different contexts
-    // - Enables orchestration from the right altitude without getting stuck in one directory
-    // - Supports the manager mindset by allowing movement between different areas of concern
-    // See knowledge/principles/ose.md for full OSE principle documentation
     "allow": [
       "Bash(find:*)",
       "Bash(grep:*)",
