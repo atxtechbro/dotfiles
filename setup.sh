@@ -287,6 +287,15 @@ fi
 if [[ -f "$DOT_DEN/utils/generate-commands.sh" ]]; then
   echo "Generating AI provider commands from templates..."
   "$DOT_DEN/utils/generate-commands.sh"
+  
+  # Check for validation anti-patterns in templates
+  if [[ -f "$DOT_DEN/utils/check-template-validation.sh" ]]; then
+    echo "Checking templates for validation anti-patterns..."
+    if ! "$DOT_DEN/utils/check-template-validation.sh"; then
+      echo -e "${YELLOW}Warning: Found validation in templates that should be in generator${NC}"
+      echo -e "${YELLOW}See knowledge/principles/generation-time-validation.md for details${NC}"
+    fi
+  fi
 elif [[ -f "$DOT_DEN/utils/generate-claude-commands.sh" ]]; then
   # Fallback to Claude-specific script for backwards compatibility
   echo "Generating Claude commands from templates (legacy)..."
