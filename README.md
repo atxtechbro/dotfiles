@@ -155,10 +155,6 @@ This principle establishes that configurations in dotfiles should default to glo
 
 When in doubt, ask: "Should this apply everywhere I code?" If yes → global configuration. If it's specific to how this dotfiles repo works → document it here in README.md.
 
-### Design by Contract
-
-Per [PR Readability Contract](knowledge/principles/pr-readability-contract.md): assume `source setup.sh` succeeded - skip all defensive checks.
-
 ## Repository Design Patterns
 
 This repository follows specific organizational patterns to maintain consistency and clarity:
