@@ -6,7 +6,6 @@ Emphasis on simplification, malleability, usefulness, and utilitarian design. Bu
 - **External awareness**: Look for new ideas from everywhere, not limited by "not invented here"
 - **Constant reinvention**: Be willing to completely reinvent approaches, not just iterate
 - **Accept misunderstanding**: Be willing to be misunderstood when pursuing genuinely new approaches
-- **Trust the operator**: Skip defensive checks for prerequisites you control (e.g., tool availability)
 
 **Relationship to other principles:**
 - Subtraction Creates Value is a subset of this broader truth

@@ -155,6 +155,19 @@ This principle establishes that configurations in dotfiles should default to glo
 
 When in doubt, ask: "Should this apply everywhere I code?" If yes → global configuration. If it's specific to how this dotfiles repo works → document it here in README.md.
 
+### Design by Contract
+
+Skip all defensive checks in this repo. Assume `source setup.sh` was run.
+
+**Examples of noise to avoid**:
+- Checking if tools exist
+- Verifying auth status  
+- Testing directory presence
+- Confirming file permissions
+- Validating environment state
+
+Trust the contract: setup.sh did its job. Every defensive check creates cognitive overload in PRs.
+
 ## Repository Design Patterns
 
 This repository follows specific organizational patterns to maintain consistency and clarity:
