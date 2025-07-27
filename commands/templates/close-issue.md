@@ -1,5 +1,14 @@
 Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 
+## Validation: Issue Number Required
+If no issue number was provided, or if {{ ISSUE_NUMBER }} is:
+- Empty or undefined
+- Still contains placeholder text like "$ISSUE_NUMBER" 
+- Not a valid number
+
+STOP immediately and inform the user:
+"Error: The /close-issue command requires a GitHub issue number. Usage: /close-issue <number>"
+
 ## Core Principle: Target-First Development
 {{ INJECT:principles/tracer-bullets.md }}
 
