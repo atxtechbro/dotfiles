@@ -22,15 +22,11 @@ cycles. The data still uses tokens but agent starts with full context immediatel
 
 ## Step 1: Analyze the Issue
 
-**Check prefetched data first:**
+**Available prefetched data:**
 - Issue state: `$ISSUE_STATE`
 - Issue title: `$ISSUE_TITLE`
 - Issue labels: `$ISSUE_LABELS`
-- Issue comments: `$ISSUE_COMMENTS` (already fetched as JSON)
-
-**Only if environment variables are empty**, fall back to API calls:
-- Use `mcp__github__get_issue` to read issue #{{ ISSUE_NUMBER }}
-- Get issue comments with `mcp__github__get_issue_comments`
+- Issue comments: `$ISSUE_COMMENTS` (JSON array)
 
 **Determine path based on available data:**
 - Is this already resolved? → Quick close
