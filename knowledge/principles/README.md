@@ -11,6 +11,7 @@ Foundational truths that guide development across all projects.
 - `invent-and-simplify.md` - Constant reinvention and simplifying assumptions
 - `no-leaks.md` - Keep company details private while enabling rich AI context via gitignored documentation
 - `ose.md` - Outside and Slightly Elevated perspective for clear decision-making
+- `pr-readability-contract.md` - Optimize PRs for human review by moving defensive checks to system boundaries
 - `snowball-method.md` - Continuous knowledge accumulation and compounding improvements
 - `subtraction-creates-value.md` - Strategic removal often creates more value than addition
 - `systems-stewardship.md` - Maintaining systems through patterns and documentation
