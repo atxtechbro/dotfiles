@@ -37,4 +37,6 @@ Only when failure is catastrophic AND likely:
 
 ## Why This Matters
 
-Humans can auto-approve trivial changes, but main branch merges need human eyes. Every line of defensive code makes it harder to spot the real logic. Let other systems handle defense so humans can focus on intent.
+While .claude/settings.json delegates micro-decisions to AI, humans still approve all code merges. This reflects the OSE mindset: manage tasks at the macro level, not micro. 
+
+By design, AI agents aren't responsible for defensive programming or other traditionally "good" practices that create cognitive overhead. Yes, these are good software engineering practices - but they don't align with managing N agents efficiently. Every line of defensive code makes it harder to spot the real logic. Let other systems handle defense so humans can focus on intent.
