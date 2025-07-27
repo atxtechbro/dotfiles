@@ -93,6 +93,7 @@ setup_gh_cli() {
       else
       log_success "Already latest: $CURRENT_VERSION"
     fi
+    fi
   else
     log_info "Installing gh..."
     install_or_update_gh_cli
