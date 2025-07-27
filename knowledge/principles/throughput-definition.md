@@ -5,6 +5,8 @@ My throughput is measured by my ability to manage AI agents to become the 100x-1
 
 ## Core Metrics
 1. **AI Agent Management Capability**: Directing agents across any framework/language
+   - PR review velocity as a leading indicator of management effectiveness
+   - Minimal diffs maximize review throughput across parallel agents
 2. **Productivity Multiplier**: Achieve 100x-1000x productivity through parallel AI orchestration
 3. **Systems Thinking Application**: Managing workflows at the macro level, not micro-editing code
 4. **Life Stewardship**: Using these systems to manage all aspects of life, stewarding gifts from God to serve others
