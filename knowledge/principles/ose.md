@@ -45,6 +45,7 @@ How could this NOT be 100x-1000x more productive? You're not just faster - you'r
 - Design procedures that agents can follow consistently
 - Focus on the "why" and "what" while letting agents handle the "how"
 - Maintain calm perspective during crisis situations - systems thinking over emotional reactions
+- Grant broad tool permissions - just as managers don't want employees asking permission to staple papers, you shouldn't micromanage agent tool access
 
 ## Relationship to Other Principles
 
