@@ -23,7 +23,6 @@ This standardized approach makes it easy to add more MCP servers in the future f
 |-------------|-------------|----------------------|---------------------|---------------|-------------------|-------------------|
 | AWS Documentation | AWS documentation search | None required | PyPI packages via UVX | - | No | No |
 | GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script | [Our Fork](https://github.com/atxtechbro/github-mcp-server?tab=readme-ov-file#github-mcp-server) | No | Yes |
-| GitLab | GitLab API integration | `GITLAB_PERSONAL_ACCESS_TOKEN` from `.bash_secrets` | External npm package | https://github.com/zereight/gitlab-mcp | No | No |
 | Brave Search | Web search via Brave | API key from `.bash_secrets` | Docker container | - | No | Yes |
 | Filesystem | Local filesystem operations | None required | Built from source | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/filesystem#filesystem-mcp-server) | No | Yes |
 | Git | Git repository operations | None required | Source lives in dotfiles | [README.md](servers/git-mcp-server/README.md) | Yes | Yes |
