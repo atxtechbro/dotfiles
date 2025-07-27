@@ -4,7 +4,7 @@ The human reviewer is the constraint in multi-agent development. Optimize PRs fo
 
 ## The Constraint
 
-With N agents producing code and 1 human approving it, **your cognitive bandwidth is the bottleneck**. Every defensive check, validation, or "just in case" code is a tax on the scarce resource: your attention.
+With N agents producing code and 1 human approving it, **human cognitive bandwidth is the bottleneck**. Every defensive check, validation, or "just in case" code is a tax on the scarce resource: human attention.
 
 ## The Contract
 
@@ -37,4 +37,4 @@ Only when failure is catastrophic AND likely:
 
 ## Why This Matters
 
-You can auto-approve trivial changes, but main branch merges need your eyes. Every line of defensive code makes it harder to spot the real logic. Let other systems handle defense so you can focus on intent.
+Humans can auto-approve trivial changes, but main branch merges need human eyes. Every line of defensive code makes it harder to spot the real logic. Let other systems handle defense so humans can focus on intent.
