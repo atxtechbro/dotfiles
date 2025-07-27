@@ -109,6 +109,19 @@ for config in "${PROVIDER_CONFIGS[@]}"; do
 !echo "\$(date '+%Y-%m-%d %H:%M:%S') $command_name \$ARGUMENTS" >> ~/claude-slash-commands.log
 
 EOF
+                    # Add command-specific validation
+                    case "$command_name" in
+                        close-issue)
+                            # Inject shell validation for close-issue
+                            cat >> "$output.tmp" << 'EOF'
+if [ -z "$ISSUE_NUMBER" ]; then
+    echo "Error: The /close-issue command requires a GitHub issue number. Usage: /close-issue <number>"
+    exit 1
+fi
+
+EOF
+                            ;;
+                    esac
                     ;;
                 amazonq)
                     # Amazon Q might have different logging needs
