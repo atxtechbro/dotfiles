@@ -1,68 +1,40 @@
 # PR Readability Contract
 
-Optimize pull requests for human review by moving defensive checks out of core logic.
+The human reviewer is the constraint in multi-agent development. Optimize PRs for rapid comprehension.
 
-## The Problem
+## The Constraint
 
-Defensive programming inline with business logic creates cognitive overload during PR review. Reviewers must mentally filter out defensive scaffolding to understand the actual changes.
+With N agents producing code and 1 human approving it, **your cognitive bandwidth is the bottleneck**. Every defensive check, validation, or "just in case" code is a tax on the scarce resource: your attention.
 
-## The Solution
+## The Contract
 
-Establish contracts at system boundaries (setup scripts, CI/CD, infrastructure) so core logic can be clean and readable.
-
-## When to Be Defensive Inline
-
-- **Error-prone workflows**: Git worktrees, complex git operations where failures are common and costly
-- **User-facing APIs**: External interfaces with unpredictable input
-- **Critical failure paths**: Where silent failures would cause significant damage
-- **Security boundaries**: Authentication, authorization, data validation at trust boundaries
-
-## When to Trust the Contract
-
-- **After setup scripts have run**: When prerequisites are verified by infrastructure
-- **In controlled environments**: Internal tools with known constraints
-- **When prerequisites are verified elsewhere**: Downstream of validation layers
-- **Pure business logic**: Focus on the "what" not the "how to protect"
+AI agents implement features. Other systems (setup scripts, CI/CD, future bots) handle defense. This separation of concerns keeps PRs focused on "what changed" not "what could go wrong."
 
 ## Examples
 
-**Bad (cognitive overload in PR)**:
+**Bad (cognitive overload)**:
 ```bash
-# In a slash command script
 if [ ! -d "$HOME/ppv/pillars/dotfiles" ]; then
     echo "Error: dotfiles directory not found"
     exit 1
 fi
-
-if ! command -v git &> /dev/null; then
-    echo "Error: git is not installed"
-    exit 1
-fi
-
-if [ -z "$GITHUB_TOKEN" ]; then
-    echo "Error: GITHUB_TOKEN not set"
-    exit 1
-fi
-
-# Finally, the actual logic...
+# ... 10 more checks ...
+# Finally, the actual change:
 git pull origin main
 ```
 
 **Good (trust the contract)**:
 ```bash
-# Prerequisites verified by setup.sh
-git pull origin main
+git pull origin main  # Setup.sh verified prerequisites
 ```
 
-## Relationship to Other Principles
+## When to Break the Rule
 
-- **[OSE](ose.md)**: Review at appropriate altitude - PRs should show intent, not implementation details
-- **[Systems Stewardship](systems-stewardship.md)**: Put defensive checks in system setup, not runtime
-- **[Subtraction Creates Value](subtraction-creates-value.md)**: Remove inline checks that don't add value to the reviewer
-- **[Selective Optimization](selective-optimization.md)**: Optimize for the common case (setup worked) not the edge case
+Only when failure is catastrophic AND likely:
+- Git worktrees (empirically error-prone)
+- Security boundaries
+- Data corruption risks
 
-## The Deeper Insight
+## Why This Matters
 
-This isn't about being cavalier with error handling. It's about recognizing that **PR review is a scarce resource** and optimizing for reviewer comprehension. Every defensive check in a PR is a tax on understanding the actual change.
-
-Put another way: defensive programming is system design, not feature implementation. Design your systems to be defensive at the boundaries so your features can be clear at the center.
+You can auto-approve trivial changes, but main branch merges need your eyes. Every line of defensive code makes it harder to spot the real logic. Let other systems handle defense so you can focus on intent.
