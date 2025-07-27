@@ -19,12 +19,12 @@ The system allows you to automatically enable or disable certain MCP servers bas
    ```
 
 2. The setup script will automatically filter MCP servers based on your environment:
-   - On personal machines (`WORK_MACHINE="false"`), work-specific servers like Atlassian are removed
+   - On personal machines (`WORK_MACHINE="false"`), work-specific servers are removed
    - On work machines (`WORK_MACHINE="true"`), all servers are kept
 
 3. You can customize which servers are disabled in each environment by editing the arrays in `utils/mcp-environment.sh`:
    ```bash
-   PERSONAL_DISABLED_SERVERS=("atlassian" "jira" "confluence")
+   PERSONAL_DISABLED_SERVERS=("jira" "confluence")
    DEVELOPMENT_DISABLED_SERVERS=()
    PRODUCTION_DISABLED_SERVERS=("experimental" "beta")
    ```
@@ -46,7 +46,7 @@ To add a new server to the disabled list for a specific environment:
 1. Edit `utils/mcp-environment.sh`
 2. Add the server name to the appropriate array:
    ```bash
-   PERSONAL_DISABLED_SERVERS=("atlassian" "jira" "confluence" "new-server")
+   PERSONAL_DISABLED_SERVERS=("jira" "confluence" "new-server")
    ```
 
 ## Adding New Environments

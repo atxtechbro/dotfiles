@@ -334,9 +334,8 @@ The dotfiles include pre-configured MCP servers for:
 - Brave Search API
 - Filesystem operations
 - Google Drive access
-- Atlassian tools (work machines only)
 
-Work-specific servers (Atlassian, GitLab) require `WORK_MACHINE=true` in `~/.bash_exports.local`.
+Work-specific servers (GitLab) require `WORK_MACHINE=true` in `~/.bash_exports.local`.
 
 ### Claude Model Preferences
 

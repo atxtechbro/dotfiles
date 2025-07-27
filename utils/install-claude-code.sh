@@ -126,7 +126,7 @@ configure_claude_mcp() {
     
     echo -e "\n${BLUE}MCP Configuration Notes:${NC}"
     echo -e "  • Global MCP config: $DOT_DEN/mcp/mcp.json"
-    echo -e "  • Work-only servers (Atlassian, GitLab) require WORK_MACHINE=true"
+    echo -e "  • Work-only servers (GitLab) require WORK_MACHINE=true"
     echo -e "  • ${GREEN}Global access enabled:${NC} 'claude' alias includes --mcp-config automatically"
     echo -e "  • MCP servers available from ANY directory after running setup.sh"
     echo -e "\n${YELLOW}Claude Code MCP commands:${NC}"
