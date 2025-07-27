@@ -155,6 +155,17 @@ This principle establishes that configurations in dotfiles should default to glo
 
 When in doubt, ask: "Should this apply everywhere I code?" If yes → global configuration. If it's specific to how this dotfiles repo works → document it here in README.md.
 
+### Design by Contract
+
+Following the [PR Readability Contract](knowledge/principles/pr-readability-contract.md) principle, assume `source setup.sh` was run successfully. This specific contract means:
+
+- All tools mentioned in setup.sh are installed
+- Environment variables are configured
+- Symlinks are created
+- MCP servers are available
+
+Skip defensive checks for these prerequisites. Trust the contract: setup.sh did its job.
+
 ## Repository Design Patterns
 
 This repository follows specific organizational patterns to maintain consistency and clarity:
