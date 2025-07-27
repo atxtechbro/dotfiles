@@ -14,6 +14,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_DIR="$(dirname "$SCRIPT_DIR")"
 PROMPT_ORCHESTRATOR="$SCRIPT_DIR/prompt_orchestrator.py"
+PREFETCH_GITHUB="$SCRIPT_DIR/prefetch-github-issue.sh"
 
 # Configuration file for provider directories (if exists)
 PROVIDER_CONFIG="$DOTFILES_DIR/.config/provider_dirs.conf"
@@ -109,14 +110,25 @@ for config in "${PROVIDER_CONFIGS[@]}"; do
 !echo "\$(date '+%Y-%m-%d %H:%M:%S') $command_name \$ARGUMENTS" >> ~/claude-slash-commands.log
 
 EOF
-                    # Add command-specific validation
+                    # Add command-specific validation and prefetching
                     case "$command_name" in
                         close-issue)
-                            # Inject shell validation for close-issue
+                            # Inject validation and GitHub prefetching for close-issue
                             cat >> "$output.tmp" << 'EOF'
 if [ -z "$ISSUE_NUMBER" ]; then
     echo "Error: The /close-issue command requires a GitHub issue number. Usage: /close-issue <number>"
     exit 1
+fi
+
+# Source GitHub prefetch functions
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$HOME/ppv/pillars/dotfiles/utils/prefetch-github-issue.sh" ]; then
+    source "$HOME/ppv/pillars/dotfiles/utils/prefetch-github-issue.sh"
+    
+    # Prefetch issue data to eliminate API calls from agent
+    prefetch_issue_data "$ISSUE_NUMBER"
+else
+    echo "Warning: GitHub prefetch script not found - agent will need to fetch data"
 fi
 
 EOF

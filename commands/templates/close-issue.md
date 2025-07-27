@@ -1,17 +1,40 @@
 Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 
+<!-- 
+Prefetched Environment Variables (eliminating request/response cycles):
+- $ISSUE_STATE: Current state (OPEN/CLOSED)
+- $ISSUE_TITLE: Issue title
+- $ISSUE_BODY: Issue description
+- $ISSUE_LABELS: Comma-separated labels
+- $ISSUE_ASSIGNEES: Comma-separated assignees
+- $ISSUE_COMMENTS: JSON array of comments
+
+These are prefetched during command generation to eliminate 2-3 request/response
+cycles. The data still uses tokens but agent starts with full context immediately.
+-->
+
 ## Core Principle: Target-First Development
 {{ INJECT:principles/tracer-bullets.md }}
 
 ## Step 1: Analyze the Issue
-Use `mcp__github__get_issue` to read issue #{{ ISSUE_NUMBER }} and determine:
+
+**Check prefetched data first:**
+- Issue state: `$ISSUE_STATE` (if CLOSED, consider quick close)
+- Issue title: `$ISSUE_TITLE`
+- Issue labels: `$ISSUE_LABELS` (check for "spike", "duplicate", etc.)
+- Issue comments: `$ISSUE_COMMENTS` (already fetched as JSON)
+
+**Only if environment variables are empty**, fall back to API calls:
+- Use `mcp__github__get_issue` to read issue #{{ ISSUE_NUMBER }}
+- Get issue comments with `mcp__github__get_issue_comments`
+
+**Determine path based on available data:**
 - Is this already resolved? → Quick close
 - Does this need implementation? → Full workflow
 - Is this invalid/duplicate? → Close with explanation
 - **Is this a spike?** → Spike workflow (no PR)
 - **Repository check**: If issue requires git operations in a different repo, STOP and ask human to restart session there. Claude Code cannot `cd` outside initial directory tree, breaking git workflows.
 - Check recent merged PRs for similar patterns → `mcp__github__list_pull_requests` (state: "closed")
-- Get issue comments with `mcp__github__get_issue_comments` to enrich understanding
 
 **Clarity opportunity**: If the issue contains vague language ("doesn't work", "should handle", "it depends"), consider exploring with EARS patterns to surface hidden assumptions and edge cases. This often reveals interesting test scenarios and sparks productive conversations about the real requirements. See [EARS Requirements](knowledge/procedures/ears-requirements.md) for conversation-driven discovery techniques.
 
