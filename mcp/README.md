@@ -23,8 +23,6 @@ This standardized approach makes it easy to add more MCP servers in the future f
 |-------------|-------------|----------------------|---------------------|---------------|-------------------|-------------------|
 | AWS Documentation | AWS documentation search | None required | PyPI packages via UVX | - | No | No |
 | GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script | [Our Fork](https://github.com/atxtechbro/github-mcp-server?tab=readme-ov-file#github-mcp-server) | No | Yes |
-| GitLab | GitLab API integration | `GITLAB_PERSONAL_ACCESS_TOKEN` from `.bash_secrets` | External npm package | https://github.com/zereight/gitlab-mcp | No | No |
-| Atlassian | Jira and Confluence integration | API tokens from `.bash_secrets` | Custom setup script | - | No | Yes |
 | Brave Search | Web search via Brave | API key from `.bash_secrets` | Docker container | - | No | Yes |
 | Filesystem | Local filesystem operations | None required | Built from source | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/filesystem#filesystem-mcp-server) | No | Yes |
 | Git | Git repository operations | None required | Source lives in dotfiles | [README.md](servers/git-mcp-server/README.md) | Yes | Yes |
@@ -35,7 +33,6 @@ This standardized approach makes it easy to add more MCP servers in the future f
 Each MCP integration has its own setup method:
 
 - **AWS Documentation MCP Server**: No setup script needed - installed automatically via UVX package manager from PyPI
-- `setup-atlassian-mcp.sh` - Sets up Atlassian (Jira/Confluence) integration
 - `setup-brave-search-mcp.sh` - Sets up Brave Search integration
 - `setup-filesystem-mcp.sh` - Sets up Filesystem integration from source (allows customization)
 - `setup-gdrive-mcp.sh` - Sets up Google Drive integration
@@ -199,7 +196,7 @@ When creating new MCP wrapper scripts:
    mcp_log_error "SERVER_NAME" "Custom error message" "Optional remediation steps"
    ```
 
-3. **Use consistent server names**: BRAVE, ATLASSIAN, GITHUB, GIT, FILESYSTEM, GDRIVE
+3. **Use consistent server names**: BRAVE, GITHUB, GIT, FILESYSTEM, GDRIVE
 
 #### Adding Tool-Level Logging to MCP Servers
 

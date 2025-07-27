@@ -330,13 +330,9 @@ claude mcp add my-server -s user /path/to/server
 The dotfiles include pre-configured MCP servers for:
 - Git operations (git-mcp-server)
 - GitHub integration (github-mcp-server with read/write split)
-- GitLab integration (requires glab CLI)
 - Brave Search API
 - Filesystem operations
 - Google Drive access
-- Atlassian tools (work machines only)
-
-Work-specific servers (Atlassian, GitLab) require `WORK_MACHINE=true` in `~/.bash_exports.local`.
 
 ### Claude Model Preferences
 
