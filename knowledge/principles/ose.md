@@ -45,6 +45,7 @@ How could this NOT be 100x-1000x more productive? You're not just faster - you'r
 - Design procedures that agents can follow consistently
 - Focus on the "why" and "what" while letting agents handle the "how"
 - Maintain calm perspective during crisis situations - systems thinking over emotional reactions
+- Configure tools to enable movement and perspective (see [Claude Code Permissions](../procedures/claude-code-permissions.md))
 
 ## Relationship to Other Principles
 
