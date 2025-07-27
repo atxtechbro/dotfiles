@@ -15,6 +15,7 @@
       "Bash(mkdir -p:*)",
       "Bash(source:*)",
       "Bash(cd:*)",
+      "Bash(cat:*)",
       
       "LS",
       "Read",
