@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Dashboard - Real-time Tool Usage</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar is-dark" role="navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item">
+                <strong>MCP Dashboard</strong>
+            </a>
+        </div>
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <span id="connection-status" class="tag is-success">Connected</span>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <!-- Summary Cards -->
+            <div class="columns is-multiline">
+                <div class="column is-3">
+                    <div class="card">
+                        <div class="card-content">
+                            <p class="title is-4" id="total-calls">0</p>
+                            <p class="subtitle is-6">Total Tool Calls</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-3">
+                    <div class="card">
+                        <div class="card-content">
+                            <p class="title is-4" id="success-rate">0%</p>
+                            <p class="subtitle is-6">Success Rate</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-3">
+                    <div class="card">
+                        <div class="card-content">
+                            <p class="title is-4" id="avg-exec-time">0ms</p>
+                            <p class="subtitle is-6">Avg Execution Time</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-3">
+                    <div class="card">
+                        <div class="card-content">
+                            <p class="title is-4" id="error-rate">0%</p>
+                            <p class="subtitle is-6">Error Rate</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="columns">
+                <div class="column is-6">
+                    <div class="box">
+                        <h5 class="title is-5">Tool Usage</h5>
+                        <canvas id="tool-usage-chart"></canvas>
+                    </div>
+                </div>
+                <div class="column is-6">
+                    <div class="box">
+                        <h5 class="title is-5">Activity Timeline</h5>
+                        <canvas id="activity-timeline-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Metrics -->
+            <div class="columns">
+                <div class="column is-4">
+                    <div class="box">
+                        <h5 class="title is-5">Principle Adherence</h5>
+                        <canvas id="principle-chart"></canvas>
+                    </div>
+                </div>
+                <div class="column is-4">
+                    <div class="box">
+                        <h5 class="title is-5">Branch Activity</h5>
+                        <canvas id="branch-chart"></canvas>
+                    </div>
+                </div>
+                <div class="column is-4">
+                    <div class="box">
+                        <h5 class="title is-5">Cognitive Load</h5>
+                        <canvas id="cognitive-load-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Feed -->
+            <div class="box">
+                <h5 class="title is-5">Live Tool Call Stream</h5>
+                <div id="live-feed" class="live-feed">
+                    <p class="has-text-grey">Waiting for tool calls...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
