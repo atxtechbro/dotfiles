@@ -1,6 +1,6 @@
 # PR Readability Contract
 
-The human reviewer is the constraint in multi-agent development. Optimize PRs for rapid comprehension.
+The human reviewer is the constraint in multi-agent development. Optimize diffs for rapid comprehension.
 
 ## The Constraint
 
@@ -8,7 +8,7 @@ With N agents producing code and 1 human approving it, **human cognitive bandwid
 
 ## The Contract
 
-Design by contract: AI agents are responsible for implementing the requested functionality - nothing more. Everything else (defensive checks, error handling, logging, performance optimization, code style perfection) is delegated to other systems or future passes. This keeps PRs focused on the actual change.
+Design by contract: AI agents are responsible for implementing the requested functionality - nothing more. Everything else (defensive checks, error handling, logging, performance optimization, code style perfection) is delegated to other systems or future passes. This keeps diffs focused on the actual change.
 
 ## Examples of Non-Bottleneck Optimizations to Avoid
 
@@ -20,17 +20,13 @@ Design by contract: AI agents are responsible for implementing the requested fun
 - Edge case handling
 - "Future-proofing" abstractions
 
-**The Golden Rule**: If it doesn't directly implement the requested feature, it belongs elsewhere.
-
 ## When to Break the Rule
 
 Only when failure is catastrophic AND likely:
 - Git worktrees (empirically error-prone)
-- Security boundaries
-- Data corruption risks
 
 ## Why This Matters
 
-Theory of Constraints: optimize the bottleneck (human attention), not the non-bottlenecks. While .claude/settings.json delegates micro-decisions to AI, humans still approve all code. This reflects the OSE mindset: manage at the macro level.
+Theory of Constraints: optimize the bottleneck (human attention), not the non-bottlenecks. While .claude/settings.json delegates micro-decisions to AI, humans still review all diffs. This reflects the OSE mindset: manage at the macro level.
 
-AI agents should optimize for the constraint by delivering the cleanest possible implementation of the requested feature. All the "good engineering practices" that bloat PRs? Delegate them elsewhere. The human reviewer needs to see intent, not infrastructure.
+AI agents should optimize for the constraint by delivering the cleanest possible diff of the requested feature. All the "good engineering practices" that bloat diffs? Delegate them elsewhere. The human reviewer scanning the diff needs to see intent, not infrastructure.
