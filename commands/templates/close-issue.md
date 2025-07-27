@@ -25,7 +25,7 @@ cycles. The data still uses tokens but agent starts with full context immediatel
 **Check prefetched data first:**
 - Issue state: `$ISSUE_STATE`
 - Issue title: `$ISSUE_TITLE`
-- Issue labels: `$ISSUE_LABELS` (check for "spike", "duplicate", etc.)
+- Issue labels: `$ISSUE_LABELS`
 - Issue comments: `$ISSUE_COMMENTS` (already fetched as JSON)
 
 **Only if environment variables are empty**, fall back to API calls:
