@@ -14,7 +14,6 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_DIR="$(dirname "$SCRIPT_DIR")"
 PROMPT_ORCHESTRATOR="$SCRIPT_DIR/prompt_orchestrator.py"
-PREFETCH_GITHUB="$SCRIPT_DIR/prefetch-github-issue.sh"
 
 # Configuration file for provider directories (if exists)
 PROVIDER_CONFIG="$DOTFILES_DIR/.config/provider_dirs.conf"
