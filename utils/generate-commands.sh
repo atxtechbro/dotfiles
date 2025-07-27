@@ -14,6 +14,12 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_DIR="$(dirname "$SCRIPT_DIR")"
 PROMPT_ORCHESTRATOR="$SCRIPT_DIR/prompt_orchestrator.py"
+HOUSEKEEPING="$SCRIPT_DIR/command-housekeeping.sh"
+
+# Source housekeeping functions if available
+if [[ -f "$HOUSEKEEPING" ]]; then
+    source "$HOUSEKEEPING"
+fi
 
 # Configuration file for provider directories (if exists)
 PROVIDER_CONFIG="$DOTFILES_DIR/.config/provider_dirs.conf"
@@ -122,9 +128,17 @@ EOF
                     # REMEMBER: Validation in templates = token waste
                     #           Validation here = zero tokens
                     # ================================================================
+                    
+                    # Use housekeeping functions if available
+                    if type inject_housekeeping &>/dev/null; then
+                        # Let housekeeping handle common patterns
+                        inject_housekeeping "$command_name" >> "$output.tmp"
+                    fi
+                    
+                    # Command-specific validations
                     case "$command_name" in
                         close-issue)
-                            # Inject shell validation for close-issue
+                            # Basic parameter validation (housekeeping adds more)
                             cat >> "$output.tmp" << 'EOF'
 if [ -z "$ISSUE_NUMBER" ]; then
     echo "Error: The /close-issue command requires a GitHub issue number. Usage: /close-issue <number>"

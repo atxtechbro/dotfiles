@@ -4,6 +4,36 @@
 
 This codebase enforces **Generation-Time Validation** - a pattern where all validation happens at command generation time (zero tokens) rather than runtime (wastes tokens).
 
+## Automatic Housekeeping
+
+The system now includes `utils/command-housekeeping.sh` which automatically handles common pre-flight checks:
+
+### What Gets Validated Automatically
+
+For issue-related commands (`close-issue`, `update-issue`, etc.):
+- ✅ Issue exists and is accessible
+- ✅ Issue state (warns if already closed)
+- ✅ Pre-fetches issue title, labels, and state
+- ✅ Git working directory state (auto-stashes if needed)
+- ✅ Branch validation (prevents running on main)
+- ✅ GitHub CLI authentication
+- ✅ Required tools (gh, jq, git)
+
+For PR-related commands (`create-pr`, `review-pr`, etc.):
+- ✅ PR exists and is accessible
+- ✅ PR state (warns if merged/closed)
+- ✅ Pre-fetches PR metadata
+- ✅ Git state validations
+- ✅ Required tools
+
+### Available Environment Variables
+
+After housekeeping runs, these are available in your template:
+- `$ISSUE_STATE`, `$ISSUE_TITLE`, `$ISSUE_LABELS` (for issue commands)
+- `$PR_STATE`, `$PR_TITLE`, `$PR_BASE_BRANCH`, `$PR_HEAD_BRANCH` (for PR commands)
+- `$WORKTREE_PATH` (suggested isolation path)
+- `$RECENT_PRS` (pattern reference)
+
 ## Key Components
 
 ### 1. Template Creator (`utils/create-command-template.sh`)
