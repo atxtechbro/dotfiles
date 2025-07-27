@@ -1,6 +1,6 @@
 # PR Readability Contract
 
-The human reviewer is the constraint in multi-agent development. Optimize diffs for rapid comprehension.
+The human reviewer is the constraint in multi-agent development. Optimize PRs for easy review.
 
 ## The Constraint
 
@@ -8,7 +8,7 @@ With N agents producing code and 1 human approving it, **human cognitive bandwid
 
 ## The Contract
 
-Design by contract: AI agents are responsible for implementing the requested functionality - nothing more. Everything else (defensive checks, error handling, logging, performance optimization, code style perfection) is delegated to other systems or future passes. This keeps diffs focused on the actual change.
+Design by contract: AI agents are responsible for implementing the requested functionality - nothing more. Everything else (defensive checks, error handling, logging, performance optimization, code style perfection) is delegated to other systems or future passes. This keeps PRs focused on the actual change, making them quick to eyeball.
 
 ## Examples of Non-Bottleneck Optimizations to Avoid
 
@@ -27,6 +27,6 @@ Only when failure is catastrophic AND likely:
 
 ## Why This Matters
 
-Theory of Constraints: optimize the bottleneck (human attention), not the non-bottlenecks. While .claude/settings.json delegates micro-decisions to AI, humans still review all diffs. This reflects the OSE mindset: manage at the macro level.
+Theory of Constraints: optimize the bottleneck (human attention), not the non-bottlenecks. While proposed diffs get auto-approved, humans still review at the PR level. This reflects the OSE mindset: manage at the macro level.
 
-AI agents should optimize for the constraint by delivering the cleanest possible diff of the requested feature. All the "good engineering practices" that bloat diffs? Delegate them elsewhere. The human reviewer scanning the diff needs to see intent, not infrastructure.
+AI agents should optimize for the constraint by delivering PRs that are easy to review - clean, focused changes that can be quickly eyeballed. All the "good engineering practices" that bloat PRs? Delegate them elsewhere. When scanning a PR, the human needs to see intent, not infrastructure.
