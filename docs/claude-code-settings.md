@@ -41,7 +41,7 @@ Each setting in the JSON file is automatically applied by the configuration scri
 ### Project Settings (direct file read)
 See `.claude/settings.local.json` for project-level settings including:
 
-- **Permissions**: allowed and denied tool usage patterns (see `knowledge/procedures/claude-code-permissions.md` for the philosophy behind these permissions and how they align with OSE principle)
+- **Permissions**: allowed and denied tool usage patterns
 - **Environment Variables**: timeout limits, token limits, cost warnings
 - **MCP Servers**: enabled Model Context Protocol servers
 
