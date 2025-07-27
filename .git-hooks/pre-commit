@@ -1,0 +1,14 @@
+#!/bin/bash
+# Pre-commit hook to check for validation anti-patterns
+# Copy to .git/hooks/pre-commit to enable
+
+# Check if any template files are being committed
+if git diff --cached --name-only | grep -q "commands/templates/.*\.md$"; then
+    echo "Checking templates for validation anti-patterns..."
+    ./utils/check-template-validation.sh || {
+        echo ""
+        echo "Commit blocked: Found validation in templates"
+        echo "Move validation logic to utils/generate-commands.sh"
+        exit 1
+    }
+fi

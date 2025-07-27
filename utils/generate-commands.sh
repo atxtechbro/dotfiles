@@ -109,7 +109,19 @@ for config in "${PROVIDER_CONFIGS[@]}"; do
 !echo "\$(date '+%Y-%m-%d %H:%M:%S') $command_name \$ARGUMENTS" >> ~/claude-slash-commands.log
 
 EOF
-                    # Add command-specific validation
+                    # ================================================================
+                    # VALIDATION INJECTION POINT - Add command validations here!
+                    # ================================================================
+                    # This is where you prevent token waste by validating BEFORE
+                    # the agent sees anything. Common validations:
+                    # - Required parameters (if [ -z "$PARAM" ])
+                    # - Git state checks (git diff --quiet)
+                    # - Environment prerequisites
+                    # - File existence checks
+                    #
+                    # REMEMBER: Validation in templates = token waste
+                    #           Validation here = zero tokens
+                    # ================================================================
                     case "$command_name" in
                         close-issue)
                             # Inject shell validation for close-issue
@@ -121,6 +133,12 @@ fi
 
 EOF
                             ;;
+                        # ADD NEW COMMAND VALIDATIONS HERE
+                        # template-name)
+                        #     cat >> "$output.tmp" << 'EOF'
+                        # # Your validation logic
+                        # EOF
+                        #     ;;
                     esac
                     ;;
                 amazonq)
