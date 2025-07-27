@@ -5,9 +5,7 @@ let reconnectInterval = null;
 // Chart instances
 let toolUsageChart = null;
 let activityTimelineChart = null;
-let principleChart = null;
 let branchChart = null;
-let cognitiveLoadChart = null;
 
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', () => {
@@ -120,9 +118,7 @@ function updateDashboard(data) {
     // Update charts
     updateToolUsageChart(data.toolCalls);
     updateActivityTimeline(data.activityTimeline);
-    updatePrincipleChart(data.principleUsage);
     updateBranchChart(data.branchActivity);
-    updateCognitiveLoadChart(data.cognitiveLoad);
 }
 
 function initCharts() {
@@ -180,28 +176,6 @@ function initCharts() {
         }
     });
     
-    // Principle Chart
-    const principleCtx = document.getElementById('principle-chart').getContext('2d');
-    principleChart = new Chart(principleCtx, {
-        type: 'doughnut',
-        data: {
-            labels: [],
-            datasets: [{
-                data: [],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)'
-                ]
-            }]
-        },
-        options: {
-            responsive: true
-        }
-    });
-    
     // Branch Chart
     const branchCtx = document.getElementById('branch-chart').getContext('2d');
     branchChart = new Chart(branchCtx, {
@@ -221,29 +195,6 @@ function initCharts() {
         },
         options: {
             responsive: true
-        }
-    });
-    
-    // Cognitive Load Chart
-    const cognitiveCtx = document.getElementById('cognitive-load-chart').getContext('2d');
-    cognitiveLoadChart = new Chart(cognitiveCtx, {
-        type: 'radar',
-        data: {
-            labels: ['Low', 'Medium', 'High'],
-            datasets: [{
-                label: 'Distribution',
-                data: [0, 0, 0],
-                borderColor: 'rgba(255, 99, 132, 1)',
-                backgroundColor: 'rgba(255, 99, 132, 0.2)'
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                r: {
-                    beginAtZero: true
-                }
-            }
         }
     });
 }
@@ -274,17 +225,6 @@ function updateActivityTimeline(timeline) {
     activityTimelineChart.update();
 }
 
-function updatePrincipleChart(principles) {
-    if (!principles) return;
-    
-    const labels = Object.keys(principles);
-    const data = labels.map(label => principles[label]);
-    
-    principleChart.data.labels = labels;
-    principleChart.data.datasets[0].data = data;
-    principleChart.update();
-}
-
 function updateBranchChart(branches) {
     if (!branches) return;
     
@@ -294,17 +234,4 @@ function updateBranchChart(branches) {
     branchChart.data.labels = labels;
     branchChart.data.datasets[0].data = data;
     branchChart.update();
-}
-
-function updateCognitiveLoadChart(cognitiveLoad) {
-    if (!cognitiveLoad) return;
-    
-    const data = [
-        cognitiveLoad.low || 0,
-        cognitiveLoad.medium || 0,
-        cognitiveLoad.high || 0
-    ];
-    
-    cognitiveLoadChart.data.datasets[0].data = data;
-    cognitiveLoadChart.update();
 }
