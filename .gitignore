@@ -89,7 +89,3 @@ mcp/clients/
 # MCP server convenience symlinks (setup-generated executables)
 mcp/servers/*/git_mcp_server.py
 
-# Screenshots directory
-# Keep the directory structure but ignore all screenshot files
-screenshots/*
-!screenshots/.gitkeep
