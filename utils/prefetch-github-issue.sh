@@ -20,20 +20,6 @@ prefetch_issue_data() {
     
     echo "Prefetching GitHub issue #$issue_number data..."
     
-    # Check if gh CLI is available
-    if ! command -v gh &> /dev/null; then
-        echo "Warning: GitHub CLI (gh) not found - skipping prefetch"
-        echo "Install from: https://cli.github.com/"
-        return 0  # Non-fatal to allow offline development
-    fi
-    
-    # Check authentication
-    if ! gh auth status &>/dev/null; then
-        echo "Warning: Not authenticated with GitHub - skipping prefetch"
-        echo "Run: gh auth login"
-        return 0  # Non-fatal
-    fi
-    
     # Fetch issue data
     if ! issue_json=$(gh issue view "$issue_number" --json state,title,body,labels,assignees 2>/dev/null); then
         echo "Error: Issue #$issue_number not found or not accessible"
@@ -101,17 +87,6 @@ prefetch_pr_data() {
     fi
     
     echo "Prefetching GitHub PR #$pr_number data..."
-    
-    # Check prerequisites (same as issue)
-    if ! command -v gh &> /dev/null; then
-        echo "Warning: GitHub CLI (gh) not found - skipping prefetch"
-        return 0
-    fi
-    
-    if ! gh auth status &>/dev/null; then
-        echo "Warning: Not authenticated with GitHub - skipping prefetch"
-        return 0
-    fi
     
     # Fetch PR data
     if ! pr_json=$(gh pr view "$pr_number" --json state,title,body,labels,baseRefName,headRefName,mergeable,isDraft 2>/dev/null); then
