@@ -8,25 +8,19 @@ With N agents producing code and 1 human approving it, **human cognitive bandwid
 
 ## The Contract
 
-AI agents implement features. Other systems (setup scripts, CI/CD, future bots) handle defense. This separation of concerns keeps PRs focused on "what changed" not "what could go wrong."
+Design by contract: AI agents are responsible for implementing the requested functionality - nothing more. Everything else (defensive checks, error handling, logging, performance optimization, code style perfection) is delegated to other systems or future passes. This keeps PRs focused on the actual change.
 
-## Examples
+## Examples of Non-Bottleneck Optimizations to Avoid
 
-**Bad (cognitive overload)**:
-```bash
-if [ ! -d "$HOME/ppv/pillars/dotfiles" ]; then
-    echo "Error: dotfiles directory not found"
-    exit 1
-fi
-# ... 10 more checks ...
-# Finally, the actual change:
-git pull origin main
-```
+- Defensive programming checks
+- Extensive error handling
+- Performance micro-optimizations  
+- Code style perfection
+- Comprehensive logging
+- Edge case handling
+- "Future-proofing" abstractions
 
-**Good (trust the contract)**:
-```bash
-git pull origin main  # Setup.sh verified prerequisites
-```
+**The Golden Rule**: If it doesn't directly implement the requested feature, it belongs elsewhere.
 
 ## When to Break the Rule
 
@@ -37,6 +31,6 @@ Only when failure is catastrophic AND likely:
 
 ## Why This Matters
 
-While .claude/settings.json delegates micro-decisions to AI, humans still approve all code merges. This reflects the OSE mindset: manage tasks at the macro level, not micro. 
+Theory of Constraints: optimize the bottleneck (human attention), not the non-bottlenecks. While .claude/settings.json delegates micro-decisions to AI, humans still approve all code. This reflects the OSE mindset: manage at the macro level.
 
-By design, AI agents aren't responsible for defensive programming or other traditionally "good" practices that create cognitive overhead. Yes, these are good software engineering practices - but they don't align with managing N agents efficiently. Every line of defensive code makes it harder to spot the real logic. Let other systems handle defense so humans can focus on intent.
+AI agents should optimize for the constraint by delivering the cleanest possible implementation of the requested feature. All the "good engineering practices" that bloat PRs? Delegate them elsewhere. The human reviewer needs to see intent, not infrastructure.
