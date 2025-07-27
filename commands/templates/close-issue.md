@@ -1,6 +1,10 @@
 Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 
 <!-- 
+"Close issue" means: Solve the problem described in the issue by implementing
+the requested changes, then create a PR that will close it when merged.
+The GitHub issue itself gets closed by the PR merge, not by this command.
+
 Prefetched Environment Variables (eliminating request/response cycles):
 - $ISSUE_STATE: Current state (OPEN/CLOSED)
 - $ISSUE_TITLE: Issue title
@@ -19,7 +23,7 @@ cycles. The data still uses tokens but agent starts with full context immediatel
 ## Step 1: Analyze the Issue
 
 **Check prefetched data first:**
-- Issue state: `$ISSUE_STATE` (if CLOSED, consider quick close)
+- Issue state: `$ISSUE_STATE`
 - Issue title: `$ISSUE_TITLE`
 - Issue labels: `$ISSUE_LABELS` (check for "spike", "duplicate", etc.)
 - Issue comments: `$ISSUE_COMMENTS` (already fetched as JSON)
