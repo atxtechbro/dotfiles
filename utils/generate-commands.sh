@@ -5,8 +5,9 @@
 #
 # [TEMPLATE-GENERATION]
 # This script DOES generate slash commands from templates.
-# Templates are stored in commands/templates/ and processed by prompt_orchestrator.py
-# to create provider-specific commands with injected variables and knowledge base content.
+# Templates are stored in commands/templates/ and processed by
+# prompt_orchestrator.py to create provider-specific commands with
+# injected variables and knowledge base content.
 # This allows slash commands to be dynamic and context-aware.
 
 set -euo pipefail
@@ -55,7 +56,8 @@ fi
 
 # Check if prompt orchestrator exists
 if [[ ! -x "$PROMPT_ORCHESTRATOR" ]]; then
-    echo "Error: prompt_orchestrator.py not found or not executable at: $PROMPT_ORCHESTRATOR"
+    echo "Error: prompt_orchestrator.py not found or not executable at:" \
+         "$PROMPT_ORCHESTRATOR"
     exit 1
 fi
 
@@ -70,12 +72,15 @@ for config in "${PROVIDER_CONFIGS[@]}"; do
     
     # Skip if template directory doesn't exist
     if [[ ! -d "$template_dir" ]]; then
-        echo "Skipping $provider: template directory not found at $template_dir"
+        echo "Skipping $provider: template directory not found at" \
+             "$template_dir"
         continue
     fi
     
     # Check if templates directory is empty
-    template_count=$(find "$template_dir" -name "*.md" -type f 2>/dev/null | wc -l)
+    template_count=$(find "$template_dir" \
+                         -name "*.md" \
+                         -type f 2>/dev/null | wc -l)
     if [[ $template_count -eq 0 ]]; then
         echo "Warning: No template files found in $template_dir for $provider"
         continue
@@ -106,7 +111,8 @@ for config in "${PROVIDER_CONFIGS[@]}"; do
                 claude)
                     # Claude-specific logging
                     cat > "$output.tmp" << EOF
-!echo "\$(date '+%Y-%m-%d %H:%M:%S') $command_name \$ARGUMENTS" >> ~/claude-slash-commands.log
+!echo "\$(date '+%Y-%m-%d %H:%M:%S') $command_name \$ARGUMENTS" \\
+    >> ~/claude-slash-commands.log
 
 EOF
                     # Add command-specific validation
@@ -115,7 +121,8 @@ EOF
                             # Inject shell validation for close-issue
                             cat >> "$output.tmp" << 'EOF'
 if [ -z "$ISSUE_NUMBER" ]; then
-    echo "Error: The /close-issue command requires a GitHub issue number. Usage: /close-issue <number>"
+    echo "Error: The /close-issue command requires a GitHub issue number." \
+         "Usage: /close-issue <number>"
     exit 1
 fi
 
@@ -157,7 +164,8 @@ done
 
 # Final status
 if [[ $TEMPLATES_PROCESSED -eq 0 ]]; then
-    echo "Error: No templates were processed. Please check your template directories."
+    echo "Error: No templates were processed." \
+         "Please check your template directories."
     exit 1
 else
     echo "Successfully processed $TEMPLATES_PROCESSED command template(s)!"
