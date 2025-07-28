@@ -1,54 +1,66 @@
 # See Also Pattern
 
-A standardized approach for creating bidirectional links between related concepts in our knowledge base, similar to Notion's backlinks or Wikipedia's "See also" sections.
+A systems thinking approach to connecting related concepts in our knowledge base, creating an emergent knowledge graph.
 
-## When to Use
+## Systems Perspective
 
-Add a "See Also" section when:
-- Two concepts are philosophically related (e.g., Jonah personality ↔ throughput definition)
-- One concept implements or embodies another (e.g., a procedure that implements a principle)
-- Understanding one concept enhances understanding of another
-- There's a source material relationship (e.g., concepts derived from the same book)
+Knowledge isn't linear - it's a network. The "See Also" pattern acknowledges that understanding emerges from seeing connections between concepts. Like synapses in a neural network, these links strengthen the overall system's intelligence.
+
+## When to Consider Adding Links
+
+Add a "See Also" section when you notice:
+- **Resonance**: Two concepts vibrate at similar frequencies (e.g., Jonah personality resonates with throughput definition through constraint thinking)
+- **Implementation relationships**: A procedure actualizes a principle in practice
+- **Complementary perspectives**: Different angles on the same truth enhance understanding
+- **Source relationships**: Concepts flowing from the same wellspring of wisdom
+- **Tension relationships**: Concepts that create productive friction when juxtaposed
+
+## Natural Emergence
+
+Rather than forcing bidirectional links, let connections emerge organically:
+- **One-way links are valid**: Sometimes A illuminates B without B needing to reference A
+- **Asymmetric relationships exist**: A principle might inform many procedures, but those procedures might not all link back
+- **Discovery over prescription**: Links should feel like "aha!" moments, not checkboxes
 
 ## Format
 
-Always place the "See Also" section at the end of the document, after all main content:
+Place the "See Also" section at the end, after main content:
 
 ```markdown
 ## See Also
-- [Link Text](relative/path/to/file.md) - Brief description of why this is related
-- External Resource Name - Context for external references
+- [Link Text](relative/path/to/file.md) - Nature of the connection
+- External Resource - How this enriches understanding
 ```
 
-## Guidelines
+## Guiding Principles
 
-1. **Make it bidirectional**: If A links to B, then B should link back to A
-2. **Use relative paths**: Enable navigation regardless of where the repo is cloned
-3. **Add context**: Include a brief description of the relationship
-4. **Keep it focused**: Only link truly related concepts, not everything tangentially connected
-5. **Update both files**: When adding a link, always update both ends of the relationship
+1. **Quality over symmetry**: A meaningful one-way link beats a forced bidirectional pair
+2. **Context reveals connection**: Brief descriptions help others see what you see
+3. **Relative paths for resilience**: Enable navigation regardless of repository location
+4. **Restraint maintains signal**: Link only when the connection genuinely enhances understanding
+5. **Evolution over perfection**: Links can be added, removed, or changed as understanding deepens
 
 ## Examples
 
-**In a principle file:**
+**When a principle influences practice:**
 ```markdown
 ## See Also
-- [Git Workflow](../procedures/git-workflow.md) - Procedure that implements this principle
-- [Jonah Personality](../personalities/jonah.md) - Consultant persona that teaches this concept
+- [Git Workflow](../procedures/git-workflow.md) - How this principle manifests in daily practice
+- [Subtraction Creates Value](subtraction-creates-value.md) - Complementary principle for decision-making
 ```
 
-**In a personality file:**
+**When discovering source wisdom:**
 ```markdown
 ## See Also
-- [Throughput Definition](../../knowledge/throughput-definition.md) - The North Star principle this persona helps discover
-- The Goal by Eliyahu M. Goldratt - Source material for this persona
+- The Goal by Eliyahu M. Goldratt - Wellspring of Theory of Constraints thinking
+- [Throughput Definition](../throughput-definition.md) - How we've adapted ToC for AI agent management
 ```
 
-## Benefits
+## System Benefits
 
-- Creates a knowledge graph for navigating related concepts
-- Reduces duplication by linking rather than repeating
-- Helps discover connections between ideas
-- Enables both human browsing and potential future tooling
+- **Emergent understanding**: Patterns become visible through the network of connections
+- **Reduced cognitive load**: Follow links rather than holding everything in memory
+- **Natural documentation**: The link structure itself documents relationships
+- **Future tooling potential**: Graph visualization, link analysis, concept clustering
 
-This pattern supports the [Systems Stewardship](../principles/systems-stewardship.md) principle by creating consistent, maintainable knowledge structures.
+This pattern embodies [Systems Stewardship](../principles/systems-stewardship.md) by creating structures that reveal rather than impose order.
