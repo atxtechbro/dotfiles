@@ -1,5 +1,6 @@
 # Binaries
 mcp-dashboard
+dashboard
 *.exe
 *.dll
 *.so
