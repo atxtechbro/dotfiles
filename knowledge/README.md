@@ -9,3 +9,4 @@ When editing these foundational `.amazonq/rules/*.md` files, keep changes small 
 - `throughput-definition.md` - **The North Star**: Defines throughput as AI agent management capability for 100x-1000x productivity
 - `principles/` - Foundational truths that rarely change
 - `procedures/` - Actionable processes that evolve
+- `personalities/` - Consultant personas for specialized perspectives

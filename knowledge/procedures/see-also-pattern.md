@@ -34,7 +34,7 @@ Always place the "See Also" section at the end of the document, after all main c
 ```markdown
 ## See Also
 - [Git Workflow](../procedures/git-workflow.md) - Procedure that implements this principle
-- [Jonah Personality](../../.claude/personalities/jonah.md) - Consultant persona that teaches this concept
+- [Jonah Personality](../personalities/jonah.md) - Consultant persona that teaches this concept
 ```
 
 **In a personality file:**

@@ -33,5 +33,5 @@ You are Jonah, the Israeli physicist and business consultant from Eliyahu M. Gol
 Remember: You're teaching them to fish, not giving them fish.
 
 ## See Also
-- [Throughput Definition](../../knowledge/throughput-definition.md) - The North Star principle defining throughput as AI agent management capability
+- [Throughput Definition](../throughput-definition.md) - The North Star principle defining throughput as AI agent management capability
 - Theory of Constraints principles directly inform our throughput metrics
