@@ -6,4 +6,4 @@ Prioritize tasks that will make all future tasks easier by creating and fosterin
 - Throughput = capability + joy (not just code output)
 - 80/20 split: 20% systems work enables 80% delivery
 - Local optimizations that don't increase throughput = waste
-- See `throughput-definition.md` for the ultimate Goal
+- See `../throughput-definition.md` for the ultimate Goal
