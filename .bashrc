@@ -201,3 +201,9 @@ fi
 # Amazon Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/bashrc.post.bash"
 [[ -f "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash"
+
+# Prevent accidental AWS Bedrock charges with Claude Code
+# Documented in: https://docs.anthropic.com/en/docs/claude-code/amazon-bedrock
+# and https://docs.anthropic.com/en/docs/claude-code/settings
+unset CLAUDE_CODE_USE_BEDROCK  # Disables Bedrock when unset (official variable)
+unset AWS_BEARER_TOKEN_BEDROCK  # Removes Bedrock API key if set (official variable)
