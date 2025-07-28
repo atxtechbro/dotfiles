@@ -55,4 +55,4 @@ When converting a directory to a symlink (or vice versa), it's safer to use diff
 3. Create fresh branch from clean state if corruption occurs
 
 ## Think-Tank Content in Worktrees
-**CRITICAL**: Never add think-tank notes or personal content to worktree locations. Worktrees are temporary directories that will be deleted when cleanup occurs. Always use the main repository at `/think-tank/` for any persistent personal content, notes, or documentation.
+→ See [think-tank](../procedures/think-tank.md) for personal content storage guidelines.
