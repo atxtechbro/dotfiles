@@ -14,7 +14,7 @@ Avoid leaking company details into your public dotfiles - it's about respect, no
 - SHOULD keep comprehensive company-specific documentation in `think-tank/` directory
 - MAY include as much detail as needed in gitignored notes - they stay local and private
 
-**Spilled Coffee Compatibility**: Think-tank notes are backed up in company cloud and only accessed on company hardware. AI can easily find think-tank documentation during setup, maintaining 20-minute recovery time. Inline comments create discoverable breadcrumbs.
+**Spilled Coffee Compatibility**: think-tank notes are backed up in company cloud and only accessed on company hardware. AI can easily find think-tank documentation during setup, maintaining 20-minute recovery time. Inline comments create discoverable breadcrumbs.
 
 **Global Force Multiplier**: The `think-tank/` pattern works in ANY repository via global gitignore configuration. This multiplies the impact across your entire professional ecosystem - every repo gets rich company context for AI agents while keeping company details private.
 
