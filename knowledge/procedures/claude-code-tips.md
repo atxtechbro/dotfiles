@@ -13,3 +13,9 @@ Force multiplier discoveries for 1000x Claude Code productivity. Default to one-
 ## Keyboard Shortcuts
 
 - **ThinkPad conversation navigation**: Hold Escape to view conversation history and fork from any previous message. (ThinkPad users: if Fn Lock is on, toggle with Fn+Esc first)
+
+## Model Configuration
+
+- **Default model**: Set in `.claude/settings.json` with `"model": "claude-opus-4-20250514"`
+- **Environment variable**: Alternatively use `ANTHROPIC_MODEL` environment variable
+- **CLI flag**: Override per-session with `claude --model opus` or `claude --model claude-opus-4-20250514`
