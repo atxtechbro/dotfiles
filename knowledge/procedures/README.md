@@ -5,6 +5,7 @@ Actionable processes and workflows that evolve with experience.
 - `fs-write-full-paths.md` - Always use absolute paths in fs_write operations
 - `git-workflow.md` - Git conventions and branch management
 - `post-pr-mini-retro.md` - Systems improvement retro after feature PRs
+- `see-also-pattern.md` - Bidirectional linking between related concepts
 - `worktree-workflow.md` - Git worktree workflow (beta/imperfect system)
 
 ## Future Procedure Ideas
