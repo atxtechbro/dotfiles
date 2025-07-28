@@ -21,6 +21,9 @@
 flywire-notes/
 **/flywire-notes/
 
+# Personal notes and thinking space
+think-tank/
+
 # Claude Code personal configuration
 CLAUDE.local.md
 # Claude Code local settings (personal overrides, not for source control per Anthropic docs)
