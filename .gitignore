@@ -17,9 +17,8 @@
 # Machine-specific configuration
 .bash_exports.local
 
-# Company-specific documentation (stays local)
-flywire-notes/
-**/flywire-notes/
+# Personal notes and thinking space
+think-tank/
 
 # Claude Code personal configuration
 CLAUDE.local.md
