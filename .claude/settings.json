@@ -122,14 +122,14 @@
     ]
   },
   "env": {
-    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8192",
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "32768",
     "BASH_DEFAULT_TIMEOUT_MS": "120000",
     "BASH_MAX_TIMEOUT_MS": "600000",
-    "BASH_MAX_OUTPUT_LENGTH": "50000",
+    "BASH_MAX_OUTPUT_LENGTH": "200000",
     "DISABLE_COST_WARNINGS": "1",
-    "MCP_TIMEOUT": "30000",
-    "MCP_TOOL_TIMEOUT": "60000",
-    "MAX_MCP_OUTPUT_TOKENS": "25000"
+    "MCP_TIMEOUT": "60000",
+    "MCP_TOOL_TIMEOUT": "120000",
+    "MAX_MCP_OUTPUT_TOKENS": "100000"
   },
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
@@ -142,5 +142,6 @@
     "gdrive",
     "gitlab"
   ],
-  "includeCoAuthoredBy": false
+  "includeCoAuthoredBy": false,
+  "model": "opus"
 }
