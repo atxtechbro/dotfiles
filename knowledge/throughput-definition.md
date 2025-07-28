@@ -28,3 +28,7 @@ Every principle, procedure, and system should ultimately serve this throughput:
 - Does it compound over time?
 
 This is the "pillar" in PPV (Pillars, Pipelines, and Vaults) - the fundamental truth everything else supports.
+
+## See Also
+- [Jonah Personality](../.claude/personalities/jonah.md) - Consultant persona based on "The Goal" who guides discovery of constraints
+- The Goal by Eliyahu M. Goldratt - Source material for Theory of Constraints thinking
