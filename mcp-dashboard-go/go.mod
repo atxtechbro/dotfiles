@@ -1,6 +1,6 @@
 module github.com/atxtechbro/dotfiles/mcp-dashboard-go
 
-go 1.23
+go 1.21
 
 require (
 	github.com/fsnotify/fsnotify v1.8.0

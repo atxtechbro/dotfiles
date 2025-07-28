@@ -9,10 +9,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/atxtechbro/dotfiles/mcp-dashboard-go/internal/analytics"
 	"github.com/atxtechbro/dotfiles/mcp-dashboard-go/internal/websocket"
 	"github.com/fsnotify/fsnotify"
 )
+
+// Aggregator interface to avoid import cycle
+type Aggregator interface {
+	AddEntry(entry LogEntry)
+}
 
 // LogEntry represents a parsed log entry
 type LogEntry struct {
@@ -27,7 +31,7 @@ type LogEntry struct {
 }
 
 // WatchFile watches a log file for changes and broadcasts updates
-func WatchFile(path string, hub *websocket.Hub, aggregator *analytics.Aggregator) {
+func WatchFile(path string, hub *websocket.Hub, aggregator Aggregator) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Printf("Error creating watcher for %s: %v", path, err)

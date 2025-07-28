@@ -9,7 +9,7 @@ import (
 
 	"github.com/atxtechbro/dotfiles/mcp-dashboard-go/internal/analytics"
 	"github.com/atxtechbro/dotfiles/mcp-dashboard-go/internal/watcher"
-	"github.com/atxtechbro/dotfiles/mcp-dashboard-go/internal/websocket"
+	ws "github.com/atxtechbro/dotfiles/mcp-dashboard-go/internal/websocket"
 	"github.com/gorilla/websocket"
 )
 
@@ -24,7 +24,7 @@ var upgrader = websocket.Upgrader{
 
 func main() {
 	// Create WebSocket hub
-	hub := websocket.NewHub()
+	hub := ws.NewHub()
 	go hub.Run()
 
 	// Initialize analytics aggregator
@@ -46,8 +46,8 @@ func main() {
 		serveWS(hub, w, r)
 	})
 
-	// Serve static files
-	http.Handle("/", http.FileServer(http.FS(webContent)))
+	// Serve static files from web directory
+	http.Handle("/", http.FileServer(http.Dir("cmd/server/web")))
 
 	// API endpoints
 	http.HandleFunc("/api/metrics", func(w http.ResponseWriter, r *http.Request) {
@@ -66,13 +66,13 @@ func main() {
 	}
 }
 
-func serveWS(hub *websocket.Hub, w http.ResponseWriter, r *http.Request) {
+func serveWS(hub *ws.Hub, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	client := &websocket.Client{
+	client := &ws.Client{
 		Hub:  hub,
 		Conn: conn,
 		Send: make(chan []byte, 256),
