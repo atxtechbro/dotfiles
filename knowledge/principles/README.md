@@ -3,7 +3,7 @@
 Foundational truths that guide development across all projects.
 
 ## The Goal
-- `throughput-definition.md` - **The North Star**: AI agent management capability for top 2% positioning
+- `../throughput-definition.md` - **The North Star**: AI agent management capability for top 2% positioning
 
 ## Operating Principles
 - `ai-provider-agnosticism.md` - **Crisis-Proven**: Interchangeable AI providers for service outage resilience

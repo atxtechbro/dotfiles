@@ -65,7 +65,7 @@ See [Snowball Method](knowledge/principles/snowball-method.md) - compound return
 
 ## Development Workflow
 
-This system avoids traditional IDEs to enable **macro-level task management** instead of micro-level file editing. Using [tmux + git worktrees + Claude Code CLI](knowledge/procedures/tmux-git-worktrees-claude-code.md), you manage multiple AI agents simultaneously across parallel tasks - the foundation for 1000x AI engineer productivity. See [throughput definition](knowledge/principles/throughput-definition.md) and [OSE principle](knowledge/principles/ose.md).
+This system avoids traditional IDEs to enable **macro-level task management** instead of micro-level file editing. Using [tmux + git worktrees + Claude Code CLI](knowledge/procedures/tmux-git-worktrees-claude-code.md), you manage multiple AI agents simultaneously across parallel tasks - the foundation for 1000x AI engineer productivity. See [throughput definition](knowledge/throughput-definition.md) and [OSE principle](knowledge/principles/ose.md).
 
 ## Modular Shell Configuration
 
