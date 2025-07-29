@@ -3,7 +3,7 @@
 Start with maximum capability and transparency, then surgically remove only what violates security or the spilled coffee principle. This inverts traditional security thinking (restrictive by default) in favor of developer experience and visibility.
 
 ## Core Pattern
-- **Wildcards over enumeration**: `mcp__git*` not 27 individual entries
+- **Server-level permissions**: `mcp__git` grants all tools from that server (wildcards not supported)
 - **All access by default**: `additionalDirectories: ["*"]`, `WebFetch(domain:*)`
 - **Full visibility**: `verbose: true`, keep all output transparent
 - **Surgical removal**: Remove only specific dangerous operations like `claude config set`
@@ -18,7 +18,7 @@ Traditional security says "deny all, allow specific" but in a trusted developmen
 ## Examples from Practice
 - Started with `Bash(claude config:*)` → removed only `set` operations
 - Enabled all directories access rather than maintaining allowed lists
-- Kept all MCP servers with wildcards rather than individual permissions
+- Kept all MCP servers with server-level permissions rather than individual tool permissions
 - Disabled telemetry/reporting at the source rather than filtering data
 
 ## Relationship to Other Principles
