@@ -1,9 +1,9 @@
 {
   "model": "claude-opus-4-20250514",
-  "defaultMode": "acceptEdits",
   "cleanupPeriodDays": 90,
   "forceLoginMethod": "claudeai",
   "permissions": {
+    "defaultMode": "acceptEdits",
     "allow": [
       "LS",
       "Read",
@@ -38,7 +38,8 @@
       "mcp__filesystem",
       "mcp__gdrive",
       "mcp__playwright*"
-    ]
+    ],
+    "additionalDirectories": ["*"]
   },
   "env": {
     "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8192",
@@ -56,7 +57,6 @@
   "enableAllProjectMcpServers": true,
   "autoUpdates": true,
   "verbose": true,
-  "additionalDirectories": ["*"],
   "enabledMcpjsonServers": [
     "git-read",
     "github-read",
