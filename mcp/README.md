@@ -31,7 +31,7 @@ Wrapper scripts and configuration for MCP clients (Claude Code, Amazon Q, Cursor
 ```json
 {
   "enableAllProjectMcpServers": false,
-  "enabledMcpjsonServers": ["git", "github-read", "github-write", "playwright"]
+  "enabledMcpjsonServers": ["git", "github", "playwright"]
 }
 ```
 
