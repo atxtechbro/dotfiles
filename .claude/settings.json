@@ -47,6 +47,7 @@
     "MAX_MCP_OUTPUT_TOKENS": "40000"
   },
   "enableAllProjectMcpServers": true,
+  "autoUpdates": true,
   "additionalDirectories": ["*"],
   "enabledMcpjsonServers": [
     "git-read",
