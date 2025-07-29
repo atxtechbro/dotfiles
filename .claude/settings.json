@@ -5,19 +5,22 @@
   "forceLoginMethod": "claudeai",
   "permissions": {
     "allow": [
-      "Bash(grep:*)",
-      "Bash(source:*)",
-      "Bash(cd:*)",
-      
       "LS",
       "Read",
       "Write",
       "Edit",
       "WebFetch(domain:*)",
       
+      "Bash(grep:*)",
+      "Bash(source:*)",
+      "Bash(cd:*)",
       "Bash(claude config --help)",
       "Bash(claude config get:*)",
       "Bash(claude config list:*)",
+      "Bash(./utils/generate-claude-commands.sh:*)",
+      "Bash(./utils/configure-claude-code-settings.sh:*)",
+      "Bash(check-mcp-logs:*)",
+      "Bash(python:*)",
       
       "mcp__git*",
       "mcp__github-read*",
@@ -27,12 +30,7 @@
       "mcp__brave-search",
       "mcp__filesystem",
       "mcp__gdrive",
-      "mcp__playwright*",
-      
-      "Bash(./utils/generate-claude-commands.sh:*)",
-      "Bash(./utils/configure-claude-code-settings.sh:*)",
-      "Bash(check-mcp-logs:*)",
-      "Bash(python:*)"
+      "mcp__playwright*"
     ]
   },
   "env": {
