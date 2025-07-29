@@ -16,10 +16,8 @@
       "WebFetch(domain:*)",
       
       "Bash(claude config --help)",
-      "Bash(claude config get --global verbose)",
-      "Bash(claude config list --global)",
-      "Bash(claude config list)",
-      "Bash(claude config set --help)",
+      "Bash(claude config get:*)",
+      "Bash(claude config list:*)",
       
       "mcp__git*",
       "mcp__github-read*",
