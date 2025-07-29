@@ -33,6 +33,53 @@ Wrapper scripts and configuration for MCP clients (Claude Code, Amazon Q, Cursor
 }
 ```
 
+## Debugging MCP Servers
+
+When an MCP server shows as "failed" in Claude Code:
+
+### 1. Quick Health Check
+```bash
+check-mcp-health.sh     # Check all servers at once
+```
+
+### 2. Manual Diagnostic Steps
+
+1. **Check the wrapper script**
+   - Location: `mcp/<server>-mcp-wrapper.sh`
+   - Verify it exists and is executable
+
+2. **Check the server directory**
+   - Python servers need `.venv/bin/python`
+   - Node servers need `node_modules/`
+   - Go servers need compiled binary
+
+3. **Run the setup script manually**
+   ```bash
+   ./mcp/setup-<server>-mcp.sh
+   ```
+   Watch for error messages
+
+4. **Test the server directly** (if needed)
+   - Python: `.venv/bin/python -m <module_name> --help`
+   - Node: `npx <package> --help`
+   - Go: `./<binary> --help`
+
+### Common Failure Modes
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Git MCP "failed" | Missing `.venv` | Run `setup-git-mcp.sh` |
+| Git MCP "failed" | Missing `pyproject.toml` | File may be missing from repo |
+| GitHub MCP "failed" | Not authenticated | Run `gh auth login` |
+| GitHub MCP "failed" | Binary not built | Run `setup-github-mcp.sh` |
+| Brave Search "failed" | Missing API key | Add `BRAVE_API_KEY` to `~/.bash_secrets` |
+
+### Log Locations
+
+- **MCP errors**: `~/mcp-errors.log` - Server initialization failures
+- **Tool calls**: `~/mcp-tool-calls.log` - Individual tool execution logs
+- **Claude Code logs**: TBD - Client-side logs location varies
+
 ## Troubleshooting
 
 ```bash
