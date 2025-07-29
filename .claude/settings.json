@@ -2,6 +2,7 @@
   "model": "claude-opus-4-20250514",
   "cleanupPeriodDays": 90,
   "forceLoginMethod": "claudeai",
+  "includeCoAuthoredBy": false,
   "permissions": {
     "defaultMode": "plan",
     "allow": [
@@ -30,11 +31,7 @@
       "Bash(python:*)",
       
       "mcp__git",
-      "mcp__github-read",
-      "mcp__github-write",
-      "mcp__brave-search",
-      "mcp__filesystem",
-      "mcp__gdrive",
+      "mcp__github",
       "mcp__playwright"
     ],
     "additionalDirectories": ["//"]
@@ -52,13 +49,10 @@
     "MCP_TOOL_TIMEOUT": "60000",
     "MAX_MCP_OUTPUT_TOKENS": "40000"
   },
-  "enableAllProjectMcpServers": true,
+  "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
-    "git-read",
-    "github-read",
-    "brave-search",
-    "filesystem",
-    "gdrive"
-  ],
-  "includeCoAuthoredBy": false
+    "git",
+    "github",
+    "playwright"
+  ]
 }

@@ -7,32 +7,13 @@
         "FASTMCP_LOG_LEVEL": "ERROR"
       }
     },
-    "github-read": {
-      "command": "github-mcp-read-wrapper.sh",
-      "args": [],
-      "env": {}
-    },
-    "github-write": {
-      "command": "github-mcp-write-wrapper.sh",
+    "github": {
+      "command": "github-mcp-wrapper.sh",
       "args": [],
       "env": {}
     },
     "brave-search": {
       "command": "brave-search-mcp-wrapper.sh",
-      "args": [],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
-    "filesystem": {
-      "command": "filesystem-mcp-wrapper.sh",
-      "args": [],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
-    "gdrive": {
-      "command": "gdrive-mcp-wrapper.sh",
       "args": [],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
