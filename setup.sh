@@ -278,22 +278,6 @@ else
   echo -e "${YELLOW}MCP server setup script not found. Skipping MCP server setup.${NC}"
 fi
 
-# MCP Dashboard setup
-echo -e "${DIVIDER}"
-echo "Setting up MCP Dashboard..."
-
-# Check if start-mcp-dashboard script exists
-if [[ -x "$DOT_DEN/bin/start-mcp-dashboard" ]]; then
-  # Use the start-mcp-dashboard script which handles all checks
-  "$DOT_DEN/bin/start-mcp-dashboard" start
-  # The script handles:
-  # - Checking if dashboard is already running
-  # - Verifying the binary exists
-  # - Starting with proper health checks
-  # - Displaying clear status messages
-else
-  echo -e "${YELLOW}start-mcp-dashboard script not found. Skipping dashboard setup.${NC}"
-fi
 
 # GitLab MCP authentication now handled by @zereight/mcp-gitlab package
 # No additional auth setup needed beyond GITLAB_PERSONAL_ACCESS_TOKEN in ~/.bash_secrets
@@ -625,6 +609,23 @@ if [[ -f ~/.bash_aliases ]]; then
   # shellcheck disable=SC1090
   source ~/.bash_aliases
   echo -e "${GREEN}✓ Bash aliases loaded successfully${NC}"
+fi
+
+# MCP Dashboard setup
+echo -e "${DIVIDER}"
+echo "Setting up MCP Dashboard..."
+
+# Check if start-mcp-dashboard script exists
+if [[ -x "$DOT_DEN/bin/start-mcp-dashboard" ]]; then
+  # Use the start-mcp-dashboard script which handles all checks
+  "$DOT_DEN/bin/start-mcp-dashboard" start
+  # The script handles:
+  # - Checking if dashboard is already running
+  # - Verifying the binary exists
+  # - Starting with proper health checks
+  # - Displaying clear status messages
+else
+  echo -e "${YELLOW}start-mcp-dashboard script not found. Skipping dashboard setup.${NC}"
 fi
 
 echo -e "${DIVIDER}"
