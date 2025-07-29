@@ -17,11 +17,14 @@ This standardized approach makes it easy to add more MCP servers in the future f
 
 ## Available MCP Integrations
 
-| Integration | Description | Authentication Method | Installation Method | Documentation | Tool-Level Logging | Init-Level Logging |
-|-------------|-------------|----------------------|---------------------|---------------|-------------------|-------------------|
-| GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script | [Our Fork](https://github.com/atxtechbro/github-mcp-server?tab=readme-ov-file#github-mcp-server) | No | Yes |
-| Git | Git repository operations | None required | Source lives in dotfiles | [README.md](servers/git-mcp-server/README.md) | Yes | Yes |
-| Playwright | Browser automation | None required | NPM package via npx | [Official Docs](https://github.com/modelcontextprotocol/servers/tree/main/src/playwright) | No | No |
+| Integration | Description | Authentication Method | Installation Method | Documentation | Tool-Level Logging | Init-Level Logging | Claude Code |
+|-------------|-------------|----------------------|---------------------|---------------|-------------------|-------------------|-------------|
+| GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script | [Our Fork](https://github.com/atxtechbro/github-mcp-server?tab=readme-ov-file#github-mcp-server) | No | Yes | ✅ Enabled |
+| Git | Git repository operations | None required | Source lives in dotfiles | [README.md](servers/git-mcp-server/README.md) | Yes | Yes | ✅ Enabled |
+| Playwright | Browser automation | None required | NPM package via npx | [Official Docs](https://github.com/modelcontextprotocol/servers/tree/main/src/playwright) | No | No | ✅ Enabled |
+| Brave Search | Web search via Brave | API key from Brave | NPM package via npx | [Official Docs](https://github.com/modelcontextprotocol/servers/tree/main/src/brave-search) | No | No | ❌ Disabled* |
+
+*Disabled in Claude Code due to native WebSearch tool, but available for other MCP clients
 
 ## Setup Instructions
 
@@ -30,6 +33,7 @@ Each MCP integration has its own setup method:
 - **Playwright MCP Server**: No setup script needed - runs via npx package manager
 - `setup-github-mcp.sh` - Sets up GitHub integration from source
 - `setup-git-mcp.sh` - Sets up Git integration from source
+- `setup-brave-search-mcp.sh` - Sets up Brave Search integration (optional - Claude Code has native WebSearch)
 
 For custom integrations, run the appropriate setup script:
 
@@ -75,6 +79,28 @@ The MCP configuration follows a vendor-agnostic pattern:
 - **Setup**: Run `./setup-vendor-agnostic-mcp.sh` to configure the vendor-agnostic structure
 
 This approach allows us to maintain a single MCP configuration file while supporting multiple MCP clients through symlinks or client-specific configurations.
+
+### Selective MCP Server Enabling
+
+Claude Code supports selective enabling of MCP servers to avoid duplication with native tools. This is controlled in `.claude/settings.json`:
+
+```json
+{
+  "enableAllProjectMcpServers": false,  // Set to false for selective enabling
+  "enabledMcpjsonServers": [
+    "git",
+    "github-read", 
+    "github-write",
+    "playwright"
+    // Brave Search is omitted since Claude has native WebSearch
+  ]
+}
+```
+
+This configuration ensures:
+- Claude Code uses only non-duplicative MCP servers
+- Other MCP clients (Amazon Q, Cursor, etc.) can access all configured servers
+- Provider-agnostic benefit is maintained across the ecosystem
 
 ## Protocol Testing
 

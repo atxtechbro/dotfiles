@@ -49,10 +49,12 @@
     "MCP_TOOL_TIMEOUT": "60000",
     "MAX_MCP_OUTPUT_TOKENS": "40000"
   },
-  "enableAllProjectMcpServers": true,
+  "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
-    "git-read",
-    "github-read"
+    "git",
+    "github-read",
+    "github-write",
+    "playwright"
   ],
   "includeCoAuthoredBy": false
 }

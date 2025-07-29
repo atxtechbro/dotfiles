@@ -1,5 +1,12 @@
 {
   "mcpServers": {
+    "brave-search": {
+      "command": "brave-search-mcp-wrapper.sh",
+      "args": [],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      }
+    },
     "git": {
       "command": "git-mcp-wrapper.sh",
       "args": [],
