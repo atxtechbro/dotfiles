@@ -1599,7 +1599,7 @@ def git_restore(repo: git.Repo, files: list[str], source: str | None = None, sta
     """
     try:
         # Build command parts
-        cmd_parts = ["restore"]
+        cmd_parts = ["git", "restore"]
         
         # Add source if specified
         if source:
