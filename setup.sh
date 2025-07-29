@@ -260,6 +260,13 @@ if [[ -d "$DOT_DEN/commands/templates" ]]; then
   mkdir -p "$DOT_DEN/.claude"
   ln -sf "../commands/templates" "$DOT_DEN/.claude/command-templates"
   echo -e "${GREEN}✓ Created symlink: .claude/command-templates → commands/templates${NC}"
+  
+  # Check for and remove circular symlink (issue #1057)
+  if [[ -L "$DOT_DEN/commands/templates/templates" ]]; then
+    echo -e "${YELLOW}Removing circular symlink: commands/templates/templates${NC}"
+    rm -f "$DOT_DEN/commands/templates/templates"
+    echo "  → Circular symlink removed (see issue #1057)"
+  fi
 fi
 
 # Set up vendor-agnostic MCP configuration

@@ -26,6 +26,8 @@ CLAUDE.local.md
 .claude/settings.local.json
 # Setup-generated symlinks (avoid duplicating tracked content)
 .claude/command-templates
+# Circular symlink that keeps appearing (issue #1057)
+commands/templates/templates
 
 # Private SSH keys
 id_rsa
