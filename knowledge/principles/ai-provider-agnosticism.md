@@ -16,7 +16,6 @@ alias claude='claude --mcp-config "$DOT_DEN/mcp/mcp.json" --add-dir "$DOT_DEN/kn
 
 # Amazon Q: MCP import during setup (no CLI flag support)
 # Setup runs: q mcp import --file "$DOT_DEN/mcp/mcp.json" global --force
-alias q='q'
 ```
 
 ## Implementation
