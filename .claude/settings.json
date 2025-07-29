@@ -41,7 +41,7 @@
     "DISABLE_COST_WARNINGS": "1",
     "MCP_TIMEOUT": "30000",
     "MCP_TOOL_TIMEOUT": "60000",
-    "MAX_MCP_OUTPUT_TOKENS": "25000"
+    "MAX_MCP_OUTPUT_TOKENS": "40000"
   },
   "enableAllProjectMcpServers": true,
   "additionalDirectories": ["*"],
