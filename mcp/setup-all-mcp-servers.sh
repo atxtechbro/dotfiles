@@ -37,6 +37,7 @@ fi
 setup_scripts=(
     "setup-github-mcp.sh"
     "setup-git-mcp.sh"
+    "setup-brave-search-mcp.sh"
 )
 
 failed_setups=()

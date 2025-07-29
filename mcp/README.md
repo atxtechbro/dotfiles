@@ -13,8 +13,6 @@ Wrapper scripts and configuration for MCP clients (Claude Code, Amazon Q, Cursor
 
 *Claude Code has native WebSearch
 
-## Quick Start
-
 ```bash
 # Most servers auto-setup during ./setup.sh
 # For optional servers:
