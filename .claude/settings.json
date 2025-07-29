@@ -2,6 +2,7 @@
   "model": "claude-opus-4-20250514",
   "cleanupPeriodDays": 90,
   "forceLoginMethod": "claudeai",
+  "_comment": "MCP permissions are all-or-nothing per server. Granular permissions (e.g., mcp__git__git_push) don't work. See issue #1040",
   "permissions": {
     "defaultMode": "plan",
     "allow": [
@@ -31,9 +32,7 @@
       
       "mcp__git",
       "mcp__github-read",
-      "mcp__github-write__create_pull_request",
-      "mcp__github-write__add_issue_comment",
-      "mcp__github-write__update_issue",
+      "mcp__github-write",
       "mcp__brave-search",
       "mcp__filesystem",
       "mcp__gdrive",
