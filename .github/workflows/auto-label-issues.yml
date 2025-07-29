@@ -2,7 +2,7 @@ name: Dotfiles Issue Triage
 description: Automatically triage GitHub issues using Claude Code
 on:
   issues:
-    types: [opened, edited]
+    types: [opened]
 
 jobs:
   triage-issue:
