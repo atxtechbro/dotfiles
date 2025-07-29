@@ -13,9 +13,9 @@ GitHub Issue → Planning Mode → Implementation → Pull Request → Review �
 ### 1. GitHub Issue Defines the Work
 
 Every task starts as a GitHub issue:
-- Clear problem statement
+- Clear problem statement  
 - Success criteria defined
-- Labels indicate type (bug, feature, spike)
+- Labels automatically assigned by Claude Code GitHub Action based on principles
 
 **Anti-pattern**: Starting work without an issue leads to scope creep and unclear PRs.
 
@@ -59,7 +59,21 @@ PR review happens at the right altitude:
 - Verify it solves the original issue
 - Merge when approved
 
-### 6. Optional: Post-PR Retro
+### 6. Post-Merge Workflow
+
+After merging via GitHub UI:
+1. Exit Claude Code
+2. `git checkout main`
+3. `git pull origin main`
+4. `source setup.sh`
+5. Start new terminal session
+6. Restart Claude Code:
+   - Resume last chat for context continuity
+   - Or start fresh for new work
+
+**Note**: This manual process ensures clean environment and updated configurations.
+
+### 7. Optional: Post-PR Retro
 
 For significant work:
 - Run [post-PR mini retro](post-pr-mini-retro.md)
@@ -75,13 +89,15 @@ For significant work:
 
 ## Configuration
 
-Enable planning mode by default:
+Planning mode should be enabled by default for all users:
 ```bash
 # In ~/.claude/settings.json
 {
   "defaultMode": "plan"
 }
 ```
+
+**Recommendation**: Add this to your `setup.sh` or dotfiles to ensure all team members start with planning mode enabled. This enforces OSE principles from day one.
 
 ## Related
 
