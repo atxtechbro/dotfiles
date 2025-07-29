@@ -1,9 +1,15 @@
 {
   "model": "claude-opus-4-20250514",
-  "defaultMode": "acceptEdits",
   "cleanupPeriodDays": 90,
   "forceLoginMethod": "claudeai",
   "permissions": {
+    "defaultMode": "acceptEdits",
+    "additionalDirectories": ["*"],
+    "deny": [
+      "Edit(file_path:~/.claude/settings.json)",
+      "Write(file_path:~/.claude/settings.json)",
+      "MultiEdit(file_path:~/.claude/settings.json)"
+    ],
     "allow": [
       "LS",
       "Read",
@@ -54,9 +60,6 @@
     "MAX_MCP_OUTPUT_TOKENS": "40000"
   },
   "enableAllProjectMcpServers": true,
-  "autoUpdates": true,
-  "verbose": true,
-  "additionalDirectories": ["*"],
   "enabledMcpjsonServers": [
     "git-read",
     "github-read",
