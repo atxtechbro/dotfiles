@@ -31,8 +31,7 @@
       "Bash(python:*)",
       
       "mcp__git",
-      "mcp__github-read",
-      "mcp__github-write",
+      "mcp__github",
       "mcp__playwright"
     ],
     "additionalDirectories": ["//"]
@@ -53,8 +52,7 @@
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
     "git",
-    "github-read",
-    "github-write",
+    "github",
     "playwright"
   ]
 }
