@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -46,8 +47,12 @@ func main() {
 		serveWS(hub, w, r)
 	})
 
-	// Serve static files from web directory
-	http.Handle("/", http.FileServer(http.Dir("cmd/server/web")))
+	// Serve static files from embedded web directory
+	webFS, err := fs.Sub(webContent, "web")
+	if err != nil {
+		log.Fatal("Failed to create sub filesystem: ", err)
+	}
+	http.Handle("/", http.FileServer(http.FS(webFS)))
 
 	// API endpoints
 	http.HandleFunc("/api/metrics", func(w http.ResponseWriter, r *http.Request) {
