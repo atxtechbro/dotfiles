@@ -4,9 +4,20 @@ Start with maximum capability and transparency, then surgically remove only what
 
 ## Core Pattern
 - **Server-level permissions**: `mcp__git` grants all tools from that server (wildcards not supported)
-- **All access by default**: `additionalDirectories: ["*"]`, `WebFetch(domain:*)`
+- **All access by default**: `additionalDirectories: ["//"]` for full filesystem access, `WebFetch(domain:*)`
 - **Full visibility**: `verbose: true`, keep all output transparent
 - **Surgical removal**: Remove only specific dangerous operations like `claude config set`
+
+## Claude Code Directory Access Syntax
+The `additionalDirectories` field extends Claude Code's built-in Edit/Write tools beyond the starting directory:
+
+- **Full filesystem**: `["//"]` - Grants access to entire filesystem
+- **Home directory**: `["~/"]` - All files under home
+- **Parent directories**: `["../", "../../"]` - Navigate up from current location
+- **Absolute paths**: `["//etc", "//usr/local"]` - Use `//` prefix for absolute paths
+- **Home-relative**: `["~/ppv", "~/Documents"]` - Use `~/` prefix
+
+**Note**: Without these entries, Claude's built-in Edit tool is restricted to the current working directory. The filesystem MCP server (`mcp__filesystem`) provides an alternative with unrestricted access.
 
 ## Why This Works
 Traditional security says "deny all, allow specific" but in a trusted development environment:
@@ -17,9 +28,10 @@ Traditional security says "deny all, allow specific" but in a trusted developmen
 
 ## Examples from Practice
 - Started with `Bash(claude config:*)` → removed only `set` operations
-- Enabled all directories access rather than maintaining allowed lists
+- Enabled full filesystem access with `additionalDirectories: ["//"]` rather than maintaining allowed lists
 - Kept all MCP servers with server-level permissions rather than individual tool permissions
 - Disabled telemetry/reporting at the source rather than filtering data
+- Fixed "Path not found" error by using proper syntax (`//`) instead of glob patterns (`*`)
 
 ## Relationship to Other Principles
 - **Developer Experience**: Maximum capability out of the box
