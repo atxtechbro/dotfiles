@@ -45,37 +45,6 @@ qsafe() {
     github___rerun_failed_jobs\
     github___cancel_workflow_run\
     github___delete_workflow_run_logs\
-    gitlab___cancel_pipeline\
-    gitlab___create_branch\
-    gitlab___create_issue\
-    gitlab___create_issue_link\
-    gitlab___create_issue_note\
-    gitlab___create_label\
-    gitlab___create_merge_request\
-    gitlab___create_merge_request_note\
-    gitlab___create_merge_request_thread\
-    gitlab___create_milestone\
-    gitlab___create_note\
-    gitlab___create_or_update_file\
-    gitlab___create_pipeline\
-    gitlab___create_repository\
-    gitlab___create_wiki_page\
-    gitlab___delete_issue\
-    gitlab___delete_issue_link\
-    gitlab___delete_label\
-    gitlab___delete_milestone\
-    gitlab___delete_wiki_page\
-    gitlab___edit_milestone\
-    gitlab___fork_repository\
-    gitlab___promote_milestone\
-    gitlab___push_files\
-    gitlab___retry_pipeline\
-    gitlab___update_issue\
-    gitlab___update_issue_note\
-    gitlab___update_label\
-    gitlab___update_merge_request\
-    gitlab___update_merge_request_note\
-    gitlab___update_wiki_page\
     atlassian___jira_create_issue\
     atlassian___jira_update_issue\
     atlassian___jira_add_comment\
