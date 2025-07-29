@@ -19,8 +19,8 @@ echo "Go installation verified. Proceeding with GitHub MCP server setup..."
 # Create servers directory if it doesn't exist
 mkdir -p "$CURRENT_SCRIPT_DIRECTORY/servers"
 
-# GitHub MCP server is now in-house at mcp/github-mcp-server
-GITHUB_MCP_DIR="$CURRENT_SCRIPT_DIRECTORY/github-mcp-server"
+# GitHub MCP server is now in-house at mcp/servers/github-mcp-server
+GITHUB_MCP_DIR="$CURRENT_SCRIPT_DIRECTORY/servers/github-mcp-server"
 
 # Verify the in-house GitHub MCP server exists
 if [ ! -d "$GITHUB_MCP_DIR" ]; then
