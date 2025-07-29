@@ -1,0 +1,6 @@
+{
+  "model": "claude-3-5-sonnet-20241022",
+  "defaultMode": "acceptEdits",
+  "cleanupPeriodDays": 90,
+  "forceLoginMethod": "claudeai"
+}

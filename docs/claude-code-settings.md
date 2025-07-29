@@ -30,6 +30,12 @@ The configuration script is called automatically:
 ### Global Settings (via `claude config`)
 See `.claude/settings/claude-code-defaults.json` for the current configuration. The settings file is the source of truth and includes:
 
+- **model**: AI model to use (e.g., claude-3-5-sonnet-20241022)
+- **defaultMode**: Default permission mode ("acceptEdits" for auto-accepting)
+- **cleanupPeriodDays**: Chat transcript retention (90 days)
+- **forceLoginMethod**: Authentication method ("claudeai" for Pro/Pro Max accounts)
+
+Additional settings that can be configured:
 - **Visual**: theme, editor mode
 - **Behavior**: auto-updates, verbose output, diff tool
 - **Notifications**: preferred channel, idle thresholds  

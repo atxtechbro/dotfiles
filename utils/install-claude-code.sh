@@ -95,6 +95,12 @@ setup_claude_code() {
     # Configure MCP servers for Claude Code
     configure_claude_mcp
     
+    # Apply Claude Code settings if configuration script exists
+    if [[ -f "$SCRIPT_DIR/configure-claude-code-settings.sh" ]]; then
+        echo "Applying Claude Code settings..."
+        "$SCRIPT_DIR/configure-claude-code-settings.sh"
+    fi
+    
     return 0
 }
 
