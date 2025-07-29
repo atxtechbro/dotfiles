@@ -61,6 +61,13 @@ setup_claude_code() {
     # Configure MCP servers for Claude Code
     configure_claude_mcp
     
+    # Configure imperative settings (must always run regardless of installation status)
+    if command -v claude &> /dev/null; then
+        claude config set -g autoUpdate true 2>/dev/null
+        claude config set -g preferredNotifChannel terminal_bell 2>/dev/null
+        claude config set -g verbose true 2>/dev/null
+    fi
+    
     return 0
 }
 
@@ -70,12 +77,6 @@ configure_claude_mcp() {
     # Get the directory where this script is located
     SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     DOT_DEN="$(dirname "$SCRIPT_DIR")"
-    
-    # Configure imperative settings
-    if command -v claude &> /dev/null; then
-        claude config set -g autoUpdate true 2>/dev/null
-        claude config set -g preferredNotifChannel terminal_bell 2>/dev/null
-    fi
     
     # Check if .mcp.json exists in the dotfiles repository
     if [[ -f "$DOT_DEN/.mcp.json" ]]; then
