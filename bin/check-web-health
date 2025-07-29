@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# =============================================================================
+# Web Service Health Check Guide for Playwright
+# =============================================================================
+# PURPOSE: Guide for using Playwright MCP to verify web services
+# USAGE: Reference this guide when performing health checks in Claude Code
+# =============================================================================
+
+# Colors for output
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Get URL from argument
+URL="${1:-http://localhost:8080}"
+
+echo -e "${BLUE}=== Playwright Health Check Guide ===${NC}"
+echo ""
+echo -e "${GREEN}To perform a visual health check of $URL using Claude Code:${NC}"
+echo ""
+echo "1. Basic health check:"
+echo "   ${YELLOW}# Navigate to the service${NC}"
+echo "   Use the browser_navigate tool with url: \"$URL\""
+echo ""
+echo "   ${YELLOW}# Take a screenshot for confirmation${NC}"
+echo "   Use the browser_take_screenshot tool"
+echo ""
+echo "2. Advanced health check:"
+echo "   ${YELLOW}# Wait for specific content${NC}"
+echo "   Use browser_wait_for with text: \"MCP Dashboard\""
+echo ""
+echo "   ${YELLOW}# Check page structure${NC}"
+echo "   Use browser_snapshot to see the page content"
+echo ""
+echo "   ${YELLOW}# Check for console errors${NC}"
+echo "   Use browser_console_messages"
+echo ""
+echo "3. Save results:"
+echo "   ${YELLOW}# Take a full page screenshot${NC}"
+echo "   Use browser_take_screenshot with fullPage: true"
+echo ""
+echo -e "${BLUE}Benefits over curl:${NC}"
+echo "  • Visual confirmation of correct rendering"
+echo "  • JavaScript error detection"
+echo "  • Content verification"
+echo "  • Interactive debugging capability"
+echo ""
+echo -e "${GREEN}Try it now in Claude Code with the commands above!${NC}"

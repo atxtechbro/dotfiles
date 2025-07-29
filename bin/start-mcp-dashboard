@@ -5,6 +5,11 @@
 # =============================================================================
 # PURPOSE: Start, stop, restart, and check status of the MCP dashboard
 # USAGE: start-mcp-dashboard [start|stop|restart|status]
+# 
+# HEALTH CHECKS:
+# - Basic: Uses curl to verify dashboard is responding
+# - Enhanced: Use Claude Code with Playwright MCP for visual verification
+#   Run: bash bin/check-web-health <url> (from within Claude Code)
 # =============================================================================
 
 # Configuration
@@ -62,6 +67,13 @@ start_dashboard() {
             echo -e "${GREEN}✓ MCP Dashboard started successfully${NC}"
             echo -e "${BLUE}Dashboard URL: http://localhost:$DASHBOARD_PORT${NC}"
             echo -e "${BLUE}Log file: $DASHBOARD_LOG${NC}"
+            
+            # Suggest enhanced health check option
+            echo ""
+            echo -e "${YELLOW}Tip: For visual verification with Playwright:${NC}"
+            echo -e "  In Claude Code, run: bash bin/check-web-health http://localhost:$DASHBOARD_PORT"
+            echo -e "  Or use Playwright MCP tools directly to navigate and screenshot"
+            
             return 0
         fi
         sleep 1
