@@ -29,9 +29,7 @@
       "mcp__brave-search",
       "mcp__filesystem",
       "mcp__awslabs.aws-documentation-mcp-server",
-      "mcp__atlassian",
       "mcp__gdrive",
-      "mcp__gitlab",
       
       "Bash(./utils/generate-claude-commands.sh:*)",
       "Bash(./utils/configure-claude-code-settings.sh:*)",
@@ -54,11 +52,9 @@
     "awslabs.aws-documentation-mcp-server",
     "git-read",
     "github-read",
-    "atlassian",
     "brave-search",
     "filesystem",
-    "gdrive",
-    "gitlab"
+    "gdrive"
   ],
   "includeCoAuthoredBy": false
 }
