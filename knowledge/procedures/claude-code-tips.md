@@ -22,7 +22,7 @@ Force multiplier discoveries for 1000x Claude Code productivity. Default to one-
 
 - **Set in settings.json**: Configure with `"model": "claude-opus-4-20250514"`
 
-## Permission Systems (Tentative Findings)
+## Permission Systems (Validated)
 
 Claude Code has two separate permission systems that behave differently:
 
@@ -36,7 +36,7 @@ Claude Code has two separate permission systems that behave differently:
 - **Managed by**: `settings.json` file
 - **Covers**: `mcp__git`, `mcp__github-read`, `mcp__filesystem`, etc.
 - **Changes**: Only loaded at session start (requires restart)
-- **Potential bug**: Granular git permissions (e.g., `mcp__git__git_push`) may not work as expected
+- **Confirmed limitation**: Granular permissions (e.g., `mcp__git__git_push`) don't work - only server-level permissions are supported
 
 ### Runtime Workspace Access
 - **The `/permissions` Workspace tab** = runtime equivalent of `additionalDirectories`
