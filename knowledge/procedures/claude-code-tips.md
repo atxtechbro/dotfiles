@@ -36,7 +36,11 @@ Claude Code has two separate permission systems that behave differently:
 - **Managed by**: `settings.json` file
 - **Covers**: `mcp__git`, `mcp__github-read`, `mcp__filesystem`, etc.
 - **Changes**: Only loaded at session start (requires restart)
-- **Confirmed limitation**: Granular permissions (e.g., `mcp__git__git_push`) don't work - only server-level permissions are supported
+- **Confirmed limitation**: Granular permissions don't work - only server-level permissions are supported
+  - ❌ `mcp__github-write__create_pull_request` - doesn't work
+  - ❌ `mcp__git__git_push` - doesn't work  
+  - ✅ `mcp__github-write` - works (all-or-nothing for the server)
+  - ✅ `mcp__git` - works (all-or-nothing for the server)
 
 ### Runtime Workspace Access
 - **The `/permissions` Workspace tab** = runtime equivalent of `additionalDirectories`
