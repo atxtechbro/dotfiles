@@ -23,7 +23,7 @@ The `utils/configure-claude-code-settings.sh` script:
 ### Integration
 The configuration script is called automatically:
 - During initial setup via `setup.sh`
-- When installing/updating Claude Code via `install-claude-code.sh`
+- When configuring Claude Code via `configure-claude-code.sh`
 
 ## Available Settings
 
