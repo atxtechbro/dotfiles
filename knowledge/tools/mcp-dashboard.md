@@ -10,7 +10,8 @@ start-mcp-dashboard start
 Automatically starts during `source setup.sh` if Go is available.
 
 ## Files
-- Dashboard: `mcp-dashboard-go/`
+- Dashboard source: `mcp-dashboard-go/`
+- Dashboard binary: `mcp-dashboard-go/dashboard`
 - Helper: `bin/start-mcp-dashboard`
 - Logs: `~/mcp-errors.log`, `~/mcp-tool-calls.log`
 
