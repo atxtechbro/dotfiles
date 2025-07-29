@@ -29,7 +29,7 @@ setup_provider_agnostic_mcp() {
     # Setup Claude Code MCP (via alias)
     echo -e "${BLUE}🔧 Configuring Claude Code...${NC}"
     if command -v claude &> /dev/null; then
-        echo -e "${GREEN}✓ Claude Code detected - MCP config via alias in .bash_aliases.d/ai-providers.sh${NC}"
+        echo -e "${GREEN}✓ Claude Code detected - MCP config via alias in .bash_aliases.d/claude.sh${NC}"
         echo -e "  Alias: claude --mcp-config \"$MCP_CONFIG\" --add-dir \"$DOT_DEN/knowledge\""
     else
         echo -e "${YELLOW}⚠️  Claude Code not installed - MCP config ready when installed${NC}"
