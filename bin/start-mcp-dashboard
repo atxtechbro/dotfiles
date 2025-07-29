@@ -51,6 +51,7 @@ is_running() {
 start_dashboard() {
     if is_running; then
         echo -e "${YELLOW}MCP Dashboard is already running (PID: $(get_dashboard_pid))${NC}"
+        echo -e "${BLUE}Dashboard URL: http://localhost:$DASHBOARD_PORT${NC}"
         return 0
     fi
     
