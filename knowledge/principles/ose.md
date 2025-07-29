@@ -47,6 +47,26 @@ How could this NOT be 100x-1000x more productive? You're not just faster - you'r
 - Maintain calm perspective during crisis situations - systems thinking over emotional reactions
 - Grant broad tool permissions - just as managers don't want employees asking permission to staple papers, you shouldn't micromanage agent tool access
 
+## Planning Mode: OSE Mechanically Enforced
+
+Claude Code's planning mode is the mechanical implementation of OSE. Instead of trying to remember to stay elevated, the tool keeps you there:
+
+**Enable OSE by default:**
+```bash
+# In ~/.claude/settings.json
+{
+  "defaultMode": "plan"
+}
+```
+
+**How it enforces OSE:**
+- Forces you to review plans, not watch implementation
+- Prevents "driving" at the code level
+- Enables batch approval of multiple agent plans
+- Shifts your focus from HOW (implementation) to WHAT (requirements)
+
+See [tmux + git worktrees + Claude Code + Planning Mode](../procedures/tmux-git-worktrees-claude-code.md) for the complete workflow that delivers 100x productivity through true parallel agent management.
+
 ## Relationship to Other Principles
 
 - **[Spilled Coffee Principle](../../../README.md)**: OSE prevents the firefighting that creates fragile systems
