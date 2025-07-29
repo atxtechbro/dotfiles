@@ -46,7 +46,7 @@ The setup process ensures all MCP servers work correctly in worktrees by:
 
 1. **Building binaries locally**: GitHub MCP server binary is built in `worktree/mcp/servers/github`
 2. **Creating Python venvs**: Git MCP server venv is created at `worktree/mcp/servers/git-mcp-server/.venv`
-3. **Installing npm packages**: Filesystem MCP dependencies installed in `worktree/mcp/servers/filesystem-mcp-server/node_modules`
+3. **Installing npm packages**: Brave Search MCP dependencies installed in `worktree/node_modules`
 4. **Generating configs**: MCP configurations are generated for the worktree path
 
 ## Working with MCP in Worktrees
@@ -76,7 +76,6 @@ python -m venv .venv
 ### Issue: npm packages not found
 **Solution**: The setup script should install them. If not, run:
 ```bash
-cd mcp/servers/filesystem-mcp-server
 npm install
 ```
 

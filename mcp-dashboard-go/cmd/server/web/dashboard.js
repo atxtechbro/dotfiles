@@ -178,10 +178,8 @@ function getServerIcon(server) {
     const icons = {
         'git': 'fab fa-git-alt',
         'github': 'fab fa-github',
-        'filesystem': 'fas fa-folder',
         'brave': 'fas fa-search',
-        'playwright': 'fas fa-robot',
-        'gdrive': 'fab fa-google-drive'
+        'playwright': 'fas fa-robot'
     };
     return icons[server] || 'fas fa-server';
 }
