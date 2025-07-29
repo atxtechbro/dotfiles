@@ -32,7 +32,9 @@ claude config set cleanupPeriodDays 90
 }
 ```
 
-## Exception
+## Exceptions
 Installation scripts that check for prerequisites and handle errors are appropriate. But even these should configure via data files, not embedded commands.
+
+**Claude Code imperative settings**: Anthropic requires `autoUpdate`, `preferredNotifChannel`, and `verbose` to be set via `claude config set` commands. This violates our principle but is unavoidable - the tool design forces imperative configuration for these runtime settings.
 
 This approach aligns with infrastructure-as-code principles: declare what you want, let the system figure out how to achieve it.
