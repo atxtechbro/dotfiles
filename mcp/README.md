@@ -38,7 +38,6 @@ Each MCP integration has its own setup method:
 - `setup-gdrive-mcp.sh` - Sets up Google Drive integration
 - `setup-github-mcp.sh` - Sets up GitHub integration from source
 - `setup-git-mcp.sh` - Sets up Git integration from source
-- `setup-gitlab-mcp.sh` - Sets up external GitLab integration
 
 For custom integrations, run the appropriate setup script:
 
