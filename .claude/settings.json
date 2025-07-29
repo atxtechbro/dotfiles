@@ -1,5 +1,8 @@
 {
   "model": "claude-opus-4-20250514",
+  "defaultMode": "acceptEdits",
+  "cleanupPeriodDays": 90,
+  "forceLoginMethod": "claudeai",
   "permissions": {
     "allow": [
       "Bash(find:*)",
