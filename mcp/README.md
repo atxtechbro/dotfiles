@@ -4,12 +4,12 @@ Wrapper scripts and configuration for MCP clients (Claude Code, Amazon Q, Cursor
 
 ## Available Servers
 
-| Server | Description | Auth | Claude Code |
-|--------|-------------|------|-------------|
-| Git | Repository operations | None | ✅ Enabled |
-| GitHub | API integration | `gh auth token` | ✅ Enabled |
-| Playwright | Browser automation | None | ✅ Enabled |
-| Brave Search | Web search | API key | ❌ Disabled* |
+| Server | Description | Auth | Source | Claude Code |
+|--------|-------------|------|--------|-------------|
+| Git | Repository operations | None | [mcp-servers fork](servers/git-mcp-server) | ✅ Enabled |
+| GitHub | API integration | `gh auth token` | [Custom server](servers/github-mcp-server) | ✅ Enabled |
+| Playwright | Browser automation | None | [Official NPM](https://www.npmjs.com/package/@playwright/mcp) | ✅ Enabled |
+| Brave Search | Web search | API key | [Official NPM](https://www.npmjs.com/package/@modelcontextprotocol/server-brave-search) | ❌ Disabled* |
 
 *Claude Code has native WebSearch
 
