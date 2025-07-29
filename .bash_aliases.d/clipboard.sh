@@ -43,23 +43,6 @@ qsafe() {
     github___rerun_workflow_run\
     github___rerun_failed_jobs\
     github___cancel_workflow_run\
-    github___delete_workflow_run_logs\
-    atlassian___jira_create_issue\
-    atlassian___jira_update_issue\
-    atlassian___jira_add_comment\
-    atlassian___jira_add_worklog \
-    atlassian___jira_create_issue_link\
-    atlassian___confluence_create_page\
-    atlassian___confluence_update_page \
-    atlassian___confluence_add_comment
-    atlassian___jira_transition_issue\
-    atlassian___jira_update_sprint\
-    atlassian___jira_delete_issue \
-    atlassian___confluence_delete_page\
-    atlassian___jira_remove_issue_link\
-    atlassian___confluence_add_label \
-    atlassian___jira_batch_create_issues\
-    atlassian___jira_create_sprint\
-    atlassian___jira_link_to_epic"\
+    github___delete_workflow_run_logs"\
     | clipboard_copy
 }
