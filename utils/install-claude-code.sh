@@ -37,43 +37,9 @@ setup_claude_code() {
     
     # Check if Claude Code is already installed
     if command -v claude &> /dev/null; then
-        # Get current version
+        # Get current version for informational purposes
         CURRENT_VERSION=$(claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
-        echo "Claude Code is already installed (version: $CURRENT_VERSION)"
-        
-        # Get latest version from npm
-        LATEST_VERSION=$(npm view @anthropic-ai/claude-code version 2>/dev/null || echo "unknown")
-        
-        if [ "$LATEST_VERSION" = "unknown" ]; then
-            echo -e "${YELLOW}Could not determine latest version. Attempting to update anyway...${NC}"
-            if ! npm update -g @anthropic-ai/claude-code; then
-                echo -e "${RED}Failed to update Claude Code. Please try again or check your npm installation.${NC}"
-                return 1
-            fi
-        elif [ "$CURRENT_VERSION" = "$LATEST_VERSION" ]; then
-            echo -e "${GREEN}✓ Claude Code is already up to date (version: $CURRENT_VERSION)${NC}"
-            return 0
-        else
-            # Use proper version comparison to prevent downgrades
-            VERSION_COMPARISON=$(version_compare "$CURRENT_VERSION" "$LATEST_VERSION")
-            
-            if [ "$VERSION_COMPARISON" = "newer" ]; then
-                echo -e "${GREEN}✓ Claude Code local version is newer (local: $CURRENT_VERSION, npm: $LATEST_VERSION)${NC}"
-                return 0
-            elif [ "$VERSION_COMPARISON" = "older" ]; then
-                echo "Updating Claude Code from $CURRENT_VERSION to $LATEST_VERSION..."
-                if ! npm update -g @anthropic-ai/claude-code; then
-                    echo -e "${RED}Failed to update Claude Code. Please try again or check your npm installation.${NC}"
-                    return 1
-                fi
-                
-                NEW_VERSION=$(claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
-                echo -e "${GREEN}✓ Claude Code successfully updated to version $NEW_VERSION${NC}"
-            else
-                echo -e "${GREEN}✓ Claude Code is already up to date (version: $CURRENT_VERSION)${NC}"
-                return 0
-            fi
-        fi
+        echo -e "${GREEN}✓ Claude Code is already installed (version: $CURRENT_VERSION)${NC}"
     else
         # Install Claude Code
         echo "Installing Claude Code CLI..."
@@ -104,6 +70,12 @@ configure_claude_mcp() {
     # Get the directory where this script is located
     SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     DOT_DEN="$(dirname "$SCRIPT_DIR")"
+    
+    # Configure imperative settings
+    if command -v claude &> /dev/null; then
+        claude config set -g autoUpdate true 2>/dev/null
+        claude config set -g preferredNotifChannel terminal_bell 2>/dev/null
+    fi
     
     # Check if .mcp.json exists in the dotfiles repository
     if [[ -f "$DOT_DEN/.mcp.json" ]]; then

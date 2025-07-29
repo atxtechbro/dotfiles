@@ -19,6 +19,29 @@ Design by contract: AI agents are responsible for implementing the requested fun
 - Comprehensive logging
 - Edge case handling
 - "Future-proofing" abstractions
+- **Colorful echo statements**: Multiple colored status messages bloat diffs and fatigue reviewers
+
+### Negative Example: Logging Bloat
+
+**Bad (50% logging noise):**
+```bash
+if command -v claude &> /dev/null; then
+    echo "Configuring Claude Code imperative settings..."
+    claude config set -g autoUpdate true 2>/dev/null || echo -e "${YELLOW}Warning: Could not set autoUpdate${NC}"
+    claude config set -g preferredNotifChannel terminal_bell 2>/dev/null || echo -e "${YELLOW}Warning: Could not set preferredNotifChannel${NC}"
+    echo -e "${GREEN}✓ Claude Code imperative settings configured${NC}"
+fi
+```
+
+**Good (focused on the change):**
+```bash
+if command -v claude &> /dev/null; then
+    claude config set -g autoUpdate true 2>/dev/null
+    claude config set -g preferredNotifChannel terminal_bell 2>/dev/null
+fi
+```
+
+The second version makes the actual change immediately visible. Logging can be added in a separate PR if needed.
 
 ## When to Break the Rule
 
