@@ -1,17 +1,40 @@
-# tmux + git worktrees + Claude Code
+# tmux + git worktrees + Claude Code + Planning Mode
 
-The triumvirate trinity that delivers 100x productivity: tmux orchestrates, git worktrees isolate, Claude Code executes. This is how you manage multiple AI agents in parallel without IDE context switching overhead.
+The quartet that delivers 100x productivity: tmux orchestrates, git worktrees isolate, Claude Code thinks, planning mode keeps you elevated. This is how you manage multiple AI agents in parallel without IDE context switching overhead.
 
-## The Three Components
+## The Four Components
 
 - **tmux**: Multi-session task orchestration with keyboard-driven pane management
 - **git worktrees**: Complete repository isolation per issue (no cross-contamination)  
 - **Claude Code CLI**: Context window management with resuming/branching capabilities
+- **Planning Mode**: Default to thinking over doing - enforces [OSE principle](../principles/ose.md) mechanically
+
+## Planning Mode: The Game Changer
+
+**Enable by default** (recommended):
+```bash
+# In ~/.claude/settings.json
+{
+  "defaultMode": "plan"
+}
+```
+
+**Or activate per-session**: Press `Shift+Tab` before running commands
+
+**What changes:**
+- Claude presents a plan BEFORE acting
+- You review and approve/refine at the planning level
+- No more "driving" at the implementation level
+- Enforces OSE principle - you manage plans, not code
+
+**The shift:**
+- **Old way**: Watch Claude code, interrupt to course-correct
+- **New way**: Review Claude's plan, approve with confidence
 
 ## Core Workflow
 
 **New task received:**
-`tmux pane + /close-issue <number> → automated workflow to PR`
+`tmux pane + /close-issue <number> → Claude presents plan → You approve → automated workflow to PR`
 
 **Parallel isolation:**
 Automatic worktree creation per agent prevents interference between simultaneous tasks.
@@ -36,6 +59,9 @@ Immediate issue creation/resolution cycle maintains snowball method momentum rat
 - **Empowering workflow**: Fix broken windows immediately instead of noting them
 - **Automation**: Slash commands handle worktree creation and management
 - **Joy**: Git-like conversation branching and tmux orchestration feel delightful
+- **Quality through planning**: Better plans mean smaller, focused PRs with less rework
+- **Cognitive load reduction**: Review plans in batches instead of driving implementations serially
+- **OSE enforcement**: Tool keeps you elevated - no more hands-on-keyboard heroics
 
 ## Related Procedures
 
