@@ -15,7 +15,6 @@ alias clip="clipboard_copy"
 # Copy Amazon Q security recommendations to clipboard
 # Works with qtrust alias in q-cli.sh for a complete security workflow
 qsafe() {
-    # Format as a single command with all tools on one line that updates, creates, or deletes resources
     echo "/tools untrust fs_write execute_bash use_aws report_issue\
     github___create_issue\
     github___add_issue_comment\
