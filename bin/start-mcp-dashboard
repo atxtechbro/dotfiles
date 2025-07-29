@@ -1,0 +1,178 @@
+#!/bin/bash
+
+# =============================================================================
+# MCP Dashboard Manager
+# =============================================================================
+# PURPOSE: Start, stop, restart, and check status of the MCP dashboard
+# USAGE: start-mcp-dashboard [start|stop|restart|status]
+# =============================================================================
+
+# Configuration
+DASHBOARD_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/mcp-dashboard-go"
+DASHBOARD_BINARY="$DASHBOARD_DIR/dashboard"
+DASHBOARD_LOG="$DASHBOARD_DIR/dashboard.log"
+DASHBOARD_PORT="8080"
+
+# Colors for output
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Check if dashboard binary exists
+check_binary() {
+    if [[ ! -x "$DASHBOARD_BINARY" ]]; then
+        echo -e "${RED}Error: Dashboard binary not found at $DASHBOARD_BINARY${NC}"
+        echo -e "${YELLOW}To build it, run:${NC}"
+        echo -e "${GREEN}cd $DASHBOARD_DIR && go build -o dashboard cmd/server/main.go${NC}"
+        return 1
+    fi
+    return 0
+}
+
+# Get PID of running dashboard
+get_dashboard_pid() {
+    pgrep -f "$DASHBOARD_BINARY" | head -1
+}
+
+# Check if dashboard is running
+is_running() {
+    local pid=$(get_dashboard_pid)
+    [[ -n "$pid" ]] && kill -0 "$pid" 2>/dev/null
+}
+
+# Start the dashboard
+start_dashboard() {
+    if is_running; then
+        echo -e "${YELLOW}MCP Dashboard is already running (PID: $(get_dashboard_pid))${NC}"
+        return 0
+    fi
+    
+    check_binary || return 1
+    
+    echo "Starting MCP Dashboard..."
+    nohup "$DASHBOARD_BINARY" > "$DASHBOARD_LOG" 2>&1 &
+    local pid=$!
+    
+    # Wait for dashboard to start (up to 10 seconds)
+    local attempts=0
+    while [[ $attempts -lt 10 ]]; do
+        if curl -s "http://localhost:$DASHBOARD_PORT" > /dev/null 2>&1; then
+            echo -e "${GREEN}✓ MCP Dashboard started successfully${NC}"
+            echo -e "${BLUE}Dashboard URL: http://localhost:$DASHBOARD_PORT${NC}"
+            echo -e "${BLUE}Log file: $DASHBOARD_LOG${NC}"
+            return 0
+        fi
+        sleep 1
+        ((attempts++))
+    done
+    
+    echo -e "${RED}Failed to start dashboard. Check $DASHBOARD_LOG for details.${NC}"
+    return 1
+}
+
+# Stop the dashboard
+stop_dashboard() {
+    if ! is_running; then
+        echo -e "${YELLOW}MCP Dashboard is not running${NC}"
+        return 0
+    fi
+    
+    local pid=$(get_dashboard_pid)
+    echo "Stopping MCP Dashboard (PID: $pid)..."
+    
+    # Try graceful termination first
+    kill "$pid" 2>/dev/null
+    
+    # Wait up to 5 seconds for graceful shutdown
+    local attempts=0
+    while [[ $attempts -lt 5 ]] && is_running; do
+        sleep 1
+        ((attempts++))
+    done
+    
+    # Force kill if still running
+    if is_running; then
+        echo "Force stopping dashboard..."
+        kill -9 "$pid" 2>/dev/null
+    fi
+    
+    echo -e "${GREEN}✓ MCP Dashboard stopped${NC}"
+}
+
+# Restart the dashboard
+restart_dashboard() {
+    echo "Restarting MCP Dashboard..."
+    stop_dashboard
+    sleep 1
+    start_dashboard
+}
+
+# Show dashboard status
+show_status() {
+    if is_running; then
+        local pid=$(get_dashboard_pid)
+        echo -e "${GREEN}● MCP Dashboard is running${NC}"
+        echo -e "  PID: $pid"
+        echo -e "  URL: http://localhost:$DASHBOARD_PORT"
+        echo -e "  Log: $DASHBOARD_LOG"
+        
+        # Check if port is actually listening
+        if netstat -tuln 2>/dev/null | grep -q ":$DASHBOARD_PORT " || ss -tuln 2>/dev/null | grep -q ":$DASHBOARD_PORT "; then
+            echo -e "  Port $DASHBOARD_PORT: ${GREEN}listening${NC}"
+        else
+            echo -e "  Port $DASHBOARD_PORT: ${YELLOW}not listening (dashboard may be starting)${NC}"
+        fi
+    else
+        echo -e "${RED}● MCP Dashboard is not running${NC}"
+        
+        # Check if binary exists
+        if [[ -x "$DASHBOARD_BINARY" ]]; then
+            echo -e "  Binary: ${GREEN}found${NC}"
+        else
+            echo -e "  Binary: ${RED}not found${NC}"
+            echo -e "  ${YELLOW}Run: cd $DASHBOARD_DIR && go build -o dashboard cmd/server/main.go${NC}"
+        fi
+    fi
+}
+
+# Show usage
+show_usage() {
+    echo "Usage: start-mcp-dashboard [command]"
+    echo ""
+    echo "Commands:"
+    echo "  start    - Start the dashboard"
+    echo "  stop     - Stop the dashboard"
+    echo "  restart  - Restart the dashboard"
+    echo "  status   - Show dashboard status (default)"
+    echo ""
+    echo "Examples:"
+    echo "  start-mcp-dashboard          # Show status"
+    echo "  start-mcp-dashboard start   # Start dashboard"
+    echo "  start-mcp-dashboard stop    # Stop dashboard"
+}
+
+# Main command handling
+case "${1:-status}" in
+    start)
+        start_dashboard
+        ;;
+    stop)
+        stop_dashboard
+        ;;
+    restart)
+        restart_dashboard
+        ;;
+    status)
+        show_status
+        ;;
+    help|--help|-h)
+        show_usage
+        ;;
+    *)
+        echo -e "${RED}Unknown command: $1${NC}"
+        show_usage
+        exit 1
+        ;;
+esac
