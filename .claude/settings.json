@@ -29,6 +29,7 @@
       "mcp__brave-search",
       "mcp__filesystem",
       "mcp__gdrive",
+      "mcp__playwright*",
       
       "Bash(./utils/generate-claude-commands.sh:*)",
       "Bash(./utils/configure-claude-code-settings.sh:*)",
