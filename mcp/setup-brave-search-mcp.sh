@@ -17,11 +17,11 @@ NC='\033[0m' # No Color
 
 echo "Setting up Brave Search MCP server..."
 
+# Get repository root
+REPO_ROOT=$(get_repo_root)
+
 # Update the secrets template
-update_secrets_template "Brave Search" "
-# ==== BRAVE SEARCH API CREDENTIALS ====
-# Get API key from: https://api.search.brave.com/app/keys
-# export BRAVE_API_KEY=\"your_api_key\""
+update_secrets_template "$REPO_ROOT" "BRAVE_API_KEY" "BRAVE SEARCH API CREDENTIALS" "Get API key from: https://api.search.brave.com/app/keys" 'export BRAVE_API_KEY="your_api_key"'
 
 # Check for required secrets
 if [[ -z "$BRAVE_API_KEY" ]]; then
