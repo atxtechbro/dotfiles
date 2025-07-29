@@ -4,7 +4,7 @@ Start with maximum capability and transparency, then surgically remove only what
 
 ## Core Pattern
 - **Server-level permissions**: `mcp__git` grants all tools from that server (wildcards not supported)
-- **All access by default**: `additionalDirectories: ["*"]`, `WebFetch(domain:*)`
+- **All access by default**: `additionalDirectories: ["//"]`, `WebFetch(domain:*)`
 - **Full visibility**: `verbose: true`, keep all output transparent
 - **Surgical removal**: Remove only specific dangerous operations like `claude config set`
 
