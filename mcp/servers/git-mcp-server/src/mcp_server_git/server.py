@@ -923,7 +923,7 @@ def git_stash(repo: git.Repo, action: str = "push", message: str | None = None,
     
     try:
         if action == "push":
-            cmd_parts = ["stash", "push"]
+            cmd_parts = ["git", "stash", "push"]
             if message:
                 cmd_parts.extend(["-m", message])
             if keep_index:
@@ -974,7 +974,7 @@ def git_stash_pop(repo: git.Repo, stash_ref: str | None = None, index: bool = Fa
     Apply and remove stashed changes (convenience wrapper)
     """
     try:
-        cmd_parts = ["stash", "pop"]
+        cmd_parts = ["git", "stash", "pop"]
         if index:
             cmd_parts.append("--index")
         if stash_ref:
@@ -1017,7 +1017,7 @@ def git_cherry_pick(repo: git.Repo, commits: list[str] | str, no_commit: bool = 
         if isinstance(commits, str):
             commits = [commits]
         
-        cmd_parts = ["cherry-pick"]
+        cmd_parts = ["git", "cherry-pick"]
         
         if no_commit:
             cmd_parts.append("--no-commit")
@@ -1057,7 +1057,7 @@ def git_reflog(repo: git.Repo, max_count: int = 30, ref: str | None = None) -> s
     Show the reference log (reflog) for recovery and history inspection
     """
     try:
-        cmd_parts = ["reflog"]
+        cmd_parts = ["git", "reflog"]
         
         # Add count limit
         cmd_parts.extend(["-n", str(max_count)])
@@ -1091,7 +1091,7 @@ def git_blame(repo: git.Repo, file_path: str, line_range: str | None = None) -> 
     Show who last modified each line of a file (line-by-line authorship)
     """
     try:
-        cmd_parts = ["blame"]
+        cmd_parts = ["git", "blame"]
         
         # Add line range if specified
         if line_range:
@@ -1130,7 +1130,7 @@ def git_revert(repo: git.Repo, commits: list[str] | str, no_commit: bool = False
         if isinstance(commits, str):
             commits = [commits]
         
-        cmd_parts = ["revert"]
+        cmd_parts = ["git", "revert"]
         
         if no_commit:
             cmd_parts.append("--no-commit")
@@ -1262,7 +1262,7 @@ def git_clean(repo: git.Repo, force: bool = False, directories: bool = False,
     Remove untracked files and directories (DESTRUCTIVE)
     """
     try:
-        cmd_parts = ["clean"]
+        cmd_parts = ["git", "clean"]
         
         # Build command flags
         flags = ""
@@ -1409,7 +1409,7 @@ def git_describe(repo: git.Repo, commit: str | None = None, tags: bool = True,
     Generate human-readable names for commits based on tags
     """
     try:
-        cmd_parts = ["describe"]
+        cmd_parts = ["git", "describe"]
         
         # Add options
         if all:
@@ -1467,7 +1467,7 @@ def git_shortlog(repo: git.Repo, revision_range: str | None = None,
     Summarize git log by contributor
     """
     try:
-        cmd_parts = ["shortlog"]
+        cmd_parts = ["git", "shortlog"]
         
         # Add options
         if numbered:
@@ -1599,7 +1599,7 @@ def git_restore(repo: git.Repo, files: list[str], source: str | None = None, sta
     """
     try:
         # Build command parts
-        cmd_parts = ["restore"]
+        cmd_parts = ["git", "restore"]
         
         # Add source if specified
         if source:
