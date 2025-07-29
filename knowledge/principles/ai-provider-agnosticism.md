@@ -20,7 +20,6 @@ alias claude='claude --mcp-config "$DOT_DEN/mcp/mcp.json" --add-dir "$DOT_DEN/kn
 
 ## Implementation
 
-- **Configuration**: `.bash_aliases.d/ai-providers.sh`
 - **Setup**: `utils/setup-provider-agnostic-mcp.sh`
 
 ## Relationship to Other Principles
