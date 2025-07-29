@@ -17,12 +17,22 @@ fi
 UTILS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${UTILS_DIR}/version-utils.sh"
 
-# Colors for output
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-RED='\033[0;31m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+# Colors for output - using descriptive names for maintainability
+# Format: \033[style;colorCode + m
+# Style: 0=normal, 1=bold
+# Colors: 30-37 (black to white), 90-97 (bright variants)
+COLOR_SUCCESS='\033[0;32m'    # Green - successful operations
+COLOR_WARNING='\033[0;33m'    # Yellow - warnings and notices
+COLOR_ERROR='\033[0;31m'      # Red - errors and failures
+COLOR_INFO='\033[0;34m'       # Blue - informational messages
+COLOR_RESET='\033[0m'         # Reset to default terminal color
+
+# Legacy aliases for backward compatibility within script
+GREEN="${COLOR_SUCCESS}"
+YELLOW="${COLOR_WARNING}"
+RED="${COLOR_ERROR}"
+BLUE="${COLOR_INFO}"
+NC="${COLOR_RESET}"
 
 # ============================================================================
 # MAIN FUNCTION: Configuration is the star
