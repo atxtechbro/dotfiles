@@ -89,6 +89,8 @@ setup_claude_code() {
             echo "1. Run: claude login"
             echo "2. Follow the authentication process"
             echo "3. MCP servers will be automatically configured by the dotfiles setup"
+            echo -e "\n${BLUE}Optional: For PPV workflow optimization:${NC}"
+            echo "cp .claude/settings/claude-code-ppv.json ~/.claude/settings.json"
         fi
     fi
     
