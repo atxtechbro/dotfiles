@@ -35,6 +35,9 @@ GITHUB_BINARY_PATH="$SCRIPT_DIR/servers/github"
 # Check if the binary exists and is executable
 if [[ ! -x "$GITHUB_BINARY_PATH" ]]; then
   mcp_log_error "GITHUB" "GitHub MCP server binary not found or not executable at $GITHUB_BINARY_PATH" "Run setup-github-mcp.sh to build the binary"
+  echo "Debug: Expected binary at: $GITHUB_BINARY_PATH" >&2
+  echo "Debug: Contents of $(dirname "$GITHUB_BINARY_PATH"):" >&2
+  ls -la "$(dirname "$GITHUB_BINARY_PATH")" >&2
   exit 1
 fi
 

@@ -26,5 +26,20 @@ fi
 # Check if git command is available
 mcp_check_command "GIT" "git" "Install Git: brew install git"
 
+# Check if Python virtual environment exists
+if [[ ! -f "$SERVER_DIR/.venv/bin/python" ]]; then
+  mcp_log_error "GIT" "Python environment not found. Run: setup-git-mcp.sh"
+  echo "Debug: Expected .venv at: $SERVER_DIR/.venv" >&2
+  echo "Debug: Contents of $SERVER_DIR:" >&2
+  ls -la "$SERVER_DIR" >&2
+  exit 1
+fi
+
+# Check if pyproject.toml exists (required for setup)
+if [[ ! -f "$SERVER_DIR/pyproject.toml" ]]; then
+  mcp_log_error "GIT" "Missing pyproject.toml in $SERVER_DIR" "This file is required for installation. Check if it exists in the repository."
+  exit 1
+fi
+
 # Run the Python module directly from the venv
 mcp_exec_with_logging "GIT" "$SERVER_DIR/.venv/bin/python" -m mcp_server_git "$@"
