@@ -28,7 +28,6 @@
       "mcp__github-write__update_issue",
       "mcp__brave-search",
       "mcp__filesystem",
-      "mcp__awslabs.aws-documentation-mcp-server",
       "mcp__gdrive",
       
       "Bash(./utils/generate-claude-commands.sh:*)",
@@ -49,7 +48,6 @@
   },
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
-    "awslabs.aws-documentation-mcp-server",
     "git-read",
     "github-read",
     "brave-search",
