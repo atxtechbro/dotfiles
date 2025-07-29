@@ -8,11 +8,15 @@ AI services experience outages and rate limits. Provider agnosticism enables sea
 
 ## Architecture Pattern
 
-**Symmetric Configuration**: Both providers use identical MCP servers and knowledge directory patterns:
+**Symmetric Capabilities**: Both providers access identical MCP servers and knowledge directory, but through different integration methods:
 
 ```bash
+# Claude Code: Direct file reference via CLI flags
 alias claude='claude --mcp-config "$DOT_DEN/mcp/mcp.json" --add-dir "$DOT_DEN/knowledge"'
-alias q='q --mcp-config "$DOT_DEN/mcp/mcp.json" --add-dir "$DOT_DEN/knowledge"'
+
+# Amazon Q: MCP import during setup (no CLI flag support)
+# Setup runs: q mcp import --file "$DOT_DEN/mcp/mcp.json" global --force
+alias q='q'
 ```
 
 ## Implementation
