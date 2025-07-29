@@ -104,73 +104,7 @@ jobs:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-elif [ -d ".claude/command-templates" ]; then
-            echo "Copying .claude command templates..."
-            cp -r .claude/command-templates ~/.claude/
-          fi
-
-      - name: Run close-issue command with SDK
-        env:
-          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { execSync } = require('child_process');
-            const issueNumber = context.payload.issue.number;
-            
-            console.log(`🚀 Running Claude Code SDK to implement issue #${issueNumber}...`);
-            
-            try {
-              const result = execSync(`claude -p "/close-issue ${issueNumber}" --allowedTools 'Bash(git log:*),mcp__git__*,mcp__github-write__*' --output-format json`, { encoding: 'utf-8' });
-              console.log(result);
-            } catch (error) {
-              console.error(`Error executing Claude Code SDK: ${error.message}`);
-              core.setFailed(error.message);
-            }
-
-      - name: Check for created PR
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            // Check if Claude created a PR
-            const { data: prs } = await github.rest.pulls.list({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              sort: 'created',
-              direction: 'desc',
-              per_page: 5
-            });
-            
-            // Look for a PR that references this issue
-            const issuePR = prs.find(pr => 
-              pr.body && pr.body.includes(`#${context.payload.issue.number}`)
-            );
-            
-            if (issuePR) {
-              console.log(`✅ PR #${issuePR.number} created successfully!`);
-              
-              // Add a comment on the issue
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.issue.number,
-                body: `🚀 Claude has created PR #${issuePR.number} to implement this issue!
-
-This is OSE in action - automatic issue implementation with zero manual intervention.`
-              });
-            } else {
-              console.log('⚠️ No PR found - Claude may still be working or encountered an issue');
-            }
-
-      - name: Upload logs on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
+        run: |
           echo "🚀 Running Claude Code SDK to implement issue #${{ github.event.issue.number }}..."
           
           # Using the SDK with -p flag for programmatic access
@@ -208,7 +142,9 @@ This is OSE in action - automatic issue implementation with zero manual interven
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: ${{ github.event.issue.number }},
-                body: `🚀 Claude has created PR #${issuePR.number} to implement this issue!\n\nThis is OSE in action - automatic issue implementation with zero manual intervention.`
+                body: `🚀 Claude has created PR #${issuePR.number} to implement this issue!
+
+This is OSE in action - automatic issue implementation with zero manual intervention.`
               });
             } else {
               console.log('⚠️ No PR found - Claude may still be working or encountered an issue');
