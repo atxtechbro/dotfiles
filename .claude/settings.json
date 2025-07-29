@@ -48,6 +48,7 @@
   },
   "enableAllProjectMcpServers": true,
   "autoUpdates": true,
+  "verbose": true,
   "additionalDirectories": ["*"],
   "enabledMcpjsonServers": [
     "git-read",
