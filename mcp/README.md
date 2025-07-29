@@ -43,13 +43,6 @@ check-mcp-logs --tools  # Tool calls only
 check-mcp-logs --follow # Real-time logs
 ```
 
-## Adding New Servers
-
-1. Add to `mcp.json`
-2. Create `<name>-mcp-wrapper.sh`
-3. Create `setup-<name>-mcp.sh` if needed
-4. Update table above
-
 ## Protocol Testing
 
 ```bash
