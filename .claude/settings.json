@@ -2,6 +2,8 @@
   "model": "claude-opus-4-20250514",
   "cleanupPeriodDays": 90,
   "forceLoginMethod": "claudeai",
+  "autoUpdates": true,
+  "verbose": true,
   "permissions": {
     "defaultMode": "acceptEdits",
     "additionalDirectories": ["*"],
