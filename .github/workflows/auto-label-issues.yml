@@ -18,15 +18,17 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Prepare prompt with issue details
+        id: prepare-prompt
         run: |
-          mkdir -p /tmp/claude-prompts
-          
           ISSUE_AUTO_LABEL="${{ github.workspace }}/.github/workflow-prompts/issue-triage.md"
           
-          cat "$ISSUE_AUTO_LABEL" | \
+          PROMPT_CONTENT=$(cat "$ISSUE_AUTO_LABEL" | \
             sed "s|{{ REPO }}|${{ github.repository }}|g" | \
-            sed "s|{{ ISSUE_NUMBER }}|${{ github.event.issue.number }}|g" \
-            > /tmp/claude-prompts/triage-prompt.txt
+            sed "s|{{ ISSUE_NUMBER }}|${{ github.event.issue.number }}|g")
+          
+          echo "prompt<<EOF" >> $GITHUB_OUTPUT
+          echo "$PROMPT_CONTENT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Setup GitHub MCP Server
         run: |
@@ -48,7 +50,7 @@ jobs:
       - name: Run Claude Code for Issue Triage
         uses: anthropics/claude-code-action@beta
         with:
-          prompt_file: /tmp/claude-prompts/triage-prompt.txt
+          direct_prompt: ${{ steps.prepare-prompt.outputs.prompt }}
           allowed_tools: "Bash(gh label list),mcp__github-write__get_issue,mcp__github-write__get_issue_comments,mcp__github-write__update_issue,mcp__github-write__search_issues,mcp__github-write__list_issues"
           timeout_minutes: "5"
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
