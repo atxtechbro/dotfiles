@@ -17,8 +17,6 @@ alias clip="clipboard_copy"
 qsafe() {
     # Format as a single command with all tools on one line that updates, creates, or deletes resources
     echo "/tools untrust fs_write execute_bash use_aws report_issue\
-    filesystem___create_directory\
-    filesystem___move_file\
     github___create_issue\
     github___add_issue_comment\
     github___push_files\

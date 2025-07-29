@@ -32,9 +32,6 @@
       "mcp__git",
       "mcp__github-read",
       "mcp__github-write",
-      "mcp__brave-search",
-      "mcp__filesystem",
-      "mcp__gdrive",
       "mcp__playwright"
     ],
     "additionalDirectories": ["//"]
@@ -55,10 +52,7 @@
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "git-read",
-    "github-read",
-    "brave-search",
-    "filesystem",
-    "gdrive"
+    "github-read"
   ],
   "includeCoAuthoredBy": false
 }

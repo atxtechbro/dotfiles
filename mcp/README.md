@@ -7,9 +7,7 @@ This directory contains wrapper scripts and configuration for MCP clients (Claud
 Many of our MCP servers are sourced from the official [Model Context Protocol servers repository](https://github.com/modelcontextprotocol/servers), which provides a standardized collection of vetted MCP servers. This repository appears to be maintained with oversight from Anthropic and offers a consistent framework for building and deploying MCP servers.
 
 Current servers from this source:
-- Brave Search
-- Filesystem
-- Google Drive
+(None currently - all servers are custom implementations)
 
 This standardized approach makes it easy to add more MCP servers in the future from this abundant collection.
 
@@ -21,30 +19,23 @@ This standardized approach makes it easy to add more MCP servers in the future f
 
 | Integration | Description | Authentication Method | Installation Method | Documentation | Tool-Level Logging | Init-Level Logging |
 |-------------|-------------|----------------------|---------------------|---------------|-------------------|-------------------|
-| AWS Documentation | AWS documentation search | None required | PyPI packages via UVX | - | No | No |
 | GitHub | GitHub API integration | Uses GitHub CLI token | Custom setup script | [Our Fork](https://github.com/atxtechbro/github-mcp-server?tab=readme-ov-file#github-mcp-server) | No | Yes |
-| Brave Search | Web search via Brave | API key from `.bash_secrets` | Docker container | - | No | Yes |
-| Filesystem | Local filesystem operations | None required | Built from source | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/filesystem#filesystem-mcp-server) | No | Yes |
 | Git | Git repository operations | None required | Source lives in dotfiles | [README.md](servers/git-mcp-server/README.md) | Yes | Yes |
-| Google Drive | Google Drive file operations | OAuth credentials from `.bash_secrets` | Docker container | [Our Fork](https://github.com/atxtechbro/mcp-servers/tree/main/src/gdrive#authentication) | No | Yes |
+| Playwright | Browser automation | None required | NPM package via npx | [Official Docs](https://github.com/modelcontextprotocol/servers/tree/main/src/playwright) | No | No |
 
 ## Setup Instructions
 
 Each MCP integration has its own setup method:
 
-- **AWS Documentation MCP Server**: No setup script needed - installed automatically via UVX package manager from PyPI
-- `setup-brave-search-mcp.sh` - Sets up Brave Search integration
-- `setup-filesystem-mcp.sh` - Sets up Filesystem integration from source (allows customization)
-- `setup-gdrive-mcp.sh` - Sets up Google Drive integration
+- **Playwright MCP Server**: No setup script needed - runs via npx package manager
 - `setup-github-mcp.sh` - Sets up GitHub integration from source
 - `setup-git-mcp.sh` - Sets up Git integration from source
-- `setup-gitlab-mcp.sh` - Sets up external GitLab integration
 
 For custom integrations, run the appropriate setup script:
 
 ```bash
-# Example: Set up Brave Search integration
-./setup-brave-search-mcp.sh
+# Example: Set up GitHub integration
+./setup-github-mcp.sh
 ```
 
 ## Secret Management
@@ -70,11 +61,10 @@ To add your secrets:
 
 ## Docker-based MCP Servers
 
-Some MCP servers use Docker for containerization. The setup scripts handle building the Docker images and configuring the wrapper scripts.
-
-Requirements:
-- Docker installed and running
-- Internet access to pull base images
+Currently, none of our MCP servers require Docker. All servers run either:
+- Via NPM/npx (Playwright)
+- As Python virtual environments (Git)
+- As compiled binaries (GitHub)
 
 ## Configuration
 
@@ -85,20 +75,6 @@ The MCP configuration follows a vendor-agnostic pattern:
 - **Setup**: Run `./setup-vendor-agnostic-mcp.sh` to configure the vendor-agnostic structure
 
 This approach allows us to maintain a single MCP configuration file while supporting multiple MCP clients through symlinks or client-specific configurations.
-
-## Filesystem MCP Server Configuration
-
-The Filesystem MCP server requires at least one allowed directory to be specified. By default, it uses your home directory (`$HOME`).
-
-If you want to restrict filesystem access to specific directories:
-
-```bash
-# Set environment variable before starting Amazon Q
-export MCP_FILESYSTEM_RESTRICT_DIRS="/projects:/data:/tmp"
-q chat  # Start Amazon Q with restricted filesystem access
-```
-
-This allows you to control which directories the Filesystem MCP server can access.
 
 ## Protocol Testing
 
@@ -196,7 +172,7 @@ When creating new MCP wrapper scripts:
    mcp_log_error "SERVER_NAME" "Custom error message" "Optional remediation steps"
    ```
 
-3. **Use consistent server names**: BRAVE, GITHUB, GIT, FILESYSTEM, GDRIVE
+3. **Use consistent server names**: GITHUB, GIT
 
 #### Adding Tool-Level Logging to MCP Servers
 
