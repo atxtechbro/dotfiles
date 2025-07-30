@@ -11,38 +11,3 @@ alias clip-cmd='PREV_CMD=$(fc -ln -2 -2 | sed "s/^ *//"); (echo "Command: $PREV_
 
 # Quick clipboard access
 alias clip="clipboard_copy"
-
-# Copy Amazon Q security recommendations to clipboard
-# Works with qtrust alias in q-cli.sh for a complete security workflow
-qsafe() {
-    echo "/tools untrust fs_write execute_bash use_aws report_issue\
-    github___create_issue\
-    github___add_issue_comment\
-    github___push_files\
-    github___create_or_update_file\
-    github___create_repository \
-    github___fork_repository\
-    github___create_branch\
-    github___create_pull_request\
-    github___merge_pull_request\
-    github___create_and_submit_pull_request_review\
-    github___assign_copilot_to_issue\
-    github___add_pull_request_review_comment_to_pending_review\
-    github___create_and_submit_pull_request_review\
-    github___create_pending_pull_request_review\
-    github___dismiss_notification\
-    github___manage_notification_subscription\
-    github___manage_repository_notification_subscription\
-    github___mark_all_notifications_read\
-    github___request_copilot_review\
-    github___submit_pending_pull_request_review\
-    github___update_issue\
-    github___update_pull_request\
-    github___update_pull_request_branch\
-    github___run_workflow\
-    github___rerun_workflow_run\
-    github___rerun_failed_jobs\
-    github___cancel_workflow_run\
-    github___delete_workflow_run_logs"\
-    | clipboard_copy
-}
