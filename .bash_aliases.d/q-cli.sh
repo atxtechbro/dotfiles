@@ -10,15 +10,7 @@ alias q-run="$HOME/ppv/pillars/q-cli/target/release/q"
 # Quick development testing (build and run in one step)
 alias q-dev="cd $HOME/ppv/pillars/q-cli && cargo run --bin q_cli -- chat"
 
-# Main Amazon Q command with resume and aliases loaded
-alias qq='source ~/.bash_aliases && q chat --resume'
 
-# Fresh Amazon Q session (no resume) - use when you want a clean start
-alias qf='source ~/.bash_aliases && q chat'
-
-# Trust all tools command
-# Use with qsafe alias from clipboard.sh for a complete security workflow
-qtrust() {
-    q chat "$@" "/tools trustall"
-}
+# Amazon Q alias with auto-trust (simplified setup)
+alias q='q chat /tools trustall'
 
