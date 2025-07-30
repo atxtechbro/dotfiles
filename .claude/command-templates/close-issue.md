@@ -1,3 +1,4 @@
+# Close Issue Command Template
 Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 
 ## Core Principle: Target-First Development

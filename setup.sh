@@ -255,12 +255,8 @@ fi
 "$DOT_DEN/utils/setup-amazonq-rules.sh"
 
 # Setup vendor-agnostic command structure
-# Create symlink for Claude Code to find templates in vendor-agnostic location
-if [[ -d "$DOT_DEN/commands/templates" ]]; then
-  mkdir -p "$DOT_DEN/.claude"
-  ln -sf "../commands/templates" "$DOT_DEN/.claude/command-templates"
-  echo -e "${GREEN}✓ Created symlink: .claude/command-templates → commands/templates${NC}"
-fi
+# Command templates now live directly in .claude/command-templates
+# No symlink needed - this is the source of truth
 
 # Set up vendor-agnostic MCP configuration
 if [[ -f "$DOT_DEN/mcp/setup-vendor-agnostic-mcp.sh" ]]; then
