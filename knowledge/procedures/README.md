@@ -34,5 +34,4 @@ This is THE workflow. Everything else supports this core process.
 - `mcp-prompts.md` - Adding prompts to MCP servers
 
 ### Tips & Setup
-- `agent-permission-setup.md` - Configure tool permissions for agents
 - `claude-code-tips.md` - Tips and shortcuts for Claude Code
