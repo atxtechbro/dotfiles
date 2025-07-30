@@ -1,36 +1,37 @@
 ---
 name: Pull Request
-about: Submit changes to the repository
+about: Submit changes to the repository  
 title: 'type(scope): brief description'
 labels: ''
 assignees: ''
 ---
 
-<!-- 
-AUDIENCE: Future AI agents searching for solutions to similar problems
-FORMAT: Use keywords, exact error messages, and technical details they'll search for
--->
+## 📊 Impact
+| Files | +Lines | -Lines | Net |
+|-------|--------|--------|-----|
+| X     | +Y 🟢  | -Z 🔴  | ±N  |
 
-## Problem & Solution
-<!-- What problem does this solve? Include exact error messages and symptoms -->
-**Problem**: 
-**Solution**: 
-**Keywords**: <!-- e.g., token limit, MCP error, pagination -->
+## 🎯 What This Does
+<!-- One sentence summary of the change -->
 
-## Related Issues
-<!-- Link related issues: Fixes #issue_number, Closes #issue_number -->
+## 📝 Changes
+<!-- Visual breakdown of modifications -->
+- 🔴 **Removed**: 
+- 🟢 **Added**: 
+- 🔄 **Modified**: 
 
-## Technical Details
-<!-- Specific changes for AI discovery -->
-**Files changed**: 
-**Key modifications**: 
-**Alternative approaches considered**: 
+## 🔗 Related Issues
+<!-- Closes #issue_number -->
 
-## Testing
-<!-- How to verify this works -->
+## ✅ Testing
+- [ ] Tested locally
+- [ ] No breaking changes
 
-## Checklist
-- [ ] My code follows the style guidelines of this project
-- [ ] I have performed a self-review of my own code
-- [ ] I have added/updated tests that prove my fix is effective or that my feature works (if applicable)
-- [ ] I have updated the documentation accordingly (if applicable)
+## 💔 Breaking Changes
+<!-- If none, delete this section -->
+
+## 📸 Screenshots
+<!-- If applicable, otherwise delete -->
+
+## 💭 Additional Context
+<!-- Optional: Any extra details for reviewers -->
