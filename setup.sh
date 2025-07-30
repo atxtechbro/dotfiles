@@ -587,14 +587,7 @@ if command -v docker &> /dev/null; then
   echo "Testing Docker access..."
   if docker info &>/dev/null; then
     echo -e "${GREEN}✓ Docker is working correctly${NC}"
-    # Only run hello-world if Docker is working - with robust error handling
-    echo "Running Docker hello-world test..."
-    if docker run --rm hello-world &>/dev/null; then
-      echo -e "${GREEN}✓ Docker hello-world test passed${NC}"
-    else
-      echo -e "${YELLOW}Docker hello-world test failed. You may need to restart your system.${NC}"
-      echo "This is not a critical error, continuing with setup..."
-    fi
+    # Skip hello-world test for faster setup - users can test manually if needed
   else
     echo -e "${YELLOW}Docker is installed but not accessible without sudo.${NC}"
     echo "Please log out and back in, or restart your system to apply group changes."
@@ -611,19 +604,19 @@ if [[ -f ~/.bash_aliases ]]; then
   echo -e "${GREEN}✓ Bash aliases loaded successfully${NC}"
 fi
 
-# MCP Dashboard setup
+# MCP Dashboard setup (background, non-blocking)
 echo -e "${DIVIDER}"
-echo "Setting up MCP Dashboard..."
+echo "Starting MCP Dashboard in background..."
 
 # Check if start-mcp-dashboard script exists
 if [[ -x "$DOT_DEN/bin/start-mcp-dashboard" ]]; then
-  # Use the start-mcp-dashboard script which handles all checks
-  "$DOT_DEN/bin/start-mcp-dashboard" start
-  # The script handles:
-  # - Checking if dashboard is already running
-  # - Verifying the binary exists
-  # - Starting with proper health checks
-  # - Displaying clear status messages
+  # Start dashboard in background without waiting for health check
+  (
+    "$DOT_DEN/bin/start-mcp-dashboard" start >/dev/null 2>&1 &
+  )
+  echo -e "${BLUE}→ MCP Dashboard starting in background${NC}"
+  echo -e "${BLUE}  Check status later with: start-mcp-dashboard status${NC}"
+  echo -e "${BLUE}  URL will be: http://localhost:8080${NC}"
 else
   echo -e "${YELLOW}start-mcp-dashboard script not found. Skipping dashboard setup.${NC}"
 fi
