@@ -1,3 +1,4 @@
+# Close Issue Command Template
 Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 
 ## Core Principle: Target-First Development
@@ -64,7 +65,11 @@ Apply tracer bullets methodology:
 
 ### 3. Create Pull Request
 - Push the feature branch to remote
-- Create PR with `mcp__github__create_pull_request` following the PR template at `.github/PULL_REQUEST_TEMPLATE.md`
+- Look for PR template:
+  - First check local repo: `.github/PULL_REQUEST_TEMPLATE.md`
+  - If not found, use dotfiles fallback: `~/ppv/pillars/dotfiles/.github/PULL_REQUEST_TEMPLATE.md`
+  - Inform which template is being used for transparency
+- Create PR with `mcp__github__create_pull_request` following the discovered template
 - Reference "Closes #{{ ISSUE_NUMBER }}" in PR body
 - Add "Conduct post-PR mini retro" to your todo list
 

@@ -5,7 +5,7 @@
 #
 # [TEMPLATE-GENERATION]
 # This script DOES generate slash commands from templates.
-# Templates are stored in commands/templates/ and processed by prompt_orchestrator.py
+# Templates are stored in .claude/command-templates/ and processed by prompt_orchestrator.py
 # to create provider-specific commands with injected variables and knowledge base content.
 # This allows slash commands to be dynamic and context-aware.
 
@@ -21,9 +21,9 @@ PROVIDER_CONFIG="$DOTFILES_DIR/.config/provider_dirs.conf"
 # Default provider configurations (bash 3.2 compatible)
 # Format: "provider:template_dir|output_dir"
 DEFAULT_PROVIDERS=(
-    "claude:$DOTFILES_DIR/commands/templates|$HOME/.claude/commands"
-    "amazonq:$DOTFILES_DIR/commands/templates|$HOME/.amazonq/commands"
-    "cursor:$DOTFILES_DIR/commands/templates|$HOME/.cursor/commands"
+    "claude:$DOTFILES_DIR/.claude/command-templates|$HOME/.claude/commands"
+    "amazonq:$DOTFILES_DIR/.claude/command-templates|$HOME/.amazonq/commands"
+    "cursor:$DOTFILES_DIR/.claude/command-templates|$HOME/.cursor/commands"
 )
 
 # Function to get provider config

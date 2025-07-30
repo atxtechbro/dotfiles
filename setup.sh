@@ -254,13 +254,9 @@ fi
 # Set up Amazon Q global rules (Claude Code now uses --add-dir flag via alias)
 "$DOT_DEN/utils/setup-amazonq-rules.sh"
 
-# Setup vendor-agnostic command structure
-# Create symlink for Claude Code to find templates in vendor-agnostic location
-if [[ -d "$DOT_DEN/commands/templates" ]]; then
-  mkdir -p "$DOT_DEN/.claude"
-  ln -sf "../commands/templates" "$DOT_DEN/.claude/command-templates"
-  echo -e "${GREEN}✓ Created symlink: .claude/command-templates → commands/templates${NC}"
-fi
+# Command templates live in .claude/command-templates/
+# Generated to ~/.claude/commands/ by generate-commands.sh below
+# No symlink needed - templates are processed, not used directly
 
 # Set up vendor-agnostic MCP configuration
 if [[ -f "$DOT_DEN/mcp/setup-vendor-agnostic-mcp.sh" ]]; then
