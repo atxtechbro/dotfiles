@@ -587,14 +587,6 @@ if command -v docker &> /dev/null; then
   echo "Testing Docker access..."
   if docker info &>/dev/null; then
     echo -e "${GREEN}✓ Docker is working correctly${NC}"
-    # Only run hello-world if Docker is working - with robust error handling
-    echo "Running Docker hello-world test..."
-    if docker run --rm hello-world &>/dev/null; then
-      echo -e "${GREEN}✓ Docker hello-world test passed${NC}"
-    else
-      echo -e "${YELLOW}Docker hello-world test failed. You may need to restart your system.${NC}"
-      echo "This is not a critical error, continuing with setup..."
-    fi
   else
     echo -e "${YELLOW}Docker is installed but not accessible without sudo.${NC}"
     echo "Please log out and back in, or restart your system to apply group changes."
