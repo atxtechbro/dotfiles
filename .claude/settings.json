@@ -3,6 +3,7 @@
   "cleanupPeriodDays": 90,
   "forceLoginMethod": "claudeai",
   "includeCoAuthoredBy": false,
+  "additionalDirectories": ["//"],
   "permissions": {
     "defaultMode": "plan",
     "allow": [
@@ -32,8 +33,7 @@
       "mcp__github",
       "mcp__playwright",
       "Bash(*)"
-    ],
-    "additionalDirectories": ["//"]
+    ]
   },
   "env": {
     "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8192",
