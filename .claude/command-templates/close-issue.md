@@ -67,7 +67,7 @@ Apply tracer bullets methodology:
 - Push the feature branch to remote
 - Look for PR template:
   - First check local repo: `.github/PULL_REQUEST_TEMPLATE.md`
-  - If not found, use dotfiles fallback: `/home/linuxmint-lp/ppv/pillars/dotfiles/.github/PULL_REQUEST_TEMPLATE.md`
+  - If not found, use dotfiles fallback: `~/ppv/pillars/dotfiles/.github/PULL_REQUEST_TEMPLATE.md`
   - Inform which template is being used for transparency
 - Create PR with `mcp__github__create_pull_request` following the discovered template
 - Reference "Closes #{{ ISSUE_NUMBER }}" in PR body
