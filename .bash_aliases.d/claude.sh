@@ -11,7 +11,7 @@ unset CLAUDE_CODE_USE_BEDROCK  # Disables Bedrock when unset (official variable)
 unset AWS_BEARER_TOKEN_BEDROCK  # Removes Bedrock API key if set (official variable)
 
 # Claude alias with MCP configuration
-alias claude='claude --mcp-config "$GLOBAL_MCP_CONFIG" --add-dir "$DOT_DEN/knowledge"'
+alias claude='claude --dangerously-skip-permissions --mcp-config "$GLOBAL_MCP_CONFIG" --add-dir "$DOT_DEN/knowledge"'
 
 # Quick test command (works on both work and personal)
 alias claude-test='claude -p "What is the capital of Texas?"'
