@@ -1,37 +1,48 @@
 ---
 name: Pull Request
-about: Submit changes to the repository  
+about: Submit changes to the repository
 title: 'type(scope): brief description'
 labels: ''
 assignees: ''
 ---
 
-## 📊 Impact
-| Files | +Lines | -Lines | Net |
-|-------|--------|--------|-----|
-| X     | +Y 🟢  | -Z 🔴  | ±N  |
+<!-- 
+AUDIENCE: You, the human reviewer seeking joy and control
+PHILOSOPHY: Based on Developer Experience, PR Readability Contract, and OSE principles
+GOAL: Make PR review delightful, digestible, and fatigue-free
+-->
 
-## 🎯 What This Does
-<!-- One sentence summary of the change -->
+## Git Statistics
+<!-- Always show the numbers - your cognitive entry point -->
+| Metric | Value |
+|--------|-------|
+| Files Changed | X |
+| Lines Added | +Y |
+| Lines Removed | -Z |
+| Net Impact | ±N |
 
-## 📝 Changes
-<!-- Visual breakdown of modifications -->
-- 🔴 **Removed**: 
-- 🟢 **Added**: 
-- 🔄 **Modified**: 
+## What Control This Gives You
+<!-- One powerful line about what capability this unlocks -->
 
-## 🔗 Related Issues
-<!-- Closes #issue_number -->
+## The Change
+<!-- AI will craft this section dynamically to maximize your joy and minimize fatigue -->
+<!-- Focus on WHY and IMPACT, assuming you won't read the code -->
+<!-- Structured for digestibility, with removable sections as needed -->
 
-## ✅ Testing
-- [ ] Tested locally
-- [ ] No breaking changes
+## Related Issues
+<!-- Clean linkage -->
+Closes #
 
-## 💔 Breaking Changes
-<!-- If none, delete this section -->
+## Verification
+<!-- Only what matters for confidence -->
+- [ ] Works as intended
+- [ ] No surprises
 
-## 📸 Screenshots
-<!-- If applicable, otherwise delete -->
-
-## 💭 Additional Context
-<!-- Optional: Any extra details for reviewers -->
+<!-- 
+The AI composing this PR body should consider:
+- What would bring joy to read?
+- What gives maximum control and understanding?
+- What's most digestible at a glance?
+- How to avoid review fatigue?
+- Remember: No emojis in titles, but body can use visual elements sparingly
+-->
