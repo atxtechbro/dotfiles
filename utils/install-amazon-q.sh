@@ -186,12 +186,8 @@ configure_amazon_q() {
 
     echo "Configuring Amazon Q settings..."
 
-    # Configure settings with error handling
-    q telemetry disable >/dev/null 2>&1 || echo -e "${YELLOW}Could not disable telemetry (might already be disabled)${NC}"
-    q settings chat.editMode vi >/dev/null 2>&1 || echo -e "${YELLOW}Could not set chat.editMode to vi${NC}"
-# Default model now set in main setup.sh for visibility
-    q settings mcp.noInteractiveTimeout 5000 >/dev/null 2>&1 || echo -e "${YELLOW}Could not set mcp.noInteractiveTimeout${NC}"
-    q settings chat.enableNotifications false >/dev/null 2>&1 || echo -e "${YELLOW}Could not set chat.enableNotifications${NC}"
+    # Note: Settings are now configured through environment variables or config files
+    # The q CLI does not support the 'settings' or 'telemetry' subcommands
 
     echo -e "${GREEN}✓ Amazon Q configuration complete${NC}"
 }
