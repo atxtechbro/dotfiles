@@ -1,10 +1,20 @@
 {
-  "model": "claude-opus-4-20250514",
   "cleanupPeriodDays": 90,
-  "forceLoginMethod": "claudeai",
+  "env": {
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8192",
+    "BASH_DEFAULT_TIMEOUT_MS": "8000",
+    "BASH_MAX_TIMEOUT_MS": "600000",
+    "BASH_MAX_OUTPUT_LENGTH": "50000",
+    "DISABLE_COST_WARNINGS": "1",
+    "DISABLE_BUG_COMMAND": "1",
+    "DISABLE_ERROR_REPORTING": "1",
+    "DISABLE_TELEMETRY": "1",
+    "MCP_TIMEOUT": "30000",
+    "MCP_TOOL_TIMEOUT": "60000",
+    "MAX_MCP_OUTPUT_TOKENS": "40000"
+  },
   "includeCoAuthoredBy": false,
   "permissions": {
-    "defaultMode": "bypassPermissions",
     "allow": [
       "LS",
       "Read",
@@ -33,25 +43,20 @@
       "mcp__playwright",
       "Bash(*)"
     ],
-    "additionalDirectories": ["//"]
+    "defaultMode": "bypassPermissions",
+    "additionalDirectories": [
+      "//"
+    ]
   },
-  "env": {
-    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8192",
-    "BASH_DEFAULT_TIMEOUT_MS": "120000",
-    "BASH_MAX_TIMEOUT_MS": "600000",
-    "BASH_MAX_OUTPUT_LENGTH": "50000",
-    "DISABLE_COST_WARNINGS": "1",
-    "DISABLE_BUG_COMMAND": "1",
-    "DISABLE_ERROR_REPORTING": "1",
-    "DISABLE_TELEMETRY": "1",
-    "MCP_TIMEOUT": "30000",
-    "MCP_TOOL_TIMEOUT": "60000",
-    "MAX_MCP_OUTPUT_TOKENS": "40000"
-  },
+  "model": "claude-opus-4-20250514",
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
     "git",
     "github",
     "playwright"
-  ]
+  ],
+  "forceLoginMethod": "claudeai",
+  "feedbackSurveyState": {
+    "lastShownTime": 1753922216798
+  }
 }
