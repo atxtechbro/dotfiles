@@ -142,9 +142,9 @@ configure_imperative_settings() {
         echo "Applying imperative settings..."
         
         # These settings cannot be managed declaratively and must be set imperatively
+        # Note: verbose is now handled via --verbose flag in the claude alias
         claude config set -g autoUpdate true 2>/dev/null
         claude config set -g preferredNotifChannel terminal_bell 2>/dev/null
-        claude config set -g verbose true 2>/dev/null
         
         echo -e "${GREEN}✓ Imperative settings applied${NC}"
     else

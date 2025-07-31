@@ -31,7 +31,7 @@ The configuration script is called automatically:
 See `.claude/settings/claude-code-defaults.json` for the current configuration. The settings file is the source of truth and includes:
 
 - **Visual**: theme, editor mode
-- **Behavior**: auto-updates, verbose output, diff tool
+- **Behavior**: auto-updates, diff tool (Note: verbose is now set via --verbose flag in claude alias)
 - **Notifications**: preferred channel, idle thresholds  
 - **Performance**: parallel task execution
 - **Features**: todo list, auto-compact, IDE connections
@@ -93,9 +93,12 @@ For terminal bell notifications in iTerm2:
 ### Linux
 Terminal bell should work by default in most terminal emulators.
 
+**Verbose Mode**: On Linux systems where Ctrl+R doesn't work due to terminal raw mode limitations, verbose output is enabled by default via the `--verbose` flag in the claude alias. This ensures full output is always visible without relying on the broken interactive toggle.
+
 ## Related
 - Issue #564: Claude Code Settings Configuration-as-Code
 - Issue #577: Migrate to settings.json Format
 - Issue #579: Add Environment Variables (implemented)
 - Issue #580: Configure Additional settings.json Options
+- Issue #1091: Change verbose mode from imperative to --verbose flag
 - Principle: systems-stewardship
