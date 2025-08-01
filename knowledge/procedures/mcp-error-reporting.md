@@ -50,3 +50,6 @@ Use the [MCP Tool Error template](/.github/ISSUE_TEMPLATE/mcp-tool-error.md) whi
 - Focus 80% on core work, 20% on documenting issues
 - Every reported issue makes our tools more joyful
 - Human assistance is available for restarts
+
+## See Also
+- [Tool Discovery](../../mcp/tool-discovery.md) - Finding the right tool

@@ -66,3 +66,5 @@ Guidelines for effective tool selection in this repository.
 | Search web | `WebSearch` |
 
 Remember: When in doubt, check [AI Index](../knowledge/ai-index.md) for guidance.
+
+If MCP tools fail, report via [MCP Error Reporting](../knowledge/procedures/mcp-error-reporting.md) to create self-healing feedback loops.
