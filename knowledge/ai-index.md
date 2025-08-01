@@ -20,7 +20,8 @@ Your starting point for understanding and working with this dotfiles repository.
 - Apply [Tracer Bullets](principles/tracer-bullets.md) - Iterative development
 
 ### Handle GitHub Tasks
-- See [Issue to PR Workflow](procedures/issue-to-pr-workflow.md)
+- See [Issue to PR Workflow](procedures/issue-to-pr-workflow.md) - High-level flow
+- Follow [Close Issue Procedure](procedures/close-issue-procedure.md) - Detailed steps
 - Use GitHub MCP server for all GitHub operations
 - Remember: Use mcp__github__ tools, not direct API calls
 
