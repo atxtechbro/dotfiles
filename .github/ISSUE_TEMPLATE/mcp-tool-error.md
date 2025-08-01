@@ -3,7 +3,7 @@ name: MCP Tool Error Report
 about: Report when our custom MCP tools (git/github) don't work as expected
 title: '[MCP Error] '
 labels: 'mcp-tool-error'
-assignees: ''
+assignees: 'atxtechbro'
 
 ---
 
