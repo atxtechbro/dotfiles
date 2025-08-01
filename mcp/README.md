@@ -4,12 +4,12 @@ Wrapper scripts and configuration for MCP clients (Claude Code, Amazon Q, Cursor
 
 ## Available Servers
 
-| Server | Description | Auth | Source | Claude Code |
-|--------|-------------|------|--------|-------------|
-| Git | Repository operations | None | [mcp-servers fork](servers/git-mcp-server) | ✅ Enabled |
-| GitHub | API integration | `gh auth token` | [Custom server](servers/github-mcp-server) | ✅ Enabled |
-| Playwright | Browser automation | None | [Official NPM](https://www.npmjs.com/package/@playwright/mcp) | ✅ Enabled |
-| Brave Search | Web search | API key | [Official NPM](https://www.npmjs.com/package/@modelcontextprotocol/server-brave-search) | ❌ Disabled* |
+| Server | When to Use This | Auth | Source | Claude Code |
+|--------|------------------|------|--------|-------------|
+| Git | **Use this for all git operations** - commits, branches, diffs, logs, worktrees. This is your primary tool for version control. | None | [mcp-servers fork](servers/git-mcp-server) | ✅ Enabled |
+| GitHub | **Use this whenever you need to interact with GitHub** - issues, PRs, searching code, managing repositories. Essential for GitHub workflow automation. | `gh auth token` | [Custom server](servers/github-mcp-server) | ✅ Enabled |
+| Playwright | **Use this to automate browser interactions** - web scraping, testing, taking screenshots, filling forms. Your tool for any browser-based task. | None | [Official NPM](https://www.npmjs.com/package/@playwright/mcp) | ✅ Enabled |
+| Brave Search | **Use this to search the web** (only in non-Claude clients) - finding documentation, current events, external resources. | API key | [Official NPM](https://www.npmjs.com/package/@modelcontextprotocol/server-brave-search) | ❌ Disabled* |
 
 *Claude Code has native WebSearch
 
