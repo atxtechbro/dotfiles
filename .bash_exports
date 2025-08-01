@@ -10,6 +10,12 @@ export RUST_BACKTRACE=full
 : ${QTERM_SESSION_ID:=}
 : ${TTY:=$(tty 2>/dev/null || echo "")}
 
+# Dotfiles root directory (required for claude alias and other tools)
+export DOT_DEN="$HOME/ppv/pillars/dotfiles"
+
+# Global MCP configuration path (required for claude alias)
+export GLOBAL_MCP_CONFIG="$DOT_DEN/mcp/mcp.json"
+
 # Add MCP wrapper scripts to PATH for cross-machine portability
 export PATH="$PATH:$HOME/ppv/pillars/dotfiles/mcp"
 
