@@ -137,4 +137,4 @@ Semantic mapping of common tasks to the right tools. When you're unsure which to
 | Browse web | `mcp__playwright__*` |
 | Search web | `WebSearch` |
 
-Remember: When in doubt, check [AI Index](/home/linuxmint-lp/ppv/pillars/dotfiles/knowledge/ai-index.md) for guidance.
+Remember: When in doubt, check [AI Index](../knowledge/ai-index.md) for guidance.

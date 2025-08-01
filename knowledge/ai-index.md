@@ -2,43 +2,46 @@
 
 Your starting point for understanding and working with this dotfiles repository.
 
+> **Note**: All paths are relative to the `knowledge/` directory.  
+> Repository typically located at: `~/ppv/pillars/dotfiles/`
+
 ## Quick Navigation
 
 **When you need to...**
 
 ### Understand the Core Philosophy
-- Read [The Goal: Throughput Definition](/home/linuxmint-lp/ppv/pillars/dotfiles/knowledge/throughput-definition.md) - Our north star metric
-- Review [Core Principles](/home/linuxmint-lp/ppv/pillars/dotfiles/knowledge/principles/) - Foundational truths
-- Understand the [Snowball Method](/home/linuxmint-lp/ppv/pillars/dotfiles/knowledge/principles/snowball-method.md) - Knowledge accumulation
+- Read [The Goal: Throughput Definition](throughput-definition.md) - Our north star metric
+- Review [Core Principles](principles/) - Foundational truths
+- Understand the [Snowball Method](principles/snowball-method.md) - Knowledge accumulation
 
 ### Work with Git
-- Follow [Git Workflow](/home/linuxmint-lp/ppv/pillars/dotfiles/knowledge/procedures/git-workflow.md) - **ALWAYS START HERE**
-- Use [Worktree Workflow](/home/linuxmint-lp/ppv/pillars/dotfiles/knowledge/procedures/worktree-workflow.md) - For parallel development
-- Apply [Tracer Bullets](/home/linuxmint-lp/ppv/pillars/dotfiles/knowledge/principles/tracer-bullets.md) - Iterative development
+- Follow [Git Workflow](procedures/git-workflow.md) - **ALWAYS START HERE**
+- Use [Worktree Workflow](procedures/worktree-workflow.md) - For parallel development
+- Apply [Tracer Bullets](principles/tracer-bullets.md) - Iterative development
 
 ### Handle GitHub Tasks
-- See [Issue to PR Workflow](/home/linuxmint-lp/ppv/pillars/dotfiles/knowledge/procedures/issue-to-pr-workflow.md)
+- See [Issue to PR Workflow](procedures/issue-to-pr-workflow.md)
 - Use GitHub MCP server for all GitHub operations
 - Remember: Use mcp__github__ tools, not direct API calls
 
 ### Write or Modify Code
-- Check [Coding Conventions](/home/linuxmint-lp/ppv/pillars/dotfiles/knowledge/procedures/coding-conventions.md)
-- Apply [Subtraction Creates Value](/home/linuxmint-lp/ppv/pillars/dotfiles/knowledge/principles/subtraction-creates-value.md) - Remove before adding
-- Follow [Versioning Mindset](/home/linuxmint-lp/ppv/pillars/dotfiles/knowledge/principles/versioning-mindset.md) - Iterate, don't recreate
+- Check [Coding Conventions](procedures/coding-conventions.md)
+- Apply [Subtraction Creates Value](principles/subtraction-creates-value.md) - Remove before adding
+- Follow [Versioning Mindset](principles/versioning-mindset.md) - Iterate, don't recreate
 
 ### Debug or Fix Issues
-- Use [MCP Protocol Smoke Test](/home/linuxmint-lp/ppv/pillars/dotfiles/knowledge/procedures/mcp-protocol-smoke-test.md) for MCP issues
-- Apply [Systems Stewardship](/home/linuxmint-lp/ppv/pillars/dotfiles/knowledge/principles/systems-stewardship.md) - Document fixes
-- See [Tool Discovery](/home/linuxmint-lp/ppv/pillars/dotfiles/mcp/tool-discovery.md) - Find the right tool
+- Use [MCP Protocol Smoke Test](procedures/mcp-protocol-smoke-test.md) for MCP issues
+- Apply [Systems Stewardship](principles/systems-stewardship.md) - Document fixes
+- See [Tool Discovery](../mcp/tool-discovery.md) - Find the right tool
 
 ### Improve Documentation
-- Follow [Transparency in Agent Work](/home/linuxmint-lp/ppv/pillars/dotfiles/knowledge/principles/transparency-in-agent-work.md)
-- Apply [PR Readability Contract](/home/linuxmint-lp/ppv/pillars/dotfiles/knowledge/principles/pr-readability-contract.md)
-- Use absolute paths everywhere (no relative paths)
+- Follow [Transparency in Agent Work](principles/transparency-in-agent-work.md)
+- Apply [PR Readability Contract](principles/pr-readability-contract.md)
+- Use relative paths for portability
 
 ### Run Post-PR Retros
-- See [Post-PR Mini Retro](/home/linuxmint-lp/ppv/pillars/dotfiles/knowledge/procedures/post-pr-mini-retro.md)
-- Consult [Personalities](/home/linuxmint-lp/ppv/pillars/dotfiles/knowledge/personalities/) for perspectives
+- See [Post-PR Mini Retro](procedures/post-pr-mini-retro.md)
+- Consult [Personalities](personalities/) for perspectives
 
 ## Structure
 - `throughput-definition.md` - **The North Star**: Defines throughput as AI agent management capability for 100x-1000x productivity
