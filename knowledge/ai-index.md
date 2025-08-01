@@ -32,6 +32,7 @@ Your starting point for understanding and working with this dotfiles repository.
 
 ### Debug or Fix Issues
 - Use [MCP Protocol Smoke Test](procedures/mcp-protocol-smoke-test.md) for MCP issues
+- Follow [MCP Error Reporting](procedures/mcp-error-reporting.md) when MCP tools fail
 - Apply [Systems Stewardship](principles/systems-stewardship.md) - Document fixes
 
 ### Improve Documentation
@@ -82,5 +83,6 @@ When editing these foundational files, keep changes small and easy to approve. A
 | File creation | Write (only when necessary) |
 | Web browsing | mcp__playwright__* tools |
 | Documentation lookup | Read this index first, then specific docs |
+| Run shell commands | Bash (prefer MCP tools when available) |
 
 Remember: The goal is AI agent management capability for 100x-1000x productivity.
