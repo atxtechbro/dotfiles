@@ -43,6 +43,11 @@ Your starting point for understanding and working with this dotfiles repository.
 - See [Post-PR Mini Retro](procedures/post-pr-mini-retro.md)
 - Consult [Personalities](personalities/) for perspectives
 
+### When MCP Tools Don't Work
+- Follow [MCP Error Reporting](procedures/mcp-error-reporting.md) - We control these servers, we'll fix them!
+- Creates self-healing systems through proper issue tracking
+- Remember: 80% core work, 20% documenting issues
+
 ## Structure
 - `throughput-definition.md` - **The North Star**: Defines throughput as AI agent management capability for 100x-1000x productivity
 - `principles/` - Foundational truths that rarely change
