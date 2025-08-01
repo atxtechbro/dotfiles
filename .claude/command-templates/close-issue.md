@@ -19,7 +19,7 @@ When following the procedure:
 ## Final Step: Retro
 Let's retro this context and wring out the gleanings.
 
-{{ INJECT:principles/continuous-improvement.md }}
+{{ INJECT:principles/eager-evolution.md }}
 
 **Consider capturing any ghost procedures** that emerged during this work - see [Procedure Creation](knowledge/procedures/procedure-creation.md).
 
