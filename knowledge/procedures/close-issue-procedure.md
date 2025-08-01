@@ -73,6 +73,8 @@ Follow [Git Workflow](git-workflow.md) for commit standards.
 ### 4. Iterate Based on Feedback
 Keep worktree active for PR adjustments based on the tracer bullets principle. Only cleanup after PR is merged.
 
+If MCP tools fail during implementation, follow [MCP Error Reporting](mcp-error-reporting.md) to create self-healing feedback loop.
+
 ## Decision Matrix
 
 - **Spike label** → Spike workflow (research only)
