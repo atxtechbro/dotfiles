@@ -39,6 +39,12 @@ Your starting point for understanding and working with this dotfiles repository.
 - Apply [PR Readability Contract](principles/pr-readability-contract.md)
 - Use relative paths for portability
 
+### Capture Ghost Procedures
+- Follow [Procedure Creation](procedures/procedure-creation.md) - Document the undocumented!
+- Many procedures exist but aren't written down yet
+- If you do it twice, write it down
+- Transform tribal knowledge into systems
+
 ### Run Post-PR Retros
 - See [Post-PR Mini Retro](procedures/post-pr-mini-retro.md)
 - Consult [Personalities](personalities/) for perspectives
