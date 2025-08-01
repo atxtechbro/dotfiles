@@ -33,6 +33,8 @@ Improve a procedure when:
 4. **Follow the template** below
 5. **Link it** - Add to relevant sections in ai-index.md
 
+**Quick capture option**: Use the [Procedure Documentation issue template](/.github/ISSUE_TEMPLATE/procedure-documentation.md) to quickly document a ghost procedure for later formalization.
+
 ## Procedure Template
 
 ```markdown
