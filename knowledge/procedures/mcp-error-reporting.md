@@ -20,12 +20,18 @@ When any of our custom MCP tools fail:
 
 1. **Continue your task** using a workaround if possible (80/20 rule - focus on core work)
 
-2. **After completing the task**:
+2. **Immediately after finding a workaround**:
    - Check for [existing MCP error issues](https://github.com/atxtechbro/dotfiles/issues?q=is%3Aissue+label%3Amcp-tool-error)
    - If found: Add a comment saying you experienced it too
-   - If not found: [Create a new issue](https://github.com/atxtechbro/dotfiles/issues/new?template=mcp-tool-error.md)
+   - If not found: Create a new issue using the [MCP Tool Error template](https://github.com/atxtechbro/dotfiles/issues/new?template=mcp-tool-error.md)
+   - **Don't wait** - report while the error is fresh in context
+   - When available, follow [GitHub Issue Creation procedure](github-issue-creation.md) (see [#1100](https://github.com/atxtechbro/dotfiles/issues/1100))
 
 3. **Alert the human** - Claude Code restart may be needed for immediate fix
+
+## Agent Reminder
+
+**Proactively report errors**: When you encounter an MCP tool error, create the issue immediately after finding a workaround. Don't wait for the human to remind you. This is part of creating self-healing systems and giving agents autonomy.
 
 ## Why This Matters
 
