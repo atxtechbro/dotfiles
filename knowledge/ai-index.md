@@ -33,7 +33,6 @@ Your starting point for understanding and working with this dotfiles repository.
 ### Debug or Fix Issues
 - Use [MCP Protocol Smoke Test](procedures/mcp-protocol-smoke-test.md) for MCP issues
 - Apply [Systems Stewardship](principles/systems-stewardship.md) - Document fixes
-- See [Tool Discovery](../mcp/tool-discovery.md) - Find the right tool
 
 ### Improve Documentation
 - Follow [Transparency in Agent Work](principles/transparency-in-agent-work.md)

@@ -51,5 +51,3 @@ Use the [MCP Tool Error template](/.github/ISSUE_TEMPLATE/mcp-tool-error.md) whi
 - Every reported issue makes our tools more joyful
 - Human assistance is available for restarts
 
-## See Also
-- [Tool Discovery](../../mcp/tool-discovery.md) - Finding the right tool
