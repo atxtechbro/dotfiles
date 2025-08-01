@@ -88,3 +88,6 @@ mcp/clients/
 # MCP server convenience symlinks (setup-generated executables)
 mcp/servers/*/git_mcp_server.py
 
+# Generated AI context file
+knowledge/llms.txt
+

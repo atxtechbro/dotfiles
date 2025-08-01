@@ -292,6 +292,14 @@ else
   echo -e "${YELLOW}Command generation script not found. Skipping command generation.${NC}"
 fi
 
+# Generate llms.txt for AI consumption
+if [[ -f "$DOT_DEN/utils/generate-llms-txt.sh" ]]; then
+  echo "Generating knowledge/llms.txt for AI context..."
+  "$DOT_DEN/utils/generate-llms-txt.sh"
+else
+  echo -e "${YELLOW}llms.txt generation script not found. Skipping AI context generation.${NC}"
+fi
+
 # Configuration files setup complete
 echo -e "${GREEN}✓ Configuration files setup complete${NC}"
 
