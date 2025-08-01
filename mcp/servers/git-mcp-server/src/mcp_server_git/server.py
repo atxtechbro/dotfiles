@@ -382,9 +382,8 @@ def git_commit(repo: git.Repo, message: str) -> str:
     return f"Changes committed successfully with hash {commit.hexsha}"
 
 def git_add(repo: git.Repo, files: list[str]) -> str:
-    # Validate that all files exist in the repository before attempting to stage them.
-    # This prevents the "empty PR" problem where git claims success even when files
-    # don't exist in the worktree, leading to commits with no actual changes.
+    # Validate that all files exist in the repository OR are tracked (deleted) files.
+    # This prevents the "empty PR" problem while allowing deleted files to be staged.
     repo_path = str(Path(repo.working_dir))
     
     # Validate paths for security (prevent path traversal)
@@ -393,14 +392,25 @@ def git_add(repo: git.Repo, files: list[str]) -> str:
         if not file_path.startswith(repo_path):
             raise ValueError(f"Invalid file path: {file}")
     
-    # Find missing files using list comprehension
-    missing_files = [
-        file for file in files 
-        if not os.path.exists(os.path.normpath(os.path.join(repo_path, file)))
-    ]
+    # Get all tracked files (including deleted ones) from git
+    try:
+        # List all files known to git (including deleted)
+        tracked_files = set(repo.git.ls_files().splitlines())
+        # Also include deleted files specifically
+        deleted_files = set(repo.git.ls_files('--deleted').splitlines())
+        all_known_files = tracked_files | deleted_files
+    except git.GitCommandError:
+        all_known_files = set()
     
-    if missing_files:
-        raise FileNotFoundError(f"Files not found in repository: {', '.join(missing_files)}")
+    # Find files that neither exist on disk nor are tracked by git
+    invalid_files = []
+    for file in files:
+        file_path = os.path.normpath(os.path.join(repo_path, file))
+        if not os.path.exists(file_path) and file not in all_known_files:
+            invalid_files.append(file)
+    
+    if invalid_files:
+        raise FileNotFoundError(f"Files not found in repository: {', '.join(invalid_files)}")
     
     repo.index.add(files)
     return f"Files staged successfully: {', '.join(files)}"
