@@ -31,3 +31,6 @@ Suppose you need to work on multiple tasks simultaneously with complete code iso
 - **[OSE Principle](../principles/ose.md)**: Only GitHub PR diff matters for review - must verify before creating PR
 - **Broken symlinks**: Running setup.sh from worktree creates symlinks that break when worktree is deleted
 - **Think-tank content in worktrees**: Never add think-tank notes or personal content to worktree locations - they're ephemeral and will be lost. Always use the main repository at `/think-tank/`
+
+## See Also
+- [Close Issue Procedure](close-issue-procedure.md) - Full workflow using worktrees for issue implementation

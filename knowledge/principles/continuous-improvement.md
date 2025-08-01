@@ -21,4 +21,4 @@ The human drives the exploration while the agent provides observations when aske
 
 **Improvement focus**: What procedures need updating? What new patterns emerged? Which approaches felt natural versus forced?
 
-This principle transforms any pause into an opportunity for systems strengthening through reflective learning.
+This principle transforms any pause into an opportunity for systems strengthening through reflective learning. See [Procedure Creation](../procedures/procedure-creation.md) for capturing ghost procedures discovered during retros.

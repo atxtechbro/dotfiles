@@ -43,6 +43,7 @@ After merging a PR, switch to the base branch and pull latest to avoid working o
 
 ## Common Errors to Avoid
 - Don't thank self when closing your own PRs
+- If git MCP tools fail, report via [MCP Error Reporting](mcp-error-reporting.md)
 
 ## Directory to Symlink Conversions
 When converting a directory to a symlink (or vice versa), it's safer to use different names or do it in separate commits to avoid git tree corruption.

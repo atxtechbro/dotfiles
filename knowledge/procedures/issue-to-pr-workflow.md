@@ -79,6 +79,7 @@ For significant work:
 - Run [post-PR mini retro](post-pr-mini-retro.md)
 - Capture learnings
 - Update procedures if needed
+- Document any ghost procedures discovered - see [Procedure Creation](procedure-creation.md)
 
 ## Why This Works
 
