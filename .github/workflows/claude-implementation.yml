@@ -37,27 +37,25 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             try {
-              // Add reactions to show Claude saw the request and is working on it
-              // 👀 = Claude saw the request
-              const eyesReaction = await github.rest.reactions.createForIssueComment({
+              // Add appropriate reaction based on context
+              let reaction;
+              
+              if (context.payload.issue && !context.payload.issue.pull_request) {
+                // 🚀 = Claude is implementing (for issues)
+                reaction = 'rocket';
+              } else {
+                // 👀 = Claude is reviewing (for PRs)
+                reaction = 'eyes';
+              }
+              
+              const reactionResponse = await github.rest.reactions.createForIssueComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 comment_id: context.payload.comment.id,
-                content: 'eyes'
+                content: reaction
               });
               
-              console.log(`✅ Successfully added 👀 reaction to comment ${context.payload.comment.id}`);
-              
-              // 🚀 = Claude is implementing (for issues only, not PR reviews)
-              if (context.payload.issue && !context.payload.issue.pull_request) {
-                const rocketReaction = await github.rest.reactions.createForIssueComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  comment_id: context.payload.comment.id,
-                  content: 'rocket'
-                });
-                console.log(`✅ Successfully added 🚀 reaction to comment ${context.payload.comment.id}`);
-              }
+              console.log(`✅ Successfully added ${reaction} reaction to comment ${context.payload.comment.id}`);
             } catch (error) {
               console.error(`❌ Failed to add reaction: ${error.message}`);
               console.error(`Comment ID: ${context.payload.comment.id}`);
