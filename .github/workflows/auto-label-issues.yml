@@ -48,7 +48,7 @@ jobs:
           EOF
 
       - name: Run Claude Code for Issue Triage
-        uses: anthropics/claude-code-action@beta
+        uses: anthropics/claude-code-base-action@beta
         with:
           direct_prompt: ${{ steps.prepare-prompt.outputs.prompt }}
           allowed_tools: "Bash(gh label list),mcp__github-write__get_issue,mcp__github-write__get_issue_comments,mcp__github-write__update_issue,mcp__github-write__search_issues,mcp__github-write__list_issues"
