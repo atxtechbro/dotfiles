@@ -73,3 +73,4 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          allowed_tools: "Bash(*),LS,Read,Write,Edit,MultiEdit,Glob,Grep,Task,TodoWrite,WebFetch(domain:*),WebSearch,mcp__git,mcp__github"
