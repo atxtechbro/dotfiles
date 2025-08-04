@@ -96,19 +96,27 @@ jobs:
           if [ "$IS_ISSUE" == "true" ]; then
             echo "Preparing prompt for issue implementation..."
             
-            # Get issue details
+            # Get issue number (safe - just a number)
             ISSUE_NUMBER="${{ github.event.issue.number }}"
-            ISSUE_TITLE="${{ github.event.issue.title }}"
-            ISSUE_BODY="${{ github.event.issue.body }}"
             
-            # Write all replacement values to temp files to avoid bash expansion issues
+            # Write all values to temp files to avoid bash expansion issues
+            # Use heredoc for user-controlled content to prevent command injection
             cat <<'KNOWLEDGE_EOF' > /tmp/knowledge.txt
           ${{ steps.knowledge.outputs.content }}
           KNOWLEDGE_EOF
             
             echo "$ISSUE_NUMBER" > /tmp/issue_number.txt
-            echo "$ISSUE_TITLE" > /tmp/issue_title.txt
-            echo "$ISSUE_BODY" > /tmp/issue_body.txt
+            
+            # SECURITY: Use heredoc to prevent command injection from issue title
+            cat <<'ISSUE_TITLE_EOF' > /tmp/issue_title.txt
+          ${{ github.event.issue.title }}
+          ISSUE_TITLE_EOF
+            
+            # SECURITY: Use heredoc to prevent command injection from issue body
+            cat <<'ISSUE_BODY_EOF' > /tmp/issue_body.txt
+          ${{ github.event.issue.body }}
+          ISSUE_BODY_EOF
+            
             echo "${{ github.repository }}" > /tmp/repo.txt
             
             # Load the template
@@ -150,13 +158,19 @@ jobs:
           ${{ steps.knowledge.outputs.content }}
           KNOWLEDGE_EOF
             
+            # SECURITY: Use heredoc to prevent command injection from PR comment
+            cat <<'COMMENT_BODY_EOF' > /tmp/comment_body.txt
+          ${{ github.event.comment.body }}
+          COMMENT_BODY_EOF
+            
             # Build the PR review prompt
             {
               cat /tmp/knowledge.txt
               echo ""
               echo "## PR Review Request"
               echo ""
-              echo "The user has requested: ${{ github.event.comment.body }}"
+              echo "The user has requested:"
+              cat /tmp/comment_body.txt
               echo ""
               echo "Please review and respond to this pull request comment with the full context of the codebase principles and procedures available above."
             } > /tmp/final_prompt.md
