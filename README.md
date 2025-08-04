@@ -361,3 +361,5 @@ nano ~/.bash_secrets
 The `.bash_secrets` file is automatically loaded by `.bashrc`. It provides a framework for managing your secrets and environment variables, with examples of common patterns. You should customize it based on your needs.
 
 For company-specific secrets, consider maintaining a separate private repository in your Vaults directory.
+
+<!-- Test comment: This comment was added by Claude to test auto-PR creation workflow from issue #1153 -->
