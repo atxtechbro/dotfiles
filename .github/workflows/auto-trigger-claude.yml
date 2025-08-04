@@ -21,5 +21,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: '@claude Please implement this issue. The pull request will be created automatically after you complete the implementation.'
+              body: '@claude Please implement this issue and CREATE AN ACTUAL PULL REQUEST on GitHub.\n\n**IMPORTANT**: You MUST create a real PR on GitHub (not just provide a link to create one). The PR must be created and visible at github.com/atxtechbro/dotfiles/pulls.\n\nUse the PR template from https://github.com/atxtechbro/dotfiles/blob/main/.github/PULL_REQUEST_TEMPLATE.md when creating the pull request.'
             });
