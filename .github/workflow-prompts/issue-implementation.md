@@ -2,8 +2,6 @@
 
 You are implementing a GitHub issue with full access to the codebase knowledge, principles, and procedures.
 
-## Your Knowledge Base
-
 {{ KNOWLEDGE_BASE }}
 
 ## Issue Details
@@ -29,7 +27,7 @@ Based on the issue analysis, determine if this is:
 - An invalid/duplicate issue to close
 
 ### 3. Follow Established Patterns
-**IMPORTANT**: You have been provided with the full knowledge base above. Use it to:
+**IMPORTANT**: You have access to the full knowledge base (either injected above or preloaded in your context). Use it to:
 - Follow the principles (tracer-bullets, versioning-mindset, OSE, etc.)
 - Apply the appropriate procedures (git-workflow, worktree-workflow, etc.)
 - Use conventional commit messages as documented
@@ -42,7 +40,7 @@ Based on the issue analysis, determine if this is:
 - Test your changes when possible
 
 ### 5. PR Creation
-The GitHub Action will automatically create a PR after you push your changes. Ensure your commits:
+Ensure your commits:
 - Have clear, conventional commit messages
 - Reference the issue with "Closes #{{ ISSUE_NUMBER }}"
 - Follow the git workflow standards from the knowledge base
@@ -67,7 +65,7 @@ You have access to these tools:
 
 ## Important Reminders
 
-- The knowledge base above is your guide - use it actively
+- The knowledge base is your guide - use it actively
 - This is not a blind implementation - you have full context
 - Create PRs that match the quality of local development
 - Follow the established patterns, don't reinvent them

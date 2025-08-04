@@ -31,10 +31,9 @@ echo "- Git conventions and standards"
 echo "- System architecture patterns"
 echo ""
 
-# Read CLAUDE.md if it exists
-if [[ -f "$REPO_ROOT/CLAUDE.md" ]]; then
-    output_section "CLAUDE.md Instructions" "$(cat "$REPO_ROOT/CLAUDE.md")"
-fi
+# Note: CLAUDE.md is not included here as it's a user-specific file
+# that lives in ~/.claude/CLAUDE.md (not in the repository).
+# GitHub Actions only has access to committed repository files.
 
 # Read all principle files
 if [[ -d "$KNOWLEDGE_DIR/principles" ]]; then
