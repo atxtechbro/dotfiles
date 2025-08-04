@@ -40,8 +40,10 @@ if [[ -d "$KNOWLEDGE_DIR/principles" ]]; then
     echo "# Core Principles"
     echo ""
     
+    found_principles=0
     for file in "$KNOWLEDGE_DIR/principles"/*.md; do
         if [[ -f "$file" ]]; then
+            found_principles=1
             filename=$(basename "$file" .md)
             # Convert filename to title case (e.g., tracer-bullets -> Tracer Bullets)
             title=$(echo "$filename" | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g')
@@ -54,6 +56,11 @@ if [[ -d "$KNOWLEDGE_DIR/principles" ]]; then
             echo ""
         fi
     done
+    
+    if [[ $found_principles -eq 0 ]]; then
+        echo "No principle files found in knowledge/principles/"
+        echo ""
+    fi
 fi
 
 # Read all procedure files
@@ -61,8 +68,10 @@ if [[ -d "$KNOWLEDGE_DIR/procedures" ]]; then
     echo "# Established Procedures"
     echo ""
     
+    found_procedures=0
     for file in "$KNOWLEDGE_DIR/procedures"/*.md; do
         if [[ -f "$file" ]]; then
+            found_procedures=1
             filename=$(basename "$file" .md)
             # Convert filename to title case
             title=$(echo "$filename" | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g')
@@ -75,6 +84,11 @@ if [[ -d "$KNOWLEDGE_DIR/procedures" ]]; then
             echo ""
         fi
     done
+    
+    if [[ $found_procedures -eq 0 ]]; then
+        echo "No procedure files found in knowledge/procedures/"
+        echo ""
+    fi
 fi
 
 # Add a footer note
