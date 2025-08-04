@@ -89,4 +89,21 @@ You have access to these tools:
 - Create PRs that match the quality of local development
 - Follow the established patterns, don't reinvent them
 
+## Core Principle: Target-First Development
+{{ INJECT:principles/tracer-bullets.md }}
+
+## Close Issue Procedure
+{{ INJECT:procedures/close-issue-procedure.md }}
+
 Now proceed with implementing issue #{{ ISSUE_NUMBER }}.
+
+## Post-Implementation Retro
+After completing the implementation and creating the PR, let's retro this context and wring out the gleanings.
+
+{{ INJECT:principles/eager-evolution.md }}
+
+**Consider capturing any ghost procedures** that emerged during this work - see [Procedure Creation](knowledge/procedures/procedure-creation.md).
+
+**What would you like to focus on?**
+- Do you have a specific aspect you want to double-click on?
+- Or would you like me to suggest the top 3 areas I predict you'll find most valuable to explore?
