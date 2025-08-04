@@ -25,8 +25,10 @@ Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 {{ INJECT:principles/tracer-bullets.md }}
 
 ## Analyze Issue #{{ ISSUE_NUMBER }}
+<!-- This template IS the procedure - executable documentation -->
 First, use `mcp__github__get_issue` to understand the issue and determine the appropriate workflow path.
 
+<!-- The injected procedure below provides decision matrices and workflow paths -->
 {{ INJECT:procedures/close-issue-procedure.md }}
 
 ## Apply to Issue #{{ ISSUE_NUMBER }}
