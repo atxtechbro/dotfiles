@@ -67,7 +67,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.CLAUDE_TRIGGER_PAT }}
 
       - uses: anthropics/claude-code-action@beta
         with:
