@@ -1,7 +1,7 @@
 #!/bin/bash
 # Aggregate knowledge base for GitHub Actions
-# This script reads all knowledge files and outputs them as a single text block
-# for injection into Claude's prompt in GitHub Actions workflows
+# This script reads ALL knowledge files (matching Claude Code's behavior)
+# and outputs them as a single text block for injection into Claude's prompt
 # Principle: systems-stewardship
 
 set -euo pipefail
@@ -10,45 +10,60 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 KNOWLEDGE_DIR="$REPO_ROOT/knowledge"
 
-# Function to output a section with clear markers
-output_section() {
-    local title="$1"
-    local content="$2"
-    
-    echo "## $title"
-    echo ""
-    echo "$content"
-    echo ""
-}
-
 # Start with a header
 echo "# Knowledge Base Context"
 echo ""
 echo "This context is automatically injected to provide Claude with understanding of:"
-echo "- Core development principles"
-echo "- Established procedures and workflows"
-echo "- Git conventions and standards"
-echo "- System architecture patterns"
+echo "- Core development principles and procedures"
+echo "- Personality models for retrospectives"
+echo "- System architecture patterns and tools"
+echo "- The North Star throughput definition"
 echo ""
 
 # Note: CLAUDE.md is not included here as it's a user-specific file
 # that lives in ~/.claude/CLAUDE.md (not in the repository).
 # GitHub Actions only has access to committed repository files.
 
-# Read all principle files
-if [[ -d "$KNOWLEDGE_DIR/principles" ]]; then
-    echo "# Core Principles"
-    echo ""
+# Process all .md files in knowledge/ recursively to match Claude Code behavior
+# This ensures GitHub Actions has the exact same context as local development
+process_directory() {
+    local dir="$1"
+    local relative_path="${dir#$KNOWLEDGE_DIR}"
+    relative_path="${relative_path#/}"  # Remove leading slash if present
     
-    found_principles=0
-    for file in "$KNOWLEDGE_DIR/principles"/*.md; do
+    # Process files in current directory first
+    for file in "$dir"/*.md; do
         if [[ -f "$file" ]]; then
-            found_principles=1
             filename=$(basename "$file" .md)
-            # Convert filename to title case (e.g., tracer-bullets -> Tracer Bullets)
-            title=$(echo "$filename" | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g')
             
-            echo "## $title"
+            # Skip README files in subdirectories (but include the main one)
+            if [[ "$filename" == "README" && "$relative_path" != "" ]]; then
+                continue
+            fi
+            
+            # Create section header based on location
+            if [[ "$relative_path" == "" ]]; then
+                # Root knowledge files
+                title=$(echo "$filename" | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g')
+                echo "# $title"
+            elif [[ "$relative_path" == "principles" ]]; then
+                title=$(echo "$filename" | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g')
+                echo "## Principle: $title"
+            elif [[ "$relative_path" == "procedures" ]]; then
+                title=$(echo "$filename" | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g')
+                echo "## Procedure: $title"
+            elif [[ "$relative_path" == "personalities" ]]; then
+                title=$(echo "$filename" | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g')
+                echo "## Personality: $title"
+            elif [[ "$relative_path" == "tools" ]]; then
+                title=$(echo "$filename" | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g')
+                echo "## Tool: $title"
+            else
+                # Other directories
+                title=$(echo "$filename" | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g')
+                echo "## $relative_path: $title"
+            fi
+            
             echo ""
             cat "$file"
             echo ""
@@ -57,38 +72,26 @@ if [[ -d "$KNOWLEDGE_DIR/principles" ]]; then
         fi
     done
     
-    if [[ $found_principles -eq 0 ]]; then
-        echo "No principle files found in knowledge/principles/"
-        echo ""
-    fi
-fi
+    # Process subdirectories
+    for subdir in "$dir"/*; do
+        if [[ -d "$subdir" ]]; then
+            dirname=$(basename "$subdir")
+            # Add section header for new directory
+            if [[ "$relative_path" == "" ]]; then
+                echo "# $(echo "$dirname" | sed 's/\b\(.\)/\u\1/g')"
+                echo ""
+            fi
+            process_directory "$subdir"
+        fi
+    done
+}
 
-# Read all procedure files
-if [[ -d "$KNOWLEDGE_DIR/procedures" ]]; then
-    echo "# Established Procedures"
+# Process the entire knowledge directory
+if [[ -d "$KNOWLEDGE_DIR" ]]; then
+    process_directory "$KNOWLEDGE_DIR"
+else
+    echo "Knowledge directory not found at: $KNOWLEDGE_DIR"
     echo ""
-    
-    found_procedures=0
-    for file in "$KNOWLEDGE_DIR/procedures"/*.md; do
-        if [[ -f "$file" ]]; then
-            found_procedures=1
-            filename=$(basename "$file" .md)
-            # Convert filename to title case
-            title=$(echo "$filename" | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g')
-            
-            echo "## $title"
-            echo ""
-            cat "$file"
-            echo ""
-            echo "---"
-            echo ""
-        fi
-    done
-    
-    if [[ $found_procedures -eq 0 ]]; then
-        echo "No procedure files found in knowledge/procedures/"
-        echo ""
-    fi
 fi
 
 # Add a footer note
