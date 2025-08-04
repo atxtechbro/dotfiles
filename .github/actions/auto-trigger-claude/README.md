@@ -65,9 +65,11 @@ jobs:
 
 Each repository using this action needs to configure:
 
-1. **`CLAUDE_TRIGGER_PAT`**: A GitHub Personal Access Token with `issues:write` permission
+1. **`CLAUDE_TRIGGER_PAT`**: A GitHub Personal Access Token with repository and workflow permissions
    - Go to GitHub Settings → Developer settings → Personal access tokens
-   - Create a token with `repo` scope
+   - Create a token with the following scopes:
+     - `repo` (full control of private repositories)
+     - `workflow` (update GitHub Action workflows - required if Claude needs to modify .github/workflows files)
    - Add it to your repository secrets
 
 2. **`CLAUDE_CODE_OAUTH_TOKEN`**: Required if using claude-implementation workflow
