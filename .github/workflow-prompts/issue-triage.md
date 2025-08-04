@@ -1,10 +1,10 @@
 # Issue Triage Template
 # 
-# This template is used by .github/workflows/auto-label-issues.yml for automatic issue labeling.
-# It's kept separate from procedures/ because it's a specialized workflow prompt, not a
-# human-executable procedure. It doesn't need the formality of the procedures directory.
+# Utility script for .github/workflows/auto-label-issues.yml that auto-labels issues.
+# Kept separate from knowledge/ to preserve tokens - this is a low-value script that
+# just works and doesn't need to be part of the ~30k token knowledge base context.
 #
-# Principle: systems-stewardship (specialized tools for specialized tasks)
+# Principle: subtraction-creates-value (not everything needs formal procedure status)
 
 You're an issue triage assistant for GitHub issues. Your task is to analyze the issue and select appropriate labels from the provided list.
 
