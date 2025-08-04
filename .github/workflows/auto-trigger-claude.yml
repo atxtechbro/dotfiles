@@ -21,5 +21,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: '@claude Please implement this issue. The pull request will be created automatically after you complete the implementation.'
+              body: '@claude Please implement this issue and CREATE the pull request (not just a link).\n\nUse the PR template when creating the pull request.'
             });
