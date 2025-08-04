@@ -24,6 +24,7 @@ permissions:
   contents: write
   issues: write
   pull-requests: write
+  workflows: write    # Required for modifying workflow files
 
 jobs:
   claude-assistant:
@@ -67,7 +68,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # Use PAT instead of GITHUB_TOKEN to allow workflow modifications
+          # PAT needs 'repo' and 'workflow' scopes
+          token: ${{ secrets.CLAUDE_TRIGGER_PAT }}
 
       - uses: anthropics/claude-code-action@beta
         with:
