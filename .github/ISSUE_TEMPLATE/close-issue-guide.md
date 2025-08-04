@@ -67,7 +67,7 @@ Follow [Git Workflow](../../knowledge/procedures/git-workflow.md) for commit sta
   - First check local repo: `.github/PULL_REQUEST_TEMPLATE.md`
   - If not found, use dotfiles fallback: `~/ppv/pillars/dotfiles/.github/PULL_REQUEST_TEMPLATE.md`
   - Inform which template is being used for transparency
-- Create PR with `mcp__github__create_pull_request` following the discovered template
+- The GitHub Action will automatically create a PR following the discovered template
 - Add "Conduct post-PR mini retro" to your todo list
 
 ### 4. Iterate Based on Feedback
