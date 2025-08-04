@@ -24,7 +24,6 @@ permissions:
   contents: write
   issues: write
   pull-requests: write
-  workflows: write  # Required for modifying workflow files
 
 jobs:
   claude-assistant:
