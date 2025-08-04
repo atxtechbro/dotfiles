@@ -6,7 +6,7 @@ Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 
 ## Implementation Instructions
 
-{{ INJECT:../../.github/workflow-prompts/issue-implementation.md }}
+{{ INJECT:https://raw.githubusercontent.com/atxtechbro/dotfiles/main/.github/workflow-prompts/issue-implementation.md }}
 
 ## Additional Context: Close Issue Procedure
 {{ INJECT:procedures/close-issue-procedure.md }}
