@@ -6,8 +6,8 @@ Enables Ultimate OSE automation where GitHub issues automatically trigger Claude
 
 1. Issue created on GitHub
 2. `.github/workflows/auto-trigger-claude.yml` fires automatically
-3. Claude receives explicit MCP instructions to CREATE PR (not just link)
-4. Claude implements and creates PR using `mcp__github__create_pull_request`
+3. Claude receives instruction to implement the issue
+4. The `anthropics/claude-code-action` automatically creates the PR after Claude completes the implementation
 
 ## Key Difference from /close-issue
 
@@ -16,30 +16,24 @@ Enables Ultimate OSE automation where GitHub issues automatically trigger Claude
 
 ## The Secret Sauce
 
-The explicit instruction that makes it work:
+The `anthropics/claude-code-action@beta` GitHub Action handles PR creation automatically:
 
-- Must say "CREATE the pull request automatically"
-- Must specify "using mcp__github__create_pull_request"
-- Must say "Do NOT just provide a link"
+- Claude focuses on implementation
+- The Action creates branches with `claude/` prefix
+- The Action automatically creates the PR when work is complete
+- No manual PR creation tools needed
 
 ## Implementation Details
 
 ### Workflow Trigger
-The workflow triggers on `issues.opened` events and immediately posts a comment with specific instructions:
+The workflow triggers on `issues.opened` events and posts a simple comment:
 
 ```markdown
-@claude Please implement this issue and CREATE the pull request automatically.
-
-Remember:
-- CREATE the PR automatically using mcp__github__create_pull_request (not gh cli)
-- Do NOT just provide a link - actually create the PR
-- Do NOT approve the PR (only humans approve)
-
-This is OSE automation - the PR must be created automatically.
+@claude Please implement this issue. The pull request will be created automatically after you complete the implementation.
 ```
 
 ### Why It Works
-The key is the explicit MCP tool instruction (`mcp__github__create_pull_request`) which ensures Claude uses the GitHub MCP server instead of trying to generate manual PR links.
+The `anthropics/claude-code-action` has built-in PR creation capability. After Claude pushes changes to a branch, the Action automatically creates a PR without Claude needing to call any PR creation tools. This is simpler and more reliable than manual tool invocation.
 
 ## When to Use
 
