@@ -1,0 +1,100 @@
+name: 'Auto Trigger Claude'
+description: 'Automatically trigger Claude to implement issues across repositories'
+author: 'atxtechbro'
+
+inputs:
+  github-token:
+    description: 'GitHub token with permissions to comment on issues (typically secrets.CLAUDE_TRIGGER_PAT)'
+    required: true
+  allowed-users:
+    description: 'Comma-separated list of GitHub usernames allowed to trigger Claude (e.g., "atxtechbro,trusted-user")'
+    required: false
+    default: 'atxtechbro'
+  pr-template-url:
+    description: 'URL to the PR template Claude should use'
+    required: false
+    default: 'https://github.com/${{ github.repository }}/blob/main/.github/PULL_REQUEST_TEMPLATE.md'
+  custom-message:
+    description: 'Custom message to append to the Claude trigger comment'
+    required: false
+    default: ''
+  issue-number:
+    description: 'Issue number to comment on (defaults to current issue)'
+    required: false
+    default: '${{ github.event.issue.number }}'
+  repository:
+    description: 'Repository in owner/repo format (defaults to current repository)'
+    required: false
+    default: '${{ github.repository }}'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Check user authorization
+      shell: bash
+      run: |
+        # Convert comma-separated list to array
+        IFS=',' read -ra ALLOWED_USERS <<< "${{ inputs.allowed-users }}"
+        
+        # Check if current user is in allowed list
+        USER_ALLOWED=false
+        for user in "${ALLOWED_USERS[@]}"; do
+          # Trim whitespace
+          user=$(echo "$user" | xargs)
+          if [ "$user" == "${{ github.event.issue.user.login }}" ]; then
+            USER_ALLOWED=true
+            break
+          fi
+        done
+        
+        if [ "$USER_ALLOWED" != "true" ]; then
+          echo "❌ User ${{ github.event.issue.user.login }} is not authorized to trigger Claude"
+          echo "Authorized users: ${{ inputs.allowed-users }}"
+          exit 0  # Exit gracefully without error
+        fi
+        
+        echo "✅ User ${{ github.event.issue.user.login }} is authorized to trigger Claude"
+
+    - name: Auto-trigger Claude implementation
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          // Parse repository input
+          const [owner, repo] = '${{ inputs.repository }}'.split('/');
+          
+          // Build the comment body
+          let commentBody = `@claude Please implement this issue and CREATE AN ACTUAL PULL REQUEST on GitHub.
+
+          **IMPORTANT**: You MUST create a real PR on GitHub (not just provide a link to create one). The PR must be created and visible at github.com/${owner}/${repo}/pulls.`;
+          
+          // Add PR template reference if provided
+          const prTemplateUrl = '${{ inputs.pr-template-url }}';
+          if (prTemplateUrl && prTemplateUrl !== '') {
+            commentBody += `\n\nUse the PR template from ${prTemplateUrl} when creating the pull request.`;
+          }
+          
+          // Add custom message if provided
+          const customMessage = `${{ inputs.custom-message }}`;
+          if (customMessage && customMessage !== '') {
+            commentBody += `\n\n${customMessage}`;
+          }
+          
+          // Create the comment
+          try {
+            await github.rest.issues.createComment({
+              owner: owner,
+              repo: repo,
+              issue_number: parseInt('${{ inputs.issue-number }}'),
+              body: commentBody
+            });
+            
+            console.log(`✅ Successfully triggered Claude for issue #${{ inputs.issue-number }} in ${owner}/${repo}`);
+          } catch (error) {
+            console.error(`❌ Failed to trigger Claude: ${error.message}`);
+            throw error;
+          }
+
+branding:
+  icon: 'message-circle'
+  color: 'purple'

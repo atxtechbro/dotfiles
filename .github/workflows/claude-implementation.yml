@@ -27,7 +27,7 @@ permissions:
 
 jobs:
   claude-assistant:
-    if: contains(github.event.comment.body, '@claude')
+    if: contains(github.event.comment.body, '@claude') && github.event.comment.user.login == 'atxtechbro'
     runs-on: ubuntu-latest
 
     steps:
