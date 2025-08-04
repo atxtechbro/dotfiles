@@ -8,3 +8,5 @@ Use MCP git tools, follow conventional commits, and maintain branch hygiene to p
 - Conventional commits: `type[scope]: description`
 - Never work on main - always branch first
 **Details**: See [git-workflow-detailed.md](/docs/procedures/git-workflow-detailed.md)
+
+<!-- Test comment added for issue #1186 to verify /close-issue command functionality -->
