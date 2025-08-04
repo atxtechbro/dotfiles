@@ -2,12 +2,17 @@
 # 
 # This is the SINGLE SOURCE OF TRUTH for issue implementation instructions.
 # Used by both:
-# - Local /close-issue command (via GitHub raw URL injection)
+# - Local /close-issue command (via relative path injection)
 # - GitHub Actions @claude workflow (with knowledge base injection)
 #
-# The {{ KNOWLEDGE_BASE }} placeholder below:
-# - Remains empty for /close-issue (knowledge is preloaded)
-# - Gets filled with aggregated knowledge for GitHub Actions
+# IMPORTANT: How {{ KNOWLEDGE_BASE }} works:
+# - For GitHub Actions: Gets replaced with aggregated knowledge files via string substitution
+# - For local /close-issue: Remains as literal text "{{ KNOWLEDGE_BASE }}" in the prompt
+#   (harmless since knowledge is already preloaded in Claude's context)
+# 
+# This is NOT smart placeholder logic - it's simple:
+# - GitHub Actions: Does string replacement: {{ KNOWLEDGE_BASE }} → actual content
+# - Local command: Does NO replacement: {{ KNOWLEDGE_BASE }} → stays as literal text
 #
 # Principle: systems-stewardship (single source of truth)
 
@@ -16,6 +21,7 @@
 You are implementing a GitHub issue with full access to the codebase knowledge, principles, and procedures.
 
 {{ KNOWLEDGE_BASE }}
+<!-- Note: If you see "{{ KNOWLEDGE_BASE }}" above as literal text, you're running locally and knowledge is already preloaded in your context -->
 
 ## Issue Details
 
