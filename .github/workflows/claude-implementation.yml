@@ -101,32 +101,48 @@ jobs:
             ISSUE_TITLE="${{ github.event.issue.title }}"
             ISSUE_BODY="${{ github.event.issue.body }}"
             
-            # Write knowledge to temp file (already safely in GITHUB_OUTPUT)
+            # Write all replacement values to temp files to avoid bash expansion issues
             cat <<'KNOWLEDGE_EOF' > /tmp/knowledge.txt
           ${{ steps.knowledge.outputs.content }}
           KNOWLEDGE_EOF
             
+            echo "$ISSUE_NUMBER" > /tmp/issue_number.txt
+            echo "$ISSUE_TITLE" > /tmp/issue_title.txt
+            echo "$ISSUE_BODY" > /tmp/issue_body.txt
+            echo "${{ github.repository }}" > /tmp/repo.txt
+            
             # Load the template
             TEMPLATE_FILE="knowledge/procedures/close-issue-procedure.md"
             
-            # Use awk to safely replace the KNOWLEDGE_BASE placeholder with file content
+            # Use awk to safely replace ALL placeholders in a single pass
             awk '
               /\{\{ KNOWLEDGE_BASE \}\}/ {
-                while ((getline line < "/tmp/knowledge.txt") > 0) {
-                  print line
-                }
+                while ((getline < "/tmp/knowledge.txt") > 0) print
                 close("/tmp/knowledge.txt")
                 next
               }
-              {print}
-            ' "$TEMPLATE_FILE" > /tmp/prompt_with_knowledge.md
-            
-            # Now do simple replacements on the result
-            PROMPT=$(cat /tmp/prompt_with_knowledge.md)
-            PROMPT="${PROMPT//\{\{ ISSUE_NUMBER \}\}/$ISSUE_NUMBER}"
-            PROMPT="${PROMPT//\{\{ ISSUE_TITLE \}\}/$ISSUE_TITLE}"
-            PROMPT="${PROMPT//\{\{ ISSUE_BODY \}\}/$ISSUE_BODY}"
-            PROMPT="${PROMPT//\{\{ REPO \}\}/${{ github.repository }}}"
+              {
+                # Read replacement values only once
+                if (!values_read) {
+                  getline issue_num < "/tmp/issue_number.txt"
+                  close("/tmp/issue_number.txt")
+                  getline issue_title < "/tmp/issue_title.txt"
+                  close("/tmp/issue_title.txt")
+                  getline issue_body < "/tmp/issue_body.txt"
+                  close("/tmp/issue_body.txt")
+                  getline repo < "/tmp/repo.txt"
+                  close("/tmp/repo.txt")
+                  values_read = 1
+                }
+                
+                # Replace all placeholders in the current line
+                gsub(/\{\{ ISSUE_NUMBER \}\}/, issue_num)
+                gsub(/\{\{ ISSUE_TITLE \}\}/, issue_title)
+                gsub(/\{\{ ISSUE_BODY \}\}/, issue_body)
+                gsub(/\{\{ REPO \}\}/, repo)
+                print
+              }
+            ' "$TEMPLATE_FILE" > /tmp/final_prompt.md
           else
             echo "Preparing prompt for PR review..."
             # For PR reviews, write knowledge to temp file then concatenate
@@ -143,14 +159,12 @@ jobs:
               echo "The user has requested: ${{ github.event.comment.body }}"
               echo ""
               echo "Please review and respond to this pull request comment with the full context of the codebase principles and procedures available above."
-            } > /tmp/pr_prompt.md
-            
-            PROMPT=$(cat /tmp/pr_prompt.md)
+            } > /tmp/final_prompt.md
           fi
           
-          # Output the prompt
+          # Output the prompt directly from file to avoid bash variable limits
           echo "prompt<<EOF" >> $GITHUB_OUTPUT
-          echo "$PROMPT" >> $GITHUB_OUTPUT
+          cat /tmp/final_prompt.md >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - uses: anthropics/claude-code-base-action@beta
