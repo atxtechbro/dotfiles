@@ -32,6 +32,7 @@ This is THE workflow. Everything else supports this core process.
 - `mcp-tool-logging.md` - MCP server tool-level logging
 - `mcp-protocol-smoke-test.md` - Testing MCP protocol directly
 - `mcp-prompts.md` - Adding prompts to MCP servers
+- `github-workflows-permission-workaround.md` - Handle Claude's workflow file limitations
 
 ### Tips & Setup
 - `claude-code-tips.md` - Tips and shortcuts for Claude Code
