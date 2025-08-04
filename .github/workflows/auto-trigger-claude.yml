@@ -1,0 +1,34 @@
+name: Auto-Trigger Claude
+description: Automatically trigger Claude to implement new issues (Ultimate OSE)
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  auto-trigger-claude:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    permissions:
+      issues: write
+
+    steps:
+      - name: Auto-trigger Claude implementation
+        # Skip if: no-auto-implement label, question label, or title contains "?"
+        if: |
+          !contains(github.event.issue.labels.*.name, 'no-auto-implement') &&
+          !contains(github.event.issue.labels.*.name, 'question') &&
+          !contains(github.event.issue.title, '?')
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // Add comment to trigger Claude implementation workflow
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: '@claude Please implement this issue and create a PR.\n\n' +
+                    '_Auto-triggered by OSE workflow._'
+            });
+            
+            console.log('🚀 Successfully triggered Claude implementation for issue #' + context.issue.number);
