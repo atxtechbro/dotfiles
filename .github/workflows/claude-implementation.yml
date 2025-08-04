@@ -101,8 +101,8 @@ jobs:
             ISSUE_TITLE="${{ github.event.issue.title }}"
             ISSUE_BODY="${{ github.event.issue.body }}"
             
-            # Load the template
-            TEMPLATE=$(cat .github/workflow-prompts/issue-implementation.md)
+            # Load the procedure (which IS the implementation)
+            TEMPLATE=$(cat knowledge/procedures/close-issue-procedure.md)
             
             # Replace placeholders
             PROMPT="${TEMPLATE//\{\{ KNOWLEDGE_BASE \}\}/${{ steps.knowledge.outputs.content }}}"
