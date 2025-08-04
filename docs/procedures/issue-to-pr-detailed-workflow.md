@@ -5,7 +5,7 @@ The complete mechanical workflow from GitHub issue to merged pull request.
 ## The Complete Flow
 
 ```
-GitHub Issue → Planning Mode → Implementation → Pull Request → Review → Merge
+GitHub Issue → Auto-Trigger Claude → Planning Mode → Implementation → Pull Request → Review → Merge
 ```
 
 ## Step-by-Step Mechanics
@@ -18,6 +18,18 @@ Every task starts as a GitHub issue:
 - Labels automatically assigned by Claude Code GitHub Action based on principles
 
 **Anti-pattern**: Starting work without an issue leads to scope creep and unclear PRs.
+
+### 1.5 Auto-Trigger Dispatches Claude (NEW!)
+
+When an issue is created:
+- `.github/workflows/auto-trigger-claude.yml` fires immediately
+- Adds comment "@claude Please implement this issue and create a PR."
+- Comment appears from user (via PAT), not github-actions[bot]
+- This triggers `claude-implementation.yml` workflow
+- Claude responds with 🚀 reaction and begins implementation
+- **Zero manual steps required!**
+
+**Note**: This is the Ultimate OSE achievement - issues automatically become PRs.
 
 ### 2. Planning Mode Review
 

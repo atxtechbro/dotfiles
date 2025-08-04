@@ -6,6 +6,19 @@ Intelligent issue creation that auto-detects type, suggests templates, and links
 
 When users request "create a GitHub issue for..." or need to document a new task, bug, or enhancement.
 
+## Auto-Trigger Behavior (NEW!)
+
+**IMPORTANT**: Creating an issue now automatically triggers Claude to implement it!
+
+When you create an issue:
+1. Auto-trigger workflow comments "@claude" within seconds
+2. Claude automatically starts implementation
+3. No manual tagging required
+
+To prevent auto-triggering (future enhancement):
+- Add `no-auto-implement` label (not yet implemented)
+- Create as draft issue (not yet implemented)
+
 ## Decision Tree
 
 1. **Analyze the request** to determine issue type:
