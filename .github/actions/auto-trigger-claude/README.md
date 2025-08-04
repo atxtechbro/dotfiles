@@ -1,6 +1,52 @@
 # Auto Trigger Claude Action
 
-A reusable composite GitHub Action that automatically triggers Claude to implement issues when they're created. This action is designed to be used across multiple repositories without duplication.
+A reusable composite GitHub Action that automatically triggers Claude to implement issues when they're created. This action enables **Ultimate OSE (Outside and Slightly Elevated)** automation where GitHub issues automatically trigger Claude to implement and create PRs with zero manual intervention.
+
+## Overview
+
+This action is the cornerstone of autonomous issue resolution - transforming GitHub issues into implemented pull requests without human intervention. It embodies the principle of managing AI agents at scale rather than manual coding.
+
+### Business Value
+- **Zero-touch automation**: Issues become PRs automatically
+- **Ultimate OSE**: Operate at the management level, not implementation level
+- **Compound improvements**: Each automated issue adds to organizational knowledge
+- **Audit trail**: Complete visibility of automated work
+
+## When to Use This vs Alternatives
+
+### Use Auto-Trigger Workflow When:
+- Issue requires implementation work
+- You want zero manual intervention 
+- Following Ultimate OSE principles (manage agents, not code)
+- Need audit trail of automated work
+- Issues are well-defined and scoped
+- Working across multiple repositories
+
+### Use `/close-issue` Command When:
+- Working locally with Claude Code CLI
+- Need interactive discussion during implementation
+- Prefer manual control over PR creation
+- Issue is complex and needs human oversight
+- Want to provide real-time guidance to Claude
+- Testing or debugging implementations
+
+## How It Works
+
+### The Automation Flow
+1. **Issue created** on GitHub (by authorized user)
+2. **Workflow triggers** via `.github/workflows/auto-trigger-claude.yml`
+3. **Security check** verifies user is authorized
+4. **Claude receives instruction** to implement the issue
+5. **Implementation happens** via `anthropics/claude-code-action@beta`
+6. **PR created automatically** with `claude/` branch prefix
+
+### The Secret Sauce
+The `anthropics/claude-code-action@beta` GitHub Action has built-in PR creation capability:
+- Claude focuses purely on implementation
+- The Action handles all git operations
+- Branches are created with `claude/` prefix automatically
+- PR is created when implementation is complete
+- No manual PR creation tools needed - simpler and more reliable
 
 ## Features
 
@@ -8,6 +54,7 @@ A reusable composite GitHub Action that automatically triggers Claude to impleme
 - 🔧 **Configurable**: Customize PR templates, messages, and allowed users per repository
 - 🔒 **Secure**: Requires explicit token passing, no hardcoded secrets
 - 📦 **Reusable**: Use across all your repositories without copying workflow files
+- 🚀 **Automated**: Zero manual intervention from issue to PR
 
 ## Usage
 
@@ -50,7 +97,9 @@ jobs:
       - Run tests with `npm test` before creating PR
 ```
 
-## Inputs
+## Configuration Reference
+
+### Inputs
 
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
@@ -61,7 +110,7 @@ jobs:
 | `issue-number` | Issue number to comment on | No | Current issue |
 | `repository` | Repository in owner/repo format | No | Current repository |
 
-## Required Secrets
+### Required Secrets
 
 Each repository using this action needs to configure:
 
@@ -76,11 +125,24 @@ Each repository using this action needs to configure:
    - Obtained from Claude Code setup
    - Add to repository secrets for Claude to create PRs
 
-## Security
+## Implementation Details
 
-- **User Authorization**: Only users listed in `allowed-users` can trigger Claude
-- **No Hardcoded Secrets**: All tokens must be explicitly passed from the calling workflow
-- **Graceful Failures**: Unauthorized attempts exit gracefully without errors
+### Related Workflows
+- **Trigger**: `.github/workflows/auto-trigger-claude.yml` - Initiates the process
+- **Implementation**: `.github/workflows/claude-implementation.yml` - Claude's execution environment
+- **Local alternative**: `/close-issue` command in Claude Code CLI
+
+### Principles Applied
+- **systems-stewardship**: Single source of truth for Claude automation
+- **ose (Outside and Slightly Elevated)**: Manage agents at scale, not individual implementations
+- **snowball-method**: Each automated issue adds to compound knowledge
+- **subtraction-creates-value**: Removes manual PR creation complexity
+
+### Security Model
+- User authorization happens at workflow level
+- Tokens are never hardcoded, always passed as secrets
+- Unauthorized users fail gracefully without errors
+- Complete audit trail in GitHub Actions logs
 
 ## Examples
 
@@ -137,12 +199,20 @@ uses: atxtechbro/dotfiles/.github/actions/auto-trigger-claude@main
 1. Check that the user creating the issue is in `allowed-users`
 2. Verify `CLAUDE_TRIGGER_PAT` secret is set in repository settings
 3. Check workflow runs for authorization messages
+4. Ensure the workflow file exists in `.github/workflows/`
 
 ### Permission errors
 
 Ensure your PAT has the required scopes:
 - `repo` (full control of private repositories)
+- `workflow` (for modifying GitHub Actions workflows)
 - Or at minimum: `public_repo` and `issues` for public repositories
+
+### PR not being created
+
+- Check that `CLAUDE_CODE_OAUTH_TOKEN` is set in repository secrets
+- Verify Claude implementation completed successfully in Actions logs
+- Ensure the issue description is clear and implementable
 
 ## License
 
