@@ -21,5 +21,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: '@claude Please implement this issue and CREATE AN ACTUAL PULL REQUEST on GitHub.\n\n**IMPORTANT**: You MUST create a real PR on GitHub (not just provide a link to create one). The PR must be created and visible at github.com/atxtechbro/dotfiles/pulls.\n\nUse the PR template from https://github.com/atxtechbro/dotfiles/blob/main/.github/PULL_REQUEST_TEMPLATE.md when creating the pull request.'
+              body: '@claude Please implement this issue and CREATE AN ACTUAL PULL REQUEST on GitHub.\n\n**IMPORTANT**: You MUST create a real PR on GitHub (not just provide a link to create one). The PR must be created and visible at github.com/atxtechbro/dotfiles/pulls.\n\n**NOTE**: You now have access to the full knowledge base including all principles (tracer-bullets, versioning-mindset, OSE, etc.) and procedures (git-workflow, worktree-workflow, etc.). Use this context to create high-quality PRs that follow established patterns.\n\nUse the PR template from https://github.com/atxtechbro/dotfiles/blob/main/.github/PULL_REQUEST_TEMPLATE.md when creating the pull request.'
             });

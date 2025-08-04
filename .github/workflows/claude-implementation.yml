@@ -2,16 +2,20 @@
 # THE SINGLE SOURCE OF TRUTH for @claude mentions in issues and PRs
 # 
 # This is the ONLY workflow that responds to @claude mentions.
-# Uses the official anthropics/claude-code-action@beta to:
-# - Implement issues when @claude is mentioned
+# Uses the official anthropics/claude-code-base-action@beta to:
+# - Implement issues when @claude is mentioned WITH FULL KNOWLEDGE BASE CONTEXT
 # - Review PRs when @claude is mentioned
 # - Create branches and push changes with proper permissions
 #
 # Note: Both claude[bot] and github-actions[bot] comments come from this workflow.
 # The bot identity depends on the context and step being executed.
 #
+# KNOWLEDGE INJECTION: This workflow now aggregates and injects the full knowledge base
+# into Claude's context, providing the same rich context as local /close-issue commands.
+#
 # Principle: subtraction-creates-value (removed duplicate workflow)
 # Principle: systems-stewardship (single clear workflow to maintain)
+# Principle: snowball-method (knowledge persistence and compound improvement)
 
 name: Claude Implementation
 on:
@@ -69,8 +73,64 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: anthropics/claude-code-action@beta
+      - name: Aggregate knowledge base
+        id: knowledge
+        run: |
+          echo "Aggregating knowledge base for Claude..."
+          KNOWLEDGE=$(.github/scripts/aggregate-knowledge.sh)
+          
+          # Use EOF delimiter to handle multi-line content
+          echo "content<<EOF" >> $GITHUB_OUTPUT
+          echo "$KNOWLEDGE" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          # Log size for debugging
+          echo "Knowledge base size: $(echo "$KNOWLEDGE" | wc -c) characters"
+
+      - name: Prepare implementation prompt
+        id: prepare-prompt
+        run: |
+          # Determine if this is an issue or PR
+          IS_ISSUE="${{ github.event.issue && !github.event.issue.pull_request }}"
+          
+          if [ "$IS_ISSUE" == "true" ]; then
+            echo "Preparing prompt for issue implementation..."
+            
+            # Get issue details
+            ISSUE_NUMBER="${{ github.event.issue.number }}"
+            ISSUE_TITLE="${{ github.event.issue.title }}"
+            ISSUE_BODY="${{ github.event.issue.body }}"
+            
+            # Load the procedure (which IS the implementation)
+            TEMPLATE=$(cat knowledge/procedures/close-issue-procedure.md)
+            
+            # Replace placeholders
+            PROMPT="${TEMPLATE//\{\{ KNOWLEDGE_BASE \}\}/${{ steps.knowledge.outputs.content }}}"
+            PROMPT="${PROMPT//\{\{ ISSUE_NUMBER \}\}/$ISSUE_NUMBER}"
+            PROMPT="${PROMPT//\{\{ ISSUE_TITLE \}\}/$ISSUE_TITLE}"
+            PROMPT="${PROMPT//\{\{ ISSUE_BODY \}\}/$ISSUE_BODY}"
+            PROMPT="${PROMPT//\{\{ REPO \}\}/${{ github.repository }}}"
+          else
+            echo "Preparing prompt for PR review..."
+            # For PR reviews, use the comment directly with knowledge context
+            PROMPT="${{ steps.knowledge.outputs.content }}
+            
+            ## PR Review Request
+            
+            The user has requested: ${{ github.event.comment.body }}
+            
+            Please review and respond to this pull request comment with the full context of the codebase principles and procedures available above."
+          fi
+          
+          # Output the prompt
+          echo "prompt<<EOF" >> $GITHUB_OUTPUT
+          echo "$PROMPT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - uses: anthropics/claude-code-base-action@beta
         with:
+          prompt: ${{ steps.prepare-prompt.outputs.prompt }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           allowed_tools: "Bash(*),LS,Read,Write,Edit,MultiEdit,Glob,Grep,Task,TodoWrite,WebFetch(domain:*),WebSearch,mcp__git,mcp__github"
+          timeout_minutes: "30"
