@@ -6,6 +6,9 @@ Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 
 ## Implementation Instructions
 
+# Using GitHub raw URL for the universal template ensures consistency between
+# local /close-issue and GitHub Actions @claude workflows. Both use the exact
+# same implementation instructions from main branch.
 {{ INJECT:https://raw.githubusercontent.com/atxtechbro/dotfiles/main/.github/workflow-prompts/issue-implementation.md }}
 
 ## Additional Context: Close Issue Procedure

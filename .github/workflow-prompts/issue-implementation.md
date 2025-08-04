@@ -1,3 +1,16 @@
+# Universal Issue Implementation Template
+# 
+# This is the SINGLE SOURCE OF TRUTH for issue implementation instructions.
+# Used by both:
+# - Local /close-issue command (via GitHub raw URL injection)
+# - GitHub Actions @claude workflow (with knowledge base injection)
+#
+# The {{ KNOWLEDGE_BASE }} placeholder below:
+# - Remains empty for /close-issue (knowledge is preloaded)
+# - Gets filled with aggregated knowledge for GitHub Actions
+#
+# Principle: systems-stewardship (single source of truth)
+
 # Implement GitHub Issue #{{ ISSUE_NUMBER }}
 
 You are implementing a GitHub issue with full access to the codebase knowledge, principles, and procedures.
