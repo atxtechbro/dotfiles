@@ -97,6 +97,38 @@ jobs:
       - Run tests with `npm test` before creating PR
 ```
 
+## Security Model
+
+This action is designed with **token isolation** as a core principle:
+
+- **Public action, private tokens**: The action code is public, but each repository uses its own isolated PAT
+- **No cross-repo access required**: Your PAT only needs access to the repository where it's used
+- **Complete isolation**: If one repo's token is compromised, other repos remain secure
+- **Zero trust**: Each repository manages its own secrets independently
+
+### Why This Works
+
+Since dotfiles is a public repository:
+- Public GitHub Actions are freely referenceable (like `actions/checkout@v4`)
+- No authentication needed to use the action/workflow
+- Secrets are passed at runtime from the calling repository
+- The workflow executes in the calling repo's security context
+
+### Token Scoping Best Practice
+
+**Create a fine-grained PAT for EACH repository:**
+1. Go to GitHub Settings → Developer settings → Personal access tokens → Fine-grained tokens
+2. Select **only** the specific repository where you'll use this action
+3. Grant repository permissions:
+   - Contents: Write
+   - Issues: Write
+   - Pull requests: Write
+   - Actions: Write (if modifying workflows)
+   - Metadata: Read
+4. Name it clearly: `CLAUDE_TRIGGER_PAT_[REPONAME]`
+
+This ensures complete isolation - a compromised token in one repo cannot affect others.
+
 ## Configuration Reference
 
 ### Inputs
@@ -114,12 +146,11 @@ jobs:
 
 Each repository using this action needs to configure:
 
-1. **`CLAUDE_TRIGGER_PAT`**: A GitHub Personal Access Token with repository and workflow permissions
-   - Go to GitHub Settings → Developer settings → Personal access tokens
-   - Create a token with the following scopes:
-     - `repo` (full control of private repositories)
-     - `workflow` (update GitHub Action workflows - required if Claude needs to modify .github/workflows files)
-   - Add it to your repository secrets
+1. **`CLAUDE_TRIGGER_PAT`**: A GitHub Personal Access Token scoped to THIS repository only
+   - **Recommended**: Use a fine-grained PAT with access only to the specific repository
+   - **Alternative**: Use a classic PAT with `repo` and `workflow` scopes (less secure, broader access)
+   - See "Security Model" section above for detailed setup instructions
+   - Add it to your repository secrets (Settings → Secrets and variables → Actions)
 
 2. **`CLAUDE_CODE_OAUTH_TOKEN`**: Required if using claude-implementation workflow
    - Obtained from Claude Code setup
