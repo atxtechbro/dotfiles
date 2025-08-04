@@ -12,14 +12,12 @@ jobs:
       issues: write
 
     steps:
+      - name: Checkout repository (for composite action)
+        uses: actions/checkout@v4
+        
       - name: Auto-trigger Claude implementation
-        uses: actions/github-script@v7
+        uses: ./.github/actions/auto-trigger-claude
         with:
           github-token: ${{ secrets.CLAUDE_TRIGGER_PAT }}
-          script: |
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: '@claude Please implement this issue and CREATE AN ACTUAL PULL REQUEST on GitHub.\n\n**IMPORTANT**: You MUST create a real PR on GitHub (not just provide a link to create one). The PR must be created and visible at github.com/atxtechbro/dotfiles/pulls.\n\nUse the PR template from https://github.com/atxtechbro/dotfiles/blob/main/.github/PULL_REQUEST_TEMPLATE.md when creating the pull request.'
-            });
+          allowed-users: 'atxtechbro'
+          pr-template-url: 'https://github.com/atxtechbro/dotfiles/blob/main/.github/PULL_REQUEST_TEMPLATE.md'
