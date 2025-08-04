@@ -101,25 +101,51 @@ jobs:
             ISSUE_TITLE="${{ github.event.issue.title }}"
             ISSUE_BODY="${{ github.event.issue.body }}"
             
-            # Load the procedure (which IS the implementation)
-            TEMPLATE=$(cat knowledge/procedures/close-issue-procedure.md)
+            # Write knowledge to temp file (already safely in GITHUB_OUTPUT)
+            cat <<'KNOWLEDGE_EOF' > /tmp/knowledge.txt
+          ${{ steps.knowledge.outputs.content }}
+          KNOWLEDGE_EOF
             
-            # Replace placeholders
-            PROMPT="${TEMPLATE//\{\{ KNOWLEDGE_BASE \}\}/${{ steps.knowledge.outputs.content }}}"
+            # Load the template
+            TEMPLATE_FILE="knowledge/procedures/close-issue-procedure.md"
+            
+            # Use awk to safely replace the KNOWLEDGE_BASE placeholder with file content
+            awk '
+              /\{\{ KNOWLEDGE_BASE \}\}/ {
+                while ((getline line < "/tmp/knowledge.txt") > 0) {
+                  print line
+                }
+                close("/tmp/knowledge.txt")
+                next
+              }
+              {print}
+            ' "$TEMPLATE_FILE" > /tmp/prompt_with_knowledge.md
+            
+            # Now do simple replacements on the result
+            PROMPT=$(cat /tmp/prompt_with_knowledge.md)
             PROMPT="${PROMPT//\{\{ ISSUE_NUMBER \}\}/$ISSUE_NUMBER}"
             PROMPT="${PROMPT//\{\{ ISSUE_TITLE \}\}/$ISSUE_TITLE}"
             PROMPT="${PROMPT//\{\{ ISSUE_BODY \}\}/$ISSUE_BODY}"
             PROMPT="${PROMPT//\{\{ REPO \}\}/${{ github.repository }}}"
           else
             echo "Preparing prompt for PR review..."
-            # For PR reviews, use the comment directly with knowledge context
-            PROMPT="${{ steps.knowledge.outputs.content }}
+            # For PR reviews, write knowledge to temp file then concatenate
+            cat <<'KNOWLEDGE_EOF' > /tmp/knowledge.txt
+          ${{ steps.knowledge.outputs.content }}
+          KNOWLEDGE_EOF
             
-            ## PR Review Request
+            # Build the PR review prompt
+            {
+              cat /tmp/knowledge.txt
+              echo ""
+              echo "## PR Review Request"
+              echo ""
+              echo "The user has requested: ${{ github.event.comment.body }}"
+              echo ""
+              echo "Please review and respond to this pull request comment with the full context of the codebase principles and procedures available above."
+            } > /tmp/pr_prompt.md
             
-            The user has requested: ${{ github.event.comment.body }}
-            
-            Please review and respond to this pull request comment with the full context of the codebase principles and procedures available above."
+            PROMPT=$(cat /tmp/pr_prompt.md)
           fi
           
           # Output the prompt
