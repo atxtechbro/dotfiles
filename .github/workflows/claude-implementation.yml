@@ -98,33 +98,85 @@ jobs:
             
             # Get issue details
             ISSUE_NUMBER="${{ github.event.issue.number }}"
-            ISSUE_TITLE="${{ github.event.issue.title }}"
-            ISSUE_BODY="${{ github.event.issue.body }}"
             
-            # Load the procedure (which IS the implementation)
-            TEMPLATE=$(cat knowledge/procedures/close-issue-procedure.md)
+            # Write all user inputs to temp files using heredoc to prevent command injection
+            cat <<'ISSUE_TITLE_EOF' > /tmp/issue_title.txt
+            ${{ github.event.issue.title }}
+            ISSUE_TITLE_EOF
             
-            # Replace placeholders
-            PROMPT="${TEMPLATE//\{\{ KNOWLEDGE_BASE \}\}/${{ steps.knowledge.outputs.content }}}"
-            PROMPT="${PROMPT//\{\{ ISSUE_NUMBER \}\}/$ISSUE_NUMBER}"
-            PROMPT="${PROMPT//\{\{ ISSUE_TITLE \}\}/$ISSUE_TITLE}"
-            PROMPT="${PROMPT//\{\{ ISSUE_BODY \}\}/$ISSUE_BODY}"
-            PROMPT="${PROMPT//\{\{ REPO \}\}/${{ github.repository }}}"
+            cat <<'ISSUE_BODY_EOF' > /tmp/issue_body.txt
+            ${{ github.event.issue.body }}
+            ISSUE_BODY_EOF
+            
+            # Write knowledge content to temp file
+            cat <<'KNOWLEDGE_EOF' > /tmp/knowledge.txt
+            ${{ steps.knowledge.outputs.content }}
+            KNOWLEDGE_EOF
+            
+            # Write other values
+            echo "$ISSUE_NUMBER" > /tmp/issue_number.txt
+            echo "${{ github.repository }}" > /tmp/repo.txt
+            
+            # Load the template
+            TEMPLATE_FILE="knowledge/procedures/close-issue-procedure.md"
+            
+            # Use awk to safely replace ALL placeholders in a single pass
+            awk '
+              /\{\{ KNOWLEDGE_BASE \}\}/ {
+                while ((getline < "/tmp/knowledge.txt") > 0) print
+                close("/tmp/knowledge.txt")
+                next
+              }
+              {
+                # Read replacement values only once
+                if (values_read == 0) {
+                  getline issue_num < "/tmp/issue_number.txt"
+                  close("/tmp/issue_number.txt")
+                  getline issue_title < "/tmp/issue_title.txt"
+                  close("/tmp/issue_title.txt")
+                  getline issue_body < "/tmp/issue_body.txt"
+                  close("/tmp/issue_body.txt")
+                  getline repo < "/tmp/repo.txt"
+                  close("/tmp/repo.txt")
+                  values_read = 1
+                }
+                
+                # Replace all placeholders in the current line
+                gsub(/\{\{ ISSUE_NUMBER \}\}/, issue_num)
+                gsub(/\{\{ ISSUE_TITLE \}\}/, issue_title)
+                gsub(/\{\{ ISSUE_BODY \}\}/, issue_body)
+                gsub(/\{\{ REPO \}\}/, repo)
+                print
+              }
+            ' "$TEMPLATE_FILE" > /tmp/final_prompt.md
           else
             echo "Preparing prompt for PR review..."
-            # For PR reviews, use the comment directly with knowledge context
-            PROMPT="${{ steps.knowledge.outputs.content }}
+            # For PR reviews, write knowledge and comment to temp files
+            cat <<'KNOWLEDGE_EOF' > /tmp/knowledge.txt
+            ${{ steps.knowledge.outputs.content }}
+            KNOWLEDGE_EOF
             
-            ## PR Review Request
+            # Write PR comment body using heredoc to prevent command injection
+            cat <<'COMMENT_EOF' > /tmp/comment_body.txt
+            ${{ github.event.comment.body }}
+            COMMENT_EOF
             
-            The user has requested: ${{ github.event.comment.body }}
-            
-            Please review and respond to this pull request comment with the full context of the codebase principles and procedures available above."
+            # Build the PR review prompt
+            {
+              cat /tmp/knowledge.txt
+              echo ""
+              echo "## PR Review Request"
+              echo ""
+              echo "The user has requested:"
+              cat /tmp/comment_body.txt
+              echo ""
+              echo "Please review and respond to this pull request comment with the full context of the codebase principles and procedures available above."
+            } > /tmp/final_prompt.md
           fi
           
-          # Output the prompt
+          # Output the prompt directly from file to avoid bash variable limits
           echo "prompt<<EOF" >> $GITHUB_OUTPUT
-          echo "$PROMPT" >> $GITHUB_OUTPUT
+          cat /tmp/final_prompt.md >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - uses: anthropics/claude-code-base-action@beta
