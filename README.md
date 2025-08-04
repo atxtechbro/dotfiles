@@ -1,5 +1,7 @@
 # Dotfiles
 
+<!-- Test timestamp: 2025-08-04T00:42:31Z -->
+
 A collection of configuration files for a consistent development environment across different machines.
 
 ## Dotfiles Philosophy
