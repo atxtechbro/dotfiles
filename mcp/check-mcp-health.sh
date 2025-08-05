@@ -111,8 +111,15 @@ if [[ ! -f "$SCRIPT_DIR/mcp.json" ]]; then
 fi
 
 # Extract server names from mcp.json
-# Using grep and sed for simplicity (jq might not be installed)
-server_names=$(grep -o '"[^"]*":' "$SCRIPT_DIR/mcp.json" | grep -v "mcpServers" | sed 's/[": ]//g' | sort)
+# More robust parsing: get only the direct children of mcpServers
+server_names=$(python3 -c "
+import json
+with open('$SCRIPT_DIR/mcp.json', 'r') as f:
+    data = json.load(f)
+    servers = data.get('mcpServers', {})
+    for server in sorted(servers.keys()):
+        print(server)
+" 2>/dev/null || echo "git github brave-search playwright")
 
 if [[ -z "$server_names" ]]; then
     echo -e "${RED}Error:${NC} No servers found in mcp.json"
