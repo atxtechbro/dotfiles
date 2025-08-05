@@ -1,24 +1,5 @@
 {
   "mcpServers": {
-    "git": {
-      "command": "git-mcp-wrapper.sh",
-      "args": [],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
-    "github": {
-      "command": "github-mcp-wrapper.sh",
-      "args": [],
-      "env": {}
-    },
-    "brave-search": {
-      "command": "brave-search-mcp-wrapper.sh",
-      "args": [],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
     "playwright": {
       "command": "npx",
       "args": [

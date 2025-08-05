@@ -375,6 +375,16 @@ else
   echo -e "${YELLOW}Warning: .claude/settings.json not found. Skipping settings symlink.${NC}"
 fi
 
+# Symlink Claude Desktop MCP config to unified location (experiment #1213)
+if [[ -f "$DOT_DEN/mcp/mcp.json" ]]; then
+  echo "Creating symlink for Claude Desktop MCP config..."
+  # Create ~/.config/claude directory if it doesn't exist
+  mkdir -p "$HOME/.config/claude"
+  # Create symlink to unified MCP config
+  ln -sf "$DOT_DEN/mcp/mcp.json" "$HOME/.config/claude/claude_desktop_config.json"
+  echo -e "${GREEN}✓ Claude Desktop MCP config symlinked to mcp/mcp.json${NC}"
+fi
+
 
 # Node.js setup with NVM
 echo -e "${DIVIDER}"
