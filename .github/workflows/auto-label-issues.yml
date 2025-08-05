@@ -55,6 +55,6 @@ jobs:
           allowed_tools: "Bash(gh:*)"
           timeout_minutes: "5"
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          model: claude-sonnet-4-20250514
+          model: claude-opus-4-1-20250805
           claude_env: |
             GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
