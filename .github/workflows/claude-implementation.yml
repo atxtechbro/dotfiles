@@ -73,32 +73,10 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup MCP servers with dependencies
+      - name: Setup MCP servers
         run: |
-          echo "Installing dependencies for MCP servers..."
-          
-          # Install Go for GitHub MCP server
-          sudo apt-get update
-          sudo apt-get install -y golang-go
-          
-          # Install uv for Git MCP server  
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-          source $HOME/.cargo/env
-          
-          echo "Building MCP servers..."
-          
-          # Build GitHub MCP server
-          cd mcp/servers/github-mcp-server/cmd/github-mcp-server
-          go build -o ../../../github
-          chmod +x ../../../github
-          
-          # Build Git MCP server
-          cd ../../../../git-mcp-server
-          uv venv .venv
-          source .venv/bin/activate
-          uv pip install -e .
-          
-          echo "MCP servers built successfully"
+          echo "Building MCP servers for Claude..."
+          ./mcp/setup-all-mcp-servers.sh
 
       - name: Aggregate knowledge base
         id: knowledge
