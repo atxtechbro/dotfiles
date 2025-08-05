@@ -12,6 +12,7 @@ from typing import Any, Optional
 
 MCP_TOOL_LOG = os.path.expanduser("~/mcp-tool-calls.log")
 MCP_ERROR_LOG = os.path.expanduser("~/mcp-errors.log")
+GIT_CONFESSIONS_DIR = Path.home() / "logs" / "git_confessions"
 
 def log_tool_call(
     server_name: str,
@@ -89,3 +90,51 @@ def log_tool_error(
 ) -> None:
     """Log a failed tool call"""
     log_tool_call(server_name, tool_name, "ERROR", error_details, repo_path, parameters)
+
+def log_git_confession(
+    command: str,
+    exit_code: int,
+    output: str,
+    context: str,
+    repo_path: Optional[Path] = None
+) -> None:
+    """
+    Log git command failures to git confessions log in JSONL format.
+    
+    Args:
+        command: The git command that failed
+        exit_code: The non-zero exit code returned
+        output: The command output/error message
+        context: Context about what operation was being performed
+        repo_path: Path to the git repository
+    """
+    # Only log non-zero exit codes (failures)
+    if exit_code == 0:
+        return
+    
+    # Ensure the git confessions directory exists
+    try:
+        GIT_CONFESSIONS_DIR.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        return  # Fail silently to not break git operations
+    
+    # Create log entry
+    timestamp = datetime.now()
+    log_entry = {
+        "timestamp": timestamp.isoformat(),
+        "exit_code": exit_code,
+        "command": command,
+        "context": context,
+        "output": output,
+        "repo_path": str(repo_path) if repo_path else None
+    }
+    
+    # Get log file path (one file per day)
+    log_file = GIT_CONFESSIONS_DIR / f"{timestamp.strftime('%Y-%m-%d')}.jsonl"
+    
+    # Write to JSONL file
+    try:
+        with open(log_file, "a", encoding="utf-8") as f:
+            f.write(json.dumps(log_entry) + "\n")
+    except (IOError, OSError):
+        pass  # Fail silently to not break git operations

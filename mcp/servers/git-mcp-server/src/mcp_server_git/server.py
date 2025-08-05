@@ -23,7 +23,17 @@ from mcp.types import (
     GetPromptResult,
 )
 
-from .logging_utils import log_tool_error, log_tool_success
+from .logging_utils import log_tool_error, log_tool_success, log_git_confession
+
+def log_git_error(e: git.GitCommandError, command: str, context: str, repo: git.Repo) -> None:
+    """Helper function to log git command errors"""
+    log_git_confession(
+        command=command,
+        exit_code=e.status,
+        output=str(e),
+        context=context,
+        repo_path=Path(repo.working_dir) if repo.working_dir else None
+    )
 
 # Define read-only and write tools
 READ_ONLY_TOOLS = {
@@ -378,8 +388,13 @@ def git_diff(repo: git.Repo, target: str) -> str:
     return repo.git.diff(target)
 
 def git_commit(repo: git.Repo, message: str) -> str:
-    commit = repo.index.commit(message)
-    return f"Changes committed successfully with hash {commit.hexsha}"
+    try:
+        commit = repo.index.commit(message)
+        return f"Changes committed successfully with hash {commit.hexsha}"
+    except git.GitCommandError as e:
+        # Log git confession for failure
+        log_git_error(e, f"git commit -m '{message}'", "committing changes", repo)
+        raise
 
 def git_add(repo: git.Repo, files: list[str]) -> str:
     # Validate that all files exist in the repository OR are tracked (deleted) files.
@@ -441,8 +456,13 @@ def git_create_branch(repo: git.Repo, branch_name: str, base_branch: str | None 
     return f"Created branch '{branch_name}' from '{base.name}'"
 
 def git_checkout(repo: git.Repo, branch_name: str) -> str:
-    repo.git.checkout(branch_name)
-    return f"Switched to branch '{branch_name}'"
+    try:
+        repo.git.checkout(branch_name)
+        return f"Switched to branch '{branch_name}'"
+    except git.GitCommandError as e:
+        # Log git confession for failure
+        log_git_error(e, f"git checkout {branch_name}", f"switching to branch '{branch_name}'", repo)
+        raise
 
 def git_show(repo: git.Repo, revision: str) -> str:
     commit = repo.commit(revision)
@@ -537,9 +557,14 @@ def git_push(repo: git.Repo, remote: str = "origin", branch: str = None, set_ups
         cmd_parts.extend([remote, branch])
     
     # Use the git command directly through repo.git
-    output = repo.git.push(*cmd_parts)
-    
-    return f"Pushed {branch} to {remote}" + (f" (tracking)" if set_upstream else "")
+    try:
+        output = repo.git.push(*cmd_parts)
+        return f"Pushed {branch} to {remote}" + (f" (tracking)" if set_upstream else "")
+    except git.GitCommandError as e:
+        # Log git confession for failure
+        cmd_str = f"git push {' '.join(cmd_parts)}"
+        log_git_error(e, cmd_str, f"pushing {branch} to {remote}", repo)
+        raise
 
 def git_pull(repo: git.Repo, remote: str = "origin", branch: str | None = None, rebase: bool = False) -> str:
     """Pull changes from remote repository"""
@@ -555,9 +580,14 @@ def git_pull(repo: git.Repo, remote: str = "origin", branch: str | None = None, 
         cmd_parts.append(branch)
     
     # Use the git command directly through repo.git
-    output = repo.git.pull(*cmd_parts)
-    
-    return output if output else f"Already up to date with {remote}" + (f"/{branch}" if branch else "")
+    try:
+        output = repo.git.pull(*cmd_parts)
+        return output if output else f"Already up to date with {remote}" + (f"/{branch}" if branch else "")
+    except git.GitCommandError as e:
+        # Log git confession for failure
+        cmd_str = f"git pull {' '.join(cmd_parts)}"
+        log_git_error(e, cmd_str, f"pulling from {remote}" + (f"/{branch}" if branch else ""), repo)
+        raise
 
 def git_fetch(repo: git.Repo, remote: str = "origin", branch: str | None = None, fetch_all: bool = False, prune: bool = False, tags: bool = True) -> str:
     """Fetch changes from remote repository without merging"""
@@ -601,6 +631,10 @@ def git_fetch(repo: git.Repo, remote: str = "origin", branch: str | None = None,
         else:
             return f"Already up to date with {remote}"
     except git.GitCommandError as e:
+        # Log git confession for failure
+        cmd_str = f"git fetch {' '.join(cmd_parts)}"
+        log_git_error(e, cmd_str, f"fetch from {remote}" + (f"/{branch}" if branch else ""), repo)
+        
         # git fetch returns non-zero exit code even on success sometimes
         # Check if it's actually an error
         output = str(e.stdout)
@@ -616,6 +650,7 @@ def git_merge(repo: git.Repo, branch: str, message: str | None = None, strategy:
             repo.git.merge("--abort")
             return "Merge aborted successfully"
         except git.GitCommandError as e:
+            log_git_error(e, "git merge --abort", "aborting merge", repo)
             return f"Error aborting merge: {str(e)}"
     
     # Build merge command
@@ -644,6 +679,10 @@ def git_merge(repo: git.Repo, branch: str, message: str | None = None, strategy:
         
         return output if output else f"Successfully merged '{branch}'"
     except git.GitCommandError as e:
+        # Log git confession for merge failure
+        cmd_str = f"git merge {' '.join(cmd_parts)}"
+        log_git_error(e, cmd_str, f"merging branch '{branch}'", repo)
+        
         if "CONFLICT" in str(e):
             return f"Merge conflict detected. Resolve conflicts and commit, or run with --abort to cancel merge.\n{str(e)}"
         else:
@@ -876,6 +915,8 @@ def git_rebase(repo: git.Repo, onto: str | None = None, interactive: bool = Fals
             repo.git.rebase("--abort")
             return "Rebase aborted successfully"
         except git.GitCommandError as e:
+            # Log git confession for failure
+            log_git_error(e, "git rebase --abort", "aborting rebase", repo)
             return f"Error aborting rebase: {str(e)}"
     
     if continue_rebase:
@@ -883,6 +924,8 @@ def git_rebase(repo: git.Repo, onto: str | None = None, interactive: bool = Fals
             repo.git.rebase("--continue")
             return "Rebase continued successfully"
         except git.GitCommandError as e:
+            # Log git confession for failure
+            log_git_error(e, "git rebase --continue", "continuing rebase", repo)
             if "No rebase in progress?" in str(e):
                 return "No rebase in progress"
             return f"Error continuing rebase: {str(e)}"
@@ -892,6 +935,8 @@ def git_rebase(repo: git.Repo, onto: str | None = None, interactive: bool = Fals
             repo.git.rebase("--skip")
             return "Skipped current commit and continued rebase"
         except git.GitCommandError as e:
+            # Log git confession for failure
+            log_git_error(e, "git rebase --skip", "skipping commit during rebase", repo)
             if "No rebase in progress?" in str(e):
                 return "No rebase in progress"
             return f"Error skipping commit: {str(e)}"
@@ -913,6 +958,9 @@ def git_rebase(repo: git.Repo, onto: str | None = None, interactive: bool = Fals
         output = repo.git.rebase(*cmd_parts)
         return output if output else f"Successfully rebased onto '{onto}'"
     except git.GitCommandError as e:
+        # Log git confession for failure
+        cmd_str = f"git rebase {' '.join(cmd_parts)}"
+        log_git_error(e, cmd_str, f"rebasing onto '{onto}'", repo)
         if "CONFLICT" in str(e):
             return f"Rebase conflict detected. Resolve conflicts and run with --continue, or --abort to cancel.\n{str(e)}"
         elif "up to date" in str(e).lower():
@@ -1775,6 +1823,9 @@ def git_branch(repo: git.Repo, action: str = "list", all: bool = False,
             return "No branches found"
             
     except git.GitCommandError as e:
+        # Log git confession for failure
+        cmd_str = f"git branch {' '.join(cmd_parts) if cmd_parts else ''}"
+        log_git_error(e, cmd_str, f"listing branches", repo)
         return f"Git branch error: {str(e)}"
     except Exception as e:
         return f"Unexpected error during git branch: {str(e)}"
