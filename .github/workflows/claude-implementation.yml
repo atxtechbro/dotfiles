@@ -73,10 +73,10 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup MCP servers
+      - name: Setup MCP servers with dependencies
         run: |
-          echo "Building MCP servers for Claude..."
-          ./mcp/setup-all-mcp-servers.sh
+          echo "Setting up MCP servers with all dependencies..."
+          source ./setup.sh
 
       - name: Aggregate knowledge base
         id: knowledge
