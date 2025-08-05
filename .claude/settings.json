@@ -28,10 +28,9 @@
       "Bash(./utils/configure-claude-code-settings.sh:*)",
       "Bash(check-mcp-logs:*)",
       "Bash(python:*)",
-      "mcp__git",
-      "mcp__github",
-      "mcp__playwright",
-      "Bash(*)"
+      "Bash(git *)",
+      "Bash(gh *)",
+      "mcp__playwright"
     ],
     "additionalDirectories": ["//"]
   },
@@ -50,8 +49,6 @@
   },
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
-    "git",
-    "github",
     "playwright"
   ]
 }
