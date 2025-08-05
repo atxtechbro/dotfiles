@@ -266,13 +266,14 @@ else
 fi
 
 # Set up all MCP servers (works in worktrees)
-if [[ -f "$DOT_DEN/mcp/setup-all-mcp-servers.sh" ]]; then
-  echo -e "${DIVIDER}"
-  echo "Setting up MCP servers..."
-  "$DOT_DEN/mcp/setup-all-mcp-servers.sh"
-else
-  echo -e "${YELLOW}MCP server setup script not found. Skipping MCP server setup.${NC}"
-fi
+# EXPERIMENT #1213: Temporarily disabled - testing without MCP servers
+# if [[ -f "$DOT_DEN/mcp/setup-all-mcp-servers.sh" ]]; then
+#   echo -e "${DIVIDER}"
+#   echo "Setting up MCP servers..."
+#   "$DOT_DEN/mcp/setup-all-mcp-servers.sh"
+# else
+#   echo -e "${YELLOW}MCP server setup script not found. Skipping MCP server setup.${NC}"
+# fi
 
 
 # GitLab MCP authentication now handled by @zereight/mcp-gitlab package
@@ -600,21 +601,22 @@ if [[ -f ~/.bash_aliases ]]; then
 fi
 
 # MCP Dashboard setup
-echo -e "${DIVIDER}"
-echo "Setting up MCP Dashboard..."
-
-# Check if start-mcp-dashboard script exists
-if [[ -x "$DOT_DEN/bin/start-mcp-dashboard" ]]; then
-  # Use the start-mcp-dashboard script which handles all checks
-  "$DOT_DEN/bin/start-mcp-dashboard" start
-  # The script handles:
-  # - Checking if dashboard is already running
-  # - Verifying the binary exists
-  # - Starting with proper health checks
-  # - Displaying clear status messages
-else
-  echo -e "${YELLOW}start-mcp-dashboard script not found. Skipping dashboard setup.${NC}"
-fi
+# EXPERIMENT #1213: Temporarily disabled - testing without MCP servers/dashboard
+# echo -e "${DIVIDER}"
+# echo "Setting up MCP Dashboard..."
+# 
+# # Check if start-mcp-dashboard script exists
+# if [[ -x "$DOT_DEN/bin/start-mcp-dashboard" ]]; then
+#   # Use the start-mcp-dashboard script which handles all checks
+#   "$DOT_DEN/bin/start-mcp-dashboard" start
+#   # The script handles:
+#   # - Checking if dashboard is already running
+#   # - Verifying the binary exists
+#   # - Starting with proper health checks
+#   # - Displaying clear status messages
+# else
+#   echo -e "${YELLOW}start-mcp-dashboard script not found. Skipping dashboard setup.${NC}"
+# fi
 
 echo -e "${DIVIDER}"
 echo -e "${GREEN}✅ Dotfiles setup complete!${NC}"

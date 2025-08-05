@@ -328,9 +328,9 @@ claude mcp add my-server -s user /path/to/server
 ### MCP Servers Included
 
 The dotfiles include pre-configured MCP servers for:
-- Brave Search API
-- Playwright browser automation
-- Google Drive access
+- Playwright browser automation (for tasks requiring browser interaction)
+
+Note: Git, GitHub, and web search are handled natively by Claude Code (experiment #1213)
 
 ### Claude Model Preferences
 
