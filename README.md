@@ -1,5 +1,7 @@
 # Dotfiles
 
+<!-- Hello World! -->
+
 A collection of configuration files for a consistent development environment across different machines.
 
 ## Dotfiles Philosophy
