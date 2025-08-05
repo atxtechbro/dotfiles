@@ -1,4 +1,5 @@
 # Dotfiles
+<!-- Branch naming test successful - Issue #1222 -->
 
 A collection of configuration files for a consistent development environment across different machines.
 
