@@ -30,22 +30,23 @@ jobs:
           echo "$PROMPT_CONTENT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Setup GitHub MCP Server
-        run: |
-          mkdir -p /tmp/mcp-config
-          cat > /tmp/mcp-config/mcp-servers.json << 'EOF'
-          {
-            "mcpServers": {
-              "github": {
-                "command": "node",
-                "args": ["${{ github.workspace }}/mcp/servers/github-mcp-server/dist/index.js"],
-                "env": {
-                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
-                }
-              }
-            }
-          }
-          EOF
+      # EXPERIMENT #1213: GitHub MCP Server temporarily disabled
+      # - name: Setup GitHub MCP Server
+      #   run: |
+      #     mkdir -p /tmp/mcp-config
+      #     cat > /tmp/mcp-config/mcp-servers.json << 'EOF'
+      #     {
+      #       "mcpServers": {
+      #         "github": {
+      #           "command": "node",
+      #           "args": ["${{ github.workspace }}/mcp/servers/github-mcp-server/dist/index.js"],
+      #           "env": {
+      #             "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+      #           }
+      #         }
+      #       }
+      #     }
+      #     EOF
 
       - name: Run Claude Code for Issue Triage
         uses: anthropics/claude-code-base-action@beta

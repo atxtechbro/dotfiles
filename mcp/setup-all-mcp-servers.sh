@@ -34,10 +34,11 @@ else
 fi
 
 # Run individual setup scripts
+# EXPERIMENT #1213: All MCP servers temporarily disabled
 setup_scripts=(
-    "setup-github-mcp.sh"
-    "setup-git-mcp.sh"
-    "setup-brave-search-mcp.sh"
+    # "setup-github-mcp.sh"
+    # "setup-git-mcp.sh"
+    # "setup-brave-search-mcp.sh"
 )
 
 failed_setups=()
