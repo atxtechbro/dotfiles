@@ -6,10 +6,10 @@
   "permissions": {
     "defaultMode": "bypassPermissions",
     "deny": [
-      "Bash(git push*main*)",
-      "Bash(git push*master*)",
-      "Bash(git add -A*)",
-      "Bash(git add .*)"
+      "Bash(git push:*main*)",
+      "Bash(git push:*master*)",
+      "Bash(git add -A:*)",
+      "Bash(git add:.*)"
     ],
     "allow": [
       "LS",
@@ -34,8 +34,8 @@
       "Bash(./utils/configure-claude-code-settings.sh:*)",
       "Bash(check-mcp-logs:*)",
       "Bash(python:*)",
-      "Bash(git *)",
-      "Bash(gh *)",
+      "Bash(git:*)",
+      "Bash(gh:*)",
       "mcp__playwright"
     ],
     "additionalDirectories": ["//"]
