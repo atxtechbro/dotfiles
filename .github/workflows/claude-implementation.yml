@@ -188,7 +188,7 @@ jobs:
         with:
           prompt_file: /tmp/final_prompt.md
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          allowed_tools: "Bash(*),LS,Read,Write,Edit,MultiEdit,Glob,Grep,Task,TodoWrite,WebFetch(domain:*),WebSearch,mcp__git,mcp__github"
+          allowed_tools: "Bash:*,LS,Read,Write,Edit,MultiEdit,Glob,Grep,Task,TodoWrite,WebFetch(domain:*),WebSearch"
           timeout_minutes: "30"
           model: claude-opus-4-1-20250805
           claude_env: |
