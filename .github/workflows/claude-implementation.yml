@@ -190,3 +190,5 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           allowed_tools: "Bash(*),LS,Read,Write,Edit,MultiEdit,Glob,Grep,Task,TodoWrite,WebFetch(domain:*),WebSearch,mcp__git,mcp__github"
           timeout_minutes: "30"
+          claude_env: |
+            GH_TOKEN=${{ secrets.GITHUB_TOKEN }}
