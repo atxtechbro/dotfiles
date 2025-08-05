@@ -328,10 +328,8 @@ claude mcp add my-server -s user /path/to/server
 ### MCP Servers Included
 
 The dotfiles include pre-configured MCP servers for:
-- Git operations (git-mcp-server)
-- GitHub integration (github-mcp-server with read/write split)
 - Brave Search API
-- Filesystem operations
+- Playwright browser automation
 - Google Drive access
 
 ### Claude Model Preferences

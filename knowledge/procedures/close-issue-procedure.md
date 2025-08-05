@@ -26,7 +26,7 @@ Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 
 ## Analyze Issue #{{ ISSUE_NUMBER }}
 <!-- This procedure IS the implementation - executable documentation -->
-First, use `mcp__github__get_issue` to understand the issue and determine the appropriate workflow path.
+First, analyze the issue.
 
 ## Apply to Issue #{{ ISSUE_NUMBER }}
 When following the procedure:

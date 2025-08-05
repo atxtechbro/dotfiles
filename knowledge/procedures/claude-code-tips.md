@@ -16,7 +16,7 @@ Force multiplier discoveries for 1000x Claude Code productivity. Default to one-
 
 ## MCP Server Permissions
 
-- **No wildcards**: Use server names only in permissions (e.g., `"mcp__git"` not `"mcp__git*"`) - wildcards aren't supported despite appearing to work for servers without hyphens
+- **No wildcards**: Use server names only in permissions - wildcards aren't supported despite appearing to work for servers without hyphens
 
 ## Model Configuration
 
@@ -34,13 +34,9 @@ Claude Code has two separate permission systems that behave differently:
 
 ### 2. MCP Server Permissions  
 - **Managed by**: `settings.json` file
-- **Covers**: `mcp__git`, `mcp__github`, `mcp__playwright`, etc.
+- **Covers**: MCP servers like `mcp__playwright`, etc.
 - **Changes**: Only loaded at session start (requires restart)
 - **Confirmed limitation**: Granular permissions don't work - only server-level permissions are supported
-  - ❌ `mcp__github__create_pull_request` - doesn't work
-  - ❌ `mcp__git__git_push` - doesn't work  
-  - ✅ `mcp__github` - works (all-or-nothing for the server)
-  - ✅ `mcp__git` - works (all-or-nothing for the server)
 
 ### Runtime Workspace Access
 - **The `/permissions` Workspace tab** = runtime equivalent of `additionalDirectories`
