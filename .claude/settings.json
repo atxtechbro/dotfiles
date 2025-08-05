@@ -34,8 +34,8 @@
       "Bash(./utils/configure-claude-code-settings.sh:*)",
       "Bash(check-mcp-logs:*)",
       "Bash(python:*)",
-      "Bash(git *)",
-      "Bash(gh *)",
+      "Bash(git:*)",
+      "Bash(gh:*)",
       "mcp__playwright"
     ],
     "additionalDirectories": ["//"]
