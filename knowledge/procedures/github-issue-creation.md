@@ -32,7 +32,7 @@ When users request "create a GitHub issue for..." or need to document a new task
 |-----------------|-------------------|------------|
 | "error", "fails", "broken", "bug" | issue.md (bug report) | Steps to reproduce, expected behavior |
 | "feature", "add", "implement", "enhance" | issue.md (enhancement) | Problem statement, proposed solution |
-| "mcp__git", "mcp__github", "tool error" | mcp-tool-error.md | Tool name, error message, reproduction |
+| "tool error" | mcp-tool-error.md | Tool name, error message, reproduction |
 | "procedure", "document process", "ghost" | procedure-documentation.md | Procedure name, steps, trigger |
 | General request | issue.md | Flexible format for any issue type |
 
@@ -44,7 +44,7 @@ When users request "create a GitHub issue for..." or need to document a new task
 
 ## Implementation
 
-Use `mcp__github__create_issue` with:
+Create the issue with:
 - Appropriate labels based on type
 - Cross-referenced procedures in body
 - Clear title following conventions
