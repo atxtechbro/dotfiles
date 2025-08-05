@@ -20,7 +20,7 @@ Force multiplier discoveries for 1000x Claude Code productivity. Default to one-
 
 ## Model Configuration
 
-- **Set in settings.json**: Configure with `"model": "claude-opus-4-1-20250805"`
+- **Set in settings.json**: Configure with `"model": "<model-name>"` - See [official model names](https://docs.anthropic.com/en/docs/about-claude/models/overview#model-names)
 
 ## Permission Systems (Validated)
 
