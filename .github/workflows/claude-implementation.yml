@@ -78,6 +78,23 @@ jobs:
           echo "Setting up environment dependencies..."
           source setup.sh  # MCP setup already disabled in setup.sh for experiment #1213
 
+      - name: Prepare branch environment
+        run: |
+          echo "Preparing branch environment to prevent conflicts..."
+          # Extract issue number from context
+          ISSUE_NUMBER="${{ github.event.issue.number }}"
+          
+          # Make script executable
+          chmod +x .github/scripts/prepare-branch.sh
+          
+          # Run branch preparation
+          .github/scripts/prepare-branch.sh "$ISSUE_NUMBER" "${{ github.run_id }}"
+          
+          # Export variables for subsequent steps
+          echo "CLAUDE_BRANCH_PREFIX=issue-${ISSUE_NUMBER}" >> $GITHUB_ENV
+          echo "CLAUDE_BRANCH_SUFFIX=${{ github.run_id }}" >> $GITHUB_ENV
+          echo "ISSUE_NUMBER=${ISSUE_NUMBER}" >> $GITHUB_ENV
+
       - name: Aggregate knowledge base
         id: knowledge
         run: |
@@ -185,8 +202,35 @@ jobs:
           echo "Final prompt size: $(wc -c < /tmp/final_prompt.md) characters"
 
       - uses: anthropics/claude-code-base-action@beta
+        id: claude_action
         with:
           prompt_file: /tmp/final_prompt.md
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           allowed_tools: "Bash(*),LS,Read,Write,Edit,MultiEdit,Glob,Grep,Task,TodoWrite,WebFetch(domain:*),WebSearch,mcp__git,mcp__github"
           timeout_minutes: "30"
+          claude_env: |
+            CLAUDE_BRANCH_PREFIX=${{ env.CLAUDE_BRANCH_PREFIX }}
+            CLAUDE_BRANCH_SUFFIX=${{ env.CLAUDE_BRANCH_SUFFIX }}
+            ISSUE_NUMBER=${{ github.event.issue.number }}
+            RUN_ID=${{ github.run_id }}
+
+      - name: Check for PR creation issues
+        if: always()
+        run: |
+          echo "Checking for potential PR creation issues..."
+          
+          # Check if any PRs were created
+          RECENT_PRS=$(gh pr list --state all --limit 5 --json number,title,headRefName,createdAt | jq -r '.[] | "\(.number): \(.headRefName)"')
+          echo "Recent PRs:"
+          echo "$RECENT_PRS"
+          
+          # Check for branches that might have been created
+          echo "Current branches:"
+          git branch -r | grep -E "(issue-${{ github.event.issue.number }}|atx/)" || echo "No matching branches found"
+          
+          # Log any branch conflicts for debugging
+          if git ls-remote --heads origin | grep -q "atx/dotbot-base-changes"; then
+            echo "⚠️ WARNING: Found potentially conflicting branch 'atx/dotbot-base-changes'"
+            echo "This branch should have been cleaned up but still exists"
+            echo "Future runs may fail if Claude tries to reuse this branch name"
+          fi

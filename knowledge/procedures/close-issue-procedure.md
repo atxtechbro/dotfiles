@@ -31,6 +31,8 @@ First, analyze the issue.
 ## Apply to Issue #{{ ISSUE_NUMBER }}
 When following the procedure:
 - Use issue #{{ ISSUE_NUMBER }} for all GitHub API calls
+- Create unique branch names using pattern: `<type>/issue-{{ ISSUE_NUMBER }}-<description>` where type matches the change (fix, feature, refactor, docs, etc.)
+- NEVER reuse generic branch names - always include issue number for uniqueness
 - Replace <NUMBER> with {{ ISSUE_NUMBER }} in branch names
 - Replace <description> with issue title slug
 - Reference "Closes #{{ ISSUE_NUMBER }}" in PR body
