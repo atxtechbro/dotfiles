@@ -213,6 +213,7 @@ jobs:
             CLAUDE_BRANCH_SUFFIX=${{ env.CLAUDE_BRANCH_SUFFIX }}
             ISSUE_NUMBER=${{ github.event.issue.number }}
             RUN_ID=${{ github.run_id }}
+            GH_TOKEN=${{ secrets.GITHUB_TOKEN }}
 
       - name: Check for PR creation issues
         if: always()
