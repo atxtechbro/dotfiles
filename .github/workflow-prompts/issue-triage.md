@@ -18,14 +18,13 @@ TASK OVERVIEW:
 
 1. First, fetch the list of labels available in this repository by running: `gh label list`. Run exactly this command with nothing else.
 
-2. Next, use the GitHub tools to get context about the issue:
-   - You have access to these tools:
-     - mcp__github-write__get_issue: Use this to retrieve the current issue's details including title, description, and existing labels
-     - mcp__github-write__get_issue_comments: Use this to read any discussion or additional context provided in the comments
-     - mcp__github-write__update_issue: Use this to apply labels to the issue (do not use this for commenting)
-     - mcp__github-write__search_issues: Use this to find similar issues that might provide context for proper categorization and to identify potential duplicate issues
-     - mcp__github-write__list_issues: Use this to understand patterns in how other issues are labeled
-   - Start by using mcp__github-write__get_issue to get the issue details
+2. Next, use GitHub CLI commands to get context about the issue:
+   - You have access to `gh` CLI commands with GH_TOKEN already configured
+   - Use `gh issue view {{ ISSUE_NUMBER }}` to get the issue details
+   - Use `gh issue view {{ ISSUE_NUMBER }} --comments` to read comments
+   - Use `gh search issues` to find similar issues for context
+   - Use `gh issue list --label` to understand labeling patterns
+   - Start by getting the issue details
 
 3. Analyze the issue content, considering:
    - Core principles mentioned (versioning-mindset, subtraction-creates-value, ose, snowball-method, tracer-bullets, systems-stewardship, throughput-definition)
@@ -41,7 +40,7 @@ TASK OVERVIEW:
    - Consider if this is a spike (research/exploration task)
 
 5. Apply the selected labels:
-   - Use mcp__github-write__update_issue to apply your selected labels
+   - Use `gh issue edit {{ ISSUE_NUMBER }} --add-label "label1,label2"` to apply labels
    - DO NOT post any additional comments explaining your decision (the action already posts one)
    - DO NOT communicate directly with users
    - If no labels are clearly applicable, do not apply any labels
@@ -50,5 +49,5 @@ IMPORTANT GUIDELINES:
 - Be thorough in your analysis
 - Only select labels from the provided list
 - DO NOT post any additional comments (the action's automatic comment is sufficient)
-- Your ONLY action should be to apply labels using mcp__github-write__update_issue
+- Your ONLY action should be to apply labels using `gh issue edit`
 - Focus on principles over implementation details
