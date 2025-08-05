@@ -1,0 +1,22 @@
+#!/bin/bash
+# Install git hooks for the repository
+# Part of MCP server experiment - see issue #1213
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+HOOKS_DIR="$REPO_ROOT/hooks"
+GIT_HOOKS_DIR="$REPO_ROOT/.git/hooks"
+
+echo "Installing git hooks..."
+
+# Install pre-push hook
+if [ -f "$HOOKS_DIR/pre-push" ]; then
+    cp "$HOOKS_DIR/pre-push" "$GIT_HOOKS_DIR/pre-push"
+    chmod +x "$GIT_HOOKS_DIR/pre-push"
+    echo "✓ Installed pre-push hook (prevents pushing to main/master)"
+fi
+
+echo ""
+echo "Git hooks installed successfully!"
+echo "These hooks provide protection while testing without MCP servers."
+echo "See issue #1213 for details."
