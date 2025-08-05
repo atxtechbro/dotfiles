@@ -20,7 +20,7 @@ Force multiplier discoveries for 1000x Claude Code productivity. Default to one-
 
 ## Model Configuration
 
-- **Set in settings.json**: Configure with `"model": "claude-opus-4-20250514"`
+- **Set in settings.json**: Configure with `"model": "claude-opus-4-1-20250805"`
 
 ## Permission Systems (Validated)
 
