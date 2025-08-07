@@ -18,7 +18,7 @@ When users request "create a GitHub issue for..." or need to document a new task
 2. **Scan for keywords** to link relevant procedures:
    - "MCP" → Link MCP-related procedures
    - "worktree" → Link worktree-workflow
-   - "retro" → Link post-pr-mini-retro
+   - "retro" → Link retro-procedure
    - "git" → Link git-workflow
 
 3. **Auto-populate context**:

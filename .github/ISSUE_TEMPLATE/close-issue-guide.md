@@ -68,7 +68,7 @@ Follow [Git Workflow](../../knowledge/procedures/git-workflow.md) for commit sta
   - If not found, use dotfiles fallback: `~/ppv/pillars/dotfiles/.github/PULL_REQUEST_TEMPLATE.md`
   - Inform which template is being used for transparency
 - Create PR with `mcp__github__create_pull_request` following the discovered template
-- Add "Conduct post-PR mini retro" to your todo list
+- Add "Conduct retro" to your todo list
 
 ### 4. Iterate Based on Feedback
 Keep worktree active for PR adjustments based on the tracer bullets principle. Only cleanup after PR is merged.
@@ -91,4 +91,4 @@ Remember: Act agentically. Make the decision and execute.
 
 - [Issue to PR Workflow](../../knowledge/procedures/issue-to-pr-workflow.md) - High-level workflow overview
 - [Tracer Bullets](../../knowledge/principles/tracer-bullets.md) - Target-first development
-- [Post-PR Mini Retro](../../knowledge/procedures/post-pr-mini-retro.md) - Learning from implementation
+- [Retro Procedure](../../knowledge/procedures/retro-procedure.md) - Learning from implementation

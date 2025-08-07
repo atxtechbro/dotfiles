@@ -20,11 +20,11 @@ Your starting point for understanding and working with this dotfiles repository.
 - Apply [Tracer Bullets](principles/tracer-bullets.md) - Iterative development
 
 ### Handle GitHub Tasks
-- Create issues with [GitHub Issue Creation](procedures/github-issue-creation.md) - Smart template selection
+- Create issues with [Issue Creation Procedure](procedures/issue-creation-procedure.md) - Smart template selection
 - See [Issue to PR Workflow](procedures/issue-to-pr-workflow.md) - High-level flow
 - Follow [Close Issue Procedure](procedures/close-issue-procedure.md) - Detailed steps
-- Use GitHub MCP server for all GitHub operations
-- Remember: Use mcp__github__ tools, not direct API calls
+- Use gh CLI for all GitHub operations
+- Remember: Use `gh` commands for GitHub API interactions
 
 ### Write or Modify Code
 - Check [Coding Conventions](procedures/coding-conventions.md)
@@ -48,7 +48,7 @@ Your starting point for understanding and working with this dotfiles repository.
 - Transform tribal knowledge into systems
 
 ### Run Post-PR Retros
-- See [Post-PR Mini Retro](procedures/post-pr-mini-retro.md)
+- See [Retro Procedure](procedures/retro-procedure.md)
 - Consult [Personalities](personalities/) for perspectives
 
 ### When MCP Tools Don't Work
@@ -67,23 +67,23 @@ When editing these foundational files, keep changes small and easy to approve. A
 
 ## Critical Rules
 
-1. **ALWAYS use MCP tools** instead of bash for git operations
-2. **ALWAYS check git status** before creating branches
-3. **ALWAYS use absolute paths** in file operations
-4. **NEVER commit directly to main** without explicit permission
-5. **NEVER create files** unless absolutely necessary - prefer editing
+1. **ALWAYS check git status** before creating branches
+2. **ALWAYS use absolute paths** in file operations
+3. **NEVER commit directly to main** without explicit permission
+4. **NEVER create files** unless absolutely necessary - prefer editing
+5. **PREFER gh CLI** for GitHub operations (issues, PRs, etc.)
 
 ## Tool Selection Guide
 
 | Task | Use These Tools |
 |------|----------------|
-| Git operations | mcp__git__* tools |
-| GitHub operations | mcp__github__* tools |
+| Git operations | gh CLI or git commands via Bash |
+| GitHub operations | gh CLI commands |
 | File search | Grep, Glob, or Task (for complex searches) |
 | File editing | Edit, MultiEdit |
 | File creation | Write (only when necessary) |
 | Web browsing | mcp__playwright__* tools |
 | Documentation lookup | Read this index first, then specific docs |
-| Run shell commands | Bash (prefer MCP tools when available) |
+| Run shell commands | Bash tool |
 
 Remember: The goal is AI agent management capability for 100x-1000x productivity.
