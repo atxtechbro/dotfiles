@@ -1,11 +1,10 @@
 {
-  "defaultMode": "plan",
   "model": "claude-opus-4-1-20250805",
   "cleanupPeriodDays": 90,
   "forceLoginMethod": "claudeai",
   "includeCoAuthoredBy": false,
   "permissions": {
-    "defaultMode": "bypassPermissions",
+    "defaultMode": "plan",
     "deny": [
       "Bash(git push:*main*)",
       "Bash(git push:*master*)",
