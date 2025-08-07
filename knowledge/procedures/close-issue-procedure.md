@@ -30,7 +30,7 @@ This prevents conflicts when multiple agents work in parallel.
 
 ## Analyze Issue #{{ ISSUE_NUMBER }}
 <!-- This procedure IS the implementation - executable documentation -->
-First, analyze the issue.
+First, analyze the issue including all comments to gather the complete context.
 
 ## Apply to Issue #{{ ISSUE_NUMBER }}
 When following the procedure:
