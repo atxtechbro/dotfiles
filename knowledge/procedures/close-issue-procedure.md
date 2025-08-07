@@ -21,6 +21,10 @@ Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 {{ KNOWLEDGE_BASE }}
 <!-- Note: If you see "{{ KNOWLEDGE_BASE }}" above as literal text, you're running locally and knowledge is already preloaded -->
 
+## Setup Isolated Environment
+Use git worktrees to create an isolated workspace for issue #{{ ISSUE_NUMBER }}.
+This prevents conflicts when multiple agents work in parallel.
+
 ## Core Principle: Target-First Development
 {{ INJECT:principles/tracer-bullets.md }}
 
