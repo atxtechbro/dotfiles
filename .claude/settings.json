@@ -4,7 +4,7 @@
   "forceLoginMethod": "claudeai",
   "includeCoAuthoredBy": false,
   "permissions": {
-    "defaultMode": "plan",
+    "defaultMode": "bypassPermissions",
     "deny": [
       "Bash(git push:*main*)",
       "Bash(git push:*master*)",
