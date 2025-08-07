@@ -180,8 +180,6 @@ fi
 # This ensures tmux always has the latest config when started
 tmux source-file ~/.tmux.conf >/dev/null 2>&1 || true
 
-# Amazon Q post block. Keep at the bottom of this file.
-[[ -f "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/.local/share/amazon-q/shell/bashrc.post.bash" 2>/dev/null
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.local/uv-tools/bin:$PATH"
 
@@ -192,11 +190,6 @@ fi
 
 # Platform-specific PATH additions
 [[ "$OSTYPE" == "darwin"* ]] && export PATH="/Users/$(whoami)/.local/bin:$PATH"
-
-# Auto-navigate to dotfiles directory on new shell (only in interactive shells)
-if [[ $- == *i* ]] && [[ -d "$HOME/ppv/pillars/dotfiles" && "$PWD" == "$HOME" ]]; then
-    cd "$HOME/ppv/pillars/dotfiles" || true
-fi
 
 # Amazon Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/bashrc.post.bash" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/bashrc.post.bash" 2>/dev/null
