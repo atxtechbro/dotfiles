@@ -76,7 +76,7 @@ After merging via GitHub UI:
 ### 7. Optional: Post-PR Retro
 
 For significant work:
-- Run [post-PR mini retro](../../knowledge/procedures/post-pr-mini-retro.md)
+- Run [retro procedure](../../knowledge/procedures/retro-procedure.md)
 - Capture learnings
 - Update procedures if needed
 - Document any ghost procedures discovered - see [Procedure Creation](../../knowledge/procedures/procedure-creation.md)

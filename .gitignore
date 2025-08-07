@@ -24,8 +24,6 @@ think-tank/
 CLAUDE.local.md
 # Claude Code local settings (personal overrides, not for source control per Anthropic docs)
 .claude/settings.local.json
-# Setup-generated symlinks (avoid duplicating tracked content)
-.claude/command-templates
 
 # Private SSH keys
 id_rsa

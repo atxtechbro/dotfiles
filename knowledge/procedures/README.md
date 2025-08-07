@@ -20,7 +20,7 @@ This is THE workflow. Everything else supports this core process.
 - `slash-command-generation.md` - How slash commands like `/close-issue` work
 
 ### Quality & Improvement
-- `post-pr-mini-retro.md` - Systems improvement retro after feature PRs
+- `retro-procedure.md` - Systems improvement retro and learning extraction
 - `five-focusing-steps.md` - Identify and optimize constraints
 
 ### Conventions & Standards

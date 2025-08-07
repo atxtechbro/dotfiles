@@ -19,7 +19,7 @@ Our dotfiles aren't just configuration - they're a **living system** that:
 This principle manifests everywhere:
 - **MCP Error Reporting** → Self-healing feedback loops
 - **Ghost Procedure Capture** → Learning from undocumented patterns
-- **Post-PR Mini Retros** → Mining gleanings from every experience
+- **Retro Procedures** → Mining gleanings from every experience
 - **INJECT patterns** → Single source of truth that evolves
 - **Snowball Method** → Compound learning over time
 - **Worktree failures documented** → Crisis becomes prevention system
