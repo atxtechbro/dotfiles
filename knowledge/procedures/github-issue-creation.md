@@ -42,13 +42,59 @@ When users request "create a GitHub issue for..." or need to document a new task
 - **mcp-tool-error.md** - Specific to MCP tool failures (auto-assigns)
 - **procedure-documentation.md** - For capturing ghost procedures
 
+## Smart Labeling
+
+### Available Labels
+The repository has these labels available:
+- **Type**: `bug`, `enhancement`, `feature`, `documentation`, `question`
+- **Components**: `mcp`, `github-actions`, `git`, `nvim`, `automation`
+- **Status**: `help wanted`, `good first issue`, `wontfix`, `duplicate`, `invalid`
+- **Areas**: `developer-experience`, `security`, `configuration`, `setup`, `ci-cd`
+- **AI**: `ai`, `amazon-q`
+- **Other**: `filesystem`, `debugging`, `modularity`, `github`, `github-integration`, `git-hooks`, `neovim`, `ci-failure`
+
+### Labeling Logic
+
+1. **First, check label existence**:
+   - Run `gh label list` to get current labels
+   - Only use labels that exist in the repository
+
+2. **Apply labels based on content**:
+   - Bug reports → `bug`
+   - Feature requests → `enhancement` or `feature`
+   - MCP-related → `mcp`
+   - GitHub Actions → `github-actions`, `automation`
+   - Configuration changes → `configuration`
+   - CI/CD issues → `ci-cd`, `ci-failure` (if build failed)
+   - Security concerns → `security`
+   - Developer tooling → `developer-experience`
+
+3. **Be minimal**: Only add labels that add clear value
+
 ## Implementation
 
 Create the issue with:
-- Appropriate labels based on type
+- Smart label selection (check existence first with `gh label list`)
 - Cross-referenced procedures in body
 - Clear title following conventions
 - Assignee if specified
+- Use `gh issue create` with `--label` only for existing labels
+
+**Example**:
+```bash
+# First check available labels
+gh label list
+
+# Then create issue with appropriate existing labels
+gh issue create --title "Fix: Issue title" --body "..." --label "bug,automation"
+```
+
+## Important Notes
+
+- **Never use labels that don't exist** - this will cause the issue creation to fail
+- The auto-label workflow has been removed per issue #1236
+- Claude now handles labeling directly at issue creation time
+- Follow the **subtraction-creates-value** principle - fewer moving parts
 
 ## See Also
 
