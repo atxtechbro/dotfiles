@@ -43,16 +43,16 @@ Scan issue content for principle alignment:
 
 ## Step 4: Validate Labels
 
-Fetch all available labels in the repository.
-Check which labels actually exist before attempting to apply them.
+Use the labels shown in the **Available Labels** section above (from `gh label list`).
+Only select from those labels - do not invent or suggest labels that don't exist.
 
 Suggested labels based on analysis:
-- Issue type labels (bug, enhancement, documentation)
-- Principle labels (principle:ose, principle:versioning-mindset, etc.)
-- Area labels (mcp, git, automation, etc.)
+- Issue type labels (bug, enhancement, documentation) - if they exist
+- Principle labels (principle:ose, principle:versioning-mindset, etc.) - if they exist
+- Area labels (mcp, git, automation, etc.) - if they exist
 
-**CRITICAL**: Only apply labels that exist in the repository.
-Never attempt to apply non-existent labels.
+**CRITICAL**: Only apply labels from the Available Labels list.
+Never attempt to apply labels not shown in that list.
 
 ## Step 5: Build Issue Content
 
