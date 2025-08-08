@@ -7,7 +7,7 @@
 **Go slow to go fast**: The recovery tax compounds invisibly. A stale starting point pollutes every subsequent action - your PR carries ghost commits, review gets clouded by unintended diffs, context windows fill with noise. The principle isn't about git mechanics but about preserving clarity of intent. When we rush past orientation, we mortgage our future attention.
 
 ### Quick orientation checks (prevent future cleanup)
-1. `mcp__git__git_status` - Where am I? What's already changed?
+1. Check git status - Where am I? What's already changed?
    → [subtraction-creates-value](../../knowledge/principles/subtraction-creates-value.md) (avoid recovery tax)
 2. Check current branch - Am I on main? Do I have uncommitted work?
 3. **Is main current?** - `git fetch && git status` - Behind origin/main means your PR will include unwanted commits

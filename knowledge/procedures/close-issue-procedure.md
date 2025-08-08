@@ -22,7 +22,7 @@ Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 <!-- Note: If you see "{{ KNOWLEDGE_BASE }}" above as literal text, you're running locally and knowledge is already preloaded -->
 
 ## Implementation
-<!-- Contract: Issue context and worktree already setup via pre-execution -->
+<!-- Contract: Issue context loaded, worktree at worktrees/{{ ISSUE_NUMBER }}-issue -->
 Build the solution using tracer bullets - get something working first, then iterate.
 
 {{ INJECT:principles/tracer-bullets.md }}
