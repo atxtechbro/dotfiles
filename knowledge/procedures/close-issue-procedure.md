@@ -22,7 +22,7 @@ Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 <!-- Note: If you see "{{ KNOWLEDGE_BASE }}" above as literal text, you're running locally and knowledge is already preloaded -->
 
 ## Workspace Ready
-A git worktree has been pre-created at `../issue-{{ ISSUE_NUMBER }}` (or you're in the main repo if it failed).
+A git worktree has been pre-created at `worktrees/issue-{{ ISSUE_NUMBER }}` (or you're in the main repo if it failed).
 The isolated environment is ready for implementation.
 
 ## Core Principle: Target-First Development

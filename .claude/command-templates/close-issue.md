@@ -9,7 +9,7 @@ argument-hint: <issue-number>
 
 ## Workspace Setup
 
-- Create worktree: !`git worktree add "../issue-$1" -b "issue-$1" 2>&1 | grep -v "fatal" || echo "Using current directory"`
+- Create worktree: !`git worktree add "worktrees/issue-$1" -b "issue-$1" 2>&1 | grep -v "fatal" || echo "Using current directory"`
 
 # Close Issue Command Template
 
