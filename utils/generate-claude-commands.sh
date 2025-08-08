@@ -44,6 +44,17 @@ for template in "$TEMPLATES_DIR"/*.md; do
 
 EOF
         
+        # Add validation for commands that require arguments
+        if [[ "$command_name" == "close-issue" || "$command_name" == "create-issue" ]]; then
+            cat >> "$output.tmp" << EOF
+if [ -z "\$ARGUMENTS" ]; then
+    echo "Error: The /$command_name command requires arguments. Usage: /$command_name <arguments>"
+    exit 1
+fi
+
+EOF
+        fi
+        
         # Append the original content
         cat "$output" >> "$output.tmp"
         

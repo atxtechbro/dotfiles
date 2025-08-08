@@ -5,7 +5,7 @@ argument-hint: [title] [description]
 
 ## Available Labels
 
-- Labels: !`gh label list`
+- Labels: !gh label list
 
 # Create Issue Command Template
 

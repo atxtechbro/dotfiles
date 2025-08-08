@@ -5,12 +5,12 @@ argument-hint: <issue-number>
 
 ## Issue Context
 
-- Issue details: !`gh issue view $ARGUMENTS`
+- Issue details: !gh issue view $ARGUMENTS
 
 ## Workspace Setup
 
-!`git worktree add "worktrees/$ARGUMENTS-issue" -b "$ARGUMENTS-issue"`
-!`cd "worktrees/$ARGUMENTS-issue"`
+!git worktree add "worktrees/$ARGUMENTS-issue" -b "$ARGUMENTS-issue"
+!cd "worktrees/$ARGUMENTS-issue"
 
 # Close Issue Command Template
 
