@@ -5,8 +5,7 @@ argument-hint: <issue-number>
 
 ## Issue Context
 
-- Issue details: !`gh issue view $1 --json number,title,state,labels | jq -r '"#\(.number): \(.title)\nState: \(.state)\nLabels: \(.labels | map(.name) | join(", "))"'`
-- Comments: !`gh issue view $1 --json comments | jq -r '.comments[:3][] | "[\(.author.login)]: \(.body | split("\n")[0])"'`
+- Issue details: !`gh issue view $1 --comments`
 
 ## Workspace Setup
 
