@@ -5,7 +5,7 @@ argument-hint: [title] [description]
 
 ## Available Labels
 
-- Labels: !`gh label list --json name,description | jq -r '.[] | "  - \(.name): \(.description // "")"'`
+- Labels: !`gh label list`
 
 ## Recent Issues
 
