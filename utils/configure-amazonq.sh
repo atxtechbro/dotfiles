@@ -49,7 +49,7 @@ cp "$SOURCE_CONFIG" "$TARGET_CONFIG"
 echo "✅ Global context configuration installed"
 
 # Validate
-if [ -L "$TARGET_RULES" ] && [ -f "$TARGET_CONFIG" ]; then
+if [ -L "$TARGET_KNOWLEDGE" ] && [ -f "$TARGET_CONFIG" ]; then
     echo "✅ Amazon Q global rules setup complete"
 else
     echo "❌ Setup validation failed!"
