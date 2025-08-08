@@ -4,6 +4,9 @@
 # Define the dotfiles location
 DOT_DEN="${DOT_DEN:-$HOME/ppv/pillars/dotfiles}"
 
+# Main alias - specify model via command line
+alias codex='codex -m gpt-5'
+
 # Test command - validates knowledge integration
 alias codex-test='codex -p "What is AI provider agnosticism and which three providers have triple redundancy?"'
 
