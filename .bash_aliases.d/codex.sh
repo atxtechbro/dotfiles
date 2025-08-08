@@ -4,8 +4,8 @@
 # Define the dotfiles location
 DOT_DEN="${DOT_DEN:-$HOME/ppv/pillars/dotfiles}"
 
-# Main alias with TOML config and GPT-5 model
-alias codex='codex --config "$DOT_DEN/.codex/config.toml" --model "gpt-5-2025-08-07"'
-
 # Test command - validates knowledge integration
 alias codex-test='codex -p "What is AI provider agnosticism and which three providers have triple redundancy?"'
+
+# Update knowledge command - regenerates AGENTS.md from knowledge base
+alias codex-update-knowledge='$DOT_DEN/utils/generate-codex-knowledge.sh'
