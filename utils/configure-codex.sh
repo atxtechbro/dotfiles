@@ -57,9 +57,20 @@ echo -e "${BLUE}Step 2: Setting up Codex directory...${NC}"
 mkdir -p "$CODEX_DIR"
 echo -e "${GREEN}✓ Created ~/.codex directory${NC}"
 
-# Step 3: Generate AGENTS.md
+# Step 3: Copy config.toml to user's .codex directory
 echo ""
-echo -e "${BLUE}Step 3: Generating AGENTS.md from knowledge base...${NC}"
+echo -e "${BLUE}Step 3: Setting up Codex configuration...${NC}"
+SOURCE_CONFIG="$DOTFILES_DIR/.codex/config.toml"
+if [[ -f "$SOURCE_CONFIG" ]]; then
+    cp "$SOURCE_CONFIG" "$CODEX_DIR/config.toml"
+    echo -e "${GREEN}✓ Copied config.toml to ~/.codex/${NC}"
+else
+    echo -e "${YELLOW}⚠ No config.toml found in dotfiles, using Codex defaults${NC}"
+fi
+
+# Step 4: Generate AGENTS.md
+echo ""
+echo -e "${BLUE}Step 4: Generating AGENTS.md from knowledge base...${NC}"
 if "$UTILS_DIR/generate-codex-knowledge.sh"; then
     echo -e "${GREEN}✓ AGENTS.md generated successfully${NC}"
 else
@@ -67,9 +78,9 @@ else
     exit 1
 fi
 
-# Step 4: Create update hook
+# Step 5: Create update hook
 echo ""
-echo -e "${BLUE}Step 4: Creating update mechanism...${NC}"
+echo -e "${BLUE}Step 5: Creating update mechanism...${NC}"
 
 # Create a git hook to regenerate on knowledge changes (optional)
 if [[ -d "$DOTFILES_DIR/.git" ]]; then
@@ -99,9 +110,9 @@ EOF
     fi
 fi
 
-# Step 5: Create convenience script
+# Step 6: Create convenience script
 echo ""
-echo -e "${BLUE}Step 5: Creating convenience commands...${NC}"
+echo -e "${BLUE}Step 6: Creating convenience commands...${NC}"
 
 # Create a project AGENTS.md template if in a git repo
 if [[ -d ".git" ]] && [[ "$PWD" != "$DOTFILES_DIR" ]]; then
@@ -133,7 +144,7 @@ EOF
     fi
 fi
 
-# Step 6: Summary
+# Step 7: Summary
 echo ""
 echo -e "${GREEN}=== Setup Complete ===${NC}"
 echo ""
