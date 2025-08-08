@@ -5,11 +5,11 @@ argument-hint: [title] [description]
 
 ## Available Labels
 
-- Labels: !`gh label list --repo atxtechbro/dotfiles --limit 10 --json name,description 2>/dev/null | jq -r '.[] | "  - \(.name): \(.description // "")"' || echo "Could not fetch labels"`
+- Labels: !`gh label list --limit 10 --json name,description | jq -r '.[] | "  - \(.name): \(.description // "")"'`
 
 ## Recent Issues
 
-- Check duplicates: !`gh issue list --repo atxtechbro/dotfiles --limit 5 --json number,title,state 2>/dev/null | jq -r '.[] | "  #\(.number): \(.title) [\(.state)]"' || echo "Could not fetch recent issues"`
+- Check duplicates: !`gh issue list --limit 5 --json number,title,state | jq -r '.[] | "  #\(.number): \(.title) [\(.state)]"'`
 
 # Create Issue Command Template
 
