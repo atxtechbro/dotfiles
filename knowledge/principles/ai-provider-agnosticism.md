@@ -24,12 +24,8 @@ alias codex='codex --config "$DOT_DEN/.codex/config.toml" --add-dir "$DOT_DEN/kn
 
 ## Implementation
 
-- **Setup Script**: `utils/setup-provider-agnostic-mcp.sh`
-- **Provider Installers**: 
-  - `utils/install-amazon-q.sh`
-  - `utils/install-codex.sh`
-- **Configuration**: `.config/provider_dirs.conf`
-- **Command Generation**: `utils/generate-commands.sh` (Claude only)
+- **Configuration Scripts**: `utils/configure-*.sh` 
+- **Complex Installation**: `utils/install-amazon-q.sh`
 - **Knowledge Integration**: 
   - Claude: Slash commands + knowledge directory
   - Amazon Q: Knowledge import during setup
@@ -47,17 +43,17 @@ alias codex='codex --config "$DOT_DEN/.codex/config.toml" --add-dir "$DOT_DEN/kn
 
 ### Claude Code (Anthropic)
 - Model: claude-opus-4-1-20250805
-- Strengths: Complex reasoning, code analysis
+- Strengths: Excellent documentation, developer-friendly ergonomics, complex reasoning
 - MCP: CLI flag support
 
 ### Amazon Q (AWS)
 - Model: Amazon's proprietary
-- Strengths: AWS integration, cloud services
+- Strengths: Rust-based, open source, cost-effective, AWS integration
 - MCP: Import mechanism
 
 ### OpenAI Codex (OpenAI)
 - Model: gpt-5-2025-08-07
-- Strengths: Latest GPT capabilities, broad knowledge
+- Strengths: Novel OpenAI models, cutting-edge capabilities, unique availability
 - MCP: TOML config with mcp_servers sections
 
 ## Relationship to Other Principles
