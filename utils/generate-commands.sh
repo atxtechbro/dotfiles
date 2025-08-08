@@ -101,49 +101,116 @@ for config in "${PROVIDER_CONFIGS[@]}"; do
                 -v ISSUE_NUMBER='$ISSUE_NUMBER' \
                 -k "$DOTFILES_DIR/knowledge"
             
+            # Check if the output file has frontmatter
+            has_frontmatter=false
+            if head -n 1 "$output" | grep -q '^---$'; then
+                has_frontmatter=true
+            fi
+            
             # Add provider-specific logging
-            case "$provider" in
-                claude)
-                    # Claude-specific logging
-                    cat > "$output.tmp" << EOF
+            if [ "$has_frontmatter" = true ]; then
+                # File has frontmatter, preserve it and inject logging after
+                # Extract frontmatter
+                awk '/^---$/{p++} p==1' "$output" > "$output.frontmatter"
+                echo "---" >> "$output.frontmatter"
+                
+                # Extract content after frontmatter
+                awk '/^---$/{p++} p==2{print; exit}' "$output" | tail -n +2 > "$output.content"
+                awk '/^---$/{p++} p>1' "$output" | tail -n +2 >> "$output.content"
+                
+                # Rebuild file with frontmatter, then logging, then content
+                cp "$output.frontmatter" "$output.tmp"
+                
+                case "$provider" in
+                    claude)
+                        # Claude-specific logging
+                        cat >> "$output.tmp" << EOF
 !echo "\$(date '+%Y-%m-%d %H:%M:%S') $command_name \$ARGUMENTS" >> ~/claude-slash-commands.log
 
 EOF
-                    # Add command-specific validation
-                    case "$command_name" in
-                        close-issue)
-                            # Inject shell validation for close-issue
-                            cat >> "$output.tmp" << 'EOF'
+                        # Add command-specific validation
+                        case "$command_name" in
+                            close-issue)
+                                # Inject shell validation for close-issue
+                                cat >> "$output.tmp" << 'EOF'
 if [ -z "$ISSUE_NUMBER" ]; then
     echo "Error: The /close-issue command requires a GitHub issue number. Usage: /close-issue <number>"
     exit 1
 fi
 
 EOF
-                            ;;
-                    esac
-                    ;;
-                amazonq)
-                    # Amazon Q might have different logging needs
-                    cat > "$output.tmp" << EOF
+                                ;;
+                        esac
+                        ;;
+                    amazonq)
+                        # Amazon Q might have different logging needs
+                        cat >> "$output.tmp" << EOF
 # Amazon Q command: $command_name
 # Generated: $(date '+%Y-%m-%d %H:%M:%S')
 
 EOF
-                    ;;
-                *)
-                    # Generic provider logging
-                    cat > "$output.tmp" << EOF
+                        ;;
+                    *)
+                        # Generic provider logging
+                        cat >> "$output.tmp" << EOF
 # Command: $command_name
 # Provider: $provider
 # Generated: $(date '+%Y-%m-%d %H:%M:%S')
 
 EOF
-                    ;;
-            esac
-            
-            # Append the original content
-            cat "$output" >> "$output.tmp"
+                        ;;
+                esac
+                
+                # Append the content after frontmatter
+                cat "$output.content" >> "$output.tmp"
+                
+                # Clean up temporary files
+                rm -f "$output.frontmatter" "$output.content"
+            else
+                # No frontmatter, add logging at the beginning as before
+                case "$provider" in
+                    claude)
+                        # Claude-specific logging
+                        cat > "$output.tmp" << EOF
+!echo "\$(date '+%Y-%m-%d %H:%M:%S') $command_name \$ARGUMENTS" >> ~/claude-slash-commands.log
+
+EOF
+                        # Add command-specific validation
+                        case "$command_name" in
+                            close-issue)
+                                # Inject shell validation for close-issue
+                                cat >> "$output.tmp" << 'EOF'
+if [ -z "$ISSUE_NUMBER" ]; then
+    echo "Error: The /close-issue command requires a GitHub issue number. Usage: /close-issue <number>"
+    exit 1
+fi
+
+EOF
+                                ;;
+                        esac
+                        ;;
+                    amazonq)
+                        # Amazon Q might have different logging needs
+                        cat > "$output.tmp" << EOF
+# Amazon Q command: $command_name
+# Generated: $(date '+%Y-%m-%d %H:%M:%S')
+
+EOF
+                        ;;
+                    *)
+                        # Generic provider logging
+                        cat > "$output.tmp" << EOF
+# Command: $command_name
+# Provider: $provider
+# Generated: $(date '+%Y-%m-%d %H:%M:%S')
+
+EOF
+                        ;;
+                esac
+                
+                # Append the original content
+                cat "$output" >> "$output.tmp"
+            fi
             
             # Replace original with logged version
             mv "$output.tmp" "$output"
