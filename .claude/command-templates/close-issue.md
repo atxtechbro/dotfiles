@@ -7,7 +7,6 @@ argument-hint: <issue-number>
 
 - Issue details: !`gh issue view $1 --json number,title,state,labels | jq -r '"#\(.number): \(.title)\nState: \(.state)\nLabels: \(.labels | map(.name) | join(", "))"'`
 - Comments: !`gh issue view $1 --json comments | jq -r '.comments[:3][] | "[\(.author.login)]: \(.body | split("\n")[0])"'`
-- Related commits: !`git log --oneline -5 --grep="#$1"`
 
 ## Workspace Setup
 
