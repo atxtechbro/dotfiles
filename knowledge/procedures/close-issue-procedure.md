@@ -23,6 +23,8 @@ Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 
 ## Implementation
 <!-- Contract: Issue context loaded, worktree at worktrees/{{ ISSUE_NUMBER }}-issue -->
+Navigate to the worktree: `cd worktrees/{{ ISSUE_NUMBER }}-issue`
+
 Build the solution using tracer bullets - get something working first, then iterate.
 
 {{ INJECT:principles/tracer-bullets.md }}
