@@ -18,7 +18,7 @@ NC='\033[0m' # No Color
 
 # Get script directory and paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DOTFILES_DIR="$SCRIPT_DIR"
+DOTFILES_DIR="$(dirname "$SCRIPT_DIR")"
 KNOWLEDGE_DIR="$DOTFILES_DIR/knowledge"
 UTILS_DIR="$DOTFILES_DIR/utils"
 CODEX_DIR="$HOME/.codex"
