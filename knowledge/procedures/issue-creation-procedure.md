@@ -41,18 +41,12 @@ Scan issue content for principle alignment:
   - "rapid", "quick test" → tracer-bullets
   - "accumulate", "compound" → snowball-method
 
-## Step 4: Validate Labels
+## Step 4: Select Labels
 
-Use the labels shown in the **Available Labels** section above (from `gh label list`).
-Only select from those labels - do not invent or suggest labels that don't exist.
-
-Suggested labels based on analysis:
-- Issue type labels (bug, enhancement, documentation) - if they exist
-- Principle labels (principle:ose, principle:versioning-mindset, etc.) - if they exist
-- Area labels (mcp, git, automation, etc.) - if they exist
-
-**CRITICAL**: Only apply labels from the Available Labels list.
-Never attempt to apply labels not shown in that list.
+From the **Available Labels** section above, select appropriate labels based on:
+- Issue type (bug, enhancement, documentation)
+- Principles detected in Step 3
+- Relevant areas (mcp, git, automation, etc.)
 
 ## Step 5: Build Issue Content
 
@@ -80,7 +74,7 @@ Based on keywords, link relevant procedures:
 Present a complete preview showing:
 - **Title**: [proposed title]
 - **Body**: [formatted content with template]
-- **Labels**: [only validated labels]
+- **Labels**: [selected from available labels]
 - **Repository**: [target repository]
 
 Ask for confirmation or modifications.
@@ -88,16 +82,9 @@ Ask for confirmation or modifications.
 ## Step 7: Create the Issue
 
 Upon confirmation:
-1. Create the issue with validated labels only
+1. Create the issue with selected labels
 2. Return the issue URL
 3. Log the creation for analytics
-
-## Error Handling
-
-If label validation fails:
-- Skip non-existent labels
-- Note which labels were skipped
-- Continue with issue creation using only valid labels
 
 ## Principle: subtraction-creates-value
 
