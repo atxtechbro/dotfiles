@@ -7,7 +7,7 @@
 **Go slow to go fast**: The recovery tax compounds invisibly. A stale starting point pollutes every subsequent action - your PR carries ghost commits, review gets clouded by unintended diffs, context windows fill with noise. The principle isn't about git mechanics but about preserving clarity of intent. When we rush past orientation, we mortgage our future attention.
 
 ### Quick orientation checks (prevent future cleanup)
-1. `mcp__git__git_status` - Where am I? What's already changed?
+1. Check git status - Where am I? What's already changed?
    → [subtraction-creates-value](../../knowledge/principles/subtraction-creates-value.md) (avoid recovery tax)
 2. Check current branch - Am I on main? Do I have uncommitted work?
 3. **Is main current?** - `git fetch && git status` - Behind origin/main means your PR will include unwanted commits
@@ -19,6 +19,8 @@ Starting from a stale foundation guarantees the recovery tax - double work to ac
 ### Standards (not methods)
 - Branch naming: `type/description` (e.g., `feature/add-authentication`, `fix/login-bug`)
 - Issue suffix: `type/description-123` (e.g., `feature/add-authentication-512`)
+- Worktree naming: `NUMBER-issue` (e.g., `1251-issue`, `42-issue`)
+  → Developer ergonomics: Tab completion with issue number first (`cd worktrees/1251<tab>`)
 - Order: Check surroundings → create branch → switch → work → commit
   → [subtraction-creates-value](../../knowledge/principles/subtraction-creates-value.md) (prevent recovery work)
 

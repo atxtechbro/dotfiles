@@ -21,23 +21,13 @@ Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 {{ KNOWLEDGE_BASE }}
 <!-- Note: If you see "{{ KNOWLEDGE_BASE }}" above as literal text, you're running locally and knowledge is already preloaded -->
 
-## Setup Isolated Environment
-Use git worktrees to create an isolated workspace for issue #{{ ISSUE_NUMBER }}.
-This prevents conflicts when multiple agents work in parallel.
+## Implementation
+<!-- Contract: Issue context loaded, working in worktree -->
+Build the solution using tracer bullets - get something working first, then iterate.
 
-## Core Principle: Target-First Development
 {{ INJECT:principles/tracer-bullets.md }}
 
-## Analyze Issue #{{ ISSUE_NUMBER }}
-<!-- This procedure IS the implementation - executable documentation -->
-First, analyze the issue including all comments to gather the complete context.
-
-## Apply to Issue #{{ ISSUE_NUMBER }}
-When following the procedure:
-- Use issue #{{ ISSUE_NUMBER }} for all GitHub API calls
-- Replace <NUMBER> with {{ ISSUE_NUMBER }} in branch names
-- Replace <description> with issue title slug
-- Reference "Closes #{{ ISSUE_NUMBER }}" in PR body
+When complete, create a PR that references "Closes #{{ ISSUE_NUMBER }}".
 
 ## Final Step: Retro
 Let's retro this context and wring out the gleanings.
