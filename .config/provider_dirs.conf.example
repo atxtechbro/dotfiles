@@ -1,18 +1,16 @@
 # AI Provider Command Configuration
 # Format: provider=template_dir|output_dir
 # Lines starting with # are ignored
+# NOTE: Only Claude Code supports slash commands natively
 
-# Claude Code
+# Claude Code (supports slash commands)
 claude=$DOTFILES_DIR/.claude/command-templates|$HOME/.claude/commands
 
-# Amazon Q
-amazonq=$DOTFILES_DIR/.amazonq/command-templates|$HOME/.amazonq/commands
+# Other providers listed for future extensibility but don't support slash commands:
+# amazonq=$DOTFILES_DIR/.claude/command-templates|$HOME/.amazonq/commands
+# cursor=$DOTFILES_DIR/.claude/command-templates|$HOME/.cursor/commands  
+# vscode=$DOTFILES_DIR/.claude/command-templates|$HOME/.vscode/commands
 
-# Cursor
-cursor=$DOTFILES_DIR/.cursor/command-templates|$HOME/.cursor/commands
-
-# VSCode
-vscode=$DOTFILES_DIR/.vscode/command-templates|$HOME/.vscode/commands
 
 # Add new providers here:
 # newprovider=$DOTFILES_DIR/.newprovider/command-templates|$HOME/.newprovider/commands

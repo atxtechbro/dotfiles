@@ -1,0 +1,52 @@
+# OpenAI Codex Configuration
+# This file uses TOML format as required by Codex CLI
+# Documentation: https://github.com/openai/codex/blob/main/codex-rs/config.md
+
+# Default model configuration
+model = "gpt-5-2025-08-07"
+temperature = 0.7
+max_tokens = 8192  # Match Claude Code's max output tokens for fair comparison
+
+# Sandbox and permissions
+sandbox = "local"
+autonomy = "medium"
+interactive = false
+
+# Authentication (subscription-based)
+# Use 'codex login' to authenticate with ChatGPT Plus/Pro/Team subscription
+
+# Logging configuration
+log_level = "info"
+log_file = "~/.codex/logs/codex.log"
+
+# MCP Server configurations
+# Note: Codex uses 'mcp_servers' (underscore) not 'mcpServers' (camelCase)
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["@playwright/mcp@latest"]
+env = { FASTMCP_LOG_LEVEL = "ERROR" }
+
+# Additional MCP servers can be added here
+# Example format:
+# [mcp_servers.github]
+# command = "npx"
+# args = ["-y", "@modelcontextprotocol/server-github"]
+# env = { GITHUB_TOKEN = "$GITHUB_TOKEN" }
+
+# Fallback models for resilience
+fallback_models = [
+    "gpt-4-turbo-preview",
+    "gpt-4-0125-preview",
+    "gpt-3.5-turbo"
+]
+
+# Integration settings
+[integrations]
+git_enabled = true
+git_auto_commit = false
+
+# Permissions configuration
+[permissions]
+allow = ["read", "write", "execute", "mcp"]
+deny = ["network:external", "system:critical"]
