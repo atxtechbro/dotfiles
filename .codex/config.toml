@@ -3,7 +3,7 @@
 # Documentation: https://github.com/openai/codex/blob/main/codex-rs/config.md
 
 # Default model configuration
-model = "gpt-4o"
+# Model is specified via command line alias (-m gpt-5)
 temperature = 0.7
 max_tokens = 8192  # Match Claude Code's max output tokens for fair comparison
 
