@@ -251,8 +251,10 @@ if [[ -f ~/.bash_exports ]]; then
   echo -e "${GREEN}✓ Environment variables loaded successfully${NC}"
 fi
 
-# Set up Amazon Q global rules (Claude Code now uses --add-dir flag via alias)
-"$DOT_DEN/utils/setup-amazonq-rules.sh"
+# Configure Amazon Q knowledge integration
+if [[ -f "$DOT_DEN/utils/configure-amazonq.sh" ]]; then
+  "$DOT_DEN/utils/configure-amazonq.sh"
+fi
 
 # Command templates live in .claude/command-templates/
 # Generated to ~/.claude/commands/ by generate-commands.sh below
@@ -330,34 +332,28 @@ fi
 echo -e "${DIVIDER}"
 echo "Setting up development tools..."
 
-# Amazon Q CLI setup and management
+# Amazon Q Installation (complex, needs its own script)
 echo -e "${DIVIDER}"
-echo "Setting up Amazon Q CLI..."
+echo "Setting up Amazon Q..."
 
-# Setup Amazon Q CLI (install, update, configure)
 if [[ -f "$DOT_DEN/utils/install-amazon-q.sh" ]]; then
   source "$DOT_DEN/utils/install-amazon-q.sh"
   setup_amazon_q || {
-    echo -e "${RED}Failed to setup Amazon Q CLI completely. Some features may not work.${NC}"
-    echo "You can install it manually later from: https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/command-line-getting-started-installing.html"
+    echo -e "${YELLOW}Amazon Q installation incomplete. See logs above.${NC}"
   }
 else
-  echo -e "${RED}Amazon Q installation script not found at $DOT_DEN/utils/install-amazon-q.sh${NC}"
+  echo -e "${YELLOW}Amazon Q installer not found, skipping.${NC}"
 fi
 
-# Claude Code CLI setup and management
+# Claude Code Configuration (includes trivial npm install)
 echo -e "${DIVIDER}"
-echo "Setting up Claude Code CLI..."
+echo "Configuring Claude Code..."
 
-# Setup Claude Code CLI (configure MCP servers, settings, and install if needed)
 if [[ -f "$DOT_DEN/utils/configure-claude-code.sh" ]]; then
   source "$DOT_DEN/utils/configure-claude-code.sh"
   configure_claude_code || {
-    echo -e "${RED}Failed to configure Claude Code CLI completely. Some features may not work.${NC}"
-    echo "You can install it manually later with: npm install -g @anthropic-ai/claude-code"
+    echo -e "${YELLOW}Claude Code configuration incomplete. Run configure-claude-code.sh manually.${NC}"
   }
-else
-  echo -e "${RED}Claude Code configuration script not found at $DOT_DEN/utils/configure-claude-code.sh${NC}"
 fi
 
 # Symlink Claude Code settings to correct location
@@ -383,6 +379,16 @@ if [[ -f "$DOT_DEN/mcp/mcp.json" ]]; then
   # Create symlink to unified MCP config
   ln -sf "$DOT_DEN/mcp/mcp.json" "$HOME/.config/claude/claude_desktop_config.json"
   echo -e "${GREEN}✓ Claude Desktop MCP config symlinked to mcp/mcp.json${NC}"
+fi
+
+# OpenAI Codex Configuration (includes trivial npm install)
+echo -e "${DIVIDER}"
+echo "Configuring OpenAI Codex..."
+
+if [[ -f "$DOT_DEN/utils/configure-codex.sh" ]]; then
+  bash "$DOT_DEN/utils/configure-codex.sh" || {
+    echo -e "${YELLOW}Codex configuration incomplete. Run configure-codex.sh manually.${NC}"
+  }
 fi
 
 

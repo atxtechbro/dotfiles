@@ -5,16 +5,16 @@ set -e
 
 # Define paths
 DOT_DEN="${DOT_DEN:-$HOME/ppv/pillars/dotfiles}"
-SOURCE_RULES="$DOT_DEN/knowledge"
-TARGET_RULES="$HOME/.amazonq/rules"
+SOURCE_KNOWLEDGE="$DOT_DEN/knowledge"
+TARGET_KNOWLEDGE="$HOME/.amazonq/rules"
 SOURCE_CONFIG="$DOT_DEN/.amazonq/global_context.json"
 TARGET_CONFIG="$HOME/.aws/amazonq/global_context.json"
 
-echo "Setting up Amazon Q global rules..."
+echo "Setting up Amazon Q global knowledge base..."
 
 # Check if source exists
-if [ ! -d "$SOURCE_RULES" ]; then
-    echo "❌ No knowledge directory found at $SOURCE_RULES"
+if [ ! -d "$SOURCE_KNOWLEDGE" ]; then
+    echo "❌ No knowledge directory found at $SOURCE_KNOWLEDGE"
     exit 1
 fi
 
@@ -23,26 +23,26 @@ if [ ! -f "$SOURCE_CONFIG" ]; then
     exit 1
 fi
 
-# Handle existing rules directory
-if [ -e "$TARGET_RULES" ] && [ ! -L "$TARGET_RULES" ]; then
-    # Backup existing rules
+# Handle existing knowledge directory
+if [ -e "$TARGET_KNOWLEDGE" ] && [ ! -L "$TARGET_KNOWLEDGE" ]; then
+    # Backup existing knowledge
     TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-    BACKUP_DIR="$HOME/.amazonq/experimental-rules.backup.$TIMESTAMP"
-    echo "Preserving existing experimental rules to $BACKUP_DIR"
-    mv "$TARGET_RULES" "$BACKUP_DIR"
-    echo "Experimental rules preserved. Consider making a PR to add useful rules to dotfiles repo"
+    BACKUP_DIR="$HOME/.amazonq/experimental-knowledge.backup.$TIMESTAMP"
+    echo "Preserving existing experimental knowledge to $BACKUP_DIR"
+    mv "$TARGET_KNOWLEDGE" "$BACKUP_DIR"
+    echo "Experimental knowledge preserved. Consider making a PR to add useful content to dotfiles repo"
 fi
 
 # Create parent directories
-mkdir -p "$(dirname "$TARGET_RULES")"
+mkdir -p "$(dirname "$TARGET_KNOWLEDGE")"
 mkdir -p "$(dirname "$TARGET_CONFIG")"
 
 # Remove existing symlink if present
-[ -L "$TARGET_RULES" ] && rm "$TARGET_RULES"
+[ -L "$TARGET_KNOWLEDGE" ] && rm "$TARGET_KNOWLEDGE"
 
 # Create symlink
-ln -s "$SOURCE_RULES" "$TARGET_RULES"
-echo "✅ Amazon Q global rules symlinked"
+ln -s "$SOURCE_KNOWLEDGE" "$TARGET_KNOWLEDGE"
+echo "✅ Amazon Q global knowledge base symlinked"
 
 # Copy global context config
 cp "$SOURCE_CONFIG" "$TARGET_CONFIG"

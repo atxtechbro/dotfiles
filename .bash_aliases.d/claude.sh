@@ -13,6 +13,6 @@ unset AWS_BEARER_TOKEN_BEDROCK  # Removes Bedrock API key if set (official varia
 # Claude alias with MCP configuration
 alias claude='claude --verbose --mcp-config "$GLOBAL_MCP_CONFIG" --add-dir "$DOT_DEN/knowledge"'
 
-# Quick test command (works on both work and personal)
-alias claude-test='claude -p "What is the capital of Texas?"'
+# Quick test command - validates knowledge integration
+alias claude-test='claude -p "What is AI provider agnosticism and which three providers have triple redundancy?"'
 
