@@ -5,7 +5,7 @@ argument-hint: <issue-number>
 
 ## Issue Context
 
-- Issue details: !`gh issue view $1 --comments`
+- Issue details: !`gh issue view $1`
 
 ## Workspace Setup
 
