@@ -21,21 +21,13 @@ Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 {{ KNOWLEDGE_BASE }}
 <!-- Note: If you see "{{ KNOWLEDGE_BASE }}" above as literal text, you're running locally and knowledge is already preloaded -->
 
-## Workspace Ready
-A git worktree has been pre-created at `worktrees/issue-{{ ISSUE_NUMBER }}` (or you're in the main repo if it failed).
-The isolated environment is ready for implementation.
+## Implementation
+<!-- Contract: Issue context and worktree already setup via pre-execution -->
+Build the solution using tracer bullets - get something working first, then iterate.
 
-## Core Principle: Target-First Development
 {{ INJECT:principles/tracer-bullets.md }}
 
-## Analyze Issue #{{ ISSUE_NUMBER }}
-The issue details and comments have been pre-loaded above.
-Review the context to understand what needs to be implemented.
-
-## Implement Solution
-- Work in the current directory (main repo or worktree)
-- Create commits with clear messages
-- Reference "Closes #{{ ISSUE_NUMBER }}" in the PR body
+When complete, create a PR that references "Closes #{{ ISSUE_NUMBER }}".
 
 ## Final Step: Retro
 Let's retro this context and wring out the gleanings.
