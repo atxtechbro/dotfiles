@@ -21,23 +21,21 @@ Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 {{ KNOWLEDGE_BASE }}
 <!-- Note: If you see "{{ KNOWLEDGE_BASE }}" above as literal text, you're running locally and knowledge is already preloaded -->
 
-## Setup Isolated Environment
-Use git worktrees to create an isolated workspace for issue #{{ ISSUE_NUMBER }}.
-This prevents conflicts when multiple agents work in parallel.
+## Workspace Ready
+A git worktree has been pre-created at `../issue-{{ ISSUE_NUMBER }}` (or you're in the main repo if it failed).
+The isolated environment is ready for implementation.
 
 ## Core Principle: Target-First Development
 {{ INJECT:principles/tracer-bullets.md }}
 
 ## Analyze Issue #{{ ISSUE_NUMBER }}
-<!-- This procedure IS the implementation - executable documentation -->
-First, analyze the issue including all comments to gather the complete context.
+The issue details and comments have been pre-loaded above.
+Review the context to understand what needs to be implemented.
 
-## Apply to Issue #{{ ISSUE_NUMBER }}
-When following the procedure:
-- Use issue #{{ ISSUE_NUMBER }} for all GitHub API calls
-- Replace <NUMBER> with {{ ISSUE_NUMBER }} in branch names
-- Replace <description> with issue title slug
-- Reference "Closes #{{ ISSUE_NUMBER }}" in PR body
+## Implement Solution
+- Work in the current directory (main repo or worktree)
+- Create commits with clear messages
+- Reference "Closes #{{ ISSUE_NUMBER }}" in the PR body
 
 ## Final Step: Retro
 Let's retro this context and wring out the gleanings.
