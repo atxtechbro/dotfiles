@@ -58,7 +58,7 @@ setup_provider_agnostic_mcp() {
         echo -e "${GREEN}✓ Codex CLI detected - MCP servers configured in TOML${NC}"
         echo -e "  Config: $DOT_DEN/.codex/config.toml"
         echo -e "  Format: TOML with [mcp_servers] sections"
-        echo -e "  Model: gpt-4o (default via alias)"
+        echo -e "  Model: gpt-5-2025-08-07 (default)"
         
         # Sync MCP servers from JSON to TOML if needed
         if [[ -f "$MCP_CONFIG" ]] && command -v jq &> /dev/null; then
