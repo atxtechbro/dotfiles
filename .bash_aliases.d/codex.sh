@@ -4,8 +4,12 @@
 # Define the dotfiles location
 DOT_DEN="${DOT_DEN:-$HOME/ppv/pillars/dotfiles}"
 
-# Main alias - specify model via command line
+# Main alias - default: reasoning-focused 4o
 alias codex='codex -m gpt-4o'
+
+# Chat-focused alias: empathetic, dialogue-optimized
+# Useful for conversational edits (e.g., refining .md content)
+alias codex-chat='codex -m chatgpt-4o-latest'
 
 # Test command - validates knowledge integration
 alias codex-test='codex -p "What is AI provider agnosticism and which three providers have triple redundancy?"'
