@@ -34,12 +34,7 @@ env = { FASTMCP_LOG_LEVEL = "ERROR" }
 # args = ["-y", "@modelcontextprotocol/server-github"]
 # env = { GITHUB_TOKEN = "$GITHUB_TOKEN" }
 
-# Fallback models for resilience
-fallback_models = [
-    "gpt-4-turbo",
-    "gpt-4",
-    "gpt-3.5-turbo"
-]
+## Note: no fallback_models here — rely on Codex's own defaults/selection.
 
 # Integration settings
 [integrations]
@@ -50,3 +45,17 @@ git_auto_commit = false
 [permissions]
 allow = ["read", "write", "execute", "mcp"]
 deny = ["network:external", "system:critical"]
+
+# Use ChatGPT subscription-based auth (no API keys)
+preferred_auth_method = "chatgpt"
+
+# -----------------------------------------------------------------------------
+# Model providers and profiles (per Codex docs)
+# Docs: https://github.com/openai/codex/blob/main/docs/config.md
+# -----------------------------------------------------------------------------
+
+# Minimal profile for GPT‑4o (uses built-in OpenAI provider defaults)
+# Invoke with: codex --profile gpt4o "..."
+
+[profiles.gpt4o]
+model = "gpt-4o"
