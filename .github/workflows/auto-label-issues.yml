@@ -6,6 +6,10 @@ on:
 
 jobs:
   triage-issue:
+    # Gate: only run when Claude Code is explicitly enabled
+    # Enable by setting repo variable: CLAUDE_CODE_SUBSCRIPTION=active
+    # Also requires OAuth token to be present
+    if: ${{ vars.CLAUDE_CODE_SUBSCRIPTION == 'active' && secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
