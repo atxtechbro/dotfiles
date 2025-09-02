@@ -9,9 +9,13 @@ set -euo pipefail
 # - Optional debug: USE_PATCHRIGHT_DEBUG=1 prints shim activation to stderr
 # - Override underlying command with PLAYWRIGHT_MCP_CMD if needed
 
+# Resolve repository-local paths dynamically (no hardcoded absolute paths)
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd -P)"
+SHIM_NODE_MODULES="$SCRIPT_DIR/patchright-shim/node_modules"
+
 USE_PATCHRIGHT="${USE_PATCHRIGHT:-1}"
 if [[ "${USE_PATCHRIGHT}" != "0" && "${USE_PATCHRIGHT,,}" != "false" ]]; then
-  export NODE_PATH="/home/linuxmint-lp/ppv/pillars/dotfiles/mcp/patchright-shim/node_modules${NODE_PATH+:$NODE_PATH}"
+  export NODE_PATH="${SHIM_NODE_MODULES}${NODE_PATH+:$NODE_PATH}"
   export USE_PATCHRIGHT_DEBUG="${USE_PATCHRIGHT_DEBUG:-0}"
 fi
 
@@ -22,4 +26,3 @@ if [[ "$CMD" == "npx" ]]; then
 else
   exec "$CMD" "$@"
 fi
-

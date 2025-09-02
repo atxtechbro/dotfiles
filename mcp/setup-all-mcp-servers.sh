@@ -58,6 +58,15 @@ done
 # Create servers directory if it doesn't exist
 mkdir -p "$MCP_DIR/servers"
 
+# Ensure patchright-playwright-mcp is available on PATH for portability
+WRAPPER_SRC="$MCP_DIR/patchright-playwright-mcp.sh"
+DEST_DIR="${HOME}/.local/bin"
+DEST_LINK="${DEST_DIR}/patchright-playwright-mcp"
+mkdir -p "${DEST_DIR}"
+if [ ! -e "${DEST_LINK}" ]; then
+    ln -s "${WRAPPER_SRC}" "${DEST_LINK}" || true
+fi
+
 # Summary
 echo -e "\n${GREEN}MCP Server Setup Summary:${NC}"
 echo "- Working directory: $REPO_ROOT"

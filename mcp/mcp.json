@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "playwright": {
-      "command": "/home/linuxmint-lp/ppv/pillars/dotfiles/mcp/patchright-playwright-mcp.sh",
+      "command": "patchright-playwright-mcp",
       "args": [],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"

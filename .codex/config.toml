@@ -23,7 +23,7 @@ log_file = "~/.codex/logs/codex.log"
 # Note: Codex uses 'mcp_servers' (underscore) not 'mcpServers' (camelCase)
 
 [mcp_servers.playwright]
-command = "/home/linuxmint-lp/ppv/pillars/dotfiles/mcp/patchright-playwright-mcp.sh"
+command = "patchright-playwright-mcp"
 args = []
 env = { FASTMCP_LOG_LEVEL = "ERROR" }
 
