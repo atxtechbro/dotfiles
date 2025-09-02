@@ -54,14 +54,8 @@ preferred_auth_method = "chatgpt"
 # Docs: https://github.com/openai/codex/blob/main/docs/config.md
 # -----------------------------------------------------------------------------
 
-# Define an OpenAI Chat Completions provider and a profile for GPT‑4o.
+# Minimal profile for GPT‑4o (uses built-in OpenAI provider defaults)
 # Invoke with: codex --profile gpt4o "..."
-
-[model_providers.openai-chat-completions]
-name = "OpenAI using Chat Completions"
-base_url = "https://api.openai.com/v1"
-wire_api = "chat"
 
 [profiles.gpt4o]
 model = "gpt-4o"
-model_provider = "openai-chat-completions"
