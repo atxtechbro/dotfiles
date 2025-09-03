@@ -32,100 +32,14 @@ mkdir -p "$SERVERS_DIR"
 # Patchright-enabled Playwright MCP directory
 PATCHRIGHT_PLAYWRIGHT_DIR="$SERVERS_DIR/patchright-playwright-mcp"
 
-# Create directory
-mkdir -p "$PATCHRIGHT_PLAYWRIGHT_DIR"
+# Verify the configuration files exist
+if [ ! -f "$PATCHRIGHT_PLAYWRIGHT_DIR/package.json" ]; then
+    echo -e "${RED}Error: Configuration files not found at $PATCHRIGHT_PLAYWRIGHT_DIR${NC}"
+    echo -e "${RED}The patchright-playwright-mcp configuration should be committed to the repository.${NC}"
+    exit 1
+fi
 
-# Create package.json with npm overrides to use patchright instead of playwright
-echo -e "${GREEN}Creating package.json with patchright overrides...${NC}"
-cat > "$PATCHRIGHT_PLAYWRIGHT_DIR/package.json" << 'EOF'
-{
-  "name": "patchright-playwright-mcp",
-  "version": "1.0.0",
-  "description": "Official Playwright MCP server using patchright as a drop-in replacement",
-  "main": "launcher.js",
-  "scripts": {
-    "postinstall": "npx patchright install chromium || true"
-  },
-  "dependencies": {
-    "@playwright/mcp": "latest",
-    "patchright": "^1.52.5",
-    "playwright": "npm:patchright@^1.52.5",
-    "playwright-core": "npm:patchright@^1.52.5"
-  },
-  "overrides": {
-    "playwright": "npm:patchright@^1.52.5",
-    "playwright-core": "npm:patchright@^1.52.5"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  }
-}
-EOF
-
-# Create a launcher script that sets up the environment
-echo -e "${GREEN}Creating launcher script...${NC}"
-cat > "$PATCHRIGHT_PLAYWRIGHT_DIR/launcher.js" << 'EOF'
-#!/usr/bin/env node
-
-/**
- * Launcher for Playwright MCP server with patchright
- * 
- * This launcher ensures the official @playwright/mcp server runs
- * with patchright as the backend through npm aliasing
- */
-
-const { spawn } = require('child_process');
-const path = require('path');
-
-// Set environment for stealth configuration
-const env = {
-  ...process.env,
-  // Log level
-  FASTMCP_LOG_LEVEL: process.env.FASTMCP_LOG_LEVEL || 'ERROR',
-  // Recommended patchright configuration for stealth
-  PLAYWRIGHT_LAUNCH_OPTIONS: JSON.stringify({
-    channel: 'chrome',  // Use real Chrome instead of Chromium
-    headless: false,    // Patchright works best in headed mode
-    viewport: null,     // Don't set custom viewport
-    args: [
-      '--start-maximized',
-      '--disable-blink-features=AutomationControlled'
-    ],
-    ignoreDefaultArgs: ['--enable-automation']
-  })
-};
-
-// Find the mcp-server-playwright executable
-const mcpExecutable = path.join(__dirname, 'node_modules', '.bin', 'mcp-server-playwright');
-
-// Launch the MCP server
-const mcpServer = spawn(mcpExecutable, process.argv.slice(2), {
-  stdio: 'inherit',
-  env: env,
-  cwd: __dirname
-});
-
-mcpServer.on('error', (err) => {
-  console.error('[patchright-mcp] Failed to start MCP server:', err);
-  process.exit(1);
-});
-
-mcpServer.on('close', (code) => {
-  process.exit(code || 0);
-});
-
-// Handle graceful shutdown
-process.on('SIGINT', () => {
-  mcpServer.kill('SIGINT');
-});
-
-process.on('SIGTERM', () => {
-  mcpServer.kill('SIGTERM');
-});
-EOF
-
-# Make the launcher executable
-chmod +x "$PATCHRIGHT_PLAYWRIGHT_DIR/launcher.js"
+echo -e "${GREEN}Found patchright MCP configuration files${NC}"
 
 # Check if npm is available
 if ! command -v npm &> /dev/null; then
@@ -175,41 +89,10 @@ else
     npx patchright install chrome 2>/dev/null || echo "Chrome install skipped (system Chrome may be present)"
 fi
 
-# Create a test script to verify patchright is being used
-echo -e "${GREEN}Creating verification script...${NC}"
-cat > "$PATCHRIGHT_PLAYWRIGHT_DIR/verify.js" << 'EOF'
-#!/usr/bin/env node
-
-const fs = require('fs');
-const path = require('path');
-
-console.log('Verifying patchright installation...\n');
-
-// Check if playwright resolves to patchright
-try {
-  const playwrightPath = require.resolve('playwright');
-  const playwrightPackage = require('playwright/package.json');
-  
-  console.log('playwright resolves to:', playwrightPath);
-  console.log('Package name:', playwrightPackage.name);
-  console.log('Package version:', playwrightPackage.version);
-  
-  if (playwrightPackage.name === 'patchright') {
-    console.log('✓ Successfully aliased playwright to patchright');
-  } else {
-    console.log('✗ playwright is not aliased to patchright');
-  }
-} catch (e) {
-  console.error('Error checking playwright:', e.message);
-}
-
-console.log('\n--- Quick functionality test ---');
-const { chromium } = require('playwright');
-console.log('chromium.name:', chromium.name());
-console.log('✓ Patchright-aliased playwright is functional');
-EOF
-
-chmod +x "$PATCHRIGHT_PLAYWRIGHT_DIR/verify.js"
+# Verify script should already exist
+if [ ! -f "$PATCHRIGHT_PLAYWRIGHT_DIR/verify.js" ]; then
+    echo -e "${YELLOW}Warning: verify.js not found in repository${NC}"
+fi
 
 # Run verification
 echo -e "\n${GREEN}Running verification...${NC}"
