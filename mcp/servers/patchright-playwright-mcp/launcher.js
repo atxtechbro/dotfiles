@@ -45,10 +45,13 @@ mcpServer.on('error', (err) => {
 
 mcpServer.on('close', (code) => {
   process.exit(code || 0);
-});
-
-// Handle graceful shutdown
-process.on('SIGINT', () => {
+mcpServer.on('error', (err) => {
+  console.error('[patchright-mcp] Failed to start MCP server:', {
+    message: err.message,
+    code: err.code,
+    stack: err.stack
+  });
+  process.exit(1);
   mcpServer.kill('SIGINT');
 });
 
