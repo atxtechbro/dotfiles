@@ -1,9 +1,9 @@
 {
   "mcpServers": {
     "playwright": {
-      "command": "node",
+      "command": "npx",
       "args": [
-        "mcp/servers/patchright-playwright-mcp/launcher.js"
+        "@playwright/mcp@latest"
       ],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
