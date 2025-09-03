@@ -2,8 +2,3 @@ filesystem-mcp-server/
 github
 mcp-servers/
 
-# Patchright-enabled Playwright MCP
-patchright-playwright-mcp/node_modules/
-patchright-playwright-mcp/package-lock.json
-patchright-playwright-mcp/.local-browsers/
-

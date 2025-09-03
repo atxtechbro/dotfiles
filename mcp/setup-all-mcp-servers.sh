@@ -34,11 +34,11 @@ else
 fi
 
 # Run individual setup scripts
+# EXPERIMENT #1213: All MCP servers temporarily disabled
 setup_scripts=(
-    "setup-patchright-mcp.sh"  # Patchright-enabled Playwright MCP
-    # "setup-github-mcp.sh"    # Temporarily disabled per #1213
-    # "setup-git-mcp.sh"       # Temporarily disabled per #1213
-    # "setup-brave-search-mcp.sh"  # Temporarily disabled per #1213
+    # "setup-github-mcp.sh"
+    # "setup-git-mcp.sh"
+    # "setup-brave-search-mcp.sh"
 )
 
 failed_setups=()
