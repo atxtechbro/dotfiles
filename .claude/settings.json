@@ -6,10 +6,10 @@
   "permissions": {
     "defaultMode": "bypassPermissions",
     "deny": [
-      "Bash(git push:*main*)",
-      "Bash(git push:*master*)",
+      "Bash(git push:*main)",
+      "Bash(git push:*master)",
       "Bash(git add -A:*)",
-      "Bash(git add:.*)"
+      "Bash(git add:.:*)"
     ],
     "allow": [
       "LS",
