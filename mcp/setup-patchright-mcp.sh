@@ -65,9 +65,10 @@ if [ ! -d "node_modules/@playwright/mcp" ]; then
 fi
 
 # Check if patchright was installed
-if [ ! -d "node_modules/patchright" ]; then
-    echo -e "${RED}Error: Failed to install patchright${NC}"
-    exit 1
+    if ! npx patchright install chromium; then
+        echo -e "${RED}Error: Failed to install Chromium browser${NC}"
+        exit 1
+    fi
 fi
 
 # Verify the executable exists
