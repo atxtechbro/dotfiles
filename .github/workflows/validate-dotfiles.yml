@@ -83,3 +83,21 @@ jobs:
           git config --list || exit 1
           
           echo "All configurations validated successfully"
+
+      - name: Validate Claude commands sync
+        run: |
+          export HOME=/tmp/test-home
+          
+          echo "Checking Claude command synchronization..."
+          cd $HOME/ppv/pillars/dotfiles
+          
+          # Run the sync check
+          if [[ -x utils/sync-claude-commands.sh ]]; then
+            utils/sync-claude-commands.sh --check || {
+              echo "Error: Claude commands are out of sync!"
+              echo "Run 'utils/sync-claude-commands.sh --clean' locally to fix"
+              exit 1
+            }
+          else
+            echo "Warning: sync-claude-commands.sh not found, skipping check"
+          fi

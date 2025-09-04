@@ -62,6 +62,15 @@ fi
 # Track if any templates were processed
 TEMPLATES_PROCESSED=0
 
+# Run cleanup before generating new commands
+echo "Running cleanup to remove orphaned commands..."
+if [[ -x "$SCRIPT_DIR/sync-claude-commands.sh" ]]; then
+    "$SCRIPT_DIR/sync-claude-commands.sh" --clean
+else
+    echo "Warning: sync-claude-commands.sh not found or not executable"
+fi
+echo
+
 # Process templates for each provider
 for config in "${PROVIDER_CONFIGS[@]}"; do
     provider="${config%%:*}"

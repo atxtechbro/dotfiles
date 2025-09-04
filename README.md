@@ -286,6 +286,24 @@ To modify a slash command:
 2. Run `utils/generate-commands.sh` (automatically run by `source setup.sh`)
 3. The updated command is available in all configured AI providers
 
+**Command Lifecycle Management**:
+- **Sync Tool**: `utils/sync-claude-commands.sh` detects and cleans orphaned commands
+- **Auto-Cleanup**: `generate-commands.sh` automatically removes orphaned commands before generation
+- **CI Validation**: GitHub Actions verify command synchronization on every push
+- **Pre-commit Hook**: Ensures commands stay synchronized (enable with `git config core.hooksPath .githooks`)
+
+To check command synchronization:
+```bash
+# Check for orphaned or missing commands
+utils/sync-claude-commands.sh --check
+
+# Clean orphaned commands
+utils/sync-claude-commands.sh --clean
+
+# Regenerate all commands (includes auto-cleanup)
+utils/generate-commands.sh
+```
+
 **Principle**: This vendor-agnostic approach follows `systems-stewardship` - building reusable patterns across tools.
 
 ### Claude Code Settings

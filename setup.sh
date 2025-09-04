@@ -623,6 +623,16 @@ fi
 #   echo -e "${YELLOW}start-mcp-dashboard script not found. Skipping dashboard setup.${NC}"
 # fi
 
+# Configure git hooks
+if [[ -d "$DOT_DEN/.githooks" ]]; then
+  echo "Configuring git hooks..."
+  # Set the git hooks path for the dotfiles repository
+  (cd "$DOT_DEN" && git config core.hooksPath .githooks)
+  echo -e "${GREEN}Git hooks configured for command synchronization validation${NC}"
+else
+  echo -e "${YELLOW}Git hooks directory not found. Skipping hooks configuration.${NC}"
+fi
+
 echo -e "${DIVIDER}"
 echo -e "${GREEN}✅ Dotfiles setup complete!${NC}"
 echo "Your development environment is now configured and ready to use."
