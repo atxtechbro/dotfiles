@@ -332,18 +332,7 @@ fi
 echo -e "${DIVIDER}"
 echo "Setting up development tools..."
 
-# Amazon Q Installation (complex, needs its own script)
-echo -e "${DIVIDER}"
-echo "Setting up Amazon Q..."
-
-if [[ -f "$DOT_DEN/utils/install-amazon-q.sh" ]]; then
-  source "$DOT_DEN/utils/install-amazon-q.sh"
-  setup_amazon_q || {
-    echo -e "${YELLOW}Amazon Q installation incomplete. See logs above.${NC}"
-  }
-else
-  echo -e "${YELLOW}Amazon Q installer not found, skipping.${NC}"
-fi
+# Amazon Q removed - was breaking tmux by hijacking shell sessions with qterm
 
 # Claude Code Configuration (includes trivial npm install)
 echo -e "${DIVIDER}"
