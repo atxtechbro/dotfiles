@@ -156,11 +156,6 @@ if [[ -n "$SSH_CONNECTION" ]]; then
     # This prevents recursive loops when connecting to localhost
     :
 else
-    # Only change to dotfiles directory when NOT in a tmux session (only in interactive shells)
-    if [[ $- == *i* ]] && [ -z "$TMUX" ] && [ -d "$DOT_DEN" ]; then
-        cd "$DOT_DEN" || true
-    fi
-
     # Source Amazon Q environment if installed
     if [ -f "$HOME/.local/bin/env" ]; then
         . "$HOME/.local/bin/env"
