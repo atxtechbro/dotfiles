@@ -161,19 +161,13 @@ else
         . "$HOME/.local/bin/env"
     fi
 
-    # Auto-start tmux: attach to existing session or create new one
+    # Auto-start tmux with a unique session name based on timestamp
     # Skip auto-start if we're running from the setup script
     # Also skip if we're running a navigation alias (to prevent session termination)
     if [ -z "$TMUX" ] && [[ "$-" == *i* ]] && command -v tmux >/dev/null 2>&1 && [ -z "$SETUP_SCRIPT_RUNNING" ] && [ -z "$NAVIGATION_ALIAS_RUNNING" ]; then
-        # Check if any tmux sessions exist
-        if tmux list-sessions >/dev/null 2>&1; then
-            # Attach to the most recent session
-            exec tmux attach-session -t "$(tmux list-sessions -F "#{session_name}" | head -1)"
-        else
-            # Create a new session in current directory
-            SESSION_NAME="terminal-$(date +%s)"
-            exec tmux new-session -s "$SESSION_NAME"
-        fi
+        # Create a new session with a unique name (terminal-TIMESTAMP)
+        SESSION_NAME="terminal-$(date +%s)"
+        exec tmux new-session -s "$SESSION_NAME"
     fi
 fi
 
