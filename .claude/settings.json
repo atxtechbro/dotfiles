@@ -36,6 +36,7 @@
       "Bash(python:*)",
       "Bash(git:*)",
       "Bash(gh:*)",
+      "Bash(tmux display-message \"[A-Za-z0-9\\s\\-_.:!?,]+\")",
       "mcp__playwright"
     ],
     "additionalDirectories": ["//"]
