@@ -44,34 +44,17 @@ This will:
 
 The setup process ensures all MCP servers work correctly in worktrees by:
 
-1. **Building binaries locally**: GitHub MCP server binary is built in `worktree/mcp/servers/github`
-2. **Creating Python venvs**: Git MCP server venv is created at `worktree/mcp/servers/git-mcp-server/.venv`
-3. **Installing npm packages**: Brave Search MCP dependencies installed in `worktree/node_modules`
-4. **Generating configs**: MCP configurations are generated for the worktree path
+1. **Installing npm packages**: MCP dependencies installed in `worktree/node_modules`
+2. **Generating configs**: MCP configurations are generated for the worktree path
 
 ## Working with MCP in Worktrees
 
-After setup, all MCP servers should work normally:
-
-```bash
-# Test GitHub MCP server
-echo '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {}, "clientInfo": {"name": "test", "version": "1.0"}}}' | github-mcp-wrapper.sh
-
-# The wrapper scripts use relative paths, so they find the worktree's binaries
-```
+After setup, MCP servers configured in Claude desktop settings should work normally.
 
 ## Common Issues and Solutions
 
 ### Issue: MCP servers fail with "binary not found"
 **Solution**: Run `source setup.sh` from the worktree directory to build/install dependencies
-
-### Issue: Python venv not found for git-mcp-server
-**Solution**: The setup script should create it. If not, run:
-```bash
-cd mcp/servers/git-mcp-server
-python -m venv .venv
-.venv/bin/pip install -e .
-```
 
 ### Issue: npm packages not found
 **Solution**: The setup script should install them. If not, run:

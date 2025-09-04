@@ -1,46 +1,27 @@
 # MCP Servers Directory
 
-This directory contains MCP servers that have been brought directly into the dotfiles repository for experimentation and enhanced control.
+This directory contains MCP servers and related configurations.
 
-## Why These Servers Are Here
+## Current State
 
-### Git MCP Server Journey
+As of issue #1215, git and GitHub MCP servers have been removed from this repository. The experiment (issue #1213) demonstrated that direct CLI usage via Bash tools provides better performance and reliability for git and GitHub operations.
 
-The git-mcp-server in this directory has an interesting origin story:
+## Lessons Learned
 
-1. **Started with cyanheads/git-mcp-server** - Initially used the popular TypeScript-based git MCP server from https://github.com/cyanheads/git-mcp-server
-2. **Performance concerns** - Noticed it was slowing me down more than speeding me up, wasting AI request/response cycles on simple operations like `git add` followed by `git commit`
-3. **Language barrier** - Being written in TypeScript made it hard to understand and modify for my needs
-4. **Discovered kzms-git-mcp-server** - Found a Python-based alternative on PyPI that was originally on GitHub but later vanished from GitHub while staying on PyPI
-5. **Forked and personalized** - Downloaded the source, forked it, and began customizing it in Python (much easier to understand and modify)
+### What We Discovered
+- **Direct CLI is faster** - Git and GitHub operations via Bash tool are more efficient than MCP server wrappers
+- **Error messages are clearer** - Direct CLI provides better error reporting
+- **Less complexity** - Removing MCP server layers reduces maintenance overhead
+- **"Subtraction creates value"** - Sometimes removing components improves the system
 
-## Current Status and Future Plans
+### Decision Outcome
+After testing (issue #1213), we determined that well-documented CLI tools like git and gh work better without MCP server wrappers. This aligns with guidance from Anthropic engineers that MCP servers add most value for custom or less-accessible tools.
 
-### Current Reality
-- **Still slower than bash** - In its current form, the git-mcp-server does slow me down compared to letting a bash agent handle git operations directly
-- **Fundamental tool** - Git is fundamental enough that the investment in control and observability is worth it
-- **Learning experience** - Already gained valuable experience implementing tool-level logging for MCP calls
+## Future Direction
 
-### Strategic Goals
-1. **Tool chaining** (medium priority) - Plan to implement operations that chain multiple git commands together to match bash speed and reduce AI request/response cycles
-2. **Enhanced control** (must have) - Direct access to source code allows for customization and optimization
-3. **Observability** (nice to have, future) - Comprehensive logging and monitoring capabilities for git operations
-4. **Experimentation platform** - Testing the concept of bringing MCP servers directly into dotfiles vs. managing separate repositories
+This directory may still be used for:
+- Custom MCP servers that provide unique functionality
+- Tools that don't have good CLI alternatives
+- Experimental MCP server development
 
-## Experimental Approach
-
-This is an **experiment** in MCP server management:
-- **Single server focus** - Not planning to bring every MCP server into dotfiles yet
-- **Time to "cook"** - Giving this approach time to mature and assess its effectiveness
-- **Learning laboratory** - Using this as a testbed for MCP server customization patterns
-
-The goal is to determine if bringing MCP servers directly into dotfiles provides enough value (control, speed, observability) to justify the approach, or if external dependency management remains the better pattern.
-
-## Future Decisions
-
-Based on how this experiment goes:
-- **Success** → Consider migrating other critical MCP servers
-- **Mixed results** → Keep git here but maintain external dependencies for others  
-- **Failure** → Return to external dependency model with lessons learned
-
-This directory represents a deliberate experiment in MCP server management philosophy, prioritizing control and customization over simplicity.
+The removal of git/GitHub MCP servers represents a strategic simplification, focusing MCP usage where it adds unique value rather than wrapping existing CLI tools.

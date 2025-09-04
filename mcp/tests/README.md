@@ -13,11 +13,11 @@ This directory contains tests for the MCP servers in this repository.
 To run tests for a specific MCP server:
 
 ```bash
-# Run Git MCP server tests with Amazon Q
-./test-git-mcp.sh
+# Run MCP server tests
+./test-<server>-mcp.sh
 
 # Run with a different model (if supported)
-TEST_MODEL=claude ./test-git-mcp.sh
+TEST_MODEL=claude ./test-<server>-mcp.sh
 ```
 
 ## Test Harness

@@ -15,4 +15,4 @@ When adding, updating, or removing MCP server tool-level logging:
 - Check both success/error scenarios
 - Confirm check-mcp-logs displays properly
 
-Reference implementation: atxtechbro-git-mcp-server
+Reference implementation: Check existing MCP servers for examples

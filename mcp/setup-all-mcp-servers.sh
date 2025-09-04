@@ -34,11 +34,10 @@ else
 fi
 
 # Run individual setup scripts
-# EXPERIMENT #1213: All MCP servers temporarily disabled
+# NOTE: git/github MCP servers removed per issue #1215
+# Direct CLI usage via Bash tool proved more reliable
 setup_scripts=(
-    # "setup-github-mcp.sh"
-    # "setup-git-mcp.sh"
-    # "setup-brave-search-mcp.sh"
+    # Add future MCP server setup scripts here
 )
 
 failed_setups=()
@@ -75,17 +74,5 @@ else
     echo -e "\n${GREEN}All MCP servers set up successfully!${NC}"
 fi
 
-# Verify critical binaries exist
-echo -e "\n${GREEN}Verifying server binaries:${NC}"
-binaries=(
-    "servers/github"
-    "servers/git-mcp-server/.venv/bin/python"
-)
-
-for binary in "${binaries[@]}"; do
-    if [ -e "$MCP_DIR/$binary" ]; then
-        echo -e "  ✓ $binary"
-    else
-        echo -e "  ${RED}✗ $binary${NC}"
-    fi
-done
+# NOTE: Binary verification removed as git/github MCP servers
+# have been deleted per issue #1215
