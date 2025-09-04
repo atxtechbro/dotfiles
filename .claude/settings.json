@@ -36,6 +36,7 @@
       "Bash(python:*)",
       "Bash(git:*)",
       "Bash(gh:*)",
+      "Bash(tmux display-message:*)",
       "mcp__playwright"
     ],
     "additionalDirectories": ["//"]
