@@ -4,17 +4,17 @@ Procedure for reporting errors with our custom MCP tools to create self-healing 
 
 ## Core Philosophy
 
-**We control the git and github MCP servers - we'll fix them, not work around them!**
+**We control our custom MCP servers - we'll fix them, not work around them!**
 
 This procedure creates autonomy for AI agents and snowball momentum for increasingly efficient tools.
 
 ## When to Use This
 
-When any of our custom MCP tools fail:
-- `mcp__git__*` tools (our git server)
-- `mcp__github__*` tools (our github server)
+When any of our custom MCP tools fail.
 
 **NOT for external tools** like playwright, brave-search, etc.
+
+**Note**: Git and GitHub operations now use direct CLI tools via Bash for better reliability (see issue #1215).
 
 ## Procedure
 

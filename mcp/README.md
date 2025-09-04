@@ -6,10 +6,10 @@ Wrapper scripts and configuration for MCP clients (Claude Code, Amazon Q, Cursor
 
 | Server | When to Use This | Auth | Source | Claude Code |
 |--------|------------------|------|--------|-------------|
-| Git | **Use this for all git operations** - commits, branches, diffs, logs, worktrees. This is your primary tool for version control. | None | [mcp-servers fork](servers/git-mcp-server) | ✅ Enabled |
-| GitHub | **Use this whenever you need to interact with GitHub** - issues, PRs, searching code, managing repositories. Essential for GitHub workflow automation. | `gh auth token` | [Custom server](servers/github-mcp-server) | ✅ Enabled |
 | Playwright | **Use this to automate browser interactions** - web scraping, testing, taking screenshots, filling forms. Your tool for any browser-based task. | None | [Official NPM](https://www.npmjs.com/package/@playwright/mcp) | ✅ Enabled |
 | Brave Search | **Use this to search the web** (only in non-Claude clients) - finding documentation, current events, external resources. | API key | [Official NPM](https://www.npmjs.com/package/@modelcontextprotocol/server-brave-search) | ❌ Disabled* |
+
+**Note**: Git and GitHub operations now use direct CLI tools via Bash for better reliability and performance (see issue #1215).
 
 *Claude Code has native WebSearch
 
@@ -29,7 +29,7 @@ Wrapper scripts and configuration for MCP clients (Claude Code, Amazon Q, Cursor
 ```json
 {
   "enableAllProjectMcpServers": false,
-  "enabledMcpjsonServers": ["git", "github", "playwright"]
+  "enabledMcpjsonServers": ["playwright"]
 }
 ```
 
@@ -39,7 +39,8 @@ When an MCP server shows as "failed" in Claude Code:
 
 ### 1. Quick Health Check
 ```bash
-check-mcp-health.sh     # Check all servers at once
+# Check individual server logs if needed
+check-mcp-logs          # View errors and tool calls
 ```
 
 ### 2. Manual Diagnostic Steps
@@ -68,10 +69,7 @@ check-mcp-health.sh     # Check all servers at once
 
 | Issue | Cause | Solution |
 |-------|-------|----------|
-| Git MCP "failed" | Missing `.venv` | Run `setup-git-mcp.sh` |
-| Git MCP "failed" | Missing `pyproject.toml` | File may be missing from repo |
-| GitHub MCP "failed" | Not authenticated | Run `gh auth login` |
-| GitHub MCP "failed" | Binary not built | Run `setup-github-mcp.sh` |
+| Playwright "failed" | npm/npx not available | Install Node.js: `brew install node` |
 | Brave Search "failed" | Missing API key | Add `BRAVE_API_KEY` to `~/.bash_secrets` |
 
 ### Log Locations
@@ -91,6 +89,6 @@ check-mcp-logs --follow # Real-time logs
 ## Protocol Testing
 
 ```bash
-# Test MCP handshake (not just --help)
-(echo '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {}, "clientInfo": {"name": "smoke-test", "version": "1.0.0"}}}'; echo '{"jsonrpc": "2.0", "method": "notifications/initialized"}'; echo '{"jsonrpc": "2.0", "id": 2, "method": "tools/list"}') | .venv/bin/python -m mcp_server_git -r .
+# Test MCP handshake for npm-based servers
+echo '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {}, "clientInfo": {"name": "smoke-test", "version": "1.0.0"}}}' | npx @playwright/mcp
 ```
