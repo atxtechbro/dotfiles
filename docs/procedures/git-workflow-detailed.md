@@ -19,7 +19,7 @@ Starting from a stale foundation guarantees the recovery tax - double work to ac
 ### Standards (not methods)
 - Branch naming: `type/description` (e.g., `feature/add-authentication`, `fix/login-bug`)
 - Issue suffix: `type/description-123` (e.g., `feature/add-authentication-512`)
-- Worktree naming: `NUMBER-issue` (e.g., `1251-issue`, `42-issue`)
+- Worktree naming: `NUMBER-descriptive-slug` (e.g., `1251-enhance-git-workflow`, `42-fix-auth-bug`)
   → Developer ergonomics: Tab completion with issue number first (`cd worktrees/1251<tab>`)
 - Order: Check surroundings → create branch → switch → work → commit
   → [subtraction-creates-value](../../knowledge/principles/subtraction-creates-value.md) (prevent recovery work)
