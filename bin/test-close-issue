@@ -1,0 +1,52 @@
+#!/bin/bash
+# Test version of close-issue that only shows the generated prompt
+# Usage: test-close-issue <issue-number>
+
+set -euo pipefail
+
+# Get script directory and repository root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Configuration
+KNOWLEDGE_DIR="$REPO_ROOT/knowledge"
+
+# Parse arguments
+if [ $# -lt 1 ]; then
+    echo "Error: Issue number required"
+    echo "Usage: test-close-issue <issue-number>"
+    exit 1
+fi
+
+ISSUE_NUMBER="$1"
+
+# Validate issue number
+if ! [[ "$ISSUE_NUMBER" =~ ^[0-9]+$ ]]; then
+    echo "Error: Invalid issue number: $ISSUE_NUMBER"
+    exit 1
+fi
+
+echo "=== GENERATED PROMPT FOR ISSUE #$ISSUE_NUMBER ==="
+echo ""
+
+# Generate the prompt (simplified version)
+cat << EOF
+# Close Issue #$ISSUE_NUMBER
+
+## Issue Details
+$(gh issue view "$ISSUE_NUMBER" 2>/dev/null | head -20 || echo "Error fetching issue")
+
+## Task
+Complete and implement GitHub issue #$ISSUE_NUMBER.
+
+## Knowledge Base
+[Knowledge base would be aggregated here - $(find "$KNOWLEDGE_DIR" -name "*.md" 2>/dev/null | wc -l) files found]
+
+## Implementation Instructions
+Build the solution using tracer bullets - get something working first, then iterate.
+
+When complete, create a PR that references "Closes #$ISSUE_NUMBER".
+EOF
+
+echo ""
+echo "=== END OF PROMPT ==="

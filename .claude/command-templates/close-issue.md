@@ -3,17 +3,30 @@ description: Complete and implement a GitHub issue
 argument-hint: <issue-number>
 ---
 
-## Issue Context
+# Close Issue Command
 
-- Issue details: !gh issue view $1
+This command now uses the CLI tool at `bin/close-issue` for provider-agnostic issue closing.
 
-## Workspace Setup
+## Using the CLI Tool
 
-!TITLE=$(gh issue view $1 --json title -q .title)
-!SLUG=$(python3 -c "import re, sys; s=re.sub(r'[^a-z0-9]+', '-', sys.argv[1].lower()).strip('-')[:50]; print(s)" "$TITLE")
-!git worktree add "worktrees/$1-${SLUG}" -b "$1-${SLUG}"
-!cd "worktrees/$1-${SLUG}"
+The issue will be processed using the new CLI tool which:
+1. Sets up the git worktree automatically
+2. Aggregates the knowledge base
+3. Generates the appropriate prompt
+4. Can work with multiple AI providers (currently Claude, more coming)
 
-# Close Issue Command Template
+!# Execute the close-issue CLI tool
+!# This provides the same functionality but can also be called from command line
+!bin/close-issue $1
 
-{{ INJECT:procedures/close-issue-procedure.md }}
+## Alternative: Direct CLI Usage
+
+You can also use this tool directly from the command line outside of Claude Code:
+```bash
+bin/close-issue <issue-number> [provider]
+```
+
+Examples:
+- `bin/close-issue 123` - Process issue #123 with Claude (default)
+- `bin/close-issue 123 claude` - Explicitly use Claude
+- `bin/close-issue 123 amazonq` - Use Amazon Q (coming soon)

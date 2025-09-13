@@ -1,0 +1,203 @@
+#!/bin/bash
+# Close Issue CLI Tool
+# Provider-agnostic command for closing GitHub issues with AI assistance
+# Usage: close-issue <issue-number> [provider]
+#
+# Principle: systems-stewardship (single source of truth)
+# Principle: ai-provider-agnosticism (work across different AI tools)
+
+set -euo pipefail
+
+# Get script directory and repository root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Configuration
+KNOWLEDGE_DIR="$REPO_ROOT/knowledge"
+WORKTREES_DIR="$REPO_ROOT/worktrees"
+
+# Parse arguments
+if [ $# -lt 1 ]; then
+    echo "Error: Issue number required"
+    echo "Usage: close-issue <issue-number> [provider]"
+    exit 1
+fi
+
+ISSUE_NUMBER="$1"
+AI_PROVIDER="${2:-claude}"  # Default to Claude if not specified
+
+# Validate issue number
+if ! [[ "$ISSUE_NUMBER" =~ ^[0-9]+$ ]]; then
+    echo "Error: Invalid issue number: $ISSUE_NUMBER"
+    exit 1
+fi
+
+echo "Processing issue #$ISSUE_NUMBER with $AI_PROVIDER..."
+
+# Get issue details
+echo "Fetching issue details..."
+ISSUE_TITLE=$(gh issue view "$ISSUE_NUMBER" --json title -q .title 2>/dev/null) || {
+    echo "Error: Could not fetch issue #$ISSUE_NUMBER"
+    exit 1
+}
+
+# Generate branch slug
+SLUG=$(python3 -c "import re, sys; s=re.sub(r'[^a-z0-9]+', '-', sys.argv[1].lower()).strip('-')[:50]; print(s)" "$ISSUE_TITLE")
+BRANCH_NAME="${ISSUE_NUMBER}-${SLUG}"
+WORKTREE_PATH="$WORKTREES_DIR/$BRANCH_NAME"
+
+# Set up worktree if it doesn't exist
+if [ ! -d "$WORKTREE_PATH" ]; then
+    echo "Creating worktree: $BRANCH_NAME"
+    # Check if branch already exists
+    if git rev-parse --verify "$BRANCH_NAME" >/dev/null 2>&1; then
+        # Branch exists, use it
+        git worktree add "$WORKTREE_PATH" "$BRANCH_NAME"
+    else
+        # Create new branch
+        git worktree add "$WORKTREE_PATH" -b "$BRANCH_NAME"
+    fi
+else
+    echo "Using existing worktree: $BRANCH_NAME"
+fi
+
+# Change to worktree
+cd "$WORKTREE_PATH"
+
+# Function to aggregate knowledge base (similar to GitHub Actions)
+aggregate_knowledge() {
+    echo "# Knowledge Base Context"
+    echo ""
+    echo "This context provides understanding of:"
+    echo "- Core development principles and procedures"
+    echo "- System architecture patterns and tools"
+    echo ""
+    
+    # Process knowledge files
+    if [ -d "$KNOWLEDGE_DIR" ]; then
+        find "$KNOWLEDGE_DIR" -name "*.md" -type f | while read -r file; do
+            relative_path="${file#$KNOWLEDGE_DIR/}"
+            filename=$(basename "$file" .md)
+            
+            # Skip README files in subdirectories
+            if [[ "$filename" == "README" && "$relative_path" != "README.md" ]]; then
+                continue
+            fi
+            
+            echo "## ${filename//-/ }"
+            echo ""
+            cat "$file"
+            echo ""
+            echo "---"
+            echo ""
+        done
+    fi
+}
+
+# Generate the prompt
+generate_prompt() {
+    cat << EOF
+# Close Issue #$ISSUE_NUMBER
+
+## Issue Details
+$(gh issue view "$ISSUE_NUMBER")
+
+## Task
+Complete and implement GitHub issue #$ISSUE_NUMBER.
+
+$(aggregate_knowledge)
+
+## Implementation Instructions
+Build the solution using tracer bullets - get something working first, then iterate.
+
+When complete, create a PR that references "Closes #$ISSUE_NUMBER".
+
+## Working Directory
+You are currently in: $WORKTREE_PATH
+This is a git worktree on branch: $BRANCH_NAME
+EOF
+}
+
+# Function to detect available AI provider
+detect_provider() {
+    # Check for explicit provider preference via environment variable
+    if [ -n "${AI_PROVIDER_PREFERENCE:-}" ]; then
+        echo "$AI_PROVIDER_PREFERENCE"
+        return
+    fi
+    
+    # Auto-detect available providers
+    if command -v claude &> /dev/null; then
+        echo "claude"
+    elif command -v amazonq &> /dev/null; then
+        echo "amazonq"
+    elif command -v cursor &> /dev/null; then
+        echo "cursor"
+    else
+        echo "none"
+    fi
+}
+
+# If provider is "auto", detect it
+if [ "$AI_PROVIDER" = "auto" ]; then
+    AI_PROVIDER=$(detect_provider)
+    if [ "$AI_PROVIDER" = "none" ]; then
+        echo "Error: No AI provider found. Please install Claude, Amazon Q, or Cursor."
+        exit 1
+    fi
+    echo "Auto-detected provider: $AI_PROVIDER"
+fi
+
+# Execute with the appropriate AI provider
+case "$AI_PROVIDER" in
+    claude)
+        # Check if claude command exists
+        if ! command -v claude &> /dev/null; then
+            echo "Error: claude command not found. Please install Claude CLI."
+            exit 1
+        fi
+        
+        echo "Generating prompt and executing with Claude..."
+        PROMPT=$(generate_prompt)
+        
+        # Use claude -p for non-interactive mode
+        # Add knowledge directory and MCP config if available
+        if [ -f "$REPO_ROOT/mcp/mcp.json" ]; then
+            echo "$PROMPT" | claude -p --add-dir "$REPO_ROOT" --mcp-config "$REPO_ROOT/mcp/mcp.json"
+        else
+            echo "$PROMPT" | claude -p --add-dir "$REPO_ROOT"
+        fi
+        ;;
+        
+    amazonq)
+        # Amazon Q support (placeholder for future implementation)
+        echo "Generating prompt for Amazon Q..."
+        PROMPT=$(generate_prompt)
+        echo ""
+        echo "Amazon Q integration coming soon. For now, copy this prompt to Amazon Q:"
+        echo "----------------------------------------"
+        echo "$PROMPT"
+        echo "----------------------------------------"
+        ;;
+        
+    cursor)
+        # Cursor support (placeholder for future implementation)
+        echo "Generating prompt for Cursor..."
+        PROMPT=$(generate_prompt)
+        echo ""
+        echo "Cursor integration coming soon. For now, copy this prompt to Cursor:"
+        echo "----------------------------------------"
+        echo "$PROMPT"
+        echo "----------------------------------------"
+        ;;
+        
+    *)
+        echo "Error: Unknown AI provider: $AI_PROVIDER"
+        echo "Supported providers: claude, amazonq, cursor, auto"
+        exit 1
+        ;;
+esac
+
+echo ""
+echo "Issue #$ISSUE_NUMBER processing complete."
+echo "Working directory: $WORKTREE_PATH"
