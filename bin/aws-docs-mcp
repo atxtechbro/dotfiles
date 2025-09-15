@@ -1,8 +1,3 @@
 #!/bin/bash
 
-# Simple wrapper to start the AWS Documentation MCP server
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-MCP_DIR="${SCRIPT_DIR}/../mcp/servers/aws-docs"
-
-# Run the server
-"${MCP_DIR}/run-aws-docs-mcp.sh"
+# REMOVED PLACEHOLDER THIS ISN'T NEEDED ANYMORE
