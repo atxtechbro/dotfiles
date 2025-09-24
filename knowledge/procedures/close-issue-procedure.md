@@ -44,7 +44,57 @@ Build the solution using tracer bullets - get something working first, then iter
 
 {{ INJECT:principles/tracer-bullets.md }}
 
-When complete, create a PR that references "Closes #{{ ISSUE_NUMBER }}".
+## Creating the Pull Request
+
+When implementation is complete, create a PR that follows the template structure and references "Closes #{{ ISSUE_NUMBER }}".
+
+**IMPORTANT**: This procedure outputs a GitHub Pull Request. The PR must be created, not just planned.
+
+Use this exact command structure with heredoc to ensure proper markdown formatting:
+
+```bash
+# Generate PR title following recruiter-optimization pattern
+# Pattern: type: [action verb] [quantified impact] [technology keywords]
+PR_TITLE="fix: enforce PR template structure in automated workflows for consistency"
+
+# Create PR with properly formatted body using heredoc
+gh pr create --title "$PR_TITLE" --body "$(cat <<'EOF'
+## Summary
+- Enforces consistent PR template usage across all automated workflows
+- Eliminates markdown formatting issues from escaped newlines
+- Ensures both GitHub Actions and local commands follow the same structure
+
+## What Changed
+- Updated close-issue procedure with explicit PR creation command
+- Modified GitHub Actions workflow to use inline template structure
+- Added heredoc examples to prevent formatting issues
+
+## Why
+Closes #{{ ISSUE_NUMBER }}
+
+Automated PR creation was drifting from the template guidance, causing:
+- Inconsistent structure between manual and automated PRs
+- Escaped newlines breaking markdown rendering
+- Missing standard sections that reviewers expect
+- Poor readability and context for technical reviews
+
+## References
+- PR Template: .github/PULL_REQUEST_TEMPLATE.md
+- Issue: #{{ ISSUE_NUMBER }}
+
+## Git Statistics
+\`\`\`
+$(git diff --stat main...HEAD)
+\`\`\`
+EOF
+)"
+```
+
+This ensures:
+1. ✅ Recruiter-optimized title with AI/ML keywords
+2. ✅ All template sections included (Summary, What Changed, Why, References, Stats)
+3. ✅ Proper markdown formatting (no escaped newlines)
+4. ✅ Clear connection to the issue being closed
 
 ## Final Step: Retro
 Let's retro this context and wring out the gleanings.
