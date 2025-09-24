@@ -44,7 +44,11 @@ Build the solution using tracer bullets - get something working first, then iter
 
 {{ INJECT:principles/tracer-bullets.md }}
 
-When complete, create a PR that references "Closes #{{ ISSUE_NUMBER }}".
+## Creating the Pull Request
+
+**IMPORTANT**: This procedure outputs a GitHub Pull Request. The PR must be created, not just planned.
+
+See `.github/PULL_REQUEST_TEMPLATE.md` for complete guidance on title patterns and body sections.
 
 ## Final Step: Retro
 Let's retro this context and wring out the gleanings.
