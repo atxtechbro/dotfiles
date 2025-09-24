@@ -46,37 +46,32 @@ Build the solution using tracer bullets - get something working first, then iter
 
 ## Creating the Pull Request
 
-When implementation is complete, create a PR that follows the template structure and references "Closes #{{ ISSUE_NUMBER }}".
+When implementation is complete, create a PR that references "Closes #{{ ISSUE_NUMBER }}".
 
 **IMPORTANT**: This procedure outputs a GitHub Pull Request. The PR must be created, not just planned.
 
-Use this exact command structure with heredoc to ensure proper markdown formatting:
+Follow the PR template structure from `.github/PULL_REQUEST_TEMPLATE.md`:
+- Title: Optimized for recruiters (see template for pattern and examples)
+- Body: All standard sections (Summary, What Changed, Why, References, Git Statistics)
+
+**Critical**: Use heredoc to prevent markdown formatting issues (no escaped newlines):
 
 ```bash
-# Generate PR title following recruiter-optimization pattern
-# Pattern: type: [action verb] [quantified impact] [technology keywords]
-PR_TITLE="fix: enforce PR template structure in automated workflows for consistency"
+# Generate title following template guidance
+PR_TITLE="type: action verb + impact + technology keywords"
 
-# Create PR with properly formatted body using heredoc
+# Create PR with properly formatted body
 gh pr create --title "$PR_TITLE" --body "$(cat <<'EOF'
 ## Summary
-- Enforces consistent PR template usage across all automated workflows
-- Eliminates markdown formatting issues from escaped newlines
-- Ensures both GitHub Actions and local commands follow the same structure
+[Your summary bullets]
 
 ## What Changed
-- Updated close-issue procedure with explicit PR creation command
-- Modified GitHub Actions workflow to use inline template structure
-- Added heredoc examples to prevent formatting issues
+[Your changes]
 
 ## Why
 Closes #{{ ISSUE_NUMBER }}
 
-Automated PR creation was drifting from the template guidance, causing:
-- Inconsistent structure between manual and automated PRs
-- Escaped newlines breaking markdown rendering
-- Missing standard sections that reviewers expect
-- Poor readability and context for technical reviews
+[Your reasoning]
 
 ## References
 - PR Template: .github/PULL_REQUEST_TEMPLATE.md
@@ -90,11 +85,7 @@ EOF
 )"
 ```
 
-This ensures:
-1. ✅ Recruiter-optimized title with AI/ML keywords
-2. ✅ All template sections included (Summary, What Changed, Why, References, Stats)
-3. ✅ Proper markdown formatting (no escaped newlines)
-4. ✅ Clear connection to the issue being closed
+See `.github/PULL_REQUEST_TEMPLATE.md` for complete guidance on title patterns and body sections.
 
 ## Final Step: Retro
 Let's retro this context and wring out the gleanings.
