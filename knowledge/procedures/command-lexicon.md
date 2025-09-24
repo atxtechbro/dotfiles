@@ -1,33 +1,28 @@
 # Command Lexicon
 
-Provider-agnostic mapping from natural language commands to procedures. Enables using the same commands in Claude Code and OpenAI Codex without relying on provider-specific slash commands.
+Provider‑agnostic conventions for invoking procedures via natural language. This avoids provider‑specific slash commands while keeping commands predictable and easy to extend.
 
-## close-issue
-- Intent: Complete and implement a GitHub issue and open a PR that references the issue.
-- Primary command: "close-issue <number>"
-- Alternative formats: "close issue <number>" (without hyphen)
-- Arguments:
-  - <number>: GitHub issue number (parsing rule: extract the first valid integer token after the command phrase; if no integer is found or multiple integers appear without clear context, prompt the user to clarify the issue number)
-- Optional natural‑language qualifiers:
-  - Any trailing text after the issue number should be treated as additional context (constraints, preferences, hints) and incorporated with graceful flexibility.
-- Variants:
-  - "close issue 123"
-  - "close-issue 123"
-  - "use the close-issue procedure to close GitHub issue 123"
-  - "please close issue #123"
-- Procedure: [close-issue-procedure.md](close-issue-procedure.md)
+## Naming
+- Use kebab‑case for command names (e.g., `close-issue`, `extract-best-frame`).
+- A command maps to a procedure file named: `knowledge/procedures/<command>-procedure.md`.
+- Alternative phrases are allowed (e.g., `close issue` for `close-issue`).
 
-## extract-best-frame
-- Intent: Extract frames from a video and select the most flattering frame via tournament comparison.
-- Primary command: "extract-best-frame <video_path> [<frames_dir>] [<output_dir>]"
-- Alternative formats: "best-frame <video_path>"
-- Arguments:
-  - <video_path>: Path to the input video
-  - <frames_dir> (optional): Directory to write extracted frames
-  - <output_dir> (optional): Directory to save the selected best frame
-- Optional natural‑language qualifiers:
-  - Any trailing text after the video path (and optional dirs) should be treated as selection guidance (preferences, qualities to optimize for) and incorporated with graceful flexibility.
-- Variants:
-  - "extract best frame from <video_path>"
-  - "best-frame <video_path>"
-- Procedure: [extract-best-frame-procedure.md](extract-best-frame-procedure.md)
+## Invocation Format
+- Primary: `<command> <args>` (e.g., `close-issue 123`, `extract-best-frame /path/video.mp4`).
+- Natural language: Phrases like “use the <command> procedure …” are acceptable and should be interpreted equivalently.
+- Optional trailing context: Any text after the required arguments is treated as helpful guidance (constraints, preferences, hints) and incorporated with graceful flexibility.
+
+## Parsing Rules
+- Integers: Extract the first valid integer token after the command phrase for numeric IDs (e.g., issue numbers). If none is found or multiple integers appear without clear context, prompt the user to clarify.
+- Quoted strings: Treat the first quoted string after the command as the primary string argument (e.g., a title or description) when relevant to the procedure. If absent, prompt interactively.
+- Paths: Accept absolute or relative paths as arguments. If a path contains spaces, require quotes.
+
+## Provider Behavior
+- These conventions apply equally in Claude Code and OpenAI Codex, assuming the knowledge base is loaded.
+- Procedures remain the single source of truth for the exact steps; this lexicon only defines how commands are recognized and parsed.
+
+## Examples (non‑exhaustive)
+- `close-issue 123` → `close-issue-procedure.md`
+- `extract-best-frame "/videos/session.mp4"` → `extract-best-frame-procedure.md`
+
+New commands work automatically when you add a corresponding `*-procedure.md` following these conventions; no changes to this file are required.
