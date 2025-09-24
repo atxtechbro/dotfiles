@@ -21,10 +21,11 @@ Every task starts as a GitHub issue:
 
 ### 2. Planning Mode Review
 
-Run `/close-issue <number>` with planning mode (default):
-- Claude analyzes the issue
-- Presents a plan for review
-- You approve, refine, or reject
+Invoke the Close Issue workflow using natural language (provider‑agnostic). Examples:
+- `close-issue <number>`
+- "use the close-issue procedure to close GitHub issue <number>"
+
+The agent analyzes the issue, presents a plan for review, and you approve, refine, or reject.
 
 **Key insight**: This shifts you from "driving" to "managing" - you review plans, not implementation details.
 
@@ -104,3 +105,4 @@ Planning mode should be enabled by default for all users:
 
 - [tmux + git worktrees + Claude Code + Planning Mode](../../knowledge/procedures/tmux-git-worktrees-claude-code.md) - The complete productivity system
 - [OSE Principle](../../knowledge/principles/ose.md) - Why this workflow embodies management over doing
+- [Command Lexicon](../../knowledge/procedures/command-lexicon.md) - Natural language command mapping

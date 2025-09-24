@@ -16,6 +16,22 @@
 #
 # Principle: systems-stewardship (single source of truth, documentation as code)
 
+## Invocation (Provider-Agnostic)
+- Command: "close-issue <number>" (also accepts "close issue <number>")
+- Arguments:
+  - <number>: GitHub issue number
+- Parsing rule: Use the first integer token appearing after the command phrase. If missing or ambiguous, ask the user to confirm the issue number.
+
+Examples:
+- "close-issue 583"
+- "use the close-issue procedure to close GitHub issue 583"
+- "please close issue #583"
+
+Provider Notes:
+- Ask for approval prior to running shell commands
+- Prefer absolute file paths when possible
+- Use Git worktrees for isolation (see Worktree Workflow)
+
 Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 
 {{ KNOWLEDGE_BASE }}

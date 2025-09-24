@@ -17,7 +17,8 @@ This is THE workflow. Everything else supports this core process.
 - `tmux-git-worktrees-claude-code.md` - The 100x productivity system with planning mode
 - `git-workflow.md` - Git conventions and branch management  
 - `worktree-workflow.md` - Git worktree isolation for parallel development
-- `slash-command-generation.md` - How slash commands like `/close-issue` work
+- `command-lexicon.md` - Provider-agnostic natural language command mapping
+- `slash-command-generation.md` - Optional wrappers for commands like `/close-issue`
 
 ### Quality & Improvement
 - `retro-procedure.md` - Systems improvement retro and learning extraction
@@ -35,3 +36,11 @@ This is THE workflow. Everything else supports this core process.
 
 ### Tips & Setup
 - `claude-code-tips.md` - Tips and shortcuts for Claude Code
+
+## Natural Language Invocation
+
+Procedures can be invoked via natural language in any AI provider that loads the knowledge base. For example:
+- "close-issue 123" → maps via Command Lexicon to Close Issue Procedure
+- "use the close-issue procedure to close GitHub issue 123" → same outcome
+
+This removes dependency on provider-specific slash commands while keeping them available as optional wrappers.
