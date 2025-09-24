@@ -23,10 +23,27 @@ alias codex='codex --config "$DOT_DEN/.codex/config.toml" --add-dir "$DOT_DEN/kn
 
 ## Implementation
 
-- **Configuration Scripts**: `utils/configure-*.sh` 
-- **Knowledge Integration**: 
-  - Claude: Slash commands + knowledge directory
-  - Codex: AGENTS.md hierarchical system
+- **Configuration Scripts**: `utils/configure-*.sh`
+- **Knowledge Integration (symmetric)**:
+  - Both providers read the same knowledge directory (`knowledge/`) and MCP config
+  - Procedures are the single source of truth; providers are interchangeable at runtime
+
+### Provider-Agnostic Invocation (Slash-Free)
+
+We removed provider-specific slash commands in favor of natural-language, slug-based invocation that works identically in both Claude Code and OpenAI Codex.
+
+- Convention: a sluggified prefix of a procedure filename in `knowledge/procedures` triggers that procedure
+- Format: `"<slug-or-prefix> <args> [optional context]"`
+- Examples:
+  - `close-issue 123`
+  - `use the close-issue procedure to close GitHub issue 123`
+  - `extract-best-frame "/videos/clip.mp4"`
+
+This eliminates dependence on provider-specific features (e.g., slash commands) while keeping procedures as the single source of truth. See:
+- `knowledge/procedures/README.md` (Natural Language Invocation)
+- `docs/procedures/issue-to-pr-detailed-workflow.md` (invocation examples)
+
+Historical note: `.claude/command-templates/` are intentionally retired; they remain only as historical reference and are not required for core workflows.
 
 ## Crisis Response Matrix
 
