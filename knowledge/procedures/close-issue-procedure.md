@@ -48,41 +48,6 @@ Build the solution using tracer bullets - get something working first, then iter
 
 **IMPORTANT**: This procedure outputs a GitHub Pull Request. The PR must be created, not just planned.
 
-Follow the PR template structure from `.github/PULL_REQUEST_TEMPLATE.md`:
-- Title: Optimized for recruiters (see template for pattern and examples)
-- Body: All standard sections (Summary, What Changed, Why, References, Git Statistics)
-
-**Critical**: Use heredoc to prevent markdown formatting issues (no escaped newlines):
-
-```bash
-# Generate title following template guidance
-PR_TITLE="type: action verb + impact + technology keywords"
-
-# Create PR with properly formatted body
-gh pr create --title "$PR_TITLE" --body "$(cat <<'EOF'
-## Summary
-[Your summary bullets]
-
-## What Changed
-[Your changes]
-
-## Why
-Closes #{{ ISSUE_NUMBER }}
-
-[Your reasoning]
-
-## References
-- PR Template: .github/PULL_REQUEST_TEMPLATE.md
-- Issue: #{{ ISSUE_NUMBER }}
-
-## Git Statistics
-\`\`\`
-$(git diff --stat main...HEAD)
-\`\`\`
-EOF
-)"
-```
-
 See `.github/PULL_REQUEST_TEMPLATE.md` for complete guidance on title patterns and body sections.
 
 ## Final Step: Retro
