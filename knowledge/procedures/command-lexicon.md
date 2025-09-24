@@ -4,7 +4,8 @@ Provider-agnostic mapping from natural language commands to procedures. Enables 
 
 ## close-issue
 - Intent: Complete and implement a GitHub issue and open a PR that references the issue.
-- Invocation: "close-issue <number>" (also accepts "close issue <number>")
+- Primary command: "close-issue <number>"
+- Alternative formats: "close issue <number>" (without hyphen)
 - Arguments:
   - <number>: GitHub issue number (parsing rule: the first integer token after the command phrase)
 - Variants:
@@ -16,4 +17,3 @@ Provider-agnostic mapping from natural language commands to procedures. Enables 
 - Provider notes:
   - Use absolute paths and follow the Git Worktree Workflow
   - Ensure PR title/body reference "Closes #<number>"
-

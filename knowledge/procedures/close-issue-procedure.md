@@ -17,7 +17,8 @@
 # Principle: systems-stewardship (single source of truth, documentation as code)
 
 ## Invocation (Provider-Agnostic)
-- Command: "close-issue <number>" (also accepts "close issue <number>")
+- Primary command: "close-issue <number>"
+- Alternative formats: "close issue <number>" (without hyphen)
 - Arguments:
   - <number>: GitHub issue number
 - Parsing rule: Use the first integer token appearing after the command phrase. If missing or ambiguous, ask the user to confirm the issue number.
