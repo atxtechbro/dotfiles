@@ -46,8 +46,6 @@ Build the solution using tracer bullets - get something working first, then iter
 
 ## Creating the Pull Request
 
-When implementation is complete, create a PR that references "Closes #{{ ISSUE_NUMBER }}".
-
 **IMPORTANT**: This procedure outputs a GitHub Pull Request. The PR must be created, not just planned.
 
 Follow the PR template structure from `.github/PULL_REQUEST_TEMPLATE.md`:
