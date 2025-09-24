@@ -21,10 +21,11 @@ Every task starts as a GitHub issue:
 
 ### 2. Planning Mode Review
 
-Run `/close-issue <number>` with planning mode (default):
-- Claude analyzes the issue
-- Presents a plan for review
-- You approve, refine, or reject
+Invoke the Close Issue workflow using natural language (provider‑agnostic). Examples:
+- `close-issue <number>`
+- "use the close-issue procedure to close GitHub issue <number>"
+
+The agent analyzes the issue, presents a plan for review, and you approve, refine, or reject.
 
 **Key insight**: This shifts you from "driving" to "managing" - you review plans, not implementation details.
 
