@@ -8,6 +8,8 @@ Provider-agnostic mapping from natural language commands to procedures. Enables 
 - Alternative formats: "close issue <number>" (without hyphen)
 - Arguments:
   - <number>: GitHub issue number (parsing rule: extract the first valid integer token after the command phrase; if no integer is found or multiple integers appear without clear context, prompt the user to clarify the issue number)
+- Optional natural‑language qualifiers:
+  - Any trailing text after the issue number should be treated as additional context (constraints, preferences, hints) and incorporated with graceful flexibility.
 - Variants:
   - "close issue 123"
   - "close-issue 123"
@@ -23,6 +25,8 @@ Provider-agnostic mapping from natural language commands to procedures. Enables 
   - <video_path>: Path to the input video
   - <frames_dir> (optional): Directory to write extracted frames
   - <output_dir> (optional): Directory to save the selected best frame
+- Optional natural‑language qualifiers:
+  - Any trailing text after the video path (and optional dirs) should be treated as selection guidance (preferences, qualities to optimize for) and incorporated with graceful flexibility.
 - Variants:
   - "extract best frame from <video_path>"
   - "best-frame <video_path>"

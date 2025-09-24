@@ -1,7 +1,12 @@
 # Extract Best Frame Procedure
 #
-# This procedure extracts frames from a video and uses Claude's visual judgment
-# to select the most flattering selfie through a tournament-style comparison.
+# This procedure extracts frames from a video and uses the agent's visual judgment
+# to select the most flattering frame through a tournament-style comparison.
+
+## Invocation
+- Primary command: "extract-best-frame <video_path> [<frames_dir>] [<output_dir>]"
+- Alternative formats: "best-frame <video_path>"
+- Optional selection criteria: Any trailing text after the arguments should be treated as guidance (preferences, qualities to optimize for) and incorporated with graceful flexibility.
 
 ## Step 1: Validate Input
 

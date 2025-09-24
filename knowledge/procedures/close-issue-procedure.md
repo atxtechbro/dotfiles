@@ -21,6 +21,7 @@
 - Alternative formats: "close issue <number>" (without hyphen)
 - Arguments:
   - <number>: GitHub issue number
+- Optional context: Any trailing text after the issue number should be treated as additional context (constraints, preferences, hints) and incorporated with graceful flexibility.
 - Parsing rule: Extract the first valid integer token after the command phrase; if no integer is found or multiple integers appear without clear context, prompt the user to clarify the issue number.
 
 Examples:
