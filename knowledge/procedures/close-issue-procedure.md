@@ -21,7 +21,7 @@
 - Alternative formats: "close issue <number>" (without hyphen)
 - Arguments:
   - <number>: GitHub issue number
-- Parsing rule: Use the first integer token appearing after the command phrase. If missing or ambiguous, ask the user to confirm the issue number.
+- Parsing rule: Extract the first valid integer token after the command phrase; if no integer is found or multiple integers appear without clear context, prompt the user to clarify the issue number.
 
 Examples:
 - "close-issue 583"

@@ -7,7 +7,7 @@ Provider-agnostic mapping from natural language commands to procedures. Enables 
 - Primary command: "close-issue <number>"
 - Alternative formats: "close issue <number>" (without hyphen)
 - Arguments:
-  - <number>: GitHub issue number (parsing rule: the first integer token after the command phrase)
+  - <number>: GitHub issue number (parsing rule: extract the first valid integer token after the command phrase; if no integer is found or multiple integers appear without clear context, prompt the user to clarify the issue number)
 - Variants:
   - "close issue 123"
   - "close-issue 123"
