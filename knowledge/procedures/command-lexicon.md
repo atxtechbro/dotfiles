@@ -14,7 +14,6 @@ Provider-agnostic mapping from natural language commands to procedures. Enables 
   - "please close issue #123"
 - Procedure: [close-issue-procedure.md](close-issue-procedure.md)
 - Provider notes:
-  - Ask for approval before executing shell commands
   - Use absolute paths and follow the Git Worktree Workflow
   - Ensure PR title/body reference "Closes #<number>"
 

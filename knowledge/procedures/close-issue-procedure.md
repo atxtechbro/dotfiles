@@ -28,7 +28,6 @@ Examples:
 - "please close issue #583"
 
 Provider Notes:
-- Ask for approval prior to running shell commands
 - Prefer absolute file paths when possible
 - Use Git worktrees for isolation (see Worktree Workflow)
 
