@@ -14,5 +14,3 @@ Provider-agnostic mapping from natural language commands to procedures. Enables 
   - "use the close-issue procedure to close GitHub issue 123"
   - "please close issue #123"
 - Procedure: [close-issue-procedure.md](close-issue-procedure.md)
-- Provider notes:
-  - Use absolute paths and follow the Git Worktree Workflow
