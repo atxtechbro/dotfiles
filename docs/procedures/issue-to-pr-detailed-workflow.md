@@ -105,4 +105,3 @@ Planning mode should be enabled by default for all users:
 
 - [tmux + git worktrees + Claude Code + Planning Mode](../../knowledge/procedures/tmux-git-worktrees-claude-code.md) - The complete productivity system
 - [OSE Principle](../../knowledge/principles/ose.md) - Why this workflow embodies management over doing
-- [Command Lexicon](../../knowledge/procedures/command-lexicon.md) - Natural language command mapping
