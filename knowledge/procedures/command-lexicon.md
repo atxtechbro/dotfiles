@@ -14,3 +14,16 @@ Provider-agnostic mapping from natural language commands to procedures. Enables 
   - "use the close-issue procedure to close GitHub issue 123"
   - "please close issue #123"
 - Procedure: [close-issue-procedure.md](close-issue-procedure.md)
+
+## extract-best-frame
+- Intent: Extract frames from a video and select the most flattering frame via tournament comparison.
+- Primary command: "extract-best-frame <video_path> [<frames_dir>] [<output_dir>]"
+- Alternative formats: "best-frame <video_path>"
+- Arguments:
+  - <video_path>: Path to the input video
+  - <frames_dir> (optional): Directory to write extracted frames
+  - <output_dir> (optional): Directory to save the selected best frame
+- Variants:
+  - "extract best frame from <video_path>"
+  - "best-frame <video_path>"
+- Procedure: [extract-best-frame-procedure.md](extract-best-frame-procedure.md)
