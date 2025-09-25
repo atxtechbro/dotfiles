@@ -605,7 +605,22 @@ if [[ -f ~/.bash_aliases ]]; then
   echo -e "${GREEN}✓ Bash aliases loaded successfully${NC}"
 fi
 
-# MCP Dashboard removed in PR #1321 - deprecated as part of experiment #1213
+# MLflow tracking setup (self-healing with spilled coffee principle)
+echo -e "${DIVIDER}"
+echo "Setting up MLflow tracking..."
+
+# Check if start-mlflow script exists
+if [[ -x "$DOT_DEN/bin/start-mlflow" ]]; then
+  # Use the start-mlflow script which handles all checks
+  "$DOT_DEN/bin/start-mlflow" start
+  # The script handles:
+  # - Installing MLflow via uv if not present (spilled coffee principle)
+  # - Checking if already running (idempotent)
+  # - Starting in background if needed
+  # - Silent operation to avoid noise
+else
+  echo -e "${YELLOW}start-mlflow script not found. Skipping MLflow setup.${NC}"
+fi
 
 # Configure git hooks
 if [[ -d "$DOT_DEN/.githooks" ]]; then
