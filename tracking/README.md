@@ -61,14 +61,11 @@ While adding:
 ### What Gets Tracked from Claude Sessions
 
 The session parser extracts:
-- **Commands executed**: Bash, git, and other CLI commands
-- **File operations**: Created, modified, and read
-- **Git operations**: Commits, pushes, branches
-- **Errors encountered**: Failures and error messages
-- **User interactions**: Your inputs and corrections
-- **Plan mode**: Activations and exits
-- **Tool uses**: Claude's function calls
-- **Events**: PR creation, commits, issue procedures
+- **Commands executed**: Actual Bash commands run via Claude's tools (● Bash(...))
+- **Git operations**: Git commands executed through Bash tool
+- **Tool uses**: All Claude tool invocations (Bash, Read, Update, etc.)
+- **User interactions**: Your prompts and inputs
+- **Events**: Issue procedures and key actions
 
 ### Querying Sessions
 
@@ -85,10 +82,10 @@ tags.type = "claude_session"
 ## Session Metrics
 
 Each Claude session tracks:
-- **Execution metrics**: Commands run, files changed, git operations
-- **Quality metrics**: Errors encountered, success/failure
-- **Interaction metrics**: User inputs, plan mode usage
-- **Full transcript**: Complete session log for review
+- **Execution metrics**: Commands run, git operations, tool uses
+- **Interaction metrics**: User prompts and inputs
+- **Success status**: Exit code and overall success
+- **Transcripts**: Both raw and cleaned versions for review
 
 ## MLflow UI Features
 

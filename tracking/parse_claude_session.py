@@ -34,60 +34,52 @@ def parse_session_log(log_path):
     """
     metrics = {
         "commands_executed": 0,
-        "files_modified": 0,
-        "files_created": 0,
-        "files_read": 0,
         "git_operations": 0,
-        "errors_encountered": 0,
-        "user_interactions": 0,
-        "plan_mode_activations": 0,
         "tool_uses": 0,
+        "user_interactions": 0,
     }
 
     events = []
+    clean_content = ""
 
     try:
         with open(log_path, "r", encoding="utf-8", errors="ignore") as f:
             content = f.read()
 
-        # Remove ANSI color codes for cleaner parsing
+        # Remove ANSI color codes and control characters for cleaner parsing
         ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
         clean_content = ansi_escape.sub('', content)
 
-        # Parse for various patterns
+        # Also remove other control characters
+        clean_content = re.sub(r'[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]', '', clean_content)
 
-        # Commands executed (bash, git, etc.)
-        bash_commands = re.findall(r'Bash(?:.*?)command["\s:]+([^"]+)', clean_content)
+        # Remove duplicate consecutive lines (from terminal redraws)
+        lines = clean_content.split('\n')
+        unique_lines = []
+        prev_line = None
+        for line in lines:
+            stripped = line.strip()
+            if stripped and stripped != prev_line:
+                unique_lines.append(line)
+                prev_line = stripped
+        clean_content = '\n'.join(unique_lines)
+
+        # Parse for Claude's actual tool use patterns (● ToolName(...))
+
+        # Bash commands actually executed
+        bash_commands = re.findall(r'● Bash\([^)]+\)', clean_content)
         metrics["commands_executed"] = len(bash_commands)
 
-        # File operations
-        files_created = re.findall(r'File created successfully at: (.+)', clean_content)
-        metrics["files_created"] = len(files_created)
-
-        files_modified = re.findall(r'The file (.+) has been updated', clean_content)
-        metrics["files_modified"] = len(files_modified)
-
-        files_read = re.findall(r'Reading file: (.+)', clean_content)
-        metrics["files_read"] = len(files_read)
-
-        # Git operations
-        git_ops = re.findall(r'git (?:add|commit|push|pull|checkout|branch)', clean_content, re.IGNORECASE)
+        # Git operations from actual Bash executions
+        git_ops = re.findall(r'● Bash\([^)]*\bgit\b[^)]*\)', clean_content)
         metrics["git_operations"] = len(git_ops)
 
-        # Errors
-        errors = re.findall(r'(?:Error|error|ERROR|Failed|failed)[:.](.{0,100})', clean_content)
-        metrics["errors_encountered"] = len(errors)
-
-        # Plan mode
-        plan_mode = re.findall(r'Plan mode.*active|Entering plan mode|ExitPlanMode', clean_content)
-        metrics["plan_mode_activations"] = len(plan_mode)
-
-        # Tool uses (Claude's tool invocations)
-        tool_uses = re.findall(r'<function_calls>|Tool ran|Using tool:', clean_content)
+        # All tool uses (Bash, Read, Task, Update, etc.)
+        tool_uses = re.findall(r'● (?:Bash|Read|Task|Update|Write|Edit|MultiEdit|Grep|Glob)\([^)]*\)', clean_content)
         metrics["tool_uses"] = len(tool_uses)
 
-        # User interactions (when user types input)
-        user_inputs = re.findall(r'Human:|User:|^[>$] ', clean_content, re.MULTILINE)
+        # User interactions (prompts starting with >)
+        user_inputs = re.findall(r'^> .+', clean_content, re.MULTILINE)
         metrics["user_interactions"] = len(user_inputs)
 
         # Key events for timeline
@@ -149,8 +141,9 @@ def log_session_to_mlflow(session_log, metadata_file, exit_code):
         for event in events[:10]:  # MLflow has tag limits
             set_tag(f"event_{events.index(event)}", event)
 
-        # Log the full session transcript as artifact
-        log_text(full_content, "session_transcript.txt")
+        # Log both raw and cleaned transcripts as artifacts
+        log_text(full_content, "session_transcript_raw.txt")
+        log_text(clean_content, "session_transcript_clean.txt")
 
         # Log summary statistics
         summary = f"""Claude Session Summary
@@ -161,14 +154,11 @@ Exit Code: {exit_code}
 
 Metrics:
 - Commands Executed: {metrics['commands_executed']}
-- Files Modified: {metrics['files_modified']}
-- Files Created: {metrics['files_created']}
 - Git Operations: {metrics['git_operations']}
-- Errors: {metrics['errors_encountered']}
-- User Interactions: {metrics['user_interactions']}
 - Tool Uses: {metrics['tool_uses']}
+- User Interactions: {metrics['user_interactions']}
 
-Events: {', '.join(events)}
+Events: {', '.join(events) if events else 'None'}
 """
         log_text(summary, "session_summary.txt")
 
