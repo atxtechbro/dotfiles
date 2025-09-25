@@ -41,7 +41,6 @@ def parse_session_log(log_path):
     metrics = {
         "commands_executed": 0,
         "git_operations": 0,
-        "tool_uses": 0,
         "user_interactions": 0,
     }
 
@@ -95,17 +94,6 @@ def parse_session_log(log_path):
             git_ops.extend(re.findall(pattern, clean_content, re.IGNORECASE))
         metrics["git_operations"] = len(git_ops)
 
-        # Tool uses (generic patterns for any AI provider)
-        # Look for common tool/function invocations
-        tool_patterns = [
-            r'(?:●|>>>|Function:|Tool:)\s*\w+[\(\[].*?[\)\]]',  # Various tool formats
-            r'(?:read|write|edit|update|create|delete|search|grep)(?:ing)?\s+(?:file|directory)',  # File operations
-        ]
-        tool_uses = []
-        for pattern in tool_patterns:
-            tool_uses.extend(re.findall(pattern, clean_content, re.IGNORECASE))
-        metrics["tool_uses"] = len(tool_uses)
-
         # User interactions (various prompt formats)
         user_patterns = [
             r'^> .+',  # Claude format
@@ -135,7 +123,7 @@ def parse_session_log(log_path):
 
 def log_session_to_mlflow(session_log, metadata_file, exit_code):
     """
-    Log a Claude session to MLflow.
+    Log an AI assistant session to MLflow.
     """
     init_mlflow()
 
@@ -190,7 +178,6 @@ Exit Code: {exit_code}
 Metrics:
 - Commands Executed: {metrics['commands_executed']}
 - Git Operations: {metrics['git_operations']}
-- Tool Uses: {metrics['tool_uses']}
 - User Interactions: {metrics['user_interactions']}
 
 Events: {', '.join(events) if events else 'None'}
@@ -212,7 +199,7 @@ Events: {', '.join(events) if events else 'None'}
 def main():
     """Main entry point."""
     if len(sys.argv) < 3:
-        print("Usage: parse_claude_session.py <session_log> <metadata_file> [exit_code]")
+        print("Usage: parse_session.py <session_log> <metadata_file> [exit_code]")
         sys.exit(1)
 
     session_log = sys.argv[1]

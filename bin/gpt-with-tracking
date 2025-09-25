@@ -37,7 +37,7 @@ cleanup() {
         echo -e "\n${BLUE}📊 Sending session to MLflow...${NC}"
 
         # Run parser with uv to ensure mlflow is available
-        uv run --with mlflow python "$DOT_DEN/tracking/parse_claude_session.py" \
+        uv run --with mlflow python "$DOT_DEN/tracking/parse_session.py" \
             "$SESSION_LOG" \
             "$SESSION_METADATA" \
             "$exit_code" 2>/dev/null &

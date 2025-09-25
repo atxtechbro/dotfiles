@@ -70,7 +70,6 @@ While adding:
 The session parser extracts (provider-agnostic):
 - **Commands executed**: Actual bash/shell commands regardless of formatting
 - **Git operations**: `git` and `gh` CLI commands found in the transcript
-- **Tool uses**: File operations and tool invocations
 - **User interactions**: Your prompts and inputs
 - **Events**: Issue procedures and key actions
 
@@ -91,7 +90,7 @@ tags.type = "ai_session"
 ## Session Metrics
 
 Each AI session tracks:
-- **Execution metrics**: Commands run, git operations, tool uses
+- **Execution metrics**: Commands run, git operations
 - **Interaction metrics**: User prompts and inputs
 - **Success status**: Exit code and overall success
 - **Transcripts**: Both raw and cleaned versions for review
@@ -166,12 +165,12 @@ open http://localhost:5000
 
 1. **Wrapper scripts** (`claude-with-tracking`, `codex-with-tracking`, `gpt-with-tracking`) run AI assistants normally
 2. **Session captured** with full interactivity preserved using `script` command
-3. **Parser** (`parse_claude_session.py`) extracts metrics by looking for actual commands
+3. **Parser** (`parse_session.py`) extracts metrics by looking for actual commands
 4. **MLflow UI** displays session history and metrics across all providers
 
 **Architecture**:
 - Each `<provider>-with-tracking` wrapper captures the session
-- All wrappers use the same `parse_claude_session.py` parser
+- All wrappers use the same `parse_session.py` parser
 - Parser looks for actual commands (git, bash, gh, etc.) rather than provider formatting
 - No provider detection or provider-specific patterns needed
 
