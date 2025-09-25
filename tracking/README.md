@@ -27,15 +27,54 @@ The MLflow tracking UI provides a web interface to view all tracked runs:
 ```bash
 # Start MLflow UI (runs on http://localhost:5000)
 mlflow ui --backend-store-uri ~/ppv/pillars/dotfiles/mlruns
+
+# Or use the auto-start script
+bin/start-mlflow start
 ```
 
-### Tracking Procedures
+### Interactive Claude Session Tracking
 
-The tracking module provides wrapper functions for our automation procedures. These wrappers integrate with the procedures defined in:
-- [`knowledge/procedures/close-issue-procedure.md`](../knowledge/procedures/close-issue-procedure.md)
-- [`knowledge/procedures/extract-best-frame-procedure.md`](../knowledge/procedures/extract-best-frame-procedure.md)
+**NEW: Track your interactive Claude CLI sessions!**
 
-See [`mlflow_tracker.py`](mlflow_tracker.py) for the implementation details of `track_close_issue()` and `track_extract_best_frame()` functions.
+Use the `claude-with-tracking` wrapper to maintain full Claude interactivity while logging to MLflow:
+
+```bash
+# Instead of:
+claude "close-issue 583"
+
+# Use:
+claude-with-tracking "close-issue 583"
+```
+
+This preserves:
+- ✅ Full interactivity (plan mode, permissions, comments)
+- ✅ Real-time terminal output
+- ✅ Ability to pause/interrupt
+- ✅ Manual steering and corrections
+
+While adding:
+- 📊 Complete session transcript in MLflow
+- 📈 Extracted metrics (commands, files, errors)
+- 🔍 Queryable history
+- ⏱️ Timing and performance data
+
+### What Gets Tracked from Claude Sessions
+
+The session parser extracts:
+- **Commands executed**: Bash, git, and other CLI commands
+- **File operations**: Created, modified, and read
+- **Git operations**: Commits, pushes, branches
+- **Errors encountered**: Failures and error messages
+- **User interactions**: Your inputs and corrections
+- **Plan mode**: Activations and exits
+- **Tool uses**: Claude's function calls
+- **Events**: PR creation, commits, issue procedures
+
+### Legacy Tracking Functions
+
+The module also provides programmatic wrapper functions for procedures:
+- [`mlflow_tracker.py`](mlflow_tracker.py) - Thin wrappers for tracking
+- Actual implementations in [`knowledge/procedures/`](../knowledge/procedures/)
 
 ### Querying Runs
 
