@@ -2,6 +2,8 @@
 
 This module provides MLflow tracking capabilities for our automation procedures, enabling reproducibility, observability, and debugging of all automated actions.
 
+**Provider-agnostic**: Works with any AI assistant by extracting actual commands from transcripts rather than relying on provider-specific formatting.
+
 ## Features
 
 - **Full Metrics Tracking**: Execution time, success rates, step completion
@@ -32,19 +34,24 @@ mlflow ui --backend-store-uri ~/ppv/pillars/dotfiles/mlruns
 bin/start-mlflow start
 ```
 
-### Interactive Claude Session Tracking
+### Interactive AI Session Tracking
 
-**NEW: Track your interactive Claude CLI sessions!**
+**Track your interactive AI assistant sessions across multiple providers!**
 
-Use the `claude-with-tracking` wrapper to maintain full Claude interactivity while logging to MLflow:
+Use the provider-specific wrappers to maintain full interactivity while logging to MLflow:
 
 ```bash
-# Instead of:
-claude "close-issue 583"
-
-# Use:
+# Claude Code (Anthropic)
 claude-with-tracking "close-issue 583"
+
+# OpenAI Codex
+codex-with-tracking "implement feature"
+
+# GPT models
+gpt-with-tracking "analyze code"
 ```
+
+**Convention**: Each AI provider has its own tracking wrapper following the pattern `<provider>-with-tracking`. This ensures clarity about which AI assistant is being used while maintaining provider-agnostic MLflow infrastructure underneath.
 
 This preserves:
 - ✅ Full interactivity (plan mode, permissions, comments)
@@ -58,34 +65,36 @@ While adding:
 - 🔍 Queryable history
 - ⏱️ Timing and performance data
 
-### What Gets Tracked from Claude Sessions
+### What Gets Tracked from AI Sessions
 
-The session parser extracts:
-- **Commands executed**: Actual Bash commands run via Claude's tools (● Bash(...))
-- **Git operations**: Git commands executed through Bash tool
-- **Tool uses**: All Claude tool invocations (Bash, Read, Update, etc.)
+The session parser extracts (provider-agnostic):
+- **Commands executed**: Actual bash/shell commands regardless of formatting
+- **Git operations**: `git` and `gh` CLI commands found in the transcript
 - **User interactions**: Your prompts and inputs
 - **Events**: Issue procedures and key actions
 
+The parser looks for actual commands in the output rather than provider-specific formatting, making it work with any AI assistant automatically.
+
 ### Querying Sessions
 
-Find specific Claude sessions in MLflow UI using search:
+Find specific AI sessions in MLflow UI using search:
 
 ```
 # In MLflow UI search bar:
 metrics.commands_executed > 10
 metrics.errors_encountered > 0
 metrics.success = 1
-tags.type = "claude_session"
+tags.type = "ai_session"
 ```
 
 ## Session Metrics
 
-Each Claude session tracks:
-- **Execution metrics**: Commands run, git operations, tool uses
+Each AI session tracks:
+- **Execution metrics**: Commands run, git operations
 - **Interaction metrics**: User prompts and inputs
 - **Success status**: Exit code and overall success
 - **Transcripts**: Both raw and cleaned versions for review
+- **Provider metadata**: Which AI assistant (if specified in wrapper)
 
 ## MLflow UI Features
 
@@ -128,13 +137,19 @@ params.procedure_name = "extract-best-frame" AND metrics.success = 0
 
 ## Testing
 
-Test the interactive session tracking:
+Test the interactive session tracking with different providers:
 
 ```bash
-# Run any Claude command with tracking
-claude-with-tracking "echo 'Hello MLflow'"
+# Test Claude tracking
+claude-with-tracking "echo 'Hello from Claude'"
 
-# View the session in MLflow UI
+# Test Codex tracking
+codex-with-tracking "echo 'Hello from Codex'"
+
+# Test GPT tracking
+gpt-with-tracking "echo 'Hello from GPT'"
+
+# View the sessions in MLflow UI
 open http://localhost:5000
 ```
 
@@ -148,15 +163,23 @@ open http://localhost:5000
 
 ## How It Works
 
-1. **Wrapper script** (`claude-with-tracking`) runs Claude normally
-2. **Session captured** with full interactivity preserved
-3. **Parser** (`parse_claude_session.py`) extracts metrics after completion
-4. **MLflow UI** displays session history and metrics
+1. **Wrapper scripts** (`claude-with-tracking`, `codex-with-tracking`, `gpt-with-tracking`) run AI assistants normally
+2. **Session captured** with full interactivity preserved using `script` command
+3. **Parser** (`parse_session.py`) extracts metrics by looking for actual commands
+4. **MLflow UI** displays session history and metrics across all providers
+
+**Architecture**:
+- Each `<provider>-with-tracking` wrapper captures the session
+- All wrappers use the same `parse_session.py` parser
+- Parser looks for actual commands (git, bash, gh, etc.) rather than provider formatting
+- No provider detection or provider-specific patterns needed
 
 ## Next Steps
 
+- [x] Make tracking provider-agnostic (works with any AI assistant)
 - [ ] Add real-time procedure hooks
 - [ ] Implement metric alerts
 - [ ] Create custom dashboards
 - [ ] Add comparison reports
 - [ ] Export metrics to other systems
+- [ ] Compare performance across AI providers

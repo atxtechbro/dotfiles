@@ -1,11 +1,11 @@
 #!/bin/bash
-# claude-with-tracking - Run Claude CLI with MLflow session tracking
+# codex-with-tracking - Run OpenAI Codex CLI with MLflow session tracking
 #
-# This wrapper preserves Claude's full interactive experience while
+# This wrapper preserves Codex's full interactive experience while
 # capturing the session for MLflow tracking and analysis.
 #
-# Usage: claude-with-tracking "your claude command here"
-# Example: claude-with-tracking "close-issue 583"
+# Usage: codex-with-tracking "your codex command here"
+# Example: codex-with-tracking "implement feature"
 
 set -euo pipefail
 
@@ -24,7 +24,7 @@ if [[ -x "$DOT_DEN/bin/start-mlflow" ]]; then
 fi
 
 # Generate session ID and paths
-SESSION_ID="claude_$(date +%Y%m%d_%H%M%S)_$$"
+SESSION_ID="codex_$(date +%Y%m%d_%H%M%S)_$$"
 SESSION_LOG="/tmp/${SESSION_ID}.log"
 SESSION_METADATA="/tmp/${SESSION_ID}.meta"
 
@@ -60,7 +60,7 @@ cat > "$SESSION_METADATA" <<EOF
 {
     "session_id": "$SESSION_ID",
     "command": "$*",
-    "ai_provider": "claude",
+    "ai_provider": "codex",
     "start_time": "$(date -Iseconds)",
     "user": "$USER",
     "pwd": "$PWD",
@@ -70,15 +70,15 @@ EOF
 
 # Inform user
 echo -e "${BLUE}╭────────────────────────────────────────╮${NC}"
-echo -e "${BLUE}│ 🚀 Claude with MLflow Tracking Active  │${NC}"
+echo -e "${BLUE}│ 🚀 Codex with MLflow Tracking Active   │${NC}"
 echo -e "${BLUE}├────────────────────────────────────────┤${NC}"
 echo -e "${BLUE}│ Session: ${SESSION_ID:0:20}... │${NC}"
 echo -e "${BLUE}│ Tracking to: http://localhost:5000     │${NC}"
 echo -e "${BLUE}╰────────────────────────────────────────╯${NC}"
 echo ""
 
-# Run Claude with full interactivity, capturing output
+# Run Codex with full interactivity, capturing output
 # Using 'script' to capture terminal session including colors and control chars
-script -q -c "claude $*" "$SESSION_LOG"
+script -q -c "codex $*" "$SESSION_LOG"
 
 # Exit code is preserved by trap

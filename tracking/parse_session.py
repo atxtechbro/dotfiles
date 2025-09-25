@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """
-Parse Claude CLI session logs and send metrics to MLflow.
+Parse AI assistant session logs and send metrics to MLflow.
 
-This script analyzes a Claude session transcript to extract:
-- Commands executed
+This script analyzes AI assistant session transcripts to extract:
+- Commands executed (bash, git, gh, etc.)
 - Files modified
 - Errors encountered
 - User interactions
 - Timing information
+
+Provider-agnostic: Works with any AI assistant by looking for actual
+commands in the output rather than provider-specific formatting.
 """
 
 import sys
@@ -23,19 +26,21 @@ def init_mlflow():
     """Initialize MLflow with local tracking."""
     dotfiles_root = Path(__file__).parent.parent
     mlflow.set_tracking_uri(f"file://{dotfiles_root}/mlruns")
-    mlflow.set_experiment("claude-sessions")
+    mlflow.set_experiment("ai-sessions")
 
 
 def parse_session_log(log_path):
     """
-    Parse a Claude session log to extract metrics.
+    Parse an AI assistant session log to extract metrics.
+
+    Provider-agnostic approach: Looks for actual commands and operations
+    in the transcript regardless of AI provider formatting.
 
     Returns dict with extracted metrics and events.
     """
     metrics = {
         "commands_executed": 0,
         "git_operations": 0,
-        "tool_uses": 0,
         "user_interactions": 0,
     }
 
@@ -64,22 +69,40 @@ def parse_session_log(log_path):
                 prev_line = stripped
         clean_content = '\n'.join(unique_lines)
 
-        # Parse for Claude's actual tool use patterns (● ToolName(...))
+        # Provider-agnostic parsing: Look for actual commands regardless of formatting
 
-        # Bash commands actually executed
-        bash_commands = re.findall(r'● Bash\([^)]+\)', clean_content)
-        metrics["commands_executed"] = len(bash_commands)
+        # Find bash/shell commands (common patterns across providers)
+        # Look for lines that appear to be shell commands
+        bash_patterns = [
+            r'(?:^|\n)\$ .+',  # Shell prompt format
+            r'(?:bash|Bash|BASH)[:\(\[].*?[\)\]\n]',  # Various bash invocation formats
+            r'(?:>>>|●) (?:bash|Bash).*',  # Common AI tool formats
+            r'(?:execute|run|command):\s*.+',  # Command descriptions
+        ]
+        bash_commands = []
+        for pattern in bash_patterns:
+            bash_commands.extend(re.findall(pattern, clean_content, re.IGNORECASE))
+        metrics["commands_executed"] = len(set(bash_commands))  # Dedupe
 
-        # Git operations from actual Bash executions
-        git_ops = re.findall(r'● Bash\([^)]*\bgit\b[^)]*\)', clean_content)
+        # Git operations (look for actual git commands)
+        git_patterns = [
+            r'git (?:clone|add|commit|push|pull|checkout|branch|merge|rebase|status|log|diff)',
+            r'gh (?:pr|issue|repo|workflow|api)',  # GitHub CLI commands
+        ]
+        git_ops = []
+        for pattern in git_patterns:
+            git_ops.extend(re.findall(pattern, clean_content, re.IGNORECASE))
         metrics["git_operations"] = len(git_ops)
 
-        # All tool uses (Bash, Read, Task, Update, etc.)
-        tool_uses = re.findall(r'● (?:Bash|Read|Task|Update|Write|Edit|MultiEdit|Grep|Glob)\([^)]*\)', clean_content)
-        metrics["tool_uses"] = len(tool_uses)
-
-        # User interactions (prompts starting with >)
-        user_inputs = re.findall(r'^> .+', clean_content, re.MULTILINE)
+        # User interactions (various prompt formats)
+        user_patterns = [
+            r'^> .+',  # Claude format
+            r'^(?:User|Human|You):\s*.+',  # Common chat formats
+            r'^\[USER\]\s*.+',  # Bracketed format
+        ]
+        user_inputs = []
+        for pattern in user_patterns:
+            user_inputs.extend(re.findall(pattern, clean_content, re.MULTILINE | re.IGNORECASE))
         metrics["user_interactions"] = len(user_inputs)
 
         # Key events for timeline
@@ -100,7 +123,7 @@ def parse_session_log(log_path):
 
 def log_session_to_mlflow(session_log, metadata_file, exit_code):
     """
-    Log a Claude session to MLflow.
+    Log an AI assistant session to MLflow.
     """
     init_mlflow()
 
@@ -114,7 +137,7 @@ def log_session_to_mlflow(session_log, metadata_file, exit_code):
     metrics, events, full_content = parse_session_log(session_log)
 
     # Create MLflow run
-    with mlflow.start_run(run_name=metadata.get("session_id", "claude_session")):
+    with mlflow.start_run(run_name=metadata.get("session_id", "ai_session")):
         # Log metadata as parameters
         for key, value in metadata.items():
             if value and key != "session_id":
@@ -146,8 +169,8 @@ def log_session_to_mlflow(session_log, metadata_file, exit_code):
         log_text(clean_content, "session_transcript_clean.txt")
 
         # Log summary statistics
-        summary = f"""Claude Session Summary
-=====================
+        summary = f"""AI Assistant Session Summary
+==========================
 Session ID: {metadata.get('session_id', 'unknown')}
 Command: {metadata.get('command', 'unknown')}
 Exit Code: {exit_code}
@@ -155,7 +178,6 @@ Exit Code: {exit_code}
 Metrics:
 - Commands Executed: {metrics['commands_executed']}
 - Git Operations: {metrics['git_operations']}
-- Tool Uses: {metrics['tool_uses']}
 - User Interactions: {metrics['user_interactions']}
 
 Events: {', '.join(events) if events else 'None'}
@@ -163,9 +185,13 @@ Events: {', '.join(events) if events else 'None'}
         log_text(summary, "session_summary.txt")
 
         # Set overall tags
-        set_tag("type", "claude_session")
+        set_tag("type", "ai_session")
         set_tag("interactive", "true")
         set_tag("status", "success" if exit_code == 0 else "failed")
+
+        # If provider info is in metadata, log it
+        if "ai_provider" in metadata:
+            set_tag("provider", metadata["ai_provider"])
 
         print(f"✓ Session logged to MLflow")
 
@@ -173,7 +199,7 @@ Events: {', '.join(events) if events else 'None'}
 def main():
     """Main entry point."""
     if len(sys.argv) < 3:
-        print("Usage: parse_claude_session.py <session_log> <metadata_file> [exit_code]")
+        print("Usage: parse_session.py <session_log> <metadata_file> [exit_code]")
         sys.exit(1)
 
     session_log = sys.argv[1]
