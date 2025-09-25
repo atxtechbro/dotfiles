@@ -596,23 +596,22 @@ if [[ -f ~/.bash_aliases ]]; then
   echo -e "${GREEN}✓ Bash aliases loaded successfully${NC}"
 fi
 
-# MCP Dashboard setup
-# EXPERIMENT #1213: Temporarily disabled - testing without MCP servers/dashboard
-# echo -e "${DIVIDER}"
-# echo "Setting up MCP Dashboard..."
-# 
-# # Check if start-mcp-dashboard script exists
-# if [[ -x "$DOT_DEN/bin/start-mcp-dashboard" ]]; then
-#   # Use the start-mcp-dashboard script which handles all checks
-#   "$DOT_DEN/bin/start-mcp-dashboard" start
-#   # The script handles:
-#   # - Checking if dashboard is already running
-#   # - Verifying the binary exists
-#   # - Starting with proper health checks
-#   # - Displaying clear status messages
-# else
-#   echo -e "${YELLOW}start-mcp-dashboard script not found. Skipping dashboard setup.${NC}"
-# fi
+# MLflow tracking setup (self-healing with spilled coffee principle)
+echo -e "${DIVIDER}"
+echo "Setting up MLflow tracking..."
+
+# Check if start-mlflow script exists
+if [[ -x "$DOT_DEN/bin/start-mlflow" ]]; then
+  # Use the start-mlflow script which handles all checks
+  "$DOT_DEN/bin/start-mlflow" start
+  # The script handles:
+  # - Installing MLflow via uv if not present (spilled coffee principle)
+  # - Checking if already running (idempotent)
+  # - Starting in background if needed
+  # - Silent operation to avoid noise
+else
+  echo -e "${YELLOW}start-mlflow script not found. Skipping MLflow setup.${NC}"
+fi
 
 # Configure git hooks
 if [[ -d "$DOT_DEN/.githooks" ]]; then
