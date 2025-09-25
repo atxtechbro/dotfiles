@@ -31,25 +31,11 @@ mlflow ui --backend-store-uri ~/ppv/pillars/dotfiles/mlruns
 
 ### Tracking Procedures
 
-The tracking module provides wrapper functions for our automation procedures:
+The tracking module provides wrapper functions for our automation procedures. These wrappers integrate with the procedures defined in:
+- [`knowledge/procedures/close-issue-procedure.md`](../knowledge/procedures/close-issue-procedure.md)
+- [`knowledge/procedures/extract-best-frame-procedure.md`](../knowledge/procedures/extract-best-frame-procedure.md)
 
-```python
-from tracking import track_close_issue, track_extract_best_frame
-
-# Track close-issue execution
-result = track_close_issue(
-    issue_number=123,
-    repo="atxtechbro/dotfiles",
-    additional_context="Fix bug in authentication"
-)
-
-# Track extract-best-frame execution
-result = track_extract_best_frame(
-    video_path="/path/to/video.mp4",
-    output_dir="/path/to/output",
-    selection_criteria="best smile"
-)
-```
+See [`mlflow_tracker.py`](mlflow_tracker.py) for the implementation details of `track_close_issue()` and `track_extract_best_frame()` functions.
 
 ### Querying Runs
 
@@ -76,42 +62,11 @@ issue_runs = query_runs(
 
 ## Tracked Metrics
 
-### close-issue Procedure
+The specific parameters and metrics tracked for each procedure are documented in the source code:
+- **close-issue**: See `track_close_issue()` in [mlflow_tracker.py](mlflow_tracker.py)
+- **extract-best-frame**: See `track_extract_best_frame()` in [mlflow_tracker.py](mlflow_tracker.py)
 
-**Parameters:**
-- `issue_number`: GitHub issue number
-- `repository`: Target repository
-- `issue_title`: Issue title
-- `issue_labels`: Comma-separated labels
-- `worktree_path`: Git worktree location
-
-**Metrics:**
-- `step_1_fetch_issue`: Issue fetch completion
-- `step_2_create_worktree`: Worktree creation
-- `step_3_implementation`: Implementation completion
-- `files_modified`: Number of files changed
-- `lines_added`: Lines added
-- `lines_removed`: Lines removed
-- `duration_seconds`: Total execution time
-- `success`: Success indicator (1 or 0)
-
-### extract-best-frame Procedure
-
-**Parameters:**
-- `video_path`: Input video file path
-- `video_name`: Video filename
-- `output_dir`: Output directory
-- `selection_criteria`: Frame selection criteria
-- `best_frame_path`: Path to selected frame
-
-**Metrics:**
-- `video_size_mb`: Video file size
-- `video_duration_seconds`: Video duration
-- `frames_extracted`: Number of frames extracted
-- `extraction_fps`: Frame extraction rate
-- `tournament_rounds`: Selection rounds completed
-- `duration_seconds`: Total execution time
-- `success`: Success indicator (1 or 0)
+Both procedures track execution time, success status, and procedure-specific metrics as defined in their implementations.
 
 ## MLflow UI Features
 
@@ -177,12 +132,10 @@ This will:
 
 ## Integration with Existing Procedures
 
-The MLflow tracking is designed to wrap existing procedures without modification:
-
-1. **Natural language invocation** remains unchanged
-2. **Procedure logic** stays in markdown files
-3. **MLflow tracking** is optional and non-intrusive
-4. **Backwards compatible** with current workflow
+The MLflow tracking wraps existing procedures without modification. See the source code for implementation:
+- Wrapper functions: [`mlflow_tracker.py`](mlflow_tracker.py)
+- Test/demo script: [`test_mlflow.py`](test_mlflow.py)
+- Procedure definitions: [`knowledge/procedures/`](../knowledge/procedures/)
 
 ## Next Steps
 

@@ -16,31 +16,15 @@ mlflow ui --backend-store-uri ~/ppv/pillars/dotfiles/mlruns
 
 ## Tracking Integration
 
-Our procedures automatically log to MLflow when executed:
+MLflow tracking wraps our automation procedures to provide observability:
+- Implementation: `tracking/mlflow_tracker.py`
+- Procedures tracked: See `knowledge/procedures/`
 
-- **close-issue**: Tracks issue details, implementation steps, PR creation
-- **extract-best-frame**: Tracks video metadata, frame extraction, selection
+## Using MLflow
 
-## Using Tracked Data
-
-### From MLflow UI
-
-1. Open http://localhost:5000
-2. Click "automation-procedures" experiment
-3. View runs, metrics, and artifacts
-4. Use search: `metrics.success = 1` or `params.issue_number = "123"`
-
-### From Python
-
-```python
-from tracking.mlflow_tracker import query_runs
-
-# Find failed runs
-failed = query_runs("metrics.success = 0")
-
-# Find slow runs
-slow = query_runs("metrics.duration_seconds > 60")
-```
+- **UI**: http://localhost:5000 after running `mlflow ui`
+- **Query API**: See `query_runs()` in `tracking/mlflow_tracker.py`
+- **Search examples**: `metrics.success = 1`, `params.issue_number = "123"`
 
 ## Benefits
 
