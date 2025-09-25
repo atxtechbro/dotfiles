@@ -69,6 +69,15 @@ See: `tracking/parse_session.py:72-96` - Provider-agnostic command extraction th
 
 This implementation achieves true provider independence by focusing on the semantic content (actual commands) rather than syntactic formatting (provider-specific output styles).
 
+### Benefits
+- Shows a concrete implementation of the principle
+- Demonstrates how to avoid the N×M problem
+- Provides a reusable reference for future provider‑agnostic implementations
+
+### Related
+- PR #1328: MLflow provider‑agnostic implementation
+- Issue #1326: Original MLflow tracking feature request
+
 ## Crisis Response Matrix
 
 | Primary Provider | Fallback | Scenario |
