@@ -38,7 +38,7 @@ bin/start-mlflow start
 
 **Track your interactive AI assistant sessions across multiple providers!**
 
-Use the provider-specific wrappers or the generic `ai-with-tracking` to maintain full interactivity while logging to MLflow:
+Use the provider-specific wrappers to maintain full interactivity while logging to MLflow:
 
 ```bash
 # Claude Code (Anthropic)
@@ -47,13 +47,11 @@ claude-with-tracking "close-issue 583"
 # OpenAI Codex
 codex-with-tracking "implement feature"
 
-# Generic wrapper with auto-detection
-ai-with-tracking claude "close-issue 583"
-ai-with-tracking codex "debug this"
-
-# Explicit provider specification
-ai-with-tracking --provider gpt gpt-4 "analyze code"
+# GPT models
+gpt-with-tracking "analyze code"
 ```
+
+**Convention**: Each AI provider has its own tracking wrapper following the pattern `<provider>-with-tracking`. This ensures clarity about which AI assistant is being used while maintaining provider-agnostic MLflow infrastructure underneath.
 
 This preserves:
 - ✅ Full interactivity (plan mode, permissions, comments)
@@ -156,11 +154,11 @@ Test the interactive session tracking with different providers:
 # Test Claude tracking
 claude-with-tracking "echo 'Hello from Claude'"
 
-# Test generic wrapper with auto-detection
-ai-with-tracking claude "echo 'Auto-detected Claude'"
+# Test Codex tracking
+codex-with-tracking "echo 'Hello from Codex'"
 
-# Test with explicit provider
-ai-with-tracking --provider codex codex "echo 'Explicit Codex'"
+# Test GPT tracking
+gpt-with-tracking "echo 'Hello from GPT'"
 
 # View the sessions in MLflow UI
 open http://localhost:5000
@@ -176,10 +174,16 @@ open http://localhost:5000
 
 ## How It Works
 
-1. **Wrapper scripts** (`ai-with-tracking`, `claude-with-tracking`, etc.) run AI assistants normally
+1. **Wrapper scripts** (`claude-with-tracking`, `codex-with-tracking`, `gpt-with-tracking`) run AI assistants normally
 2. **Session captured** with full interactivity preserved
-3. **Parser** (`parse_ai_session.py`) auto-detects provider and extracts metrics
+3. **Parser** (`parse_ai_session.py`) processes provider-specific patterns and extracts metrics
 4. **MLflow UI** displays session history and metrics across all providers
+
+**Architecture**: Each `<provider>-with-tracking` wrapper:
+- Captures the session using `script` command
+- Passes provider info to `parse_ai_session.py`
+- Uses provider-specific patterns from `provider_patterns.py`
+- Logs to unified MLflow experiment
 
 ## Next Steps
 

@@ -1,20 +1,11 @@
 #!/bin/bash
-# ai-with-tracking - Run AI assistant CLI with MLflow session tracking
+# gpt-with-tracking - Run GPT CLI with MLflow session tracking
 #
-# This wrapper preserves AI assistant's full interactive experience while
+# This wrapper preserves GPT's full interactive experience while
 # capturing the session for MLflow tracking and analysis.
 #
-# Supports multiple AI providers:
-# - Claude Code (Anthropic)
-# - OpenAI Codex
-# - GPT models
-# - Others (with auto-detection)
-#
-# Usage: ai-with-tracking [--provider <provider>] <command> [args...]
-# Examples:
-#   ai-with-tracking claude "close-issue 583"
-#   ai-with-tracking --provider codex codex "implement feature"
-#   ai-with-tracking gpt "debug this code"
+# Usage: gpt-with-tracking "your gpt command here"
+# Example: gpt-with-tracking "analyze code"
 
 set -euo pipefail
 
@@ -23,50 +14,6 @@ GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
-
-# Parse arguments
-PROVIDER=""
-COMMAND=""
-ARGS=""
-
-if [[ "$#" -eq 0 ]]; then
-    echo "Usage: ai-with-tracking [--provider <provider>] <command> [args...]"
-    echo "Providers: claude, codex, gpt (auto-detect if not specified)"
-    exit 1
-fi
-
-# Check for --provider flag
-if [[ "$1" == "--provider" ]]; then
-    if [[ "$#" -lt 3 ]]; then
-        echo "Error: --provider requires a value"
-        exit 1
-    fi
-    PROVIDER="$2"
-    shift 2
-fi
-
-# Get command and arguments
-COMMAND="$1"
-shift
-ARGS="$*"
-
-# Auto-detect provider from command if not specified
-if [[ -z "$PROVIDER" ]]; then
-    case "$COMMAND" in
-        claude*)
-            PROVIDER="claude"
-            ;;
-        codex*)
-            PROVIDER="codex"
-            ;;
-        gpt*)
-            PROVIDER="gpt"
-            ;;
-        *)
-            PROVIDER="generic"
-            ;;
-    esac
-fi
 
 # Determine dotfiles root
 DOT_DEN="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -77,7 +24,7 @@ if [[ -x "$DOT_DEN/bin/start-mlflow" ]]; then
 fi
 
 # Generate session ID and paths
-SESSION_ID="ai_${PROVIDER}_$(date +%Y%m%d_%H%M%S)_$$"
+SESSION_ID="gpt_$(date +%Y%m%d_%H%M%S)_$$"
 SESSION_LOG="/tmp/${SESSION_ID}.log"
 SESSION_METADATA="/tmp/${SESSION_ID}.meta"
 
@@ -90,15 +37,16 @@ cleanup() {
         echo -e "\n${BLUE}📊 Sending session to MLflow...${NC}"
 
         # Run parser with uv to ensure mlflow is available
+        # Use the AI-agnostic parser with GPT provider
         uv run --with mlflow python "$DOT_DEN/tracking/parse_ai_session.py" \
-            --provider "$PROVIDER" \
+            --provider gpt \
             "$SESSION_LOG" \
             "$SESSION_METADATA" \
             "$exit_code" 2>/dev/null &
 
         # Brief pause to let it start
         sleep 1
-        echo -e "${GREEN}✓ Session logged to MLflow (Provider: $PROVIDER)${NC}"
+        echo -e "${GREEN}✓ Session logged to MLflow (Provider: GPT)${NC}"
         echo -e "${BLUE}View at: http://localhost:5000${NC}"
     fi
 
@@ -113,8 +61,8 @@ trap cleanup EXIT
 cat > "$SESSION_METADATA" <<EOF
 {
     "session_id": "$SESSION_ID",
-    "command": "$COMMAND $ARGS",
-    "ai_provider": "$PROVIDER",
+    "command": "$*",
+    "ai_provider": "gpt",
     "start_time": "$(date -Iseconds)",
     "user": "$USER",
     "pwd": "$PWD",
@@ -123,32 +71,16 @@ cat > "$SESSION_METADATA" <<EOF
 EOF
 
 # Inform user
-PROVIDER_NAME=""
-case "$PROVIDER" in
-    claude)
-        PROVIDER_NAME="Claude Code"
-        ;;
-    codex)
-        PROVIDER_NAME="OpenAI Codex"
-        ;;
-    gpt)
-        PROVIDER_NAME="GPT"
-        ;;
-    *)
-        PROVIDER_NAME="AI Assistant"
-        ;;
-esac
-
 echo -e "${BLUE}╭────────────────────────────────────────╮${NC}"
-echo -e "${BLUE}│ 🚀 $PROVIDER_NAME with MLflow Tracking │${NC}"
+echo -e "${BLUE}│ 🚀 GPT with MLflow Tracking Active     │${NC}"
 echo -e "${BLUE}├────────────────────────────────────────┤${NC}"
 echo -e "${BLUE}│ Session: ${SESSION_ID:0:20}... │${NC}"
 echo -e "${BLUE}│ Tracking to: http://localhost:5000     │${NC}"
 echo -e "${BLUE}╰────────────────────────────────────────╯${NC}"
 echo ""
 
-# Run AI assistant with full interactivity, capturing output
+# Run GPT with full interactivity, capturing output
 # Using 'script' to capture terminal session including colors and control chars
-script -q -c "$COMMAND $ARGS" "$SESSION_LOG"
+script -q -c "gpt $*" "$SESSION_LOG"
 
 # Exit code is preserved by trap
