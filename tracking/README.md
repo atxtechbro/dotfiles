@@ -70,42 +70,25 @@ The session parser extracts:
 - **Tool uses**: Claude's function calls
 - **Events**: PR creation, commits, issue procedures
 
-### Legacy Tracking Functions
+### Querying Sessions
 
-The module also provides programmatic wrapper functions for procedures:
-- [`mlflow_tracker.py`](mlflow_tracker.py) - Thin wrappers for tracking
-- Actual implementations in [`knowledge/procedures/`](../knowledge/procedures/)
+Find specific Claude sessions in MLflow UI using search:
 
-### Querying Runs
-
-Find specific runs using MLflow's query capabilities:
-
-```python
-from tracking.mlflow_tracker import query_runs
-
-# Find slow executions
-slow_runs = query_runs(
-    filter_string="metrics.duration_seconds > 60"
-)
-
-# Find failed runs
-failed_runs = query_runs(
-    filter_string="metrics.success = 0"
-)
-
-# Find runs for specific issue
-issue_runs = query_runs(
-    filter_string="params.issue_number = '123'"
-)
+```
+# In MLflow UI search bar:
+metrics.commands_executed > 10
+metrics.errors_encountered > 0
+metrics.success = 1
+tags.type = "claude_session"
 ```
 
-## Tracked Metrics
+## Session Metrics
 
-The specific parameters and metrics tracked for each procedure are documented in the source code:
-- **close-issue**: See `track_close_issue()` in [mlflow_tracker.py](mlflow_tracker.py)
-- **extract-best-frame**: See `track_extract_best_frame()` in [mlflow_tracker.py](mlflow_tracker.py)
-
-Both procedures track execution time, success status, and procedure-specific metrics as defined in their implementations.
+Each Claude session tracks:
+- **Execution metrics**: Commands run, files changed, git operations
+- **Quality metrics**: Errors encountered, success/failure
+- **Interaction metrics**: User inputs, plan mode usage
+- **Full transcript**: Complete session log for review
 
 ## MLflow UI Features
 
@@ -148,18 +131,15 @@ params.procedure_name = "extract-best-frame" AND metrics.success = 0
 
 ## Testing
 
-Run the test script to verify MLflow integration:
+Test the interactive session tracking:
 
 ```bash
-# Run with uv to ensure mlflow is available
-uv run --with mlflow python tracking/test_mlflow.py
-```
+# Run any Claude command with tracking
+claude-with-tracking "echo 'Hello MLflow'"
 
-This will:
-1. Initialize MLflow tracking
-2. Create sample runs for both procedures
-3. Query and display recent runs
-4. Verify UI accessibility
+# View the session in MLflow UI
+open http://localhost:5000
+```
 
 ## Benefits
 
@@ -169,12 +149,12 @@ This will:
 4. **Observability**: Visual dashboard for all automation
 5. **Career Value**: Industry-standard ML engineering tool experience
 
-## Integration with Existing Procedures
+## How It Works
 
-The MLflow tracking wraps existing procedures without modification. See the source code for implementation:
-- Wrapper functions: [`mlflow_tracker.py`](mlflow_tracker.py)
-- Test/demo script: [`test_mlflow.py`](test_mlflow.py)
-- Procedure definitions: [`knowledge/procedures/`](../knowledge/procedures/)
+1. **Wrapper script** (`claude-with-tracking`) runs Claude normally
+2. **Session captured** with full interactivity preserved
+3. **Parser** (`parse_claude_session.py`) extracts metrics after completion
+4. **MLflow UI** displays session history and metrics
 
 ## Next Steps
 
