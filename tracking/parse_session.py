@@ -52,11 +52,39 @@ def parse_session_log(log_path):
             content = f.read()
 
         # Remove ANSI color codes and control characters for cleaner parsing
-        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+        # This comprehensive pattern matches all ANSI escape sequences
+        ansi_escape = re.compile(r'''
+            \x1B  # ESC
+            (?:   # 7-bit C1 Fe (except CSI)
+                [@-Z\\-_]
+            |     # or [ for CSI, followed by a control sequence
+                \[
+                [0-?]*  # Parameter bytes
+                [ -/]*  # Intermediate bytes
+                [@-~]   # Final byte
+            )
+        ''', re.VERBOSE)
         clean_content = ansi_escape.sub('', content)
 
-        # Also remove other control characters
+        # Remove CSI sequences that don't start with ESC (direct bracket sequences)
+        clean_content = re.sub(r'\[[0-9;?]*[a-zA-Z]', '', clean_content)
+
+        # Remove OSC sequences (Operating System Commands)
+        clean_content = re.sub(r'\][0-9];[^\x07\x1b]*[\x07\x1b\\]', '', clean_content)
+
+        # Remove terminal control sequences that use different formats
+        # Remove sequences like ]>7u]en which are terminal responses
+        clean_content = re.sub(r'\][>0-9]+[a-z]+', '', clean_content)
+        clean_content = re.sub(r'\[[\?!][0-9]+[hlc]', '', clean_content)
+        # Remove remaining ]text patterns at start of lines
+        clean_content = re.sub(r'^\][a-z]+', '', clean_content, flags=re.MULTILINE)
+
+        # Also remove other control characters (but keep newlines and tabs)
         clean_content = re.sub(r'[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]', '', clean_content)
+
+        # Remove script/typescript headers if present (do this before removing brackets)
+        clean_content = re.sub(r'Script started on .+?\[COMMAND=.*?\]\n?', '', clean_content)
+        clean_content = re.sub(r'^Script done on .+?\n', '', clean_content, flags=re.MULTILINE)
 
         # Remove duplicate consecutive lines (from terminal redraws)
         lines = clean_content.split('\n')
@@ -118,7 +146,7 @@ def parse_session_log(log_path):
     except Exception as e:
         print(f"Error parsing log: {e}")
 
-    return metrics, events, content
+    return metrics, events, clean_content
 
 
 def log_session_to_mlflow(session_log, metadata_file, exit_code):
@@ -134,7 +162,14 @@ def log_session_to_mlflow(session_log, metadata_file, exit_code):
             metadata = json.load(f)
 
     # Parse session
-    metrics, events, full_content = parse_session_log(session_log)
+    metrics, events, clean_content = parse_session_log(session_log)
+
+    # Also load the raw content for comparison
+    try:
+        with open(session_log, "r", encoding="utf-8", errors="ignore") as f:
+            raw_content = f.read()
+    except:
+        raw_content = clean_content
 
     # Create MLflow run
     with mlflow.start_run(run_name=metadata.get("session_id", "ai_session")):
@@ -164,9 +199,10 @@ def log_session_to_mlflow(session_log, metadata_file, exit_code):
         for event in events[:10]:  # MLflow has tag limits
             set_tag(f"event_{events.index(event)}", event)
 
-        # Log both raw and cleaned transcripts as artifacts
-        log_text(full_content, "session_transcript_raw.txt")
-        log_text(clean_content, "session_transcript_clean.txt")
+        # Log cleaned transcript as main artifact (this is what users see)
+        log_text(clean_content, "session_transcript.txt")
+        # Also keep raw for debugging if needed
+        log_text(raw_content, "session_transcript_raw.txt")
 
         # Log summary statistics
         summary = f"""AI Assistant Session Summary
