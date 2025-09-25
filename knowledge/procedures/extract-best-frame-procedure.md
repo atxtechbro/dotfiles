@@ -54,6 +54,30 @@ The selection process:
 3. Continue until one frame remains
 4. That frame is saved as the best selfie
 
+## Step 4b: Round 2 - Fine-Grained Selection
+
+After identifying the best frame from Round 1, perform fine-grained refinement:
+
+Calculate the timestamp of the Round 1 winner and extract refined frames:
+!WINNER_NUMBER=$(echo "$BEST_FRAME" | grep -o '[0-9]\+')
+!WINNER_TIME=$((WINNER_NUMBER * 2))  # Since we extracted at 0.5 fps (every 2 seconds)
+!START_TIME=$((WINNER_TIME - 1))
+!mkdir -p "$FRAMES_DIR/round2"
+
+Extract 20 frames at 0.1-second intervals around the winner (±1 second window):
+!ffmpeg -ss $START_TIME -i "$VIDEO_PATH" -t 2 -vf "fps=10" -q:v 2 "$FRAMES_DIR/round2/refined_%03d.jpg" -loglevel error
+!echo "Extracted $(ls -1 "$FRAMES_DIR"/round2/*.jpg | wc -l) refined frames for Round 2"
+
+[Claude will compare the refined frames to find the absolute best moment, capturing micro-expressions and perfect timing]
+
+The refined selection captures:
+- Peak facial expressions and smiles
+- Optimal muscle definition moments
+- Perfect food/cooking action shots
+- Ideal environmental atmosphere
+
+!echo "Round 2 complete: Found best frame with sub-second precision"
+
 ## Step 5: Save the Best Frame
 
 After the selection process, the winning frame will be copied to the output directory:

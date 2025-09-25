@@ -1,5 +1,8 @@
 # Close Issue Procedure
-# 
+#
+# IMPORTANT: This procedure creates a Pull Request that will auto-close the issue when merged.
+# It does NOT directly close the issue - GitHub closes it automatically via PR merge.
+#
 # This IS the implementation - the procedure documents itself by being the code.
 # Used by both:
 # - Local /close-issue command (via relative path injection)
@@ -47,6 +50,12 @@ Build the solution using tracer bullets - get something working first, then iter
 ## Creating the Pull Request
 
 **IMPORTANT**: This procedure outputs a GitHub Pull Request. The PR must be created, not just planned.
+
+**KEY WORKFLOW**:
+- Create commits with "Closes #issue-number" in the message
+- Create the Pull Request linking to the issue
+- The issue will be automatically closed when the PR is merged
+- Do NOT manually close the issue yourself
 
 See `.github/PULL_REQUEST_TEMPLATE.md` for complete guidance on title patterns and body sections.
 
