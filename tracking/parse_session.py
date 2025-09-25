@@ -86,16 +86,87 @@ def parse_session_log(log_path):
         clean_content = re.sub(r'Script started on .+?\[COMMAND=.*?\]\n?', '', clean_content)
         clean_content = re.sub(r'^Script done on .+?\n', '', clean_content, flags=re.MULTILINE)
 
-        # Remove duplicate consecutive lines (from terminal redraws)
+        # Remove excessive padding characters (═ sequences)
+        # These appear between character-by-character updates
+        clean_content = re.sub(r'═{10,}', '═' * 10, clean_content)  # Cap at 10
+        clean_content = re.sub(r'(═{5,}\n){2,}', '═════\n', clean_content)  # Collapse multiple padding lines
+
+        # Enhanced deduplication: Remove progressive typing snapshots
         lines = clean_content.split('\n')
         unique_lines = []
-        prev_line = None
-        for line in lines:
+        prev_stripped = None
+
+        for i, line in enumerate(lines):
             stripped = line.strip()
-            if stripped and stripped != prev_line:
-                unique_lines.append(line)
-                prev_line = stripped
-        clean_content = '\n'.join(unique_lines)
+
+            # Skip empty lines that are just padding
+            if not stripped or stripped == '═' * len(stripped):
+                # Only keep one padding line between content
+                if unique_lines and not unique_lines[-1].strip():
+                    continue
+                if stripped == '═' * len(stripped) and len(unique_lines) > 0:
+                    continue
+
+            # Skip if this line is a prefix of the next line (progressive typing)
+            if i < len(lines) - 1:
+                next_stripped = lines[i + 1].strip()
+                if next_stripped and stripped and next_stripped.startswith(stripped):
+                    # This is an incomplete version of the next line, skip it
+                    continue
+
+            # Skip if this line is the same as the previous (exact duplicates)
+            if stripped and stripped == prev_stripped:
+                continue
+
+            unique_lines.append(line)
+            prev_stripped = stripped
+
+        # Second pass: Remove lines that look like incomplete typing
+        # Pattern: >• [partial text] where the next occurrence has more text
+        final_lines = []
+        i = 0
+        while i < len(unique_lines):
+            line = unique_lines[i]
+
+            # Check if this looks like a prompt with partial input
+            prompt_match = re.match(r'^(>•?\s*|\$\s*|>>>\s*)(.*)$', line.strip())
+            if prompt_match and i < len(unique_lines) - 1:
+                prompt_prefix = prompt_match.group(1)
+                current_text = prompt_match.group(2)
+
+                # Look ahead for more complete versions
+                j = i + 1
+                most_complete = line
+                most_complete_text = current_text
+                skip_to = i + 1
+
+                while j < len(unique_lines) and j < i + 20:  # Check next 20 lines max
+                    next_line = unique_lines[j]
+                    next_match = re.match(r'^' + re.escape(prompt_prefix) + r'(.*)$', next_line.strip())
+
+                    if next_match:
+                        next_text = next_match.group(1)
+                        # If the next one is longer and starts with current, it's more complete
+                        if len(next_text) > len(most_complete_text) and next_text.startswith(most_complete_text):
+                            most_complete = next_line
+                            most_complete_text = next_text
+                            skip_to = j + 1  # Skip past this one
+                        elif next_text == most_complete_text:
+                            # Same command repeated, skip it
+                            skip_to = j + 1
+                        elif not next_text.startswith(current_text[:min(len(current_text), 3)]):
+                            # Different command (doesn't start with same prefix), stop looking
+                            break
+                    j += 1
+
+                # Add the most complete version and skip intermediates
+                final_lines.append(most_complete)
+                i = skip_to
+            else:
+                final_lines.append(line)
+                i += 1
+
+        clean_content = '\n'.join(final_lines)
 
         # Provider-agnostic parsing: Look for actual commands regardless of formatting
 
