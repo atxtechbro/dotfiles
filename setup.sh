@@ -283,17 +283,8 @@ fi
 
 # GitLab MCP server works via GITLAB_PERSONAL_ACCESS_TOKEN - no glab CLI setup needed
 
-# Generate AI provider commands from templates
-if [[ -f "$DOT_DEN/utils/generate-commands.sh" ]]; then
-  echo "Generating AI provider commands from templates..."
-  "$DOT_DEN/utils/generate-commands.sh"
-elif [[ -f "$DOT_DEN/utils/generate-claude-commands.sh" ]]; then
-  # Fallback to Claude-specific script for backwards compatibility
-  echo "Generating Claude commands from templates (legacy)..."
-  "$DOT_DEN/utils/generate-claude-commands.sh"
-else
-  echo -e "${YELLOW}Command generation script not found. Skipping command generation.${NC}"
-fi
+# Command generation removed - we now use provider-agnostic, slash-free invocation
+# See knowledge/principles/ai-provider-agnosticism.md for details
 
 # Configuration files setup complete
 echo -e "${GREEN}✓ Configuration files setup complete${NC}"
