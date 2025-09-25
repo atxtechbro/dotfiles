@@ -1,0 +1,13 @@
+#!/bin/bash
+# codex-with-tracking - Run OpenAI Codex CLI with MLflow session tracking
+#
+# This wrapper preserves Codex's full interactive experience while
+# capturing the session for MLflow tracking and analysis.
+#
+# Usage: codex-with-tracking "your codex command here"
+# Example: codex-with-tracking "implement feature"
+
+set -euo pipefail
+
+# Simply delegate to ai-with-tracking with codex provider
+exec "$(dirname "${BASH_SOURCE[0]}")/ai-with-tracking" --provider codex codex "$@"
