@@ -2,7 +2,7 @@
 
 This module provides MLflow tracking capabilities for our automation procedures, enabling reproducibility, observability, and debugging of all automated actions.
 
-**Now provider-agnostic!** Supports Claude Code, OpenAI Codex, GPT models, and other AI assistants.
+**Provider-agnostic**: Works with any AI assistant by extracting actual commands from transcripts rather than relying on provider-specific formatting.
 
 ## Features
 
@@ -67,19 +67,14 @@ While adding:
 
 ### What Gets Tracked from AI Sessions
 
-The session parser automatically detects the AI provider and extracts:
-- **Commands executed**: Bash commands run via the AI's tools
-- **Git operations**: Git commands executed through shell tools
-- **Tool uses**: All AI tool invocations (bash, read, write, edit, etc.)
+The session parser extracts (provider-agnostic):
+- **Commands executed**: Actual bash/shell commands regardless of formatting
+- **Git operations**: `git` and `gh` CLI commands found in the transcript
+- **Tool uses**: File operations and tool invocations
 - **User interactions**: Your prompts and inputs
 - **Events**: Issue procedures and key actions
-- **Provider info**: Which AI assistant was used
 
-Supported patterns:
-- **Claude**: `● ToolName(...)` format
-- **Codex**: `>>> tool: command` format
-- **GPT**: `Function: tool(args)` format
-- **Others**: Auto-detected or generic patterns
+The parser looks for actual commands in the output rather than provider-specific formatting, making it work with any AI assistant automatically.
 
 ### Querying Sessions
 
@@ -91,11 +86,6 @@ metrics.commands_executed > 10
 metrics.errors_encountered > 0
 metrics.success = 1
 tags.type = "ai_session"
-
-# Filter by provider
-tags.provider = "claude_code"
-tags.provider = "openai_codex"
-tags.provider = "gpt"
 ```
 
 ## Session Metrics
@@ -105,7 +95,7 @@ Each AI session tracks:
 - **Interaction metrics**: User prompts and inputs
 - **Success status**: Exit code and overall success
 - **Transcripts**: Both raw and cleaned versions for review
-- **Provider metadata**: Which AI assistant and detection method
+- **Provider metadata**: Which AI assistant (if specified in wrapper)
 
 ## MLflow UI Features
 
@@ -175,19 +165,19 @@ open http://localhost:5000
 ## How It Works
 
 1. **Wrapper scripts** (`claude-with-tracking`, `codex-with-tracking`, `gpt-with-tracking`) run AI assistants normally
-2. **Session captured** with full interactivity preserved
-3. **Parser** (`parse_ai_session.py`) processes provider-specific patterns and extracts metrics
+2. **Session captured** with full interactivity preserved using `script` command
+3. **Parser** (`parse_claude_session.py`) extracts metrics by looking for actual commands
 4. **MLflow UI** displays session history and metrics across all providers
 
-**Architecture**: Each `<provider>-with-tracking` wrapper:
-- Captures the session using `script` command
-- Passes provider info to `parse_ai_session.py`
-- Uses provider-specific patterns from `provider_patterns.py`
-- Logs to unified MLflow experiment
+**Architecture**:
+- Each `<provider>-with-tracking` wrapper captures the session
+- All wrappers use the same `parse_claude_session.py` parser
+- Parser looks for actual commands (git, bash, gh, etc.) rather than provider formatting
+- No provider detection or provider-specific patterns needed
 
 ## Next Steps
 
-- [x] Make tracking provider-agnostic (support Codex, GPT, etc.)
+- [x] Make tracking provider-agnostic (works with any AI assistant)
 - [ ] Add real-time procedure hooks
 - [ ] Implement metric alerts
 - [ ] Create custom dashboards

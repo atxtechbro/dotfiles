@@ -37,16 +37,14 @@ cleanup() {
         echo -e "\n${BLUE}📊 Sending session to MLflow...${NC}"
 
         # Run parser with uv to ensure mlflow is available
-        # Use the AI-agnostic parser with Codex provider
-        uv run --with mlflow python "$DOT_DEN/tracking/parse_ai_session.py" \
-            --provider codex \
+        uv run --with mlflow python "$DOT_DEN/tracking/parse_claude_session.py" \
             "$SESSION_LOG" \
             "$SESSION_METADATA" \
             "$exit_code" 2>/dev/null &
 
         # Brief pause to let it start
         sleep 1
-        echo -e "${GREEN}✓ Session logged to MLflow (Provider: Codex)${NC}"
+        echo -e "${GREEN}✓ Session logged to MLflow${NC}"
         echo -e "${BLUE}View at: http://localhost:5000${NC}"
     fi
 

@@ -4,9 +4,6 @@
 # This wrapper preserves Claude's full interactive experience while
 # capturing the session for MLflow tracking and analysis.
 #
-# This is now a specialized wrapper for Claude Code that uses the
-# generic ai-with-tracking infrastructure.
-#
 # Usage: claude-with-tracking "your claude command here"
 # Example: claude-with-tracking "close-issue 583"
 
@@ -40,9 +37,7 @@ cleanup() {
         echo -e "\n${BLUE}📊 Sending session to MLflow...${NC}"
 
         # Run parser with uv to ensure mlflow is available
-        # Use the new AI-agnostic parser with Claude provider
-        uv run --with mlflow python "$DOT_DEN/tracking/parse_ai_session.py" \
-            --provider claude \
+        uv run --with mlflow python "$DOT_DEN/tracking/parse_claude_session.py" \
             "$SESSION_LOG" \
             "$SESSION_METADATA" \
             "$exit_code" 2>/dev/null &
