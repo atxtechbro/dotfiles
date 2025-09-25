@@ -66,6 +66,10 @@ Historical note: `.claude/command-templates/` are intentionally retired; they re
 - Strengths: Novel OpenAI models, cutting-edge capabilities, unique availability
 - MCP: TOML config with mcp_servers sections
 
+## Implementation Example: MLflow Tracking
+
+MLflow session tracking (`tracking/parse_session.py`) demonstrates provider agnosticism by extracting actual commands rather than maintaining provider-specific patterns. Instead of N×M complexity (N providers × M patterns), it uses a single parser that looks for `git`, `gh`, and bash commands regardless of AI formatting. This avoids provider detection entirely - working automatically with Claude Code, OpenAI Codex, and future assistants.
+
 ## Relationship to Other Principles
 
 - **[Systems Stewardship](systems-stewardship.md)**: Consistent interfaces across providers
