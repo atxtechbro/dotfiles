@@ -73,3 +73,19 @@ Historical note: `.claude/command-templates/` are intentionally retired; they re
 - **[OSE](ose.md)**: External perspective prevents vendor lock-in
 
 This principle ensures AI assistant capabilities remain available even when individual providers experience issues, supporting continuous development workflow with triple redundancy.
+
+## Implementation Example: MLflow Session Tracking
+
+The MLflow tracking system demonstrates provider agnosticism by extracting actual commands from transcripts rather than maintaining provider-specific patterns:
+
+**Anti-pattern (N×M complexity):**
+- Different regex patterns for each provider
+- Provider detection logic
+- Maintenance burden grows with each new AI assistant
+
+**Correct pattern (provider-agnostic):**
+- Single parser looks for actual `git`, `gh`, and bash commands
+- No provider detection needed
+- Works automatically with any AI assistant
+
+See: `tracking/parse_session.py:72-95` - Extracts real commands regardless of AI formatting
