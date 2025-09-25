@@ -45,6 +45,39 @@ This eliminates dependence on provider-specific features (e.g., slash commands) 
 
 Historical note: `.claude/command-templates/` are intentionally retired; they remain only as historical reference and are not required for core workflows.
 
+## Implementation Example: MLflow Session Tracking
+
+The MLflow tracking system demonstrates provider agnosticism by extracting actual commands from transcripts rather than maintaining provider-specific patterns:
+
+**Anti-pattern (N×M complexity):**
+- Different regex patterns for each provider's output format
+- Provider detection logic to choose the right parser
+- Maintenance burden grows with each new AI assistant
+- Breaks when providers update their output formatting
+
+**Correct pattern (provider-agnostic):**
+- Single parser looks for actual `git`, `gh`, and bash commands
+- No provider detection needed
+- Works automatically with any AI assistant
+- Resilient to provider format changes
+
+See: `tracking/parse_session.py:72-96` - Provider-agnostic command extraction that:
+- Searches for actual shell commands regardless of formatting
+- Identifies git operations by looking for git/gh commands
+- Counts user interactions using multiple prompt patterns
+- Zero provider-specific code paths
+
+This implementation achieves true provider independence by focusing on the semantic content (actual commands) rather than syntactic formatting (provider-specific output styles).
+
+### Benefits
+- Shows a concrete implementation of the principle
+- Demonstrates how to avoid the N×M problem
+- Provides a reusable reference for future provider‑agnostic implementations
+
+### Related
+- PR #1328: MLflow provider‑agnostic implementation
+- Issue #1326: Original MLflow tracking feature request
+
 ## Crisis Response Matrix
 
 | Primary Provider | Fallback | Scenario |
