@@ -2,6 +2,8 @@
 
 This document describes the environment-specific MCP server configuration system implemented in the dotfiles repository.
 
+> **Note**: For information about which MCP servers are actually available vs. which appear in Claude Code's approval list, see [MCP Server Availability Guide](mcp-server-availability.md).
+
 ## Overview
 
 The system allows you to automatically enable or disable certain MCP servers based on your environment (work, personal, development, production). This is particularly useful for:

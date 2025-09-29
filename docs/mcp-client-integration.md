@@ -2,6 +2,8 @@
 
 This guide documents how to integrate new MCP (Model Context Protocol) clients with the dotfiles repository infrastructure.
 
+> **Important**: Before integrating MCP servers, review the [MCP Server Availability Guide](mcp-server-availability.md) to understand which servers are actually available vs. which only appear in tool approval lists.
+
 ## Overview
 
 The dotfiles repository provides an AI provider-agnostic system for managing MCP servers and global context. This allows multiple AI coding assistants (Amazon Q, Claude Code, etc.) to share the same configuration and knowledge base.
