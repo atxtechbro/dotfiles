@@ -359,6 +359,14 @@ if [[ -f "$DOT_DEN/mcp/mcp.json" ]]; then
   # Create symlink to unified MCP config
   ln -sf "$DOT_DEN/mcp/mcp.json" "$HOME/.config/claude/claude_desktop_config.json"
   echo -e "${GREEN}✓ Claude Desktop MCP config symlinked to mcp/mcp.json${NC}"
+
+  # Clear Claude Code's stale MCP cache to ensure it picks up config changes
+  # This prevents Claude from reporting removed servers as still available
+  if [[ -d "$HOME/.claude/statsig" ]]; then
+    echo "Clearing Claude Code cache to sync MCP server availability..."
+    rm -rf "$HOME/.claude/statsig"/* 2>/dev/null || true
+    echo -e "${GREEN}✓ Claude Code cache cleared${NC}"
+  fi
 fi
 
 # OpenAI Codex Configuration (includes trivial npm install)

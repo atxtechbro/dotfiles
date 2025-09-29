@@ -1,0 +1,120 @@
+#!/bin/bash
+# Claude MCP Diagnostic Tool
+# Diagnoses MCP server availability issues
+
+set -euo pipefail
+
+# Colors
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+DIVIDER="========================================"
+
+echo -e "${BLUE}${DIVIDER}${NC}"
+echo -e "${BLUE}Claude Code MCP Server Diagnostic${NC}"
+echo -e "${BLUE}${DIVIDER}${NC}\n"
+
+# 1. Check Claude Code installation
+echo -e "${YELLOW}1. Claude Code Installation:${NC}"
+if command -v claude &>/dev/null; then
+    CLAUDE_VERSION=$(claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
+    echo -e "${GREEN}✓ Claude Code installed (version: $CLAUDE_VERSION)${NC}"
+else
+    echo -e "${RED}✗ Claude Code not installed${NC}"
+    exit 1
+fi
+echo ""
+
+# 2. Check MCP configuration file
+echo -e "${YELLOW}2. MCP Configuration File:${NC}"
+DOT_DEN="${DOT_DEN:-$HOME/ppv/pillars/dotfiles}"
+GLOBAL_MCP_CONFIG="$DOT_DEN/mcp/mcp.json"
+
+if [[ -f "$GLOBAL_MCP_CONFIG" ]]; then
+    echo -e "${GREEN}✓ MCP config found: $GLOBAL_MCP_CONFIG${NC}"
+
+    # Show configured servers
+    if command -v jq &>/dev/null; then
+        echo -e "\n  Configured servers in mcp.json:"
+        jq -r '.mcpServers | keys[]' "$GLOBAL_MCP_CONFIG" 2>/dev/null | sed 's/^/    - /'
+    else
+        echo -e "${YELLOW}  (Install jq to see server list)${NC}"
+    fi
+else
+    echo -e "${RED}✗ MCP config not found at: $GLOBAL_MCP_CONFIG${NC}"
+fi
+echo ""
+
+# 3. Check Claude alias
+echo -e "${YELLOW}3. Claude Alias Configuration:${NC}"
+ALIAS_DEF=$(alias claude 2>/dev/null || echo "none")
+if [[ "$ALIAS_DEF" != "none" ]]; then
+    echo -e "${GREEN}✓ Claude alias configured:${NC}"
+    echo "  $ALIAS_DEF"
+else
+    echo -e "${RED}✗ Claude alias not configured${NC}"
+fi
+echo ""
+
+# 4. Test MCP server listing
+echo -e "${YELLOW}4. Claude MCP Server List:${NC}"
+echo "Running: claude mcp list"
+if claude mcp list 2>/dev/null; then
+    echo -e "${GREEN}✓ MCP servers listed successfully${NC}"
+else
+    echo -e "${RED}✗ Failed to list MCP servers${NC}"
+fi
+echo ""
+
+# 5. Check for stale cache
+echo -e "${YELLOW}5. Checking for Stale Cache:${NC}"
+CACHE_DIRS=(
+    "$HOME/.claude/statsig"
+    "$HOME/.cache/claude"
+    "$HOME/.local/share/claude"
+)
+
+CACHE_FOUND=false
+for dir in "${CACHE_DIRS[@]}"; do
+    if [[ -d "$dir" ]]; then
+        echo -e "  Found cache directory: $dir"
+        CACHE_FOUND=true
+    fi
+done
+
+if ! $CACHE_FOUND; then
+    echo -e "  No cache directories found"
+fi
+echo ""
+
+# 6. Check for environment variables
+echo -e "${YELLOW}6. MCP-related Environment Variables:${NC}"
+env | grep -i mcp || echo "  None found"
+echo ""
+
+# 7. Recommendations
+echo -e "${BLUE}${DIVIDER}${NC}"
+echo -e "${BLUE}Recommendations:${NC}"
+echo -e "${BLUE}${DIVIDER}${NC}"
+
+echo -e "\n1. To clear potential cache issues:"
+echo -e "   ${GREEN}rm -rf ~/.claude/statsig/*${NC}"
+echo -e "   ${GREEN}pkill -f claude || true${NC}"
+echo -e "   ${GREEN}source ~/.bashrc${NC}"
+
+echo -e "\n2. To verify MCP server availability:"
+echo -e "   ${GREEN}claude mcp list${NC}"
+echo -e "   ${GREEN}claude mcp info <server-name>${NC}"
+
+echo -e "\n3. To add/remove MCP servers:"
+echo -e "   ${GREEN}Edit: $GLOBAL_MCP_CONFIG${NC}"
+echo -e "   ${GREEN}Then: source setup.sh${NC}"
+
+echo -e "\n4. If servers still appear after removal:"
+echo -e "   - Claude Code may have cached the server list"
+echo -e "   - Try restarting your terminal session"
+echo -e "   - Run: ${GREEN}claude logout && claude login${NC}"
+
+echo -e "\n${BLUE}${DIVIDER}${NC}"
