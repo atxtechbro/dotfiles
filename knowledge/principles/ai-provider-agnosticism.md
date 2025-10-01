@@ -57,7 +57,7 @@ Historical note: `.claude/command-templates/` are intentionally retired; they re
 ## Provider Capabilities
 
 ### Claude Code (Anthropic)
-- Model: claude-opus-4-1-20250805
+- Model: claude-sonnet-4-5-20250929
 - Strengths: Excellent documentation, developer-friendly ergonomics, complex reasoning
 - MCP: CLI flag support
 
