@@ -1,1 +1,1 @@
-../../commands/close-issue.md
+../../knowledge/procedures/close-issue-procedure.md

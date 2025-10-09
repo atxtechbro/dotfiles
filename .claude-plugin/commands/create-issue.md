@@ -1,1 +1,1 @@
-../../commands/create-issue.md
+../../knowledge/procedures/issue-creation-procedure.md
