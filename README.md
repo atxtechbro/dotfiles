@@ -317,6 +317,56 @@ To add or modify Claude Code settings:
 
 Current configured settings include co-authorship attribution, MCP servers, permissions, and more.
 
+## Claude Code Plugin: Shareable Commands
+
+This repository includes a Claude Code plugin that makes slash commands available across all your repos.
+
+### What's Included
+
+The plugin provides these slash commands:
+- `/close-issue <number>` - GitHub issue closure workflow with PR creation
+- `/create-issue` - Create new GitHub issues following best practices
+- `/extract-best-frame <video>` - AI-powered best frame extraction from videos
+- `/retro` - Run retrospective procedures to capture learnings
+
+All commands are symlinked to the `knowledge/procedures/` directory, maintaining a single source of truth.
+
+### Installation in Other Repos
+
+**Option 1: GitHub (Recommended after cloning)**
+```bash
+# In any repo where you want these commands:
+/plugin marketplace add atxtechbro/dotfiles
+/plugin install dotfiles-commands@atxtechbro
+```
+
+**Option 2: Local Path (For testing or private repos)**
+```bash
+# Use absolute path to your dotfiles:
+/plugin marketplace add ~/ppv/pillars/dotfiles
+/plugin install dotfiles-commands
+```
+
+**Note**: These are Claude Code slash commands typed in a Claude Code chat session, not bash commands.
+
+### Plugin Structure
+
+```
+.claude-plugin/
+├── plugin.json              # Plugin metadata
+├── marketplace.json         # Distribution manifest
+└── commands/                # Symlinked to knowledge base
+    ├── close-issue.md      → ../../knowledge/procedures/close-issue-procedure.md
+    ├── create-issue.md     → ../../knowledge/procedures/issue-creation-procedure.md
+    ├── extract-best-frame.md → ../../knowledge/procedures/extract-best-frame-procedure.md
+    └── retro.md           → ../../knowledge/procedures/retro-procedure.md
+```
+
+**Principles**:
+- Systems-stewardship: Single source of truth in knowledge base
+- Dotfiles-as-plugin: Share your setup with other repos and users
+- Provider-agnostic: Commands work identically across installations
+
 ## Global MCP Configuration
 
 The dotfiles provide global access to MCP (Model Context Protocol) servers from any directory on your system. After running `source setup.sh`, MCP servers are automatically available through the `claude` command alias.
