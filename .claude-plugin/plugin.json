@@ -5,5 +5,5 @@
   "author": {
     "name": "atxtechbro"
   },
-  "commands": ["../commands/"]
+  "commands": ["./commands/"]
 }
