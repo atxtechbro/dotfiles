@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "dotfiles-commands",
-      "source": ".",
+      "source": "./.claude-plugin",
       "description": "Shared procedures and slash commands from dotfiles knowledge base"
     }
   ]

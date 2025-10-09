@@ -317,6 +317,20 @@ To add or modify Claude Code settings:
 
 Current configured settings include co-authorship attribution, MCP servers, permissions, and more.
 
+## Claude Code Plugin
+
+Share slash commands across repos via Claude Code's plugin system.
+
+**Commands**: `/close-issue`, `/create-issue`, `/extract-best-frame`, `/retro`
+
+**Install** (in a Claude Code chat):
+```bash
+/plugin marketplace add atxtechbro/dotfiles
+/plugin install dotfiles-commands@atxtechbro
+```
+
+Commands symlink to `knowledge/procedures/` for single source of truth.
+
 ## Global MCP Configuration
 
 The dotfiles provide global access to MCP (Model Context Protocol) servers from any directory on your system. After running `source setup.sh`, MCP servers are automatically available through the `claude` command alias.
