@@ -41,14 +41,22 @@ Scan issue content for principle alignment:
   - "rapid", "quick test" → tracer-bullets
   - "accumulate", "compound" → snowball-method
 
-## Step 4: Select Labels
+## Step 4: Fetch Available Labels
 
-From the **Available Labels** section above, select appropriate labels based on:
+Before selecting labels, run `gh label list` to get the list of labels that actually exist in the repository.
+
+**CRITICAL**: Only labels from this list can be applied. Using a non-existent label will cause `gh issue create` to fail.
+
+## Step 5: Select Labels
+
+From the labels fetched in Step 4, select appropriate labels based on:
 - Issue type (bug, enhancement, documentation)
 - Principles detected in Step 3
 - Relevant areas (mcp, git, automation, etc.)
 
-## Step 5: Build Issue Content
+**Validation**: Cross-check each selected label against the list from Step 4. Only include labels that exist.
+
+## Step 6: Build Issue Content
 
 ### Template Selection
 
@@ -69,7 +77,7 @@ Based on keywords, link relevant procedures:
 - "git" → Link git-workflow
 - "issue" → Link issue-to-pr-workflow
 
-## Step 6: Preview Issue
+## Step 7: Preview Issue
 
 Present a complete preview showing:
 - **Title**: [proposed title]
@@ -79,7 +87,7 @@ Present a complete preview showing:
 
 Ask for confirmation or modifications.
 
-## Step 7: Create the Issue
+## Step 8: Create the Issue
 
 Upon confirmation:
 1. Create the issue with selected labels
