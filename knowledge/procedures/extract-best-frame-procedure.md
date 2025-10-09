@@ -2,6 +2,14 @@
 #
 # This procedure extracts frames from a video and uses the agent's visual judgment
 # to select the most flattering frame through a tournament-style comparison.
+#
+# ADAPTIVE BEHAVIOR:
+# - Round 1: Dynamically adjusts FPS based on video duration (targets 20-50 frames)
+#   - FPS bounded between 0.1-2.0 fps to avoid extremes
+#   - Minimum 10 frames guaranteed even for very short videos
+# - Round 2: Adapts window size based on video length
+#   - Videos <10s: ±0.5s window at 20 fps for tight precision
+#   - Videos ≥10s: ±1.0s window at 10 fps for standard refinement
 
 ## Invocation
 - Primary command: "extract-best-frame <video_path> [<frames_dir>] [<output_dir>]"
@@ -13,14 +21,37 @@
 Ensure the video file exists:
 !test -f "$VIDEO_PATH" || { echo "Error: Video file not found: $VIDEO_PATH"; exit 1; }
 
-## Step 2: Extract Frames
+## Step 2: Extract Frames (Adaptive)
 
-Extract frames at regular intervals (every 2 seconds):
-!ffmpeg -i "$VIDEO_PATH" -vf "fps=0.5" -q:v 2 "$FRAMES_DIR/frame_%04d.jpg" -loglevel error
+Get video duration to calculate optimal frame extraction rate:
+!DURATION=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$VIDEO_PATH")
+!echo "Video duration: ${DURATION}s"
+
+Calculate adaptive FPS targeting 20-50 frames for Round 1:
+!TARGET_FRAMES=30
+!FPS=$(echo "scale=3; $TARGET_FRAMES / $DURATION" | bc)
+
+Cap FPS between reasonable bounds (0.1 to 2.0 fps):
+!if (( $(echo "$FPS > 2.0" | bc -l) )); then FPS=2.0; fi
+!if (( $(echo "$FPS < 0.1" | bc -l) )); then FPS=0.1; fi
+!FRAME_INTERVAL=$(echo "scale=2; 1 / $FPS" | bc)
+!echo "Using adaptive FPS: $FPS (1 frame every ${FRAME_INTERVAL}s)"
+
+Extract frames at adaptive intervals:
+!ffmpeg -i "$VIDEO_PATH" -vf "fps=$FPS" -q:v 2 "$FRAMES_DIR/frame_%04d.jpg" -loglevel error
 
 Count the extracted frames:
 !FRAME_COUNT=$(ls -1 "$FRAMES_DIR"/frame_*.jpg 2>/dev/null | wc -l)
 !echo "Extracted $FRAME_COUNT frames from video"
+
+Ensure minimum frame coverage for very short videos:
+!MIN_FRAMES=10
+!if [ "$FRAME_COUNT" -lt "$MIN_FRAMES" ]; then
+!  echo "Warning: Only $FRAME_COUNT frames extracted. Re-extracting with higher FPS for better coverage..."
+!  ffmpeg -i "$VIDEO_PATH" -vf "fps=2.0" -q:v 2 "$FRAMES_DIR/frame_%04d.jpg" -loglevel error -y
+!  FRAME_COUNT=$(ls -1 "$FRAMES_DIR"/frame_*.jpg 2>/dev/null | wc -l)
+!  echo "Re-extracted $FRAME_COUNT frames for analysis"
+!fi
 
 ## Step 3: Tournament Selection Using Claude
 
@@ -54,19 +85,36 @@ The selection process:
 3. Continue until one frame remains
 4. That frame is saved as the best selfie
 
-## Step 4b: Round 2 - Fine-Grained Selection
+## Step 4b: Round 2 - Fine-Grained Selection (Adaptive)
 
 After identifying the best frame from Round 1, perform fine-grained refinement:
 
 Calculate the timestamp of the Round 1 winner and extract refined frames:
 !WINNER_NUMBER=$(echo "$BEST_FRAME" | grep -o '[0-9]\+')
-!WINNER_TIME=$((WINNER_NUMBER * 2))  # Since we extracted at 0.5 fps (every 2 seconds)
-!START_TIME=$((WINNER_TIME - 1))
+!WINNER_TIME=$(echo "scale=2; $WINNER_NUMBER * $FRAME_INTERVAL" | bc)
+!echo "Round 1 winner is at approximately ${WINNER_TIME}s in the video"
+
+Determine adaptive Round 2 parameters based on video duration:
+!if (( $(echo "$DURATION < 10" | bc -l) )); then
+!  # Short videos: tighter window, higher precision
+!  WINDOW=0.5
+!  ROUND2_FPS=20
+!  echo "Short video detected: Using ±${WINDOW}s window with ${ROUND2_FPS} fps"
+!else
+!  # Longer videos: standard window
+!  WINDOW=1.0
+!  ROUND2_FPS=10
+!  echo "Using standard ±${WINDOW}s window with ${ROUND2_FPS} fps"
+!fi
+
+Calculate Round 2 extraction window:
+!START_TIME=$(echo "scale=2; if ($WINNER_TIME - $WINDOW < 0) 0 else $WINNER_TIME - $WINDOW" | bc)
+!DURATION_R2=$(echo "scale=2; $WINDOW * 2" | bc)
 !mkdir -p "$FRAMES_DIR/round2"
 
-Extract 20 frames at 0.1-second intervals around the winner (±1 second window):
-!ffmpeg -ss $START_TIME -i "$VIDEO_PATH" -t 2 -vf "fps=10" -q:v 2 "$FRAMES_DIR/round2/refined_%03d.jpg" -loglevel error
-!echo "Extracted $(ls -1 "$FRAMES_DIR"/round2/*.jpg | wc -l) refined frames for Round 2"
+Extract refined frames around the winner:
+!ffmpeg -ss $START_TIME -i "$VIDEO_PATH" -t $DURATION_R2 -vf "fps=$ROUND2_FPS" -q:v 2 "$FRAMES_DIR/round2/refined_%03d.jpg" -loglevel error
+!echo "Extracted $(ls -1 "$FRAMES_DIR"/round2/*.jpg 2>/dev/null | wc -l) refined frames for Round 2"
 
 [Claude will compare the refined frames to find the absolute best moment, capturing micro-expressions and perfect timing]
 
