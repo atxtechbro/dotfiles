@@ -1,0 +1,8 @@
+{
+  "name": "dotfiles-commands",
+  "description": "Shared procedures and slash commands from dotfiles knowledge base",
+  "version": "1.0.0",
+  "author": {
+    "name": "atxtechbro"
+  }
+}

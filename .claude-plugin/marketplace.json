@@ -1,0 +1,13 @@
+{
+  "name": "dotfiles-marketplace",
+  "owner": {
+    "name": "atxtechbro"
+  },
+  "plugins": [
+    {
+      "name": "dotfiles-commands",
+      "source": ".",
+      "description": "Shared procedures and slash commands from dotfiles knowledge base"
+    }
+  ]
+}
