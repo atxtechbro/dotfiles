@@ -1,1 +1,1 @@
-../../commands/extract-best-frame.md
+../../knowledge/procedures/extract-best-frame-procedure.md

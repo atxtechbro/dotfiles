@@ -1,1 +1,1 @@
-../../commands/retro.md
+../../knowledge/procedures/retro-procedure.md
