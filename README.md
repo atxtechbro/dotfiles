@@ -329,6 +329,8 @@ Share slash commands across repos via Claude Code's plugin system.
 /plugin install dotfiles-commands@atxtechbro
 ```
 
+**Then restart Claude Code** for commands to appear in autocomplete.
+
 Commands symlink to `knowledge/procedures/` for single source of truth.
 
 ## Global MCP Configuration

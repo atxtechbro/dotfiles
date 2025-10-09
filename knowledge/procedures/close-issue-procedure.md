@@ -1,3 +1,7 @@
+---
+description: Close GitHub issue with PR workflow
+---
+
 # Close Issue Procedure
 #
 # IMPORTANT: This procedure creates a Pull Request that will auto-close the issue when merged.
