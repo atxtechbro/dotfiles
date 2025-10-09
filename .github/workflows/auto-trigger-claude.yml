@@ -8,8 +8,9 @@ jobs:
   auto-trigger-claude:
     # Gate: only run when Claude Code is explicitly enabled
     # Enable by setting repo variable: CLAUDE_CODE_SUBSCRIPTION=active
-    # Also requires PAT secret to exist (prevents unsolicited comments)
-    if: ${{ vars.CLAUDE_CODE_SUBSCRIPTION == 'active' && secrets.CLAUDE_TRIGGER_PAT != '' }}
+    # Note: Secret existence is validated at step execution time, not in job conditional
+    # (GitHub Actions does not support direct secret references in job-level if conditions)
+    if: ${{ vars.CLAUDE_CODE_SUBSCRIPTION == 'active' }}
     runs-on: ubuntu-latest
     timeout-minutes: 2
     permissions:
