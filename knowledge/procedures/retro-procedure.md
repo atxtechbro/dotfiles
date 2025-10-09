@@ -1,3 +1,7 @@
+---
+description: Run retrospective to capture learnings
+---
+
 # Retro Procedure
 
 After completing work or submitting a pull request, conduct a retro focused on systems improvement. This supports the Snowball Method by capturing learnings and dedicating 20% of time to systems improvement.

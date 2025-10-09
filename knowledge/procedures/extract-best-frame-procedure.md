@@ -1,3 +1,7 @@
+---
+description: Extract best frame from video using AI
+---
+
 # Extract Best Frame Procedure
 #
 # This procedure extracts frames from a video and uses the agent's visual judgment

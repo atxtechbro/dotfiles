@@ -1,5 +1,9 @@
+---
+description: Create GitHub issue with validated labels
+---
+
 # Issue Creation Procedure
-# 
+#
 # This IS the implementation - the procedure documents itself by being the code.
 # Used by /create-issue command (via injection)
 #
