@@ -1,16 +1,12 @@
-# Claude Commands
+# Claude Code Configuration
 
-Templates that get compiled into slash commands during setup.
+Local commands for the dotfiles repository itself.
 
 ## Commands
 
-- `/project:close-issue <number>` - Close or fix an issue
-- `/project:retro` - Run a retrospective
+- `/close-issue` - Close GitHub issue with PR workflow (symlinked to knowledge base)
 
-## How it works
+## Plugin System
 
-1. Templates in `command-templates/` use `{{ INJECT:path }}` to pull from knowledge base
-2. `utils/generate-claude-commands.sh` compiles them to `~/.claude/commands/`
-3. Generated on each `source setup.sh`
-
-That's it. Keep templates short, inject procedures dynamically.
+For sharing commands across repos, see the plugin system documented in main README.md.
+Commands are distributed via `.claude-plugin/` and installed with `/plugin` commands.

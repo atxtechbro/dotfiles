@@ -256,10 +256,6 @@ if [[ -f "$DOT_DEN/utils/configure-amazonq.sh" ]]; then
   "$DOT_DEN/utils/configure-amazonq.sh"
 fi
 
-# Command templates live in .claude/command-templates/
-# Generated to ~/.claude/commands/ by generate-commands.sh below
-# No symlink needed - templates are processed, not used directly
-
 # Set up vendor-agnostic MCP configuration
 if [[ -f "$DOT_DEN/mcp/setup-vendor-agnostic-mcp.sh" ]]; then
   "$DOT_DEN/mcp/setup-vendor-agnostic-mcp.sh"
@@ -282,9 +278,6 @@ fi
 # No additional auth setup needed beyond GITLAB_PERSONAL_ACCESS_TOKEN in ~/.bash_secrets
 
 # GitLab MCP server works via GITLAB_PERSONAL_ACCESS_TOKEN - no glab CLI setup needed
-
-# Command generation removed - we now use provider-agnostic, slash-free invocation
-# See knowledge/principles/ai-provider-agnosticism.md for details
 
 # Configuration files setup complete
 echo -e "${GREEN}✓ Configuration files setup complete${NC}"
@@ -618,7 +611,7 @@ if [[ -d "$DOT_DEN/.githooks" ]]; then
   echo "Configuring git hooks..."
   # Set the git hooks path for the dotfiles repository
   (cd "$DOT_DEN" && git config core.hooksPath .githooks)
-  echo -e "${GREEN}Git hooks configured for command synchronization validation${NC}"
+  echo -e "${GREEN}✓ Git hooks configured${NC}"
 else
   echo -e "${YELLOW}Git hooks directory not found. Skipping hooks configuration.${NC}"
 fi

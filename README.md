@@ -267,44 +267,6 @@ alias q='q mcp import --file "$GLOBAL_MCP_CONFIG" global --force >/dev/null 2>&1
 
 **Available MCP Servers**: Both providers get access to git operations, GitHub integration, filesystem operations, knowledge directory context, and work-specific servers (when `WORK_MACHINE=true`).
 
-### Slash Commands (Vendor-Agnostic)
-
-Slash commands are now stored in a vendor-agnostic structure that works across all AI coding assistants:
-
-- **Templates**: Stored in `commands/templates/` (vendor-neutral location)
-- **Generation**: Run `utils/generate-commands.sh` to process templates for all providers
-- **Output**: Generated commands appear in provider-specific locations:
-  - Claude Code: `~/.claude/commands/`
-  - Amazon Q: (future support)
-  - Other providers: (easily extensible)
-- **Symlinks**: `.claude/command-templates` → `commands/templates/` (created by setup.sh)
-- **Injection**: Templates use `{{ INJECT:path }}` to pull content from `knowledge/` directory
-- **Variables**: Templates support variables like `{{ ISSUE_NUMBER }}` for dynamic content
-
-To modify a slash command:
-1. Edit the template in `commands/templates/`
-2. Run `utils/generate-commands.sh` (automatically run by `source setup.sh`)
-3. The updated command is available in all configured AI providers
-
-**Command Lifecycle Management**:
-- **Sync Tool**: `utils/sync-claude-commands.sh` detects and cleans orphaned commands
-- **Auto-Cleanup**: `generate-commands.sh` automatically removes orphaned commands before generation
-- **CI Validation**: GitHub Actions verify command synchronization on every push
-- **Pre-commit Hook**: Ensures commands stay synchronized (enable with `git config core.hooksPath .githooks`)
-
-To check command synchronization:
-```bash
-# Check for orphaned or missing commands
-utils/sync-claude-commands.sh --check
-
-# Clean orphaned commands
-utils/sync-claude-commands.sh --clean
-
-# Regenerate all commands (includes auto-cleanup)
-utils/generate-commands.sh
-```
-
-**Principle**: This vendor-agnostic approach follows `systems-stewardship` - building reusable patterns across tools.
 
 ### Claude Code Settings
 

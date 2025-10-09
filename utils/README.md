@@ -45,32 +45,6 @@ Resolves conflicts between npm and nvm installations.
 ./fix-npm-nvm-conflict.sh
 ```
 
-### prompt_orchestrator.py
-
-A secure prompt template processing system with advanced features.
-
-```bash
-# Basic usage
-./prompt_orchestrator.py template.md -v ISSUE_NUMBER=123
-
-# With output file
-./prompt_orchestrator.py template.md -o output.md -v NAME=value
-```
-
-Features:
-- Variable substitution: `{{ VARIABLE }}`
-- File injection: `{{ INJECT:path/to/file.md }}`
-- Dynamic functions: `{{ FUNCTION() }}`
-- Environment variables: `{{ ENV:VARIABLE }}`
-- Command execution: `{{ EXEC:command }}` (use with caution)
-
-Security features:
-- Path traversal protection
-- Command injection prevention
-- Comprehensive exception handling
-- Safe file operations
-
-See [prompt-orchestrator-security.md](../docs/prompt-orchestrator-security.md) for security details.
 
 ## Adding New Scripts
 
