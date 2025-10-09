@@ -1,16 +1,18 @@
 name: Auto-Trigger Claude
-description: Automatically trigger Claude to implement new issues (Ultimate OSE)
+description: Automatically trigger Claude to implement labeled issues (Hybrid OSE)
 on:
   issues:
-    types: [opened]
+    types: [labeled]
 
 jobs:
   auto-trigger-claude:
-    # Gate: only run when Claude Code is explicitly enabled
+    # Gate: only run when Claude Code is explicitly enabled AND the 'claude' label is added
     # Enable by setting repo variable: CLAUDE_CODE_SUBSCRIPTION=active
+    # Add 'claude' label to an issue to queue it for auto-implementation
+    # Note: Manual @claude mentions still work regardless of labels (handled by claude-implementation.yml)
     # Note: Secret existence is validated at step execution time, not in job conditional
     # (GitHub Actions does not support direct secret references in job-level if conditions)
-    if: ${{ vars.CLAUDE_CODE_SUBSCRIPTION == 'active' }}
+    if: ${{ vars.CLAUDE_CODE_SUBSCRIPTION == 'active' && github.event.label.name == 'claude' }}
     runs-on: ubuntu-latest
     timeout-minutes: 2
     permissions:
