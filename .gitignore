@@ -25,6 +25,15 @@ CLAUDE.local.md
 # Claude Code local settings (personal overrides, not for source control per Anthropic docs)
 .claude/settings.local.json
 
+# Claude Code plugin synced command files
+# These are generated from knowledge/procedures/ by scripts/sync-plugin-commands.sh
+# Keep test files (test-nonsymlink.md) but ignore synced procedures
+commands/close-issue.md
+commands/create-issue.md
+commands/extract-best-frame.md
+commands/issue-creation.md
+commands/retro.md
+
 # Private SSH keys
 id_rsa
 id_dsa
