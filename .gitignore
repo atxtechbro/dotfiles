@@ -86,3 +86,12 @@ mcp/clients/
 # MCP server convenience symlinks (setup-generated executables)
 mcp/servers/*/git_mcp_server.py
 
+# Video processing artifacts
+frames/
+
+# ML experiment tracking
+mlruns/
+
+# General output directory
+output/
+
