@@ -124,8 +124,8 @@ jobs:
             
             echo "${{ github.repository }}" > /tmp/repo.txt
             
-            # Load the template
-            TEMPLATE_FILE="knowledge/procedures/close-issue-procedure.md"
+            # Load the template (now source of truth is in commands/)
+            TEMPLATE_FILE="commands/close-issue.md"
             
             # Use awk to safely replace ALL placeholders in a single pass
             awk '
