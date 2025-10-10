@@ -208,8 +208,6 @@ Display summary of all processed videos:
 !done
 !echo ""
 
-{{ INJECT:principles/tracer-bullets.md }}
-
 ## Next Steps
 
 The best frame extraction is complete!

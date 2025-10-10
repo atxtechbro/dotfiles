@@ -49,8 +49,6 @@ Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 <!-- Contract: Issue context loaded, working in worktree -->
 Build the solution using tracer bullets - get something working first, then iterate.
 
-{{ INJECT:principles/tracer-bullets.md }}
-
 ## Creating the Pull Request
 
 **IMPORTANT**: This procedure outputs a GitHub Pull Request. The PR must be created, not just planned.
@@ -65,8 +63,6 @@ See `.github/PULL_REQUEST_TEMPLATE.md` for complete guidance on title patterns a
 
 ## Final Step: Retro
 Let's retro this context and wring out the gleanings.
-
-{{ INJECT:principles/eager-evolution.md }}
 
 **Consider capturing any ghost procedures** that emerged during this work - see [Procedure Creation](knowledge/procedures/procedure-creation.md).
 
