@@ -62,17 +62,17 @@ configure_<client_name>_mcp() {
 
 ### Step 2: Update AI Harness Setup
 
-Add a new class to `utils/setup-ai-provider-rules.py`:
+Add a new class to `utils/setup-ai-harness-rules.py`:
 
 ```python
-class <ClientName>Setup(AIProviderSetup):
+class <ClientName>Setup(AIHarnessSetup):
     """<Client Name> specific setup"""
 
     def __init__(self):
         super().__init__("<Client Name>")
         # Define target paths for global context
 
-    def _setup_provider_specific(self):
+    def _setup_harness_specific(self):
         """Harness-specific setup logic"""
         # Implement how this harness loads global context
         # Options: symlinks, generated files, config files
