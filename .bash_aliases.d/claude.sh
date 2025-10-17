@@ -14,5 +14,5 @@ unset AWS_BEARER_TOKEN_BEDROCK  # Removes Bedrock API key if set (official varia
 alias claude='claude --verbose --mcp-config "$GLOBAL_MCP_CONFIG" --add-dir "$DOT_DEN/knowledge"'
 
 # Quick test command - validates knowledge integration
-alias claude-test='claude -p "What is AI harness agnosticism and which development harnesses support dual redundancy?"'
+alias claude-test='claude -p "What is AI harness agnosticism and which two harnesses are currently configured?"'
 

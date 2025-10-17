@@ -13,7 +13,7 @@ DOT_DEN="${DOT_DEN:-$HOME/ppv/pillars/dotfiles}"
 alias codex-4o='codex --profile gpt4o'
 
 # Test command - validates knowledge integration (positional prompt)
-alias codex-test='codex "What is AI harness agnosticism and which development harnesses support dual redundancy?"'
+alias codex-test='codex "What is AI harness agnosticism and which two harnesses are currently configured?"'
 
 # Update knowledge command - regenerates AGENTS.md from knowledge base
 alias codex-update-knowledge='$DOT_DEN/utils/generate-codex-knowledge.sh'
