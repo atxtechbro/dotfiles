@@ -15,5 +15,5 @@ alias q-dev="cd $HOME/ppv/pillars/q-cli && cargo run --bin q_cli -- chat"
 alias q='q chat /tools trustall'
 
 # Test command - validates knowledge integration
-alias q-test='q chat --prompt "What is AI provider agnosticism and which three providers have triple redundancy?"'
+alias q-test='q chat --prompt "What is AI harness agnosticism and which two harnesses are currently configured?"'
 

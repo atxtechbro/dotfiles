@@ -239,18 +239,18 @@ source setup.sh
 
 Each worktree is self-contained with its own MCP servers, binaries, and dependencies. See [docs/worktree-development.md](docs/worktree-development.md) for detailed instructions.
 
-## AI Provider Agnostic Context
+## AI Harness Agnostic Context
 
-This repository automatically configures global context for multiple AI coding assistants from a single source of truth:
+This repository automatically configures global context for multiple AI development harnesses from a single source of truth:
 
 - **Amazon Q Developer CLI**: Uses automatic MCP import (`q mcp import --file mcp/mcp.json global --force`)
 - **Claude Code**: Uses direct config reference (`--mcp-config mcp/mcp.json`)
 
-All context is sourced from the `knowledge/` directory and MCP servers are configured identically across providers.
+All context is sourced from the `knowledge/` directory and MCP servers are configured identically across harnesses.
 
-### Provider Symmetry
+### Harness Symmetry
 
-Both AI providers use identical MCP server configurations through different integration methods:
+Both AI harnesses use identical MCP server configurations through different integration methods:
 
 ```bash
 # Single source of truth
@@ -263,9 +263,9 @@ alias claude='claude --mcp-config "$GLOBAL_MCP_CONFIG" --add-dir "$DOT_DEN/knowl
 alias q='q mcp import --file "$GLOBAL_MCP_CONFIG" global --force >/dev/null 2>&1; command q'
 ```
 
-**Crisis Resilience**: When Claude Code experiences 500 "Overloaded" errors, Amazon Q provides identical MCP server access and capabilities. This provider agnosticism ensures uninterrupted workflow during service outages.
+**Crisis Resilience**: When Claude Code experiences 500 "Overloaded" errors, Amazon Q provides identical MCP server access and capabilities. This harness agnosticism ensures uninterrupted workflow during service outages.
 
-**Available MCP Servers**: Both providers get access to git operations, GitHub integration, filesystem operations, knowledge directory context, and work-specific servers (when `WORK_MACHINE=true`).
+**Available MCP Servers**: Both harnesses get access to git operations, GitHub integration, filesystem operations, knowledge directory context, and work-specific servers (when `WORK_MACHINE=true`).
 
 
 ### Claude Code Settings

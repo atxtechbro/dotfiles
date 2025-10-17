@@ -1,6 +1,6 @@
 #!/bin/bash
-# Provider-Agnostic MCP Setup
-# Configures both Claude Code and Amazon Q to use identical MCP servers
+# Harness-Agnostic MCP Setup
+# Configures Claude Code, Amazon Q, and Codex to use identical MCP servers
 
 set -euo pipefail
 
@@ -10,8 +10,8 @@ YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-setup_provider_agnostic_mcp() {
-    echo -e "${BLUE}🚀 Setting up Provider-Agnostic MCP Configuration...${NC}"
+setup_harness_agnostic_mcp() {
+    echo -e "${BLUE}🚀 Setting up Harness-Agnostic MCP Configuration...${NC}"
     
     # Get the directory where this script is located
     SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -72,24 +72,24 @@ setup_provider_agnostic_mcp() {
     fi
     
     # Summary
-    echo -e "\n${GREEN}🎯 Provider-Agnostic MCP Setup Complete!${NC}"
-    echo -e "${BLUE}All AI providers now use identical MCP servers:${NC}"
-    
+    echo -e "\n${GREEN}🎯 Harness-Agnostic MCP Setup Complete!${NC}"
+    echo -e "${BLUE}All AI harnesses now use identical MCP servers:${NC}"
+
     if [[ -f "$MCP_CONFIG" ]] && command -v jq &> /dev/null; then
         echo -e "${BLUE}Available servers:${NC}"
         jq -r '.mcpServers | keys[]' "$MCP_CONFIG" 2>/dev/null | sed 's/^/  • /' || echo "  (jq not available for server list)"
     fi
-    
+
     echo -e "\n${YELLOW}🔄 Crisis Resilience Achieved:${NC}"
     echo -e "  • Claude Code down? → Use Codex (primary) or Amazon Q with same MCP servers"
     echo -e "  • OpenAI outage? → Use Claude Code (primary) or Amazon Q with same MCP servers"
     echo -e "  • Amazon Q issues? → Use Claude Code or Codex with same MCP servers"
-    echo -e "  • All three providers have identical capabilities"
-    
+    echo -e "  • All development harnesses have identical capabilities"
+
     return 0
 }
 
 # Run setup if script is executed directly (not sourced)
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    setup_provider_agnostic_mcp
+    setup_harness_agnostic_mcp
 fi
