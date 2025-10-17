@@ -6,7 +6,6 @@
 # Designed to be idempotent (safe to run multiple times) and platform-aware
 
 GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
 NC='\033[0m'
 
 configure_linux_mint() {
