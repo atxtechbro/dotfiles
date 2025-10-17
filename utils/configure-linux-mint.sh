@@ -31,15 +31,19 @@ configure_linux_mint() {
     # This makes Downloads show files/folders mixed by modification time
     # instead of grouping all folders at the top
     # Rationale: Temporal order is more useful than arbitrary categorization
-    gsettings set org.nemo.preferences sort-directories-first false
+    if gsettings set org.nemo.preferences sort-directories-first false 2>/dev/null; then
+        echo -e "${GREEN}✓ Nemo file manager configured with temporal-order sorting${NC}"
+        echo -e "  - Folders and files now sorted together by modification time"
+    else
+        echo "Warning: Failed to configure Nemo preferences. This may require a desktop session."
+        return 1
+    fi
 
     # Additional quality-of-life settings can be added here in the future
     # Examples:
-    # gsettings set org.nemo.preferences show-hidden-files true
-    # gsettings set org.nemo.preferences show-full-path-titles true
-
-    echo -e "${GREEN}✓ Nemo file manager configured with temporal-order sorting${NC}"
-    echo -e "  - Folders and files now sorted together by modification time"
+    # if gsettings set org.nemo.preferences show-hidden-files true 2>/dev/null; then
+    #     echo -e "${GREEN}✓ Hidden files enabled${NC}"
+    # fi
 
     return 0
 }
