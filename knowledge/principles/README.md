@@ -6,7 +6,7 @@ Foundational truths that guide development across all projects.
 - `../throughput-definition.md` - **The North Star**: AI agent management capability for top 2% positioning
 
 ## Operating Principles
-- `ai-provider-agnosticism.md` - **Crisis-Proven**: Interchangeable AI providers for service outage resilience
+- `ai-harness-agnosticism.md` - **Crisis-Proven**: Interchangeable AI harnesses for service outage resilience
 - `eager-evolution.md` - **Living System**: Eagerly seeks to evolve, self-heal, and fit like a well-worn glove
 - `invent-and-simplify.md` - Constant reinvention and simplifying assumptions
 - `no-leaks.md` - Keep company details private while enabling rich AI context via gitignored documentation

@@ -4,7 +4,7 @@ This guide documents how to integrate new MCP (Model Context Protocol) clients w
 
 ## Overview
 
-The dotfiles repository provides an AI provider-agnostic system for managing MCP servers and global context. This allows multiple AI coding assistants (Amazon Q, Claude Code, etc.) to share the same configuration and knowledge base.
+The dotfiles repository provides an AI harness-agnostic system for managing MCP servers and global context. This allows multiple AI development harnesses (Amazon Q, Claude Code, Cursor, GitHub Copilot, etc.) to share the same configuration and knowledge base.
 
 ## Key Components
 
@@ -19,8 +19,8 @@ The dotfiles repository provides an AI provider-agnostic system for managing MCP
   - `knowledge/principles/` - Foundational development principles
   - `knowledge/procedures/` - Actionable development procedures
 
-### 3. AI Provider Context
-- **Source**: `knowledge/` directory automatically configured for each provider
+### 3. AI Harness Context
+- **Source**: `knowledge/` directory automatically configured for each harness
 - **Amazon Q**: Uses symlinked rules directory (`~/.amazonq/rules/`)
 - **Claude Code**: Uses generated `CLAUDE.local.md` files with embedded context
 
@@ -60,25 +60,25 @@ configure_<client_name>_mcp() {
 }
 ```
 
-### Step 2: Update AI Provider Setup
+### Step 2: Update AI Harness Setup
 
 Add a new class to `utils/setup-ai-provider-rules.py`:
 
 ```python
 class <ClientName>Setup(AIProviderSetup):
     """<Client Name> specific setup"""
-    
+
     def __init__(self):
         super().__init__("<Client Name>")
         # Define target paths for global context
-    
+
     def _setup_provider_specific(self):
-        """Provider-specific setup logic"""
-        # Implement how this client loads global context
+        """Harness-specific setup logic"""
+        # Implement how this harness loads global context
         # Options: symlinks, generated files, config files
-    
+
     def _validate_setup(self):
-        """Provider-specific validation"""
+        """Harness-specific validation"""
         # Verify setup completed correctly
 ```
 
