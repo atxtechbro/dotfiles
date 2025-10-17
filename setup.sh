@@ -302,13 +302,26 @@ fi
 # Check if this is a Raspberry Pi and run Pi-specific setup if needed
 if grep -q "Raspberry Pi" /proc/cpuinfo 2>/dev/null; then
     echo "Detected Raspberry Pi hardware"
-    
+
     # Check if Raspberry Pi setup script exists
     if [[ -f "$DOT_DEN/raspberry-pi/setup.sh" ]]; then
         echo "Running Raspberry Pi specific setup..."
         source "$DOT_DEN/raspberry-pi/setup.sh"
     else
         echo "No Raspberry Pi setup script found. Skipping Pi-specific setup."
+    fi
+fi
+
+# Check if this is Linux Mint and configure desktop preferences
+if [[ -f /etc/os-release ]] && grep -q "linuxmint" /etc/os-release; then
+    echo "Detected Linux Mint"
+
+    # Check if Linux Mint configuration script exists
+    if [[ -f "$DOT_DEN/utils/configure-linux-mint.sh" ]]; then
+        source "$DOT_DEN/utils/configure-linux-mint.sh"
+        configure_linux_mint
+    else
+        echo "No Linux Mint configuration script found. Skipping Linux Mint-specific setup."
     fi
 fi
 
