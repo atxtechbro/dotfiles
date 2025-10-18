@@ -123,13 +123,24 @@ agents:
 <!-- In extract-best-frame.md -->
 ## Step 0: Load Configuration
 
-Read user preferences from .agent-config.yml:
-!CONFIG_OPTIMIZE_FOR=$(yq '.agents.extract-best-frame.optimize_for' .agent-config.yml)
-!CONFIG_FACTORS=$(yq '.agents.extract-best-frame.factors[]' .agent-config.yml)
+Read user preferences from .agent-config.yml using the get_config helper:
 
-Default to "flattering" if config not found:
-!CONFIG_OPTIMIZE_FOR=${CONFIG_OPTIMIZE_FOR:-flattering}
+!# Load configuration with graceful defaults
+!CONFIG_OPTIMIZE_FOR=$(get_config "agents.extract-best-frame.selection_criteria.optimize_for" "flattering")
+!CONFIG_TARGET_PERSON=$(get_config "agents.extract-best-frame.selection_criteria.target_person" "the person in the video")
+!
+!echo "📋 Configuration loaded:"
+!echo "  Selection criteria: $CONFIG_OPTIMIZE_FOR"
+!echo "  Target person: $CONFIG_TARGET_PERSON"
+
+The get_config function handles:
+- Nested YAML navigation (agents.extract-best-frame.selection_criteria.optimize_for)
+- Variable substitution (${HOME}, ${user.persona.description})
+- Graceful fallback to defaults if config missing or PyYAML unavailable
 ```
+
+**Note:** See `docs/config-architecture.md` for the full `get_config()` implementation.
+This approach uses Python + PyYAML for robust parsing with graceful degradation.
 
 ### 3. Apply Config to Logic
 ```markdown
