@@ -71,7 +71,7 @@ agents:
   close-issue:
     git:
       branch_naming: "issue-${issue_number}-${slug}"
-      worktree_base: "${HOME}/ppv/pillars/worktrees"  # Adjust to your setup
+      worktree_base: "${HOME}/worktrees"  # Or: ${HOME}/projects/worktrees
       default_base_branch: "main"
 
     workflow:
