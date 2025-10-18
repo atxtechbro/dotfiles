@@ -44,30 +44,77 @@ description: Extract best frame from video using AI
 
 Load selection preferences from .agent-config.yml (Config in Environment principle):
 
-!# Simple YAML parser for config (no dependencies required)
+!# YAML config parser with nested key support
 !CONFIG_FILE="${DOTFILES_ROOT:-.}/.agent-config.yml"
 !
-!# Function to extract YAML values safely
+!# Function to extract nested YAML values
+!# Supports paths like: "agents.extract-best-frame.selection_criteria.optimize_for"
 !get_config() {
-!  local key="$1"
+!  local path="$1"
 !  local default="$2"
-!  if [ -f "$CONFIG_FILE" ]; then
-!    grep "^[[:space:]]*${key}:" "$CONFIG_FILE" | sed 's/.*:[[:space:]]*//' | tr -d '"' || echo "$default"
-!  else
+!
+!  if [ ! -f "$CONFIG_FILE" ]; then
 !    echo "$default"
+!    return
 !  fi
+!
+!  # Try Python with PyYAML for robust parsing (handles nested keys)
+!  if command -v python3 &>/dev/null; then
+!    python3 -c "
+!import sys
+!try:
+!    import yaml
+!    with open('$CONFIG_FILE') as f:
+!        config = yaml.safe_load(f) or {}
+!
+!    # Navigate nested path
+!    value = config
+!    for key in '$path'.split('.'):
+!        if isinstance(value, dict) and key in value:
+!            value = value[key]
+!        else:
+!            print('$default')
+!            sys.exit(0)
+!
+!    # Variable substitution
+!    if isinstance(value, str):
+!        import os
+!        result = value.replace('\${HOME}', os.path.expanduser('~'))
+!        # Substitute user.* references
+!        if '\${user.' in result:
+!            user = config.get('user', {})
+!            result = result.replace('\${user.github_username}', user.get('github_username', ''))
+!            result = result.replace('\${user.name}', user.get('name', ''))
+!            persona_desc = user.get('persona', {}).get('description', '')
+!            result = result.replace('\${user.persona.description}', persona_desc)
+!        print(result)
+!    else:
+!        print(value)
+!except ImportError:
+!    # PyYAML not available, use fallback
+!    sys.exit(1)
+!except Exception:
+!    print('$default')
+!" 2>/dev/null && return
+!  fi
+!
+!  # Fallback: simple grep for top-level keys only
+!  local simple_key="${path##*.}"  # Get last component
+!  grep "^[[:space:]]*${simple_key}:" "$CONFIG_FILE" 2>/dev/null | \
+!    sed 's/.*:[[:space:]]*//' | \
+!    tr -d '"' || echo "$default"
 !}
 !
 !# Load configuration with graceful defaults
-!CONFIG_OPTIMIZE_FOR=$(get_config "optimize_for" "flattering")
-!CONFIG_TARGET_PERSON=$(get_config "description" "the person in the video")
+!CONFIG_OPTIMIZE_FOR=$(get_config "agents.extract-best-frame.selection_criteria.optimize_for" "flattering")
+!CONFIG_TARGET_PERSON=$(get_config "agents.extract-best-frame.selection_criteria.target_person" "the person in the video")
 !
 !echo "📋 Configuration loaded:"
 !echo "  Selection criteria: $CONFIG_OPTIMIZE_FOR"
 !echo "  Target person: $CONFIG_TARGET_PERSON"
 !echo ""
 
-If .agent-config.yml doesn't exist, fall back to sensible defaults (graceful degradation).
+If .agent-config.yml doesn't exist or PyYAML unavailable, gracefully falls back to defaults.
 
 ## Step 1: Parse and Initialize Batch Processing
 

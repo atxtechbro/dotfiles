@@ -101,33 +101,79 @@ At the beginning of your agent procedure (e.g., `commands/your-agent.md`):
 
 Load preferences from .agent-config.yml:
 
-!# Simple YAML parser (no dependencies required)
+!# YAML config parser with nested key support
 !CONFIG_FILE="${DOTFILES_ROOT:-.}/.agent-config.yml"
 !
-!# Function to extract YAML values safely
+!# Function to extract nested YAML values
+!# Supports paths like: "agents.your-agent.setting.nested"
 !get_config() {
-!  local key="$1"
+!  local path="$1"
 !  local default="$2"
-!  if [ -f "$CONFIG_FILE" ]; then
-!    grep "^[[:space:]]*${key}:" "$CONFIG_FILE" | \
-!      sed 's/.*:[[:space:]]*//' | \
-!      tr -d '"' || echo "$default"
-!  else
+!
+!  if [ ! -f "$CONFIG_FILE" ]; then
 !    echo "$default"
+!    return
 !  fi
+!
+!  # Try Python with PyYAML for robust parsing (handles nested keys)
+!  if command -v python3 &>/dev/null; then
+!    python3 -c "
+!import sys
+!try:
+!    import yaml
+!    with open('$CONFIG_FILE') as f:
+!        config = yaml.safe_load(f) or {}
+!
+!    # Navigate nested path
+!    value = config
+!    for key in '$path'.split('.'):
+!        if isinstance(value, dict) and key in value:
+!            value = value[key]
+!        else:
+!            print('$default')
+!            sys.exit(0)
+!
+!    # Variable substitution for \${HOME} and \${user.*}
+!    if isinstance(value, str):
+!        import os
+!        result = value.replace('\${HOME}', os.path.expanduser('~'))
+!        if '\${user.' in result:
+!            user = config.get('user', {})
+!            result = result.replace('\${user.github_username}', user.get('github_username', ''))
+!            # Add other substitutions as needed
+!        print(result)
+!    else:
+!        print(value)
+!except ImportError:
+!    sys.exit(1)  # PyYAML not available
+!except Exception:
+!    print('$default')
+!" 2>/dev/null && return
+!  fi
+!
+!  # Fallback: simple grep for last key component
+!  local simple_key="${path##*.}"
+!  grep "^[[:space:]]*${simple_key}:" "$CONFIG_FILE" 2>/dev/null | \
+!    sed 's/.*:[[:space:]]*//' | tr -d '"' || echo "$default"
 !}
 !
-!# Load configuration with graceful defaults
-!CONFIG_YOUR_SETTING=$(get_config "your_setting" "default_value")
-!CONFIG_ANOTHER_SETTING=$(get_config "another_setting" "default")
+!# Load configuration with graceful defaults (use full nested paths)
+!CONFIG_YOUR_SETTING=$(get_config "agents.your-agent.your_setting" "default_value")
+!CONFIG_ANOTHER_SETTING=$(get_config "agents.your-agent.another_setting" "default")
 !
 !echo "📋 Configuration loaded:"
 !echo "  Your setting: $CONFIG_YOUR_SETTING"
 !echo "  Another setting: $CONFIG_ANOTHER_SETTING"
 !echo ""
 
-If config doesn't exist, defaults ensure agent still works.
+If config doesn't exist or PyYAML unavailable, defaults ensure agent still works.
 ```
+
+**Key improvements:**
+- Supports nested YAML paths (e.g., `agents.extract-best-frame.selection_criteria.optimize_for`)
+- Handles variable substitution (`${HOME}`, `${user.github_username}`)
+- Falls back to simple grep if Python/PyYAML unavailable
+- Graceful degradation at multiple levels
 
 ### 3. Use Config in Agent Logic
 
