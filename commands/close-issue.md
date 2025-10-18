@@ -125,7 +125,7 @@ Load workflow preferences from .agent-config.yml (Config in Environment principl
 !# Load configuration with graceful defaults
 !CONFIG_USE_WORKTREE=$(get_config "agents.close-issue.git.use_worktree" "true")
 !CONFIG_WORKTREE_BASE=$(get_config "agents.close-issue.git.worktree_base" "${HOME}/worktrees")
-!CONFIG_SKIP_RETRO=$(get_config "agents.close-issue.workflow.skip_retro" "false")
+!CONFIG_SKIP_RETRO=$(get_config "agents.close-issue.workflow.skip_retro" "true")
 !
 !echo "📋 Configuration loaded:"
 !echo "  Use worktree: $CONFIG_USE_WORKTREE"

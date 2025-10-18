@@ -82,7 +82,7 @@ agents:
 
     workflow:
       # Retro configuration
-      skip_retro: false  # Skip retro step entirely (useful for quick fixes)
+      skip_retro: true  # Skip retro step by default (set to false to enable)
 
       # Other workflow settings
       auto_label: true
