@@ -101,7 +101,14 @@ The dry-run mode will:
 Fetch issue context from GitHub (safe read-only operation, runs in both normal and dry-run modes):
 
 !ISSUE_NUMBER="{{ ISSUE_NUMBER }}"
-!ISSUE_DATA=$(gh issue view "$ISSUE_NUMBER" --json title,body,labels,number)
+!ISSUE_NUMBER="{{ ISSUE_NUMBER }}"
+!if ! ISSUE_DATA=$(gh issue view "$ISSUE_NUMBER" --json title,body,labels,number 2>/dev/null); then
+!  echo "Error: Could not fetch issue #$ISSUE_NUMBER. Please check:"
+!  echo "  - Issue number is correct"
+!  echo "  - You have access to the repository"
+!  echo "  - GitHub CLI is authenticated (run 'gh auth status')"
+!  exit 1
+!fi
 !ISSUE_TITLE=$(echo "$ISSUE_DATA" | jq -r '.title')
 !ISSUE_BODY=$(echo "$ISSUE_DATA" | jq -r '.body')
 !
