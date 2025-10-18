@@ -31,10 +31,12 @@ description: Close GitHub issue with PR workflow
 - Optional modifiers:
   - `--dry-run`: Preview execution plan without performing git operations (shows issue details, worktree location, commit preview, PR preview)
   - `--json`: Output in machine-readable JSON format (useful with --dry-run for tooling)
+  - `--no-worktree`: Work in main repo instead of creating isolated worktree (overrides config)
+  - `--skip-retro`: Skip retro step entirely (overrides config)
 - Parsing rules:
   - Extract the first valid integer token after the command phrase as issue number
   - Detect flags anywhere in user input after command name
-  - Natural language variants accepted: "dry run", "preview", "show me what would happen"
+  - Natural language variants accepted: "dry run", "preview", "show me what would happen", "no worktree", "skip retro"
 - Optional context: Any trailing text after the issue number should be treated as additional context (constraints, preferences, hints) and incorporated with graceful flexibility.
 
 Examples:
@@ -42,6 +44,9 @@ Examples:
 - "close-issue 583 --dry-run" → Preview without execution
 - "close-issue 583 --dry-run --json" → Machine-readable preview
 - "close-issue 583 dry run" → Natural language variant
+- "close-issue 583 --no-worktree" → Work in main repo, skip worktree
+- "close-issue 583 --skip-retro" → Skip retro step
+- "close-issue 583 --no-worktree --skip-retro" → Combine flags
 - "use the close-issue procedure to close GitHub issue 583"
 - "please close issue #583"
 
@@ -54,14 +59,92 @@ Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 {{ KNOWLEDGE_BASE }}
 <!-- Note: If you see "{{ KNOWLEDGE_BASE }}" above as literal text, you're running locally and knowledge is already preloaded -->
 
-## Step 0: Parse Execution Modifiers
+## Step 0: Load User Configuration
 
-Detect dry-run and JSON output flags from user input:
+Load workflow preferences from .agent-config.yml (Config in Environment principle):
+
+!# YAML config parser with nested key support
+!CONFIG_FILE="${DOTFILES_ROOT:-.}/.agent-config.yml"
+!
+!# Function to extract nested YAML values
+!# Supports paths like: "agents.close-issue.git.use_worktree"
+!get_config() {
+!  local path="$1"
+!  local default="$2"
+!
+!  if [ ! -f "$CONFIG_FILE" ]; then
+!    echo "$default"
+!    return
+!  fi
+!
+!  # Try Python with PyYAML for robust parsing (handles nested keys)
+!  if command -v python3 &>/dev/null; then
+!    python3 -c "
+!import sys
+!try:
+!    import yaml
+!    with open('$CONFIG_FILE') as f:
+!        config = yaml.safe_load(f) or {}
+!
+!    # Navigate nested path
+!    value = config
+!    for key in '$path'.split('.'):
+!        if isinstance(value, dict) and key in value:
+!            value = value[key]
+!        else:
+!            print('$default')
+!            sys.exit(0)
+!
+!    # Variable substitution
+!    if isinstance(value, str):
+!        import os
+!        result = value.replace('\${HOME}', os.path.expanduser('~'))
+!        # Substitute user.* references
+!        if '\${user.' in result:
+!            user = config.get('user', {})
+!            result = result.replace('\${user.github_username}', user.get('github_username', ''))
+!            result = result.replace('\${user.name}', user.get('name', ''))
+!        print(result)
+!    else:
+!        print(value)
+!except ImportError:
+!    # PyYAML not available, use fallback
+!    sys.exit(1)
+!except Exception:
+!    print('$default')
+!" 2>/dev/null && return
+!  fi
+!
+!  # Fallback: simple grep for top-level keys only
+!  local simple_key="${path##*.}"  # Get last component
+!  grep "^[[:space:]]*${simple_key}:" "$CONFIG_FILE" 2>/dev/null | \
+!    sed 's/.*:[[:space:]]*//' | \
+!    tr -d '"' || echo "$default"
+!}
+!
+!# Load configuration with graceful defaults
+!CONFIG_USE_WORKTREE=$(get_config "agents.close-issue.git.use_worktree" "true")
+!CONFIG_WORKTREE_BASE=$(get_config "agents.close-issue.git.worktree_base" "${HOME}/worktrees")
+!CONFIG_SKIP_RETRO=$(get_config "agents.close-issue.workflow.skip_retro" "false")
+!
+!echo "📋 Configuration loaded:"
+!echo "  Use worktree: $CONFIG_USE_WORKTREE"
+!echo "  Worktree base: $CONFIG_WORKTREE_BASE"
+!echo "  Skip retro: $CONFIG_SKIP_RETRO"
+!echo ""
+
+If .agent-config.yml doesn't exist or PyYAML unavailable, gracefully falls back to defaults.
+
+## Step 0b: Parse Execution Modifiers
+
+Detect dry-run, JSON output, and workflow override flags from user input:
 
 !# Parse flags from the user's command invocation
-!# Supports --dry-run, --json, and natural language variants
+!# Supports --dry-run, --json, --no-worktree, --skip-retro, and natural language variants
 !DRY_RUN=false
 !JSON_OUTPUT=false
+!USE_WORKTREE="$CONFIG_USE_WORKTREE"  # Start with config value
+!SKIP_RETRO="$CONFIG_SKIP_RETRO"      # Start with config value
 !
 !# Get the full user input (this variable is provided by the LLM context)
 !USER_INPUT="${USER_INPUT:-$*}"
@@ -74,6 +157,15 @@ Detect dry-run and JSON output flags from user input:
 !# Check for JSON output flag
 !if echo "$USER_INPUT" | grep -qiE '(--json)'; then
 !  JSON_OUTPUT=true
+!fi
+!
+!# Check for workflow override flags (override config)
+!if echo "$USER_INPUT" | grep -qiE '(--no-worktree|no\.worktree)'; then
+!  USE_WORKTREE=false
+!fi
+!
+!if echo "$USER_INPUT" | grep -qiE '(--skip-retro|skip\.retro)'; then
+!  SKIP_RETRO=true
 !fi
 !
 !# If dry-run mode detected, show banner
@@ -126,7 +218,7 @@ If dry-run mode is active, show the execution plan and exit:
 !    ISSUE_SLUG="issue-implementation"
 !  fi
 !  BRANCH_NAME="issue-${ISSUE_NUMBER}-${ISSUE_SLUG}"
-!  WORKTREE_PATH="${HOME}/worktrees/issue-${ISSUE_NUMBER}"
+!  WORKTREE_PATH="$CONFIG_WORKTREE_BASE/issue-${ISSUE_NUMBER}"
 !
 !  if [ "$JSON_OUTPUT" = "true" ]; then
 !    # JSON format output
@@ -134,6 +226,11 @@ If dry-run mode is active, show the execution plan and exit:
 !{
 !  "dry_run": true,
 !  "command": "close-issue",
+!  "config": {
+!    "use_worktree": $USE_WORKTREE,
+!    "worktree_base": "$CONFIG_WORKTREE_BASE",
+!    "skip_retro": $SKIP_RETRO
+!  },
 !  "issue": {
 !    "number": $ISSUE_NUMBER,
 !    "title": "$ISSUE_TITLE",
@@ -141,14 +238,15 @@ If dry-run mode is active, show the execution plan and exit:
 !  },
 !  "planned_actions": [
 !    {"step": 1, "description": "Fetch issue details", "status": "completed (read-only)"},
-!    {"step": 2, "description": "Create worktree", "path": "$WORKTREE_PATH", "branch": "$BRANCH_NAME"},
+!    {"step": 2, "description": "Create worktree", "path": "$WORKTREE_PATH", "branch": "$BRANCH_NAME", "enabled": $USE_WORKTREE},
 !    {"step": 3, "description": "Implement solution", "note": "Interactive with user"},
 !    {"step": 4, "description": "Create commit", "message": "Closes #$ISSUE_NUMBER"},
 !    {"step": 5, "description": "Push branch to origin"},
-!    {"step": 6, "description": "Create pull request"}
+!    {"step": 6, "description": "Create pull request"},
+!    {"step": 7, "description": "Run retro", "enabled": $([ "$SKIP_RETRO" = "true" ] && echo false || echo true)}
 !  ],
 !  "would_execute": [
-!    "git worktree add $WORKTREE_PATH -b $BRANCH_NAME",
+!    $([ "$USE_WORKTREE" = "true" ] && echo "\"git worktree add $WORKTREE_PATH -b $BRANCH_NAME\"," || echo "\"# (working in main repo - no worktree)\",")
 !    "git commit -m 'feat: <implementation>\\n\\nCloses #$ISSUE_NUMBER'",
 !    "git push -u origin $BRANCH_NAME",
 !    "gh pr create --title '<PR title>' --body '...'"
@@ -164,19 +262,38 @@ If dry-run mode is active, show the execution plan and exit:
 !    echo "Repository: atxtechbro/dotfiles"
 !    echo "Base Branch: main"
 !    echo ""
+!    echo "Effective Configuration:"
+!    echo "  Use worktree: $USE_WORKTREE"
+!    echo "  Worktree base: $CONFIG_WORKTREE_BASE"
+!    echo "  Skip retro: $SKIP_RETRO"
+!    echo ""
 !    echo "Planned Actions:"
 !    echo "  1. ✓ Fetch issue details (completed - read-only)"
-!    echo "  2. Create worktree at: $WORKTREE_PATH"
-!    echo "  3. Create branch: $BRANCH_NAME"
+!    if [ "$USE_WORKTREE" = "true" ]; then
+!      echo "  2. ✓ Create worktree at: $WORKTREE_PATH"
+!      echo "  3. Create branch: $BRANCH_NAME"
+!    else
+!      echo "  2. ⊘ Create worktree (disabled - working in main repo)"
+!    fi
 !    echo "  4. Implement solution (interactive with you)"
 !    echo "  5. Commit changes with message: 'Closes #$ISSUE_NUMBER'"
 !    echo "  6. Push branch to origin"
 !    echo "  7. Create PR with title from implementation"
+!    if [ "$SKIP_RETRO" = "true" ]; then
+!      echo "  8. ⊘ Run retro (skipped per config)"
+!    else
+!      echo "  8. ✓ Run retro"
+!    fi
 !    echo ""
 !    echo "Would Execute Commands:"
 !    echo "  \$ gh issue view $ISSUE_NUMBER --json title,body,labels"
-!    echo "  \$ git worktree add $WORKTREE_PATH -b $BRANCH_NAME"
-!    echo "  \$ cd $WORKTREE_PATH"
+!    if [ "$USE_WORKTREE" = "true" ]; then
+!      echo "  \$ git worktree add $WORKTREE_PATH -b $BRANCH_NAME"
+!      echo "  \$ cd $WORKTREE_PATH"
+!    else
+!      echo "  \$ # (working in main repo - no worktree created)"
+!      echo "  \$ git checkout -b $BRANCH_NAME"
+!    fi
 !    echo "  \$ # [Interactive implementation happens here]"
 !    echo "  \$ git add ."
 !    echo "  \$ git commit -m 'feat: <description>\\n\\nCloses #$ISSUE_NUMBER'"
@@ -191,8 +308,33 @@ If dry-run mode is active, show the execution plan and exit:
 !  exit 0
 !fi
 
+## Step 3: Setup Working Environment
+
+Create isolated worktree or work in main repo based on configuration:
+
+!# Calculate branch details
+!ISSUE_SLUG=$(echo "$ISSUE_TITLE" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd '[:alnum:]-' | cut -c1-50)
+!if [ -z "$ISSUE_SLUG" ] || [ ${#ISSUE_SLUG} -lt 3 ]; then
+!  ISSUE_SLUG="issue-implementation"
+!fi
+!BRANCH_NAME="issue-${ISSUE_NUMBER}-${ISSUE_SLUG}"
+!
+!if [ "$USE_WORKTREE" = "true" ]; then
+!  # Create isolated worktree (recommended for safety)
+!  WORKTREE_PATH="$CONFIG_WORKTREE_BASE/issue-${ISSUE_NUMBER}"
+!  echo "Creating worktree at: $WORKTREE_PATH"
+!  git worktree add "$WORKTREE_PATH" -b "$BRANCH_NAME"
+!  cd "$WORKTREE_PATH"
+!  echo "Working in worktree: $WORKTREE_PATH"
+!else
+!  # Work in main repo (faster, but less isolated)
+!  echo "Working in main repo (no worktree)"
+!  git checkout -b "$BRANCH_NAME"
+!  echo "Created branch: $BRANCH_NAME"
+!fi
+
 ## Implementation
-<!-- Contract: Issue context loaded, working in worktree -->
+<!-- Contract: Issue context loaded, working environment ready -->
 Build the solution using tracer bullets - get something working first, then iterate.
 
 ## Creating the Pull Request
@@ -208,6 +350,13 @@ Build the solution using tracer bullets - get something working first, then iter
 See `.github/PULL_REQUEST_TEMPLATE.md` for complete guidance on title patterns and body sections.
 
 ## Final Step: Retro
+
+!if [ "$SKIP_RETRO" = "true" ]; then
+!  echo "⊘ Retro skipped (disabled in configuration)"
+!  echo "To enable retro, set agents.close-issue.workflow.skip_retro: false in .agent-config.yml"
+!  exit 0
+!fi
+
 Let's retro this context and wring out the gleanings.
 
 **Consider capturing any ghost procedures** that emerged during this work - see [Procedure Creation](knowledge/procedures/procedure-creation.md).

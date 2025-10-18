@@ -74,11 +74,17 @@ agents:
   # Close Issue - Convert GitHub issues to PRs with worktrees
   close-issue:
     git:
+      # Worktree management (config-in-environment principle)
+      use_worktree: true  # Create isolated worktree (recommended) vs work in main repo
+      worktree_base: "${HOME}/worktrees"  # Base path for worktree creation
       branch_naming: "issue-${issue_number}-${slug}"
-      worktree_base: "${HOME}/worktrees"  # Or: ${HOME}/projects/worktrees
       default_base_branch: "main"
 
     workflow:
+      # Retro configuration
+      skip_retro: false  # Skip retro step entirely (useful for quick fixes)
+
+      # Other workflow settings
       auto_label: true
       require_tests: true
       commit_style: "conventional"  # or "descriptive", "minimal"
