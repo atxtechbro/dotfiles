@@ -116,6 +116,7 @@ Load workflow preferences from .agent-config.yml (Config in Environment principl
 !  fi
 !
 !  # Fallback: simple grep for top-level keys only
+!  echo "⚠️  Warning: PyYAML not available, using simple config parser (top-level keys only)" >&2
 !  local simple_key="${path##*.}"  # Get last component
 !  grep "^[[:space:]]*${simple_key}:" "$CONFIG_FILE" 2>/dev/null | \
 !    sed 's/.*:[[:space:]]*//' | \
@@ -221,6 +222,10 @@ If dry-run mode is active, show the execution plan and exit:
 !  WORKTREE_PATH="$CONFIG_WORKTREE_BASE/issue-${ISSUE_NUMBER}"
 !
 !  if [ "$JSON_OUTPUT" = "true" ]; then
+!    # Calculate boolean values for JSON
+!    RETRO_ENABLED=$([ "$SKIP_RETRO" = "false" ] && echo true || echo false)
+!    WORKTREE_CMD=$([ "$USE_WORKTREE" = "true" ] && echo "\"git worktree add $WORKTREE_PATH -b $BRANCH_NAME\"," || echo "\"# (working in main repo - no worktree)\",")
+!
 !    # JSON format output
 !    cat <<EOF
 !{
@@ -243,10 +248,10 @@ If dry-run mode is active, show the execution plan and exit:
 !    {"step": 4, "description": "Create commit", "message": "Closes #$ISSUE_NUMBER"},
 !    {"step": 5, "description": "Push branch to origin"},
 !    {"step": 6, "description": "Create pull request"},
-!    {"step": 7, "description": "Run retro", "enabled": $([ "$SKIP_RETRO" = "true" ] && echo false || echo true)}
+!    {"step": 7, "description": "Run retro", "enabled": $RETRO_ENABLED}
 !  ],
 !  "would_execute": [
-!    $([ "$USE_WORKTREE" = "true" ] && echo "\"git worktree add $WORKTREE_PATH -b $BRANCH_NAME\"," || echo "\"# (working in main repo - no worktree)\",")
+!    $WORKTREE_CMD
 !    "git commit -m 'feat: <implementation>\\n\\nCloses #$ISSUE_NUMBER'",
 !    "git push -u origin $BRANCH_NAME",
 !    "gh pr create --title '<PR title>' --body '...'"
