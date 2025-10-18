@@ -301,7 +301,7 @@ If dry-run mode is active, show the execution plan instead of running commands:
 !      echo "Would Execute Commands:"
 !      echo "  \$ mkdir -p \"$VIDEO_FRAMES_DIR\" \"$VIDEO_OUTPUT_DIR\""
 !      echo "  \$ ffmpeg -i \"$VIDEO_PATH\" -vf \"fps=$FPS\" -q:v 2 \"$VIDEO_FRAMES_DIR/frame_%04d.jpg\" -loglevel error"
-!      echo "  \$ ffmpeg -ss <WINNER_TIME-$WINDOW> -i \"$VIDEO_PATH\" -t $(echo \"$WINDOW * 2\" | bc 2>/dev/null || echo \"N/A\") -vf \"fps=$ROUND2_FPS\" -q:v 2 \"$VIDEO_FRAMES_DIR/round2/refined_%03d.jpg\" -loglevel error"
+      echo "  \\$ ffmpeg -ss <WINNER_TIME-$WINDOW> -i \\"$VIDEO_PATH\\" -t <DURATION_R2> -vf \\"fps=$ROUND2_FPS\\" -q:v 2 \\"$VIDEO_FRAMES_DIR/round2/refined_%03d.jpg\\" -loglevel error"
 !      echo "  \$ cp \"<BEST_FRAME>\" \"$VIDEO_OUTPUT_DIR/${VIDEO_NAME}_best_frame.jpg\""
 !      echo ""
 !    fi
