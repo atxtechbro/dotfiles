@@ -1,0 +1,95 @@
+# AI Agent Configuration Example
+#
+# Copy this file to .agent-config.yml and customize for your preferences.
+# See: knowledge/principles/config-in-environment.md
+
+# User identity and preferences
+user:
+  name: "Your Name"
+  location: "City, State"
+  email: "your@email.com"
+  phone: "555-1234"
+  github_username: "yourusername"
+  linkedin_username: "yourlinkedin"
+
+  # Personal characteristics for visual AI tasks
+  persona:
+    description: "Brief physical description for photo selection"
+    photo_style: "professional"  # or "casual", "action", "artistic"
+
+# Agent-specific configurations
+agents:
+  # Extract Best Frame - Video frame selection with AI
+  extract-best-frame:
+    selection_criteria:
+      # What to optimize for: "flattering", "professional", "expressive",
+      # "candid", "energetic", "artistic"
+      optimize_for: "flattering"
+
+      # Factors to consider during frame selection
+      factors:
+        - "facial_expression"
+        - "eye_engagement"
+        - "composition"
+        - "lighting"
+
+      # Target person (for multi-person videos)
+      # Uses user.persona.description by default
+      target_person: "${user.persona.description}"
+
+    # Output settings
+    output:
+      frames_dir: "/tmp/extract-best-frame/frames"
+      output_dir: "/tmp/extract-best-frame/output"
+      keep_intermediate_frames: true
+
+  # Make Resume - Generate tailored resumes with GitHub PR proof
+  make-resume:
+    paths:
+      base_resume: "${HOME}/path/to/your/resume.md"
+      application_facts: "${HOME}/path/to/application-facts.md"
+      output_dir: "${HOME}/path/to/resumes/output"
+
+      # Optional: Private work history cache (most users don't have this)
+      private_pr_cache: "${HOME}/path/to/pr-cache"
+
+    data_sources:
+      public_repos:
+        owner: "${user.github_username}"
+        search_strategy: "gh_search_prs"
+        rate_limit_delay: 7  # seconds between searches
+
+      private_work_cache:
+        enabled: false  # Set to true if you have a PR cache
+        location: "${HOME}/path/to/pr-cache"  # Or reference paths.private_pr_cache above
+
+    formatting:
+      date_format: "%Y-%m-%d"
+      filename_format: "${date}-${company}-${role}.md"
+
+  # Close Issue - Convert GitHub issues to PRs with worktrees
+  close-issue:
+    git:
+      branch_naming: "issue-${issue_number}-${slug}"
+      worktree_base: "${HOME}/worktrees"  # Or: ${HOME}/projects/worktrees
+      default_base_branch: "main"
+
+    workflow:
+      auto_label: true
+      require_tests: true
+      commit_style: "conventional"  # or "descriptive", "minimal"
+
+    github:
+      # Uses user.github_username by default
+      default_owner: "${user.github_username}"
+
+# Global settings
+settings:
+  # Enable verbose logging for debugging
+  debug: false
+
+  # Validate config on agent startup
+  validate_config: true
+
+  # Graceful degradation: use defaults if config missing
+  allow_defaults: true

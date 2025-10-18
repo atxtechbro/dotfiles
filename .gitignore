@@ -25,6 +25,9 @@ CLAUDE.local.md
 # Claude Code local settings (personal overrides, not for source control per Anthropic docs)
 .claude/settings.local.json
 
+# Agent configuration with personal data (use .agent-config.example.yml as template)
+.agent-config.yml
+
 # Private SSH keys
 id_rsa
 id_dsa
