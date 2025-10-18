@@ -121,6 +121,10 @@ If dry-run mode is active, show the execution plan and exit:
 !if [ "$DRY_RUN" = "true" ]; then
 !  # Calculate planned values
 !  ISSUE_SLUG=$(echo "$ISSUE_TITLE" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd '[:alnum:]-' | cut -c1-50)
+!  # Ensure slug is not empty and has minimum length
+!  if [ -z "$ISSUE_SLUG" ] || [ ${#ISSUE_SLUG} -lt 3 ]; then
+!    ISSUE_SLUG="issue-implementation"
+!  fi
 !  BRANCH_NAME="issue-${ISSUE_NUMBER}-${ISSUE_SLUG}"
 !  WORKTREE_PATH="${HOME}/worktrees/issue-${ISSUE_NUMBER}"
 !
