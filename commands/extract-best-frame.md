@@ -33,6 +33,7 @@ description: Extract best frame from video using AI
 # - Shows resolved config, planned steps, would-be bash commands
 # - Supports both human-readable and machine-readable (--json) output
 # - Usage: "extract-best-frame video.mp4 --dry-run" or "extract-best-frame video.mp4 --dry-run --json"
+# - Pattern documentation: knowledge/procedures/dry-run-pattern.md
 
 ## Invocation
 - Primary command: "extract-best-frame <video_path(s)> [<frames_dir>] [<output_dir>]"

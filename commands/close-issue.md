@@ -28,11 +28,20 @@ description: Close GitHub issue with PR workflow
 - Alternative formats: "close issue <number>" (without hyphen)
 - Arguments:
   - <number>: GitHub issue number
+- Optional modifiers:
+  - `--dry-run`: Preview execution plan without performing git operations (shows issue details, worktree location, commit preview, PR preview)
+  - `--json`: Output in machine-readable JSON format (useful with --dry-run for tooling)
+- Parsing rules:
+  - Extract the first valid integer token after the command phrase as issue number
+  - Detect flags anywhere in user input after command name
+  - Natural language variants accepted: "dry run", "preview", "show me what would happen"
 - Optional context: Any trailing text after the issue number should be treated as additional context (constraints, preferences, hints) and incorporated with graceful flexibility.
-- Parsing rule: Extract the first valid integer token after the command phrase; if no integer is found or multiple integers appear without clear context, prompt the user to clarify the issue number.
 
 Examples:
-- "close-issue 583"
+- "close-issue 583" → Normal execution
+- "close-issue 583 --dry-run" → Preview without execution
+- "close-issue 583 --dry-run --json" → Machine-readable preview
+- "close-issue 583 dry run" → Natural language variant
 - "use the close-issue procedure to close GitHub issue 583"
 - "please close issue #583"
 
@@ -44,6 +53,132 @@ Complete and implement GitHub issue #{{ ISSUE_NUMBER }}.
 
 {{ KNOWLEDGE_BASE }}
 <!-- Note: If you see "{{ KNOWLEDGE_BASE }}" above as literal text, you're running locally and knowledge is already preloaded -->
+
+## Step 0: Parse Execution Modifiers
+
+Detect dry-run and JSON output flags from user input:
+
+!# Parse flags from the user's command invocation
+!# Supports --dry-run, --json, and natural language variants
+!DRY_RUN=false
+!JSON_OUTPUT=false
+!
+!# Get the full user input (this variable is provided by the LLM context)
+!USER_INPUT="${USER_INPUT:-$*}"
+!
+!# Check for dry-run flag variants
+!if echo "$USER_INPUT" | grep -qiE '(--dry-run|dry.run|preview|show.me.what.would.happen)'; then
+!  DRY_RUN=true
+!fi
+!
+!# Check for JSON output flag
+!if echo "$USER_INPUT" | grep -qiE '(--json)'; then
+!  JSON_OUTPUT=true
+!fi
+!
+!# If dry-run mode detected, show banner
+!if [ "$DRY_RUN" = "true" ]; then
+!  if [ "$JSON_OUTPUT" = "true" ]; then
+!    echo '{"dry_run": true, "mode": "json", "command": "close-issue"}'
+!  else
+!    echo "🧠 Dry Run Mode: Close Issue"
+!    echo "──────────────────────────────────────"
+!    echo "Preview mode - no git operations will be performed"
+!    echo ""
+!  fi
+!fi
+
+The dry-run mode will:
+- Fetch and display issue details (read-only)
+- Show planned worktree location and branch name
+- Preview commit message and PR details
+- Display all git commands that would be executed
+- Exit before any destructive operations
+- Output either human-readable format (default) or JSON (with --json flag)
+
+## Step 1: Fetch Issue Details
+
+Fetch issue context from GitHub (safe read-only operation, runs in both normal and dry-run modes):
+
+!ISSUE_NUMBER="{{ ISSUE_NUMBER }}"
+!ISSUE_DATA=$(gh issue view "$ISSUE_NUMBER" --json title,body,labels,number)
+!ISSUE_TITLE=$(echo "$ISSUE_DATA" | jq -r '.title')
+!ISSUE_BODY=$(echo "$ISSUE_DATA" | jq -r '.body')
+!
+!echo "Fetched issue #$ISSUE_NUMBER: $ISSUE_TITLE"
+
+## Step 2: Dry-Run Preview (If Enabled)
+
+If dry-run mode is active, show the execution plan and exit:
+
+!if [ "$DRY_RUN" = "true" ]; then
+!  # Calculate planned values
+!  ISSUE_SLUG=$(echo "$ISSUE_TITLE" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd '[:alnum:]-' | cut -c1-50)
+!  BRANCH_NAME="issue-${ISSUE_NUMBER}-${ISSUE_SLUG}"
+!  WORKTREE_PATH="${HOME}/worktrees/issue-${ISSUE_NUMBER}"
+!
+!  if [ "$JSON_OUTPUT" = "true" ]; then
+!    # JSON format output
+!    cat <<EOF
+!{
+!  "dry_run": true,
+!  "command": "close-issue",
+!  "issue": {
+!    "number": $ISSUE_NUMBER,
+!    "title": "$ISSUE_TITLE",
+!    "repository": "atxtechbro/dotfiles"
+!  },
+!  "planned_actions": [
+!    {"step": 1, "description": "Fetch issue details", "status": "completed (read-only)"},
+!    {"step": 2, "description": "Create worktree", "path": "$WORKTREE_PATH", "branch": "$BRANCH_NAME"},
+!    {"step": 3, "description": "Implement solution", "note": "Interactive with user"},
+!    {"step": 4, "description": "Create commit", "message": "Closes #$ISSUE_NUMBER"},
+!    {"step": 5, "description": "Push branch to origin"},
+!    {"step": 6, "description": "Create pull request"}
+!  ],
+!  "would_execute": [
+!    "git worktree add $WORKTREE_PATH -b $BRANCH_NAME",
+!    "git commit -m 'feat: <implementation>\\n\\nCloses #$ISSUE_NUMBER'",
+!    "git push -u origin $BRANCH_NAME",
+!    "gh pr create --title '<PR title>' --body '...'"
+!  ],
+!  "execution_status": "skipped (dry-run mode)"
+!}
+!EOF
+!  else
+!    # Human-readable format
+!    echo ""
+!    echo "Issue #$ISSUE_NUMBER: $ISSUE_TITLE"
+!    echo "──────────────────────────────────────"
+!    echo "Repository: atxtechbro/dotfiles"
+!    echo "Base Branch: main"
+!    echo ""
+!    echo "Planned Actions:"
+!    echo "  1. ✓ Fetch issue details (completed - read-only)"
+!    echo "  2. Create worktree at: $WORKTREE_PATH"
+!    echo "  3. Create branch: $BRANCH_NAME"
+!    echo "  4. Implement solution (interactive with you)"
+!    echo "  5. Commit changes with message: 'Closes #$ISSUE_NUMBER'"
+!    echo "  6. Push branch to origin"
+!    echo "  7. Create PR with title from implementation"
+!    echo ""
+!    echo "Would Execute Commands:"
+!    echo "  \$ gh issue view $ISSUE_NUMBER --json title,body,labels"
+!    echo "  \$ git worktree add $WORKTREE_PATH -b $BRANCH_NAME"
+!    echo "  \$ cd $WORKTREE_PATH"
+!    echo "  \$ # [Interactive implementation happens here]"
+!    echo "  \$ git add ."
+!    echo "  \$ git commit -m 'feat: <description>\\n\\nCloses #$ISSUE_NUMBER'"
+!    echo "  \$ git push -u origin $BRANCH_NAME"
+!    echo "  \$ gh pr create --title '<title>' --body '<body>'"
+!    echo ""
+!    echo "──────────────────────────────────────"
+!    echo "(No git operations executed - dry-run mode)"
+!    echo ""
+!    echo "To execute for real, run without --dry-run flag"
+!  fi
+!  exit 0
+!fi
 
 ## Implementation
 <!-- Contract: Issue context loaded, working in worktree -->
