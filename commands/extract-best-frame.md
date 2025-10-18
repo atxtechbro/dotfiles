@@ -27,6 +27,12 @@ description: Extract best frame from video using AI
 # - Processes videos sequentially (one after another)
 # - Creates unique output directories per video
 # - TODO: Future enhancement for concurrent processing (videos are independent)
+#
+# DRY-RUN MODE:
+# - Preview execution plan without running commands
+# - Shows resolved config, planned steps, would-be bash commands
+# - Supports both human-readable and machine-readable (--json) output
+# - Usage: "extract-best-frame video.mp4 --dry-run" or "extract-best-frame video.mp4 --dry-run --json"
 
 ## Invocation
 - Primary command: "extract-best-frame <video_path(s)> [<frames_dir>] [<output_dir>]"
@@ -38,7 +44,20 @@ description: Extract best frame from video using AI
   /path/to/video2.mp4
   /path/to/video3.mp4
   ```
+- Optional modifiers:
+  - `--dry-run`: Preview execution plan without running commands (shows config, planned steps, would-be commands)
+  - `--json`: Output in machine-readable JSON format (useful with --dry-run for tooling)
+- Parsing rules:
+  - Detect flags anywhere in user input after command name
+  - Flags can be combined: "extract-best-frame video.mp4 --dry-run --json"
+  - Natural language variants accepted: "dry run", "preview", "show me what would happen"
 - Optional selection criteria: Any trailing text after the arguments should be treated as guidance (preferences, qualities to optimize for) and incorporated with graceful flexibility.
+
+Examples:
+- "extract-best-frame video.mp4" → Normal execution
+- "extract-best-frame video.mp4 --dry-run" → Preview without execution
+- "extract-best-frame video.mp4 --dry-run --json" → Machine-readable preview
+- "extract-best-frame video.mp4 dry run" → Natural language variant
 
 ## Step 0: Load User Configuration
 
@@ -116,6 +135,46 @@ Load selection preferences from .agent-config.yml (Config in Environment princip
 
 If .agent-config.yml doesn't exist or PyYAML unavailable, gracefully falls back to defaults.
 
+## Step 0b: Parse Execution Modifiers
+
+Detect dry-run and JSON output flags from user input:
+
+!# Parse flags from the user's command invocation
+!# Supports --dry-run, --json, and natural language variants
+!DRY_RUN=false
+!JSON_OUTPUT=false
+!
+!# Get the full user input (this variable is provided by the LLM context)
+!USER_INPUT="${USER_INPUT:-$*}"
+!
+!# Check for dry-run flag variants
+!if echo "$USER_INPUT" | grep -qiE '(--dry-run|dry.run|preview|show.me.what.would.happen)'; then
+!  DRY_RUN=true
+!fi
+!
+!# Check for JSON output flag
+!if echo "$USER_INPUT" | grep -qiE '(--json)'; then
+!  JSON_OUTPUT=true
+!fi
+!
+!# If dry-run mode detected, show banner
+!if [ "$DRY_RUN" = "true" ]; then
+!  if [ "$JSON_OUTPUT" = "true" ]; then
+!    echo '{"dry_run": true, "mode": "json"}'
+!  else
+!    echo "🧠 Dry Run Mode: Extract Best Frame"
+!    echo "──────────────────────────────────────"
+!    echo "Preview mode enabled - no commands will be executed"
+!    echo ""
+!  fi
+!fi
+
+The dry-run mode will:
+- Show all resolved configuration values
+- Display planned execution steps with calculations
+- Preview would-be bash commands without executing them
+- Output either human-readable format (default) or JSON (with --json flag)
+
 ## Step 1: Parse and Initialize Batch Processing
 
 Parse video paths (supports single or multiple newline-separated videos):
@@ -128,7 +187,133 @@ Initialize batch tracking:
 !declare -a BATCH_RESULTS
 !CURRENT_VIDEO=0
 
-## Step 1: Batch Processing Loop
+## Step 1b: Dry-Run Mode Output (If Enabled)
+
+If dry-run mode is active, show the execution plan instead of running commands:
+
+!if [ "$DRY_RUN" = "true" ]; then
+!  # For each video, show what would happen
+!  for VIDEO_PATH in "${VIDEO_PATHS[@]}"; do
+!    CURRENT_VIDEO=$((CURRENT_VIDEO + 1))
+!
+!    # Get video metadata (safe to run in dry-run - read-only operation)
+!    if [ -f "$VIDEO_PATH" ]; then
+!      DURATION=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$VIDEO_PATH" 2>/dev/null || echo "unknown")
+!    else
+!      DURATION="video not found"
+!    fi
+!
+!    VIDEO_NAME=$(basename "$VIDEO_PATH" | sed 's/\.[^.]*$//')
+!
+!    # Calculate planned values
+!    TARGET_FRAMES=30
+!    if [ "$DURATION" != "unknown" ] && [ "$DURATION" != "video not found" ]; then
+!      FPS=$(echo "scale=3; $TARGET_FRAMES / $DURATION" | bc)
+!      if (( $(echo "$FPS > 2.0" | bc -l) )); then FPS=2.0; fi
+!      if (( $(echo "$FPS < 0.1" | bc -l) )); then FPS=0.1; fi
+!      FRAME_INTERVAL=$(echo "scale=2; 1 / $FPS" | bc)
+!
+!      # Round 2 parameters
+!      if (( $(echo "$DURATION < 10" | bc -l) )); then
+!        WINDOW=0.5
+!        ROUND2_FPS=20
+!      else
+!        WINDOW=1.0
+!        ROUND2_FPS=10
+!      fi
+!    else
+!      FPS="N/A"
+!      FRAME_INTERVAL="N/A"
+!      WINDOW="N/A"
+!      ROUND2_FPS="N/A"
+!    fi
+!
+!    VIDEO_FRAMES_DIR="${FRAMES_DIR}/${VIDEO_NAME}"
+!    VIDEO_OUTPUT_DIR="${OUTPUT_DIR}/${VIDEO_NAME}"
+!
+!    # Output based on mode
+!    if [ "$JSON_OUTPUT" = "true" ]; then
+!      # JSON format output
+!      cat <<EOF
+!{
+!  "dry_run": true,
+!  "command": "extract-best-frame",
+!  "video_index": $CURRENT_VIDEO,
+!  "total_videos": $TOTAL_VIDEOS,
+!  "input": {
+!    "video_path": "$VIDEO_PATH",
+!    "video_exists": $([ -f "$VIDEO_PATH" ] && echo "true" || echo "false"),
+!    "video_duration": "$DURATION",
+!    "frames_dir": "$VIDEO_FRAMES_DIR",
+!    "output_dir": "$VIDEO_OUTPUT_DIR"
+!  },
+!  "config": {
+!    "optimize_for": "$CONFIG_OPTIMIZE_FOR",
+!    "target_person": "$CONFIG_TARGET_PERSON"
+!  },
+!  "planned_execution": {
+!    "round1": {
+!      "target_frames": $TARGET_FRAMES,
+!      "fps": "$FPS",
+!      "frame_interval": "$FRAME_INTERVAL",
+!      "command": "ffmpeg -i \"$VIDEO_PATH\" -vf \"fps=$FPS\" -q:v 2 \"$VIDEO_FRAMES_DIR/frame_%04d.jpg\" -loglevel error"
+!    },
+!    "round2": {
+!      "window_seconds": "$WINDOW",
+!      "fps": "$ROUND2_FPS",
+!      "command": "ffmpeg -ss <WINNER_TIME-$WINDOW> -i \"$VIDEO_PATH\" -t $(echo \"$WINDOW * 2\" | bc) -vf \"fps=$ROUND2_FPS\" -q:v 2 \"$VIDEO_FRAMES_DIR/round2/refined_%03d.jpg\" -loglevel error"
+!    },
+!    "final_output": {
+!      "path": "$VIDEO_OUTPUT_DIR/${VIDEO_NAME}_best_frame.jpg",
+!      "command": "cp \"<BEST_FRAME>\" \"$VIDEO_OUTPUT_DIR/${VIDEO_NAME}_best_frame.jpg\""
+!    }
+!  },
+!  "execution_status": "skipped (dry-run mode)"
+!}
+!EOF
+!    else
+!      # Human-readable format
+!      echo ""
+!      echo "Video $CURRENT_VIDEO of $TOTAL_VIDEOS: $VIDEO_NAME"
+!      echo "──────────────────────────────────────"
+!      echo "Input Video: $VIDEO_PATH"
+!      [ -f "$VIDEO_PATH" ] && echo "Status: ✓ Found" || echo "Status: ✗ Not found"
+!      echo "Duration: ${DURATION}s"
+!      echo ""
+!      echo "Resolved Configuration:"
+!      echo "  optimize_for: $CONFIG_OPTIMIZE_FOR"
+!      echo "  target_person: $CONFIG_TARGET_PERSON"
+!      echo "  frames_dir: $VIDEO_FRAMES_DIR"
+!      echo "  output_dir: $VIDEO_OUTPUT_DIR"
+!      echo ""
+!      echo "Planned Execution Steps:"
+!      echo "  1. Calculate adaptive FPS: $TARGET_FRAMES frames / ${DURATION}s = $FPS fps"
+!      echo "  2. Extract ~$TARGET_FRAMES frames (1 frame every ${FRAME_INTERVAL}s)"
+!      echo "  3. Run tournament selection (Round 1) - AI compares frames"
+!      echo "  4. Extract refined frames around winner (±${WINDOW}s at ${ROUND2_FPS} fps)"
+!      echo "  5. Select best frame from Round 2 - AI finds perfect moment"
+!      echo "  6. Copy to: $VIDEO_OUTPUT_DIR/${VIDEO_NAME}_best_frame.jpg"
+!      echo ""
+!      echo "Would Execute Commands:"
+!      echo "  \$ mkdir -p \"$VIDEO_FRAMES_DIR\" \"$VIDEO_OUTPUT_DIR\""
+!      echo "  \$ ffmpeg -i \"$VIDEO_PATH\" -vf \"fps=$FPS\" -q:v 2 \"$VIDEO_FRAMES_DIR/frame_%04d.jpg\" -loglevel error"
+!      echo "  \$ ffmpeg -ss <WINNER_TIME-$WINDOW> -i \"$VIDEO_PATH\" -t $(echo \"$WINDOW * 2\" | bc 2>/dev/null || echo \"N/A\") -vf \"fps=$ROUND2_FPS\" -q:v 2 \"$VIDEO_FRAMES_DIR/round2/refined_%03d.jpg\" -loglevel error"
+!      echo "  \$ cp \"<BEST_FRAME>\" \"$VIDEO_OUTPUT_DIR/${VIDEO_NAME}_best_frame.jpg\""
+!      echo ""
+!    fi
+!  done
+!
+!  # Exit after dry-run preview
+!  if [ "$JSON_OUTPUT" != "true" ]; then
+!    echo "──────────────────────────────────────"
+!    echo "(No actions executed - dry-run mode)"
+!    echo ""
+!    echo "To execute for real, run without --dry-run flag"
+!  fi
+!  exit 0
+!fi
+
+## Step 1c: Batch Processing Loop
 
 For each video, process sequentially:
 !for VIDEO_PATH in "${VIDEO_PATHS[@]}"; do

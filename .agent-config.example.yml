@@ -43,6 +43,10 @@ agents:
       output_dir: "/tmp/extract-best-frame/output"
       keep_intermediate_frames: true
 
+      # Dry-run mode: Preview execution plan without running commands
+      # Can be overridden by --dry-run flag in command invocation
+      # dry_run: false  # Uncomment to enable dry-run mode by default
+
   # Make Resume - Generate tailored resumes with GitHub PR proof
   make-resume:
     paths:
