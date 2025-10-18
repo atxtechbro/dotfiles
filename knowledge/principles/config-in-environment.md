@@ -8,6 +8,43 @@ Configuration that varies between users (paths, preferences, workflows) should b
 
 **In AI agents:** Users declare **what** they want (config), agents implement **how** to achieve it (code).
 
+## Caveat: Beyond 12-Factor's Assumptions
+
+**The 12-Factor principle was written for stateless web apps.** It assumes configuration is simple key-value pairs (ports, credentials, feature flags) that fit naturally into environment variables.
+
+**AI agent architectures need richer, hierarchical configs** that describe behavioral policy, not just deployment settings. This means:
+
+- **Schema enforcement and namespacing** - Not just `API_KEY=xyz`, but nested structures like `agents.extract-best-frame.selection_criteria.optimize_for`
+- **Complex data types** - Lists, objects, and references between config sections (e.g., `${user.persona.description}`)
+- **Visibility and reproducibility** - Which config influenced which run? Version-controlled YAML provides an audit trail that scattered env vars don't
+
+**Literal interpretation breaks down:**
+```bash
+# ❌ Literal 12-Factor (env vars only)
+EXTRACT_BEST_FRAME_OPTIMIZE_FOR="professional"
+EXTRACT_BEST_FRAME_TARGET_PERSON="6'3\", hazel eyes"
+EXTRACT_BEST_FRAME_FACTORS_1="facial_expression"
+EXTRACT_BEST_FRAME_FACTORS_2="eye_engagement"
+# ...quickly becomes unmaintainable
+
+# ✅ Directional 12-Factor (structured config)
+agents:
+  extract-best-frame:
+    selection_criteria:
+      optimize_for: "professional"
+      target_person: "${user.persona.description}"
+      factors: ["facial_expression", "eye_engagement"]
+```
+
+**The directional principle still holds:** Separate configuration from code. But the mechanics differ:
+
+- **Web apps:** Flat env vars work because configs are simple
+- **AI agents:** YAML/JSON/databases work because configs are hierarchical behavioral policies
+
+**Configuration still lives in "the environment"** - it's just that "environment" means version-controlled YAML files loaded at runtime, not literal shell environment variables.
+
+Don't treat 12-Factor as literal law. Treat it as directional guidance - **separation of code and config** - and reinterpret the mechanics for your agentic, composable world.
+
 ## The Problem
 
 Hard-coded config blocks shareability:
