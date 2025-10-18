@@ -148,7 +148,7 @@ Detect dry-run and JSON output flags from user input:
 !USER_INPUT="${USER_INPUT:-$*}"
 !
 !# Check for dry-run flag variants
-!if echo "$USER_INPUT" | grep -qiE '(--dry-run|dry.run|preview|show.me.what.would.happen)'; then
+if echo "$USER_INPUT" | grep -qiE '(--dry-run|dry[[:space:]]+run|preview|show[[:space:]]+me[[:space:]]+what[[:space:]]+would[[:space:]]+happen)'; then
 !  DRY_RUN=true
 !fi
 !
