@@ -208,10 +208,17 @@ If dry-run mode is active, show the execution plan instead of running commands:
 !    # Calculate planned values
 !    TARGET_FRAMES=30
 !    if [ "$DURATION" != "unknown" ] && [ "$DURATION" != "video not found" ]; then
-!      FPS=$(echo "scale=3; $TARGET_FRAMES / $DURATION" | bc)
-!      if (( $(echo "$FPS > 2.0" | bc -l) )); then FPS=2.0; fi
-!      if (( $(echo "$FPS < 0.1" | bc -l) )); then FPS=0.1; fi
-!      FRAME_INTERVAL=$(echo "scale=2; 1 / $FPS" | bc)
+      # Check if bc is available for calculations
+      if command -v bc >/dev/null 2>&1; then
+        FPS=$(echo "scale=3; $TARGET_FRAMES / $DURATION" | bc)
+        if (( $(echo "$FPS > 2.0" | bc -l) )); then FPS=2.0; fi
+        if (( $(echo "$FPS < 0.1" | bc -l) )); then FPS=0.1; fi
+        FRAME_INTERVAL=$(echo "scale=2; 1 / $FPS" | bc)
+      else
+        # Fallback: use awk for calculations if bc unavailable
+        FPS=$(awk "BEGIN {fps = $TARGET_FRAMES / $DURATION; if (fps > 2.0) fps = 2.0; if (fps < 0.1) fps = 0.1; printf \"%.3f\", fps}")
+        FRAME_INTERVAL=$(awk "BEGIN {printf \"%.2f\", 1 / $FPS}")
+      fi
 !
 !      # Round 2 parameters
 !      if (( $(echo "$DURATION < 10" | bc -l) )); then
