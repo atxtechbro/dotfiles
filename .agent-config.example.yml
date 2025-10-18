@@ -51,7 +51,7 @@ agents:
       output_dir: "${HOME}/path/to/resumes/output"
 
       # Optional: Private work history cache (most users don't have this)
-      # private_pr_cache: "${HOME}/path/to/pr-cache"
+      private_pr_cache: "${HOME}/path/to/pr-cache"
 
     data_sources:
       public_repos:
@@ -61,7 +61,7 @@ agents:
 
       private_work_cache:
         enabled: false  # Set to true if you have a PR cache
-        # location: "${paths.private_pr_cache}"
+        location: "${HOME}/path/to/pr-cache"  # Or reference paths.private_pr_cache above
 
     formatting:
       date_format: "%Y-%m-%d"
