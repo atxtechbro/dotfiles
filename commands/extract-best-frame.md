@@ -228,8 +228,12 @@ If dry-run mode is active, show the execution plan instead of running commands:
 !      ROUND2_FPS="N/A"
 !    fi
 !
-!    VIDEO_FRAMES_DIR="${FRAMES_DIR}/${VIDEO_NAME}"
-!    VIDEO_OUTPUT_DIR="${OUTPUT_DIR}/${VIDEO_NAME}"
+    # Define directory paths (should match the main execution logic)
+    FRAMES_DIR="${FRAMES_DIR:-/tmp/extract-best-frame/frames}"
+    OUTPUT_DIR="${OUTPUT_DIR:-/tmp/extract-best-frame/output}"
+    
+    VIDEO_FRAMES_DIR="${FRAMES_DIR}/${VIDEO_NAME}"
+    VIDEO_OUTPUT_DIR="${OUTPUT_DIR}/${VIDEO_NAME}"
 !
 !    # Output based on mode
 !    if [ "$JSON_OUTPUT" = "true" ]; then
