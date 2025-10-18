@@ -265,7 +265,7 @@ If dry-run mode is active, show the execution plan instead of running commands:
 !    "round2": {
 !      "window_seconds": "$WINDOW",
 !      "fps": "$ROUND2_FPS",
-!      "command": "ffmpeg -ss <WINNER_TIME-$WINDOW> -i \"$VIDEO_PATH\" -t $(echo \"$WINDOW * 2\" | bc) -vf \"fps=$ROUND2_FPS\" -q:v 2 \"$VIDEO_FRAMES_DIR/round2/refined_%03d.jpg\" -loglevel error"
+      "command": "ffmpeg -ss <WINNER_TIME-$WINDOW> -i \\"$VIDEO_PATH\\" -t <DURATION_R2> -vf \\"fps=$ROUND2_FPS\\" -q:v 2 \\"$VIDEO_FRAMES_DIR/round2/refined_%03d.jpg\\" -loglevel error"
 !    },
 !    "final_output": {
 !      "path": "$VIDEO_OUTPUT_DIR/${VIDEO_NAME}_best_frame.jpg",
