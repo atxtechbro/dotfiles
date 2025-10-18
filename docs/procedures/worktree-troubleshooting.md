@@ -23,7 +23,3 @@
 **Problem**: Running setup.sh from worktree creates symlinks that break when worktree is deleted
 **Solution**: Never run `source setup.sh` from worktree - only from main repository
 **Note**: setup.sh automatically detects and fixes broken symlinks from deleted worktrees
-
-### Think-tank content in worktrees
-**Problem**: Personal notes or think-tank content added to worktree gets lost when worktree is deleted
-**Solution**: Always use the main repository at `/think-tank/` for any persistent personal content
