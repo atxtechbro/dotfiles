@@ -7,6 +7,7 @@ Foundational truths that guide development across all projects.
 
 ## Operating Principles
 - `ai-harness-agnosticism.md` - **Crisis-Proven**: Interchangeable AI harnesses for service outage resilience
+- `config-in-environment.md` - 🧩 **12-Factor III**: Store configuration in environment, not code (enables agent shareability)
 - `eager-evolution.md` - **Living System**: Eagerly seeks to evolve, self-heal, and fit like a well-worn glove
 - `invent-and-simplify.md` - Constant reinvention and simplifying assumptions
 - `no-leaks.md` - Keep company details private while enabling rich AI context via gitignored documentation

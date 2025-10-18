@@ -5,7 +5,14 @@ description: Extract best frame from video using AI
 # Extract Best Frame Procedure
 #
 # This procedure extracts frames from a video and uses the agent's visual judgment
-# to select the most flattering frame through a tournament-style comparison.
+# to select the best frame through a tournament-style comparison.
+#
+# CONFIGURABLE SELECTION CRITERIA (Config in Environment Principle):
+# - Reads user preferences from .agent-config.yml
+# - Selection criteria: "flattering", "professional", "expressive", "candid", "energetic"
+# - Target person description (for multi-person videos)
+# - Customizable selection factors (expression, lighting, composition, etc.)
+# - See: knowledge/principles/config-in-environment.md
 #
 # ADAPTIVE BEHAVIOR:
 # - Round 1: Dynamically adjusts FPS based on video duration (targets 20-50 frames)
@@ -33,7 +40,36 @@ description: Extract best frame from video using AI
   ```
 - Optional selection criteria: Any trailing text after the arguments should be treated as guidance (preferences, qualities to optimize for) and incorporated with graceful flexibility.
 
-## Step 0: Parse and Initialize Batch Processing
+## Step 0: Load User Configuration
+
+Load selection preferences from .agent-config.yml (Config in Environment principle):
+
+!# Simple YAML parser for config (no dependencies required)
+!CONFIG_FILE="${DOTFILES_ROOT:-.}/.agent-config.yml"
+!
+!# Function to extract YAML values safely
+!get_config() {
+!  local key="$1"
+!  local default="$2"
+!  if [ -f "$CONFIG_FILE" ]; then
+!    grep "^[[:space:]]*${key}:" "$CONFIG_FILE" | sed 's/.*:[[:space:]]*//' | tr -d '"' || echo "$default"
+!  else
+!    echo "$default"
+!  fi
+!}
+!
+!# Load configuration with graceful defaults
+!CONFIG_OPTIMIZE_FOR=$(get_config "optimize_for" "flattering")
+!CONFIG_TARGET_PERSON=$(get_config "description" "the person in the video")
+!
+!echo "📋 Configuration loaded:"
+!echo "  Selection criteria: $CONFIG_OPTIMIZE_FOR"
+!echo "  Target person: $CONFIG_TARGET_PERSON"
+!echo ""
+
+If .agent-config.yml doesn't exist, fall back to sensible defaults (graceful degradation).
+
+## Step 1: Parse and Initialize Batch Processing
 
 Parse video paths (supports single or multiple newline-separated videos):
 !# Read all video paths into an array
@@ -104,35 +140,43 @@ Ensure minimum frame coverage for very short videos:
 
 ## Step 3: Tournament Selection Using Claude
 
-Now I'll help you find the best selfie frame using a tournament-style selection process.
+Now I'll help you find the best frame using a tournament-style selection process optimized for **${CONFIG_OPTIMIZE_FOR}** criteria.
 
 First, let me see all the extracted frames to understand what we're working with:
 
 !  ls -1 "$VIDEO_FRAMES_DIR"/frame_*.jpg | head -20
 
-I'll now conduct a tournament where I compare pairs of frames to find the most flattering selfie.
+I'll now conduct a tournament where I compare pairs of frames to find the best match for your preferences.
 
 ### Round 1: Initial Pairs
 
-Let me start by comparing frames in pairs. For each pair, I'll select the more flattering selfie based on:
-- Facial expression and smile
-- Eye openness and engagement
+Let me start by comparing frames in pairs. For each pair, I'll select the frame that best matches **${CONFIG_OPTIMIZE_FOR}** criteria.
+
+**Selection Criteria (from config):**
+- **Optimize for:** ${CONFIG_OPTIMIZE_FOR}
+- **Target person:** ${CONFIG_TARGET_PERSON}
+
+**Evaluation factors:**
+- Facial expression (appropriate for ${CONFIG_OPTIMIZE_FOR} style)
+- Eye engagement and gaze direction
 - Overall pose and composition
 - Image clarity and lighting
+- Context and background
 
-!  echo "Starting tournament selection..."
+!  echo "Starting tournament selection with '${CONFIG_OPTIMIZE_FOR}' criteria..."
+!  echo "Looking for: ${CONFIG_TARGET_PERSON}"
 
 ## Step 4: Claude's Visual Comparison
 
-I'll now examine the frames and select the best one. Let me look at a sample of frames first to get a sense of the video:
+I'll now examine the frames and select the best one optimized for **${CONFIG_OPTIMIZE_FOR}** style. Let me look at a sample of frames first to get a sense of the video:
 
-[Claude will use the Read tool to view frames and make comparisons]
+[Claude will use the Read tool to view frames and make comparisons based on user's configured criteria]
 
 The selection process:
-1. I'll compare frames in pairs
+1. I'll compare frames in pairs based on ${CONFIG_OPTIMIZE_FOR} criteria
 2. Winners advance to the next round
 3. Continue until one frame remains
-4. That frame is saved as the best selfie
+4. That frame is saved as the best match for ${CONFIG_OPTIMIZE_FOR} + ${CONFIG_TARGET_PERSON}
 
 ## Step 4b: Round 2 - Fine-Grained Selection (Adaptive)
 
@@ -165,15 +209,15 @@ Extract refined frames around the winner:
 !  ffmpeg -ss $START_TIME -i "$VIDEO_PATH" -t $DURATION_R2 -vf "fps=$ROUND2_FPS" -q:v 2 "$VIDEO_FRAMES_DIR/round2/refined_%03d.jpg" -loglevel error
 !  echo "Extracted $(ls -1 "$VIDEO_FRAMES_DIR"/round2/*.jpg 2>/dev/null | wc -l) refined frames for Round 2"
 
-[Claude will compare the refined frames to find the absolute best moment, capturing micro-expressions and perfect timing]
+[Claude will compare the refined frames to find the absolute best moment for **${CONFIG_OPTIMIZE_FOR}** style, capturing micro-expressions and perfect timing]
 
-The refined selection captures:
-- Peak facial expressions and smiles
-- Optimal muscle definition moments
-- Perfect food/cooking action shots
-- Ideal environmental atmosphere
+The refined selection captures moments that match **${CONFIG_OPTIMIZE_FOR}** criteria:
+- Peak expressions appropriate for the style (e.g., genuine smile for "flattering", neutral for "professional")
+- Optimal body positioning and posture
+- Perfect contextual elements (environment, lighting, composition)
+- Target person characteristics: ${CONFIG_TARGET_PERSON}
 
-!  echo "Round 2 complete: Found best frame with sub-second precision"
+!  echo "Round 2 complete: Found best '${CONFIG_OPTIMIZE_FOR}' frame with sub-second precision"
 
 ## Step 5: Save the Best Frame
 
