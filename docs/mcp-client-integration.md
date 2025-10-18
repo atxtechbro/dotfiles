@@ -22,7 +22,6 @@ The dotfiles repository provides an AI harness-agnostic system for managing MCP 
 ### 3. AI Harness Context
 - **Source**: `knowledge/` directory automatically configured for each harness
 - **Amazon Q**: Uses symlinked rules directory (`~/.amazonq/rules/`)
-- **Claude Code**: Uses generated `CLAUDE.local.md` files with embedded context
 
 ## Adding a New MCP Client
 
@@ -115,12 +114,7 @@ Create `docs/<client-name>-setup.md` documenting:
 - Create symlink: `~/.clientname/rules` → `~/ppv/pillars/dotfiles/knowledge`
 - Minimal duplication, single source of truth
 
-### Pattern 2: Generated Files (Claude Code)
-- Client expects specific file format
-- Generate `CLIENTNAME.local.md` with embedded content
-- Run generation on each setup
-
-### Pattern 3: Configuration File
+### Pattern 2: Configuration File
 - Client uses JSON/YAML configuration
 - Generate config from `mcp/mcp.template.json` using `generate-mcp-config.sh`
 - Apply environment-specific filtering

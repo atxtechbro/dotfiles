@@ -35,6 +35,3 @@ When converting a directory to a symlink (or vice versa), it's safer to use diff
 1. Use different names (e.g., rename directory first, then create symlink)
 2. Split into separate commits (remove directory in one commit, add symlink in another)
 3. Create fresh branch from clean state if corruption occurs
-
-## Think-Tank Content in Worktrees
-**CRITICAL**: Never add think-tank notes or personal content to worktree locations. Worktrees are temporary directories that will be deleted when cleanup occurs. Always use the main repository at `/think-tank/` for any persistent personal content, notes, or documentation.
