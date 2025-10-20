@@ -1,6 +1,6 @@
 # Dotfiles
 
-A collection of configuration files for a consistent development environment across different machines.
+AI agent orchestration infrastructure for 100x throughput. Parallelize agents across any harness (Claude Code, Amazon Q, Codex), enforce principles through reproducible config, and self-heal your development stack.
 
 ## Dotfiles Philosophy
 
@@ -63,9 +63,17 @@ This principle ensures resilience and quick recovery from system failures or whe
 
 See [Snowball Method](knowledge/principles/snowball-method.md) - compound returns through stacking daily wins. This principle ensures that our development environment continuously improves over time through 1% better every day.
 
-## Development Workflow
+## Agent Orchestration Infrastructure
 
-This system avoids traditional IDEs to enable **macro-level task management** instead of micro-level file editing. Using [tmux + git worktrees + Claude Code CLI](knowledge/procedures/tmux-git-worktrees-claude-code.md), you manage multiple AI agents simultaneously across parallel tasks - the foundation for 1000x AI engineer productivity. See [throughput definition](knowledge/throughput-definition.md) and [OSE principle](knowledge/principles/ose.md).
+This system enables **macro-level agent management** instead of micro-level file editing. The core infrastructure:
+
+- **Harness-Agnostic Configuration**: Single `.agent-config.yml` defines user preferences, agent settings, and paths - works across Claude Code, Amazon Q, and Codex without duplication (see [config-architecture.md](docs/config-architecture.md))
+- **Reproducible Agent Procedures**: Slash commands in `commands/` directory (`/close-issue`, `/create-issue`, `/extract-best-frame`, `/retro`) enforce consistent workflows across all AI harnesses
+- **Telemetry and Feedback**: `bin/claude-with-tracking` wraps agent sessions with MLflow tracking for performance analysis and continuous improvement
+- **Parallel Execution**: Using [tmux + git worktrees](knowledge/procedures/tmux-git-worktrees-claude-code.md), you manage multiple AI agents simultaneously across parallel tasks
+- **Principle Enforcement**: `knowledge/procedures/` and `knowledge/principles/` automatically loaded into agent context to maintain consistency
+
+The goal: 100x-1000x developer productivity through AI agent management capability. See [throughput definition](knowledge/throughput-definition.md).
 
 ## Modular Shell Configuration
 
@@ -89,46 +97,24 @@ This pattern provides:
 
 Modules are stored in `.bash_aliases.d/<tool-name>.sh` and are automatically loaded when present.
 
-## P.P.V System: Pillars, Pipelines, and Vaults
+## Organizational Context: P.P.V System
 
-This repository is part of the P.P.V system, a holistic approach to organizing knowledge work and digital assets:
+This repository typically lives at `~/ppv/pillars/dotfiles/` as part of a three-tier organizational system:
 
-### The P.P.V System
+- **Pillars**: Core repositories and foundational configurations (you are here)
+- **Pipelines**: Automation scripts and workflow repositories
+- **Vaults**: Secure storage for credentials and company-specific tribal knowledge
 
-- **Pillars**: Core repositories, foundational configurations, and knowledge bases
-- **Pipelines**: Automation scripts, workflows, and processes that connect tools and services
-- **Vaults**: Secure storage for credentials, tokens, and tribal knowledge documentation
-
-This organizational system provides a clear mental model for where different types of work should live:
-
-```
-/home/user/
-└── ppv/                    # Root directory for P.P.V system
-    ├── pillars/            # Foundational repositories and configurations
-    │   └── dotfiles/       # 📍 YOU ARE HERE - core configuration files
-    ├── pipelines/          # Automation and workflow repositories
-    └── vaults/             # Secure storage and tribal knowledge
-```
-
-The P.P.V system helps maintain separation of concerns while providing a consistent structure across all projects and environments. It reflects systems thinking and the interconnectedness of different components in your workflow.
-
-Key aspects:
-- **Interconnected references**: Tools in `tools.md` can link to tribal knowledge in Vaults using URI schemes
-- **Company separation**: Each company gets its own folder under pillars for clear separation
-- **Principles first**: Core principles document guides all other decisions
+This structure separates concerns while maintaining a consistent layout across projects and environments.
 
 ## The 80/20 Rule for Systems Work
 
-Following "Remember the Big Picture" from The Pragmatic Programmer - don't get so engrossed in system optimization details that you lose momentum on core work. In this dotfiles repo:
+Following "Remember the Big Picture" from The Pragmatic Programmer - don't get so engrossed in system optimization that you lose momentum on core work:
 
-- **80% work**: Integrating systems, automation (Spilled Coffee Principle), core global rules
+- **80% work**: Integrating systems, automation (Spilled Coffee Principle), agent orchestration
 - **20% systems optimization**: Refining configurations, optimizing workflows, meta-work
 
-Avoid obsessing over obscure details like perfect editor configs or tmux panel layouts. The goal is systems that enable work, not systems as an end in themselves.
-
-At an even higher level, this is all about **creating value by serving others**. Systems optimization plants seeds for higher leverage to serve better, but must be balanced with actually delivering that service. The "up high and slightly elevated" manager's perspective maintains this balance - constantly checking: "Am I committing real value? Are deliverables moving forward?"
-
-This serving mindset acknowledges the tension as a pendulum rather than trying to eliminate it. Like Ecclesiastes 3:1 says, there's a season for everything - sometimes lean into systems work to build leverage, sometimes focus purely on delivery. The key is conscious awareness and feedback loops, always returning to: "How does this serve others better?"
+The goal is systems that enable work, not systems as an end in themselves. Balance infrastructure improvements with actual value delivery.
 
 ### Global-First Configuration
 
