@@ -65,7 +65,7 @@ See [Snowball Method](knowledge/principles/snowball-method.md) - compound return
 
 ## Agent Orchestration Infrastructure
 
-This system enables **macro-level agent management** instead of micro-level file editing. The core infrastructure:
+This system enables **macro-level agent management** instead of micro-level file editing - you manage tasks and projects, not lines of code within an IDE. The core infrastructure:
 
 - **Harness-Agnostic Configuration**: Single `.agent-config.yml` defines user preferences, agent settings, and paths - works across Claude Code, Amazon Q, and Codex without duplication (see [config-architecture.md](docs/config-architecture.md))
 - **Reproducible Agent Procedures**: Slash commands in `commands/` directory (`/close-issue`, `/create-issue`, `/extract-best-frame`, `/retro`) enforce consistent workflows across all AI harnesses
