@@ -39,11 +39,16 @@ See `.claude/settings/claude-code-defaults.json` for the current configuration. 
 Each setting in the JSON file is automatically applied by the configuration script.
 
 ### Project Settings (direct file read)
-See `.claude/settings.local.json` for project-level settings including:
+See `.claude/settings.json` for project-level settings including:
 
 - **Permissions**: allowed and denied tool usage patterns
 - **Environment Variables**: timeout limits, token limits, cost warnings
 - **MCP Servers**: enabled Model Context Protocol servers
+- **AI Behavior**: thinking mode configuration
+
+#### AI Behavior Settings
+- `alwaysThinkingEnabled`: true - Enables Claude's thinking mode by default for improved reasoning on complex tasks
+- `MAX_THINKING_TOKENS` (optional env var): Set token budget for extended thinking (e.g., "10000")
 
 Environment variables configured:
 - `CLAUDE_CODE_MAX_OUTPUT_TOKENS`: 8192 - Maximum tokens in Claude responses
