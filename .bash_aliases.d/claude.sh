@@ -15,5 +15,4 @@ alias claude='claude --verbose --mcp-config "$GLOBAL_MCP_CONFIG" --add-dir "$DOT
 
 # Quick test command - validates knowledge integration
 alias claude-test='claude -p "What is AI harness agnosticism and which two harnesses are currently configured?"'
-# Spill-proof the Claude CLI: pin the active Node version whenever the shell loads
-command -v nvm >/dev/null && current="$(nvm current 2>/dev/null)" && [[ "$current" != "none" && "$current" != "system" ]] && nvm alias default "$current" >/dev/null 2>&1
+
