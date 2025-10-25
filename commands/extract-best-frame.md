@@ -2,38 +2,37 @@
 description: Extract best frame from video using AI
 ---
 
-# Extract Best Frame Procedure
-#
-# This procedure extracts frames from a video and uses the agent's visual judgment
-# to select the best frame through a tournament-style comparison.
-#
-# CONFIGURABLE SELECTION CRITERIA (Config in Environment Principle):
-# - Reads user preferences from .agent-config.yml
-# - Selection criteria: "flattering", "professional", "expressive", "candid", "energetic"
-# - Target person description (for multi-person videos)
-# - Customizable selection factors (expression, lighting, composition, etc.)
-# - See: knowledge/principles/config-in-environment.md
-#
-# ADAPTIVE BEHAVIOR:
-# - Round 1: Dynamically adjusts FPS based on video duration (targets 20-50 frames)
-#   - FPS bounded between 0.1-2.0 fps to avoid extremes
-#   - Minimum 10 frames guaranteed even for very short videos
-# - Round 2: Adapts window size based on video length
-#   - Videos <10s: ±0.5s window at 20 fps for tight precision
-#   - Videos ≥10s: ±1.0s window at 10 fps for standard refinement
-#
-# BATCH PROCESSING:
-# - Supports single or multiple videos (newline-separated paths)
-# - Processes videos sequentially (one after another)
-# - Creates unique output directories per video
-# - TODO: Future enhancement for concurrent processing (videos are independent)
-#
-# DRY-RUN MODE:
-# - Preview execution plan without running commands
-# - Shows resolved config, planned steps, would-be bash commands
-# - Supports both human-readable and machine-readable (--json) output
-# - Usage: "extract-best-frame video.mp4 --dry-run" or "extract-best-frame video.mp4 --dry-run --json"
-# - Pattern documentation: knowledge/procedures/dry-run-pattern.md
+## Overview
+
+This procedure extracts frames from a video and uses the agent's visual judgment to select the best frame through a tournament-style comparison.
+
+### Configurable Selection Criteria (Config in Environment Principle)
+- Reads user preferences from .agent-config.yml
+- Selection criteria: "flattering", "professional", "expressive", "candid", "energetic"
+- Target person description (for multi-person videos)
+- Customizable selection factors (expression, lighting, composition, etc.)
+- See: knowledge/principles/config-in-environment.md
+
+### Adaptive Behavior
+- Round 1: Dynamically adjusts FPS based on video duration (targets 20-50 frames)
+  - FPS bounded between 0.1-2.0 fps to avoid extremes
+  - Minimum 10 frames guaranteed even for very short videos
+- Round 2: Adapts window size based on video length
+  - Videos <10s: ±0.5s window at 20 fps for tight precision
+  - Videos ≥10s: ±1.0s window at 10 fps for standard refinement
+
+### Batch Processing
+- Supports single or multiple videos (newline-separated paths)
+- Processes videos sequentially (one after another)
+- Creates unique output directories per video
+- TODO: Future enhancement for concurrent processing (videos are independent)
+
+### Dry-Run Mode
+- Preview execution plan without running commands
+- Shows resolved config, planned steps, would-be bash commands
+- Supports both human-readable and machine-readable (--json) output
+- Usage: "extract-best-frame video.mp4 --dry-run" or "extract-best-frame video.mp4 --dry-run --json"
+- Pattern documentation: knowledge/procedures/dry-run-pattern.md
 
 ## Invocation
 - Primary command: "extract-best-frame <video_path(s)> [<frames_dir>] [<output_dir>]"
