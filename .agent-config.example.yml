@@ -47,6 +47,41 @@ agents:
       # Command-line --dry-run flag takes precedence over this setting
       # dry_run: false  # Uncomment to enable dry-run mode by default
 
+  # Extract Best Clips - Video clip selection with AI
+  extract-best-clips:
+    selection_criteria:
+      # What to optimize for: "interesting", "action", "dialogue",
+      # "highlights", "story"
+      optimize_for: "interesting"
+
+      # Factors to consider during clip selection
+      factors:
+        - "visual_interest"
+        - "composition"
+        - "action_level"
+        - "scene_duration"
+
+    # Scene detection settings
+    scene_detection:
+      # Scene change detection threshold (0.1-0.5)
+      # Lower values = more scenes detected (more sensitive)
+      # Higher values = fewer scenes detected (less sensitive)
+      threshold: 0.3
+
+      # Clip duration constraints (in seconds)
+      min_duration: 2.0   # Minimum clip length
+      max_duration: 30.0  # Maximum clip length
+
+    # Output settings
+    output:
+      clips_dir: "/tmp/extract-best-clips/clips"
+      metadata_dir: "/tmp/extract-best-clips/metadata"
+      default_count: 1  # Number of clips to extract by default
+
+      # Dry-run mode: Preview execution plan without running commands
+      # Command-line --dry-run flag takes precedence over this setting
+      # dry_run: false  # Uncomment to enable dry-run mode by default
+
   # Make Resume - Generate tailored resumes with GitHub PR proof
   make-resume:
     paths:
