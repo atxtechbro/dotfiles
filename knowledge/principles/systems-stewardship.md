@@ -23,7 +23,7 @@ The principle of maintaining and improving systems through consistent patterns, 
 - "Vísteme despacio, que tengo prisa" - move deliberately, not frantically
 - **Never let a crisis go to waste**: Each failure becomes input for stronger procedures and prevention systems
 - **Leave cookie crumbs**: Document architectural decisions inline where future engineers encounter them. Git commit messages fade into history; inline comments create discoverable breadcrumbs for faster resolution.
-- **Gitignore as architectural documentation**: Every gitignore entry embeds meaning about system structure. `# MLflow experiment tracking data (regenerated on each run)` tells the story of why `mlruns/` is excluded. Each line is a clue to underlying architecture, not just file exclusion.
+- **Gitignore as architectural documentation**: Every gitignore entry embeds meaning about system structure. `# Claude Code session tracking` tells the story of why `claude-runs/` is excluded. Each line is a clue to underlying architecture, not just file exclusion.
 
 **GitHub Issues as WIP Inventory:**
 - Backlog buildup indicates bottlenecks in the development flow

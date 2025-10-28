@@ -25,8 +25,8 @@ from mlflow import log_metric, log_param, log_text, set_tag
 def init_mlflow():
     """Initialize MLflow with local tracking."""
     dotfiles_root = Path(__file__).parent.parent
-    mlflow.set_tracking_uri(f"file://{dotfiles_root}/mlruns")
-    mlflow.set_experiment("ai-sessions")
+    mlflow.set_tracking_uri(f"file://{dotfiles_root}/claude-runs")
+    mlflow.set_experiment("claude-sessions")
 
 
 def parse_session_log(log_path):

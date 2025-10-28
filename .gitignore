@@ -87,8 +87,8 @@ mcp/servers/*/git_mcp_server.py
 # Video processing artifacts
 frames/
 
-# ML experiment tracking
-mlruns/
+# Claude Code session tracking
+claude-runs/
 
 # General output directory
 output/
