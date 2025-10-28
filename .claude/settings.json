@@ -76,6 +76,17 @@
           }
         ]
       }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p ~/.claude/sessions && echo \"$(date -Iseconds) | Session: $(jq -r .session_id) | Transcript: $(jq -r .transcript_path) | Reason: $(jq -r .reason)\" >> ~/.claude/sessions/log.txt"
+          }
+        ]
+      }
     ]
   }
 }

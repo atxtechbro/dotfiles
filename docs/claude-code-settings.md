@@ -93,6 +93,47 @@ Displays Linux desktop notifications when Claude Code is awaiting user input.
 
 **Note:** For `Notification` hooks, the matcher is an empty string (`""`), not `"*"`, since notification events are not tool-specific.
 
+#### SessionEnd Hook (Issue #1416)
+Logs basic session metadata when Claude Code sessions end, establishing foundation for session tracking and analytics.
+
+**Triggers:**
+- When a session ends (exit, logout, clear command, or other termination)
+
+**Configuration:**
+```json
+"SessionEnd": [
+  {
+    "matcher": "",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "mkdir -p ~/.claude/sessions && echo \"$(date -Iseconds) | Session: $(jq -r .session_id) | Transcript: $(jq -r .transcript_path) | Reason: $(jq -r .reason)\" >> ~/.claude/sessions/log.txt"
+      }
+    ]
+  }
+]
+```
+
+**What it logs:**
+- ISO 8601 timestamp
+- Session ID
+- Transcript file path
+- Exit reason (clear/logout/prompt_input_exit/other)
+
+**Log location:** `~/.claude/sessions/log.txt`
+
+**Example output:**
+```
+2025-10-28T14:23:45-05:00 | Session: abc123 | Transcript: ~/.claude/projects/.../session.jsonl | Reason: clear
+```
+
+**Future enhancements:**
+- Upgrade to JSONL format for structured queries
+- Add transcript archiving
+- Build summary generation tools
+
+**Note:** For `SessionEnd` hooks, the matcher is an empty string (`""`), not `"*"`, since session end events are not tool-specific.
+
 ## Adding New Settings
 
 1. Add the setting to `.claude/settings/claude-code-defaults.json`
