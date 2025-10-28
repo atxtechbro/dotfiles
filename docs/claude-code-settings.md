@@ -55,6 +55,44 @@ Environment variables configured:
 - `MCP_TOOL_TIMEOUT`: 60000 - MCP tool execution timeout
 - `MAX_MCP_OUTPUT_TOKENS`: 25000 - Maximum tokens in MCP responses
 
+## Hooks Configuration
+
+Hooks allow you to execute custom commands in response to Claude Code events. They are configured in `.claude/settings.json` under the `"hooks"` key.
+
+**Official Documentation:**
+- [Hooks Reference](https://docs.claude.com/en/docs/claude-code/hooks) - Available events, matcher syntax, and configuration structure
+- [Hooks Guide](https://docs.claude.com/en/docs/claude-code/hooks-guide) - Examples and best practices
+
+### Hooks Implemented in This Project
+
+#### Notification Hook (Issue #1414)
+Displays Linux desktop notifications when Claude Code is awaiting user input.
+
+**Triggers:**
+- When Claude requests tool usage permission
+- When the prompt input remains idle for 60+ seconds
+
+**Configuration:**
+```json
+"Notification": [
+  {
+    "matcher": "",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "notify-send 'Claude Code' 'Awaiting your input'"
+      }
+    ]
+  }
+]
+```
+
+**Prerequisites:**
+- Linux: `libnotify-bin` package (installed via `sudo apt install libnotify-bin`)
+- macOS: Native notification system (no additional packages required)
+
+**Note:** For `Notification` hooks, the matcher is an empty string (`""`), not `"*"`, since notification events are not tool-specific.
+
 ## Adding New Settings
 
 1. Add the setting to `.claude/settings/claude-code-defaults.json`
