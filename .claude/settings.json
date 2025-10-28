@@ -83,7 +83,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "mkdir -p ~/.claude/sessions && echo \"$(date -Iseconds) | Session: $(jq -r .session_id) | Transcript: $(jq -r .transcript_path) | Reason: $(jq -r .reason)\" >> ~/.claude/sessions/log.txt"
+            "command": "bash -c 'input=$(cat); mkdir -p ~/.claude/sessions && echo \"$(date -Iseconds) | Session: $(echo \"$input\" | jq -r .session_id) | Transcript: $(echo \"$input\" | jq -r .transcript_path) | Reason: $(echo \"$input\" | jq -r .reason)\" >> ~/.claude/sessions/log.txt'"
           }
         ]
       }
