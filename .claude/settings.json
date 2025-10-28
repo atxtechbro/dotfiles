@@ -64,5 +64,18 @@
     "dotfiles-commands@dotfiles-marketplace": true
   },
   "forceLoginMethod": "claudeai",
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": true,
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "notify-send 'Claude Code' 'Awaiting your input'"
+          }
+        ]
+      }
+    ]
+  }
 }
