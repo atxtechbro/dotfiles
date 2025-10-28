@@ -36,18 +36,6 @@ start_mlflow_server() {
     --host 0.0.0.0 \
     --port 5000 \
     > /dev/null 2>&1 &
-
-  # Give it a moment to start
-  sleep 2
-
-  # Verify it started successfully
-  if curl -s http://localhost:5000 > /dev/null 2>&1; then
-    echo -e "${GREEN}✓ MLflow UI started at http://localhost:5000${NC}"
-    return 0
-  else
-    # Silent failure - don't break setup flow
-    return 0
-  fi
 }
 
 # Main execution
