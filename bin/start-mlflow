@@ -25,14 +25,14 @@ check_mlflow_running() {
 
 # Function to start MLflow
 start_mlflow_server() {
-  local mlruns_dir="$DOT_DEN/mlruns"
+  local claude_runs_dir="$DOT_DEN/claude-runs"
 
-  # Ensure mlruns directory exists
-  mkdir -p "$mlruns_dir"
+  # Ensure claude-runs directory exists
+  mkdir -p "$claude_runs_dir"
 
   # Start MLflow UI in background using uv run
   nohup uv run --with mlflow mlflow ui \
-    --backend-store-uri "file://$mlruns_dir" \
+    --backend-store-uri "file://$claude_runs_dir" \
     --host 0.0.0.0 \
     --port 5000 \
     > /dev/null 2>&1 &

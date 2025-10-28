@@ -28,7 +28,7 @@ The MLflow tracking UI provides a web interface to view all tracked runs:
 
 ```bash
 # Start MLflow UI (runs on http://localhost:5000)
-mlflow ui --backend-store-uri ~/ppv/pillars/dotfiles/mlruns
+mlflow ui --backend-store-uri ~/ppv/pillars/dotfiles/claude-runs
 
 # Or use the auto-start script
 bin/start-mlflow start
