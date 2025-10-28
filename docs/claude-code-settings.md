@@ -93,6 +93,9 @@ Displays Linux desktop notifications when Claude Code is awaiting user input.
 
 **Note:** For `Notification` hooks, the matcher is an empty string (`""`), not `"*"`, since notification events are not tool-specific.
 
+#### SessionEnd Hook (Issue #1416)
+Logs session metadata to `~/.claude/sessions/log.txt` when sessions end.
+
 ## Adding New Settings
 
 1. Add the setting to `.claude/settings/claude-code-defaults.json`
