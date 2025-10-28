@@ -59,52 +59,11 @@ Environment variables configured:
 
 Hooks allow you to execute custom commands in response to Claude Code events. They are configured in `.claude/settings.json` under the `"hooks"` key.
 
-### Hook Structure
+**Official Documentation:**
+- [Hooks Reference](https://docs.claude.com/en/docs/claude-code/hooks) - Available events, matcher syntax, and configuration structure
+- [Hooks Guide](https://docs.claude.com/en/docs/claude-code/hooks-guide) - Examples and best practices
 
-```json
-{
-  "hooks": {
-    "EventName": [
-      {
-        "matcher": "tool-pattern-or-empty",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "shell-command-to-execute"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-### Available Hook Events
-
-- **PreToolUse** - Runs before tool calls (can block execution)
-- **PostToolUse** - Runs after tool calls complete
-- **Notification** - Triggers when Claude sends notifications
-- **UserPromptSubmit** - Runs when users submit prompts
-- **Stop** - Runs when the main agent finishes responding
-- **SubagentStop** - Runs when a subagent (Task tool) finishes
-- **PreCompact** - Runs before context compaction operations
-- **SessionStart** - Runs at session initialization
-- **SessionEnd** - Runs when sessions terminate
-
-### Matcher Field Behavior
-
-The `matcher` field determines which events trigger the hook:
-
-| Matcher Value | Behavior | Use Case |
-|--------------|----------|----------|
-| `""` (empty string) | Matches ALL events of this type | System-wide hooks like notifications |
-| `"*"` (wildcard) | Matches ALL tools | Tool hooks that apply globally |
-| `"Bash"` | Matches specific tool | Tool-specific hooks (e.g., only Bash commands) |
-| `"Edit\|Write"` | Matches multiple tools (pipe-separated) | Hooks for related operations |
-
-**Important:** For `Notification` hooks, use an **empty string** (`""`), not a wildcard (`"*"`). Notification events are not tool-specific, so the matcher is left empty.
-
-### Current Hooks
+### Hooks Implemented in This Project
 
 #### Notification Hook (Issue #1414)
 Displays Linux desktop notifications when Claude Code is awaiting user input.
@@ -132,21 +91,7 @@ Displays Linux desktop notifications when Claude Code is awaiting user input.
 - Linux: `libnotify-bin` package (installed via `sudo apt install libnotify-bin`)
 - macOS: Native notification system (no additional packages required)
 
-### Adding New Hooks
-
-1. Add hook configuration to `.claude/settings.json` under the appropriate event type
-2. Choose the correct matcher value based on the table above
-3. Test the hook in a safe environment
-4. Document the hook in this file
-5. Consider security implications (validate inputs, avoid sensitive files)
-
-### Hook Security Best Practices
-
-- Always quote shell variables to prevent injection
-- Avoid processing sensitive files (`.env`, credentials, `.git/`)
-- Use `$CLAUDE_PROJECT_DIR` for project-relative paths
-- Test hooks thoroughly before deploying
-- Review all hook commands for security vulnerabilities
+**Note:** For `Notification` hooks, the matcher is an empty string (`""`), not `"*"`, since notification events are not tool-specific.
 
 ## Adding New Settings
 
