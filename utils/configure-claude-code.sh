@@ -66,7 +66,8 @@ install_claude_if_needed() {
     fi
     
     # Check if Claude Code is already installed
-    if command -v claude &> /dev/null; then
+    # Use type -P to ignore aliases and confirm the actual binary exists
+    if type -P claude &> /dev/null; then
         # Get current version for informational purposes
         CURRENT_VERSION=$(claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
         echo -e "${GREEN}✓ Claude Code is already installed (version: $CURRENT_VERSION)${NC}"
@@ -79,6 +80,7 @@ install_claude_if_needed() {
         echo -e "${RED}Failed to install Claude Code CLI. Please try again or check your npm installation.${NC}"
         return 1
     fi
+    hash -r  # ensure the shell picks up the newly installed binary
     
     VERSION=$(claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
     echo -e "${GREEN}✓ Claude Code successfully installed (version: $VERSION)${NC}"
@@ -138,7 +140,7 @@ configure_mcp_servers() {
 # These settings must be applied at runtime and cannot be declarative
 # ============================================================================
 configure_imperative_settings() {
-    if command -v claude &> /dev/null; then
+    if type -P claude &> /dev/null; then
         echo "Applying imperative settings..."
         
         # These settings cannot be managed declaratively and must be set imperatively

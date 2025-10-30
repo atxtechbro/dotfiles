@@ -329,56 +329,7 @@ fi
 echo -e "${DIVIDER}"
 echo "Setting up development tools..."
 
-# Amazon Q removed - was breaking tmux by hijacking shell sessions with qterm
-
-# Claude Code Configuration (includes trivial npm install)
-echo -e "${DIVIDER}"
-echo "Configuring Claude Code..."
-
-if [[ -f "$DOT_DEN/utils/configure-claude-code.sh" ]]; then
-  source "$DOT_DEN/utils/configure-claude-code.sh"
-  configure_claude_code || {
-    echo -e "${YELLOW}Claude Code configuration incomplete. Run configure-claude-code.sh manually.${NC}"
-  }
-fi
-
-# Symlink Claude Code settings to correct location
-# Claude Code terminology: ~/.claude/settings.json = "user settings" (their term for global)
-# We call these "global settings" since they apply across all your projects
-# Using .claude/settings.json (not .local) prevents Claude from overwriting on startup
-if [[ -f "$DOT_DEN/.claude/settings.json" ]]; then
-  echo "Creating symlink for Claude Code global settings..."
-  # Create ~/.claude directory if it doesn't exist
-  mkdir -p "$HOME/.claude"
-  # Create symlink (force to overwrite if exists)
-  ln -sf "$DOT_DEN/.claude/settings.json" "$HOME/.claude/settings.json"
-  echo -e "${GREEN}✓ Claude Code global settings symlinked to ~/.claude/settings.json${NC}"
-else
-  echo -e "${YELLOW}Warning: .claude/settings.json not found. Skipping settings symlink.${NC}"
-fi
-
-# Symlink Claude Desktop MCP config to unified location (experiment #1213)
-if [[ -f "$DOT_DEN/mcp/mcp.json" ]]; then
-  echo "Creating symlink for Claude Desktop MCP config..."
-  # Create ~/.config/claude directory if it doesn't exist
-  mkdir -p "$HOME/.config/claude"
-  # Create symlink to unified MCP config
-  ln -sf "$DOT_DEN/mcp/mcp.json" "$HOME/.config/claude/claude_desktop_config.json"
-  echo -e "${GREEN}✓ Claude Desktop MCP config symlinked to mcp/mcp.json${NC}"
-fi
-
-# OpenAI Codex Configuration (includes trivial npm install)
-echo -e "${DIVIDER}"
-echo "Configuring OpenAI Codex..."
-
-if [[ -f "$DOT_DEN/utils/configure-codex.sh" ]]; then
-  bash "$DOT_DEN/utils/configure-codex.sh" || {
-    echo -e "${YELLOW}Codex configuration incomplete. Run configure-codex.sh manually.${NC}"
-  }
-fi
-
-
-# Node.js setup with NVM
+# Node.js setup with NVM (must run before CLI configuration to keep global tools available)
 echo -e "${DIVIDER}"
 echo "Setting up Node.js with NVM..."
 
@@ -468,6 +419,65 @@ else
     echo -e "${GREEN}✓ Node.js LTS version ${NODE_VERSION} installed and set as default${NC}"
   fi
 fi
+
+# Amazon Q removed - was breaking tmux by hijacking shell sessions with qterm
+
+# Claude Code Configuration (includes trivial npm install)
+echo -e "${DIVIDER}"
+echo "Configuring Claude Code..."
+
+# Verify npm is available before proceeding
+if ! command -v npm >/dev/null 2>&1; then
+  echo -e "${YELLOW}npm not available. Skipping Claude Code configuration.${NC}"
+else
+  if [[ -f "$DOT_DEN/utils/configure-claude-code.sh" ]]; then
+    source "$DOT_DEN/utils/configure-claude-code.sh"
+    configure_claude_code || {
+      echo -e "${YELLOW}Claude Code configuration incomplete. Run configure-claude-code.sh manually.${NC}"
+    }
+  fi
+fi
+
+# Symlink Claude Code settings to correct location
+# Claude Code terminology: ~/.claude/settings.json = "user settings" (their term for global)
+# We call these "global settings" since they apply across all your projects
+# Using .claude/settings.json (not .local) prevents Claude from overwriting on startup
+if [[ -f "$DOT_DEN/.claude/settings.json" ]]; then
+  echo "Creating symlink for Claude Code global settings..."
+  # Create ~/.claude directory if it doesn't exist
+  mkdir -p "$HOME/.claude"
+  # Create symlink (force to overwrite if exists)
+  ln -sf "$DOT_DEN/.claude/settings.json" "$HOME/.claude/settings.json"
+  echo -e "${GREEN}✓ Claude Code global settings symlinked to ~/.claude/settings.json${NC}"
+else
+  echo -e "${YELLOW}Warning: .claude/settings.json not found. Skipping settings symlink.${NC}"
+fi
+
+# Symlink Claude Desktop MCP config to unified location (experiment #1213)
+if [[ -f "$DOT_DEN/mcp/mcp.json" ]]; then
+  echo "Creating symlink for Claude Desktop MCP config..."
+  # Create ~/.config/claude directory if it doesn't exist
+  mkdir -p "$HOME/.config/claude"
+  # Create symlink to unified MCP config
+  ln -sf "$DOT_DEN/mcp/mcp.json" "$HOME/.config/claude/claude_desktop_config.json"
+  echo -e "${GREEN}✓ Claude Desktop MCP config symlinked to mcp/mcp.json${NC}"
+fi
+
+# OpenAI Codex Configuration (includes trivial npm install)
+echo -e "${DIVIDER}"
+echo "Configuring OpenAI Codex..."
+
+# Verify npm is available before proceeding
+if ! command -v npm >/dev/null 2>&1; then
+  echo -e "${YELLOW}npm not available. Skipping Codex configuration.${NC}"
+else
+  if [[ -f "$DOT_DEN/utils/configure-codex.sh" ]]; then
+    bash "$DOT_DEN/utils/configure-codex.sh" || {
+      echo -e "${YELLOW}Codex configuration incomplete. Run configure-codex.sh manually.${NC}"
+    }
+  fi
+fi
+
 
 # Install uv for Python package management
 if ! command -v uv >/dev/null 2>&1; then
