@@ -197,7 +197,26 @@ Use the pre-built "Claude Code Overview" dashboard or create custom panels using
 
 ### High Resource Usage
 
-Reduce export frequency in `.claude/settings.json`:
+#### Collector Memory Issues
+
+If you see OOM errors or the collector crashing, adjust memory limits in `observability/otel-collector-config.yml`:
+
+```yaml
+memory_limiter:
+  check_interval: 1s
+  limit_mib: 2048        # Increase for high-volume telemetry (default: 2048)
+  spike_limit_mib: 512   # Temporary spike allowance (default: 512)
+```
+
+**Tuning Guidelines**:
+- **Light usage** (< 100 sessions/day): 1024 MiB is sufficient
+- **Moderate usage** (100-500 sessions/day): 2048 MiB (default)
+- **Heavy usage** (> 500 sessions/day): 4096+ MiB
+- Monitor collector memory: `docker stats claude-otel-collector`
+
+#### Reduce Export Frequency
+
+Lower telemetry volume in `.claude/settings.json`:
 
 ```json
 "OTEL_METRIC_EXPORT_INTERVAL": "30000",  // 30 seconds vs 10

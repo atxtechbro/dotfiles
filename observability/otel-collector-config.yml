@@ -19,9 +19,12 @@ processors:
         action: upsert
 
   # Memory limiter to prevent OOM
+  # Limits are set generously for local development with high-volume telemetry
+  # Adjust based on your system resources and usage patterns
   memory_limiter:
     check_interval: 1s
-    limit_mib: 512
+    limit_mib: 2048        # Soft limit: 2 GB
+    spike_limit_mib: 512   # Allow 512 MB spikes above limit
 
 exporters:
   # Export metrics to Prometheus
