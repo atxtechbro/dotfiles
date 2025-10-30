@@ -47,12 +47,11 @@ start_stack() {
         echo -e "${YELLOW}Observability stack is already running${NC}"
         show_urls
         return 0
+    if ! docker compose up -d; then
+        echo -e "${RED}✗ Failed to start observability stack${NC}"
+        echo -e "${YELLOW}Check 'docker compose logs' for details${NC}"
+        exit 1
     fi
-
-    docker compose up -d
-
-    echo -e "${GREEN}✓ Observability stack started successfully${NC}"
-    echo ""
     show_urls
 }
 
