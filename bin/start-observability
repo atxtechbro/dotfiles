@@ -22,11 +22,16 @@ OBSERVABILITY_DIR="$DOT_DEN/observability"
 # Function to check if docker-compose is available
 check_docker() {
     if ! command -v docker &> /dev/null; then
-        echo -e "${RED}Error: docker is not installed${NC}"
+    # Check for Docker Compose (prefer 'docker compose' over legacy 'docker-compose')
+    if docker compose version &> /dev/null; then
+        COMPOSE_CMD="docker compose"
+    elif command -v docker-compose &> /dev/null; then
+        COMPOSE_CMD="docker-compose"
+    else
+        echo -e "${RED}Error: Docker Compose is not installed${NC}"
+        echo -e "${YELLOW}Please install Docker Compose v2 (docker compose) or v1 (docker-compose)${NC}"
         exit 1
     fi
-
-    if ! docker compose version &> /dev/null && ! command -v docker-compose &> /dev/null; then
         echo -e "${RED}Error: docker-compose is not installed${NC}"
         exit 1
     fi
