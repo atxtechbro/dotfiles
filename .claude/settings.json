@@ -12,7 +12,15 @@
     "MCP_TIMEOUT": "30000",
     "MCP_TOOL_TIMEOUT": "60000",
     "MAX_MCP_OUTPUT_TOKENS": "40000",
-    "MAX_THINKING_TOKENS": "121393"
+    "MAX_THINKING_TOKENS": "121393",
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_METRICS_EXPORTER": "otlp",
+    "OTEL_LOGS_EXPORTER": "otlp",
+    "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
+    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317",
+    "OTEL_METRIC_EXPORT_INTERVAL": "10000",
+    "OTEL_LOGS_EXPORT_INTERVAL": "5000",
+    "OTEL_RESOURCE_ATTRIBUTES": "team=dotfiles,env=dev,service.name=claude-code"
   },
   "includeCoAuthoredBy": false,
   "permissions": {
