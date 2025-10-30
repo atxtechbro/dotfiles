@@ -25,10 +25,10 @@ services:
       - '--web.console.templates=/usr/share/prometheus/consoles'
       - '--web.enable-lifecycle'
     volumes:
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
-      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
-      - GF_USERS_ALLOW_SIGN_UP=false
+      - prometheus-data:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
     networks:
       - claude-observability
     depends_on:
