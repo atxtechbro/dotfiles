@@ -59,7 +59,7 @@
       "pluginVersion": "8.0.0",
       "targets": [
         {
-          "expr": "sum(rate(claude_code_session_count_total[5m]))",
+          "expr": "sum(rate(claude_code_claude_code_session_count_total[5m]))",
           "refId": "A"
         }
       ],
@@ -108,7 +108,7 @@
       "pluginVersion": "8.0.0",
       "targets": [
         {
-          "expr": "sum(rate(claude_code_lines_of_code_count_total[5m]))",
+          "expr": "sum(rate(claude_code_claude_code_lines_of_code_count_total[5m]))",
           "refId": "A"
         }
       ],
@@ -157,7 +157,7 @@
       "pluginVersion": "8.0.0",
       "targets": [
         {
-          "expr": "sum(rate(claude_code_cost_usage_total[5m]))",
+          "expr": "sum(rate(claude_code_claude_code_cost_usage_USD_total[5m]))",
           "refId": "A"
         }
       ],
@@ -206,7 +206,7 @@
       "pluginVersion": "8.0.0",
       "targets": [
         {
-          "expr": "sum(rate(claude_code_active_time_total_total[5m]))",
+          "expr": "sum(rate(claude_code_claude_code_active_time_seconds_total[5m]))",
           "refId": "A"
         }
       ],
@@ -281,8 +281,8 @@
       "pluginVersion": "8.0.0",
       "targets": [
         {
-          "expr": "sum by(token_type) (rate(claude_code_token_usage_total[5m]))",
-          "legendFormat": "{{token_type}}",
+          "expr": "sum by(type) (rate(claude_code_claude_code_token_usage_tokens_total[5m]))",
+          "legendFormat": "{{type}}",
           "refId": "A"
         }
       ],
@@ -357,7 +357,7 @@
       "pluginVersion": "8.0.0",
       "targets": [
         {
-          "expr": "sum(increase(claude_code_cost_usage_total[1h]))",
+          "expr": "sum(increase(claude_code_claude_code_cost_usage_USD_total[1h]))",
           "legendFormat": "Hourly Cost",
           "refId": "A"
         }
@@ -433,12 +433,12 @@
       "pluginVersion": "8.0.0",
       "targets": [
         {
-          "expr": "sum(increase(claude_code_commit_count_total[1h]))",
+          "expr": "sum(increase(claude_code_claude_code_commit_count_total[1h]))",
           "legendFormat": "Commits",
           "refId": "A"
         },
         {
-          "expr": "sum(increase(claude_code_pull_request_count_total[1h]))",
+          "expr": "sum(increase(claude_code_claude_code_pull_request_count_total[1h]))",
           "legendFormat": "Pull Requests",
           "refId": "B"
         }
@@ -514,7 +514,7 @@
       "pluginVersion": "8.0.0",
       "targets": [
         {
-          "expr": "sum by(decision) (rate(claude_code_code_edit_tool_decision_total[5m]))",
+          "expr": "sum by(decision) (rate(claude_code_claude_code_code_edit_tool_decision_total[5m]))",
           "legendFormat": "{{decision}}",
           "refId": "A"
         }
