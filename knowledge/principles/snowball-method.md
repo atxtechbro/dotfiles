@@ -8,6 +8,6 @@ The "snowball method" focuses on continuous knowledge accumulation and compoundi
 - Compounding returns: Small improvements accumulate and multiply rather than remaining isolated
 - Reduced cognitive load: Less need to "re-learn" or "re-discover" previous solutions
 
-With MLflow tracking, we transform ephemeral Claude sessions into queryable history. This enables kaizen continuous improvement. Each tracked session provides insights to debug failures and improve the next. We turn isolated interactions into a compounding knowledge base. Every session makes future sessions better.
+With OpenTelemetry observability, we transform ephemeral AI agent sessions into real-time metrics and queryable history. This enables kaizen continuous improvement. Each session provides insights through Grafana dashboards to debug failures and improve the next. We turn isolated interactions into a compounding knowledge base. Every session makes future sessions better.
 
 This principle ensures that our development environment continuously improves over time.

@@ -69,7 +69,7 @@ This system enables **macro-level agent management** instead of micro-level file
 
 - **Harness-Agnostic Configuration**: Single `.agent-config.yml` defines user preferences, agent settings, and paths - works across Claude Code, Amazon Q, and Codex without duplication (see [config-architecture.md](docs/config-architecture.md))
 - **Reproducible Agent Procedures**: Slash commands in `commands/` directory (`/close-issue`, `/create-issue`, `/extract-best-frame`, `/retro`) enforce consistent workflows across all AI harnesses
-- **Telemetry and Feedback**: `bin/claude-with-tracking` wraps agent sessions with MLflow tracking for performance analysis and continuous improvement
+- **Telemetry and Feedback**: OpenTelemetry observability stack with Grafana dashboards provides real-time performance monitoring and continuous improvement insights (see [observability/README.md](observability/README.md))
 - **Parallel Execution**: Using [tmux + git worktrees](knowledge/procedures/tmux-git-worktrees-claude-code.md), you manage multiple AI agents simultaneously across parallel tasks
 - **Principle Enforcement**: `knowledge/procedures/` and `knowledge/principles/` automatically loaded into agent context to maintain consistency
 
