@@ -1,0 +1,138 @@
+#!/bin/bash
+# start-observability - Manage Claude Code observability stack
+#
+# Starts the OpenTelemetry Collector, Prometheus, and Grafana for
+# monitoring Claude Code sessions with metrics and logs.
+#
+# Usage: start-observability [start|stop|restart|status]
+
+set -euo pipefail
+
+# Colors for output
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+# Determine dotfiles root
+DOT_DEN="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+OBSERVABILITY_DIR="$DOT_DEN/observability"
+
+# Function to check if docker-compose is available
+check_docker() {
+    if ! command -v docker &> /dev/null; then
+    # Check for Docker Compose (prefer 'docker compose' over legacy 'docker-compose')
+    if docker compose version &> /dev/null; then
+        COMPOSE_CMD="docker compose"
+    elif command -v docker-compose &> /dev/null; then
+        COMPOSE_CMD="docker-compose"
+    else
+        echo -e "${RED}Error: Docker Compose is not installed${NC}"
+        echo -e "${YELLOW}Please install Docker Compose v2 (docker compose) or v1 (docker-compose)${NC}"
+        exit 1
+    fi
+        echo -e "${RED}Error: docker-compose is not installed${NC}"
+        exit 1
+    fi
+}
+
+# Function to start the observability stack
+start_stack() {
+    echo -e "${BLUE}Starting Claude Code Observability Stack...${NC}"
+
+    cd "$OBSERVABILITY_DIR"
+
+    if docker compose ps | grep -q "Up"; then
+        echo -e "${YELLOW}Observability stack is already running${NC}"
+        show_urls
+        return 0
+    if ! docker compose up -d; then
+        echo -e "${RED}✗ Failed to start observability stack${NC}"
+        echo -e "${YELLOW}Check 'docker compose logs' for details${NC}"
+        exit 1
+    fi
+    show_urls
+}
+
+# Function to stop the observability stack
+stop_stack() {
+    echo -e "${BLUE}Stopping Claude Code Observability Stack...${NC}"
+
+    cd "$OBSERVABILITY_DIR"
+    docker compose down
+
+    echo -e "${GREEN}✓ Observability stack stopped${NC}"
+}
+
+# Function to restart the observability stack
+restart_stack() {
+    echo -e "${BLUE}Restarting Claude Code Observability Stack...${NC}"
+
+    cd "$OBSERVABILITY_DIR"
+    docker compose restart
+
+    echo -e "${GREEN}✓ Observability stack restarted${NC}"
+    show_urls
+}
+
+# Function to show stack status
+show_status() {
+    cd "$OBSERVABILITY_DIR"
+
+    echo -e "${BLUE}Claude Code Observability Stack Status:${NC}"
+    echo ""
+    docker compose ps
+    echo ""
+
+    if docker compose ps | grep -q "Up"; then
+        show_urls
+    else
+        echo -e "${YELLOW}Stack is not running. Use 'start-observability start' to start it.${NC}"
+    fi
+}
+
+# Function to show URLs
+show_urls() {
+    echo -e "${BLUE}╭──────────────────────────────────────────────────╮${NC}"
+    echo -e "${BLUE}│ 📊 Claude Code Observability Dashboards         │${NC}"
+    echo -e "${BLUE}├──────────────────────────────────────────────────┤${NC}"
+    echo -e "${BLUE}│ Grafana:    ${GREEN}http://localhost:3000${BLUE}                │${NC}"
+    echo -e "${BLUE}│   User: admin / Password: admin                  │${NC}"
+    echo -e "${BLUE}│                                                  │${NC}"
+    echo -e "${BLUE}│ Prometheus: ${GREEN}http://localhost:9090${BLUE}                │${NC}"
+    echo -e "${BLUE}│                                                  │${NC}"
+    echo -e "${BLUE}│ OTLP gRPC:  ${GREEN}http://localhost:4317${BLUE}                │${NC}"
+    echo -e "${BLUE}│ OTLP HTTP:  ${GREEN}http://localhost:4318${BLUE}                │${NC}"
+    echo -e "${BLUE}╰──────────────────────────────────────────────────╯${NC}"
+}
+
+# Main script logic
+check_docker
+
+COMMAND="${1:-start}"
+
+case "$COMMAND" in
+    start)
+        start_stack
+        ;;
+    stop)
+        stop_stack
+        ;;
+    restart)
+        restart_stack
+        ;;
+    status)
+        show_status
+        ;;
+    *)
+        echo "Usage: start-observability [start|stop|restart|status]"
+        echo ""
+        echo "Commands:"
+        echo "  start   - Start the observability stack (default)"
+        echo "  stop    - Stop the observability stack"
+        echo "  restart - Restart the observability stack"
+        echo "  status  - Show stack status"
+        exit 1
+        ;;
+esac
