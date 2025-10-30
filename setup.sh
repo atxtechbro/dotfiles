@@ -426,11 +426,16 @@ fi
 echo -e "${DIVIDER}"
 echo "Configuring Claude Code..."
 
-if [[ -f "$DOT_DEN/utils/configure-claude-code.sh" ]]; then
-  source "$DOT_DEN/utils/configure-claude-code.sh"
-  configure_claude_code || {
-    echo -e "${YELLOW}Claude Code configuration incomplete. Run configure-claude-code.sh manually.${NC}"
-  }
+# Verify npm is available before proceeding
+if ! command -v npm >/dev/null 2>&1; then
+  echo -e "${YELLOW}npm not available. Skipping Claude Code configuration.${NC}"
+else
+  if [[ -f "$DOT_DEN/utils/configure-claude-code.sh" ]]; then
+    source "$DOT_DEN/utils/configure-claude-code.sh"
+    configure_claude_code || {
+      echo -e "${YELLOW}Claude Code configuration incomplete. Run configure-claude-code.sh manually.${NC}"
+    }
+  fi
 fi
 
 # Symlink Claude Code settings to correct location
