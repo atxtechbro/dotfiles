@@ -20,6 +20,7 @@
     "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317",
     "OTEL_METRIC_EXPORT_INTERVAL": "10000",
     "OTEL_LOGS_EXPORT_INTERVAL": "5000",
+    "OTEL_LOG_USER_PROMPTS": "0",
     "OTEL_RESOURCE_ATTRIBUTES": "team=dotfiles,env=dev,service.name=claude-code"
   },
   "includeCoAuthoredBy": false,

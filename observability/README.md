@@ -104,13 +104,13 @@ Add custom metadata to all metrics/logs by editing `OTEL_RESOURCE_ATTRIBUTES`:
 
 ### Enabling User Prompt Logging
 
-By default, user prompts are redacted in logs. To include full prompts:
+By default, user prompts are redacted in logs (`OTEL_LOG_USER_PROMPTS` is set to `"0"`). To include full prompts, change the value in `.claude/settings.json`:
 
 ```json
 "OTEL_LOG_USER_PROMPTS": "1"
 ```
 
-**Warning**: Only enable if you're comfortable logging sensitive data.
+**Warning**: Only enable if you're comfortable logging sensitive data. This will log the complete text of all your prompts to Claude Code.
 
 ## Managing the Stack
 
