@@ -467,10 +467,15 @@ fi
 echo -e "${DIVIDER}"
 echo "Configuring OpenAI Codex..."
 
-if [[ -f "$DOT_DEN/utils/configure-codex.sh" ]]; then
-  bash "$DOT_DEN/utils/configure-codex.sh" || {
-    echo -e "${YELLOW}Codex configuration incomplete. Run configure-codex.sh manually.${NC}"
-  }
+# Verify npm is available before proceeding
+if ! command -v npm >/dev/null 2>&1; then
+  echo -e "${YELLOW}npm not available. Skipping Codex configuration.${NC}"
+else
+  if [[ -f "$DOT_DEN/utils/configure-codex.sh" ]]; then
+    bash "$DOT_DEN/utils/configure-codex.sh" || {
+      echo -e "${YELLOW}Codex configuration incomplete. Run configure-codex.sh manually.${NC}"
+    }
+  fi
 fi
 
 
