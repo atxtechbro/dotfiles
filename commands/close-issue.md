@@ -326,8 +326,12 @@ Create isolated worktree or work in main repo based on configuration:
 !fi
 !
 !# Run the setup script
-!SETUP_OUTPUT=$(bash "$SCRIPT_PATH" "$ISSUE_NUMBER" "$ISSUE_TITLE" "$CONFIG_WORKTREE_BASE" "$USE_WORKTREE")
-!echo "$SETUP_OUTPUT"
+# Run the setup script
+if ! SETUP_OUTPUT=$(bash "$SCRIPT_PATH" "$ISSUE_NUMBER" "$ISSUE_TITLE" "$CONFIG_WORKTREE_BASE" "$USE_WORKTREE"); then
+  echo "Error: Failed to execute setup-issue-worktree.sh"
+  exit 1
+fi
+echo "$SETUP_OUTPUT"
 !
 !# Extract variables from script output
 !WORKTREE_PATH=$(echo "$SETUP_OUTPUT" | grep "^WORKTREE_PATH=" | cut -d= -f2)
