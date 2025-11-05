@@ -33,7 +33,13 @@ BRANCH_NAME="issue-${ISSUE_NUMBER}-${ISSUE_SLUG}"
 if [ "$USE_WORKTREE" = "true" ]; then
   WORKTREE_PATH="$WORKTREE_BASE/issue-${ISSUE_NUMBER}"
   echo "Creating worktree at: $WORKTREE_PATH"
-  git worktree add "$WORKTREE_PATH" -b "$BRANCH_NAME"
+  if ! git worktree add "$WORKTREE_PATH" -b "$BRANCH_NAME" 2>/dev/null; then
+    echo "Error: Failed to create worktree. This could be due to:" >&2
+    echo "  - Branch '$BRANCH_NAME' already exists" >&2
+    echo "  - Path '$WORKTREE_PATH' is already in use" >&2
+    echo "  - Insufficient permissions" >&2
+    exit 1
+  fi
   echo "WORKTREE_PATH=$WORKTREE_PATH"
 else
   echo "Working in main repo (no worktree)"
