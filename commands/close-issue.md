@@ -212,8 +212,9 @@ Fetch issue context from GitHub (safe read-only operation, runs in both normal a
 If dry-run mode is active, show the execution plan and exit:
 
 !if [ "$DRY_RUN" = "true" ]; then
-!  # Calculate planned values
-!  ISSUE_SLUG=$(echo "$ISSUE_TITLE" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd '[:alnum:]-' | cut -c1-50)
+!  # Calculate planned values using simpler bash to avoid escaping issues
+!  # Convert to lowercase and slugify
+!  ISSUE_SLUG=$(echo "$ISSUE_TITLE" | awk '{print tolower($0)}' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | cut -c1-50)
 !  # Ensure slug is not empty and has minimum length
 !  if [ -z "$ISSUE_SLUG" ] || [ ${#ISSUE_SLUG} -lt 3 ]; then
 !    ISSUE_SLUG="issue-implementation"
@@ -317,25 +318,41 @@ If dry-run mode is active, show the execution plan and exit:
 
 Create isolated worktree or work in main repo based on configuration:
 
-!# Calculate branch details
-!ISSUE_SLUG=$(echo "$ISSUE_TITLE" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd '[:alnum:]-' | cut -c1-50)
-!if [ -z "$ISSUE_SLUG" ] || [ ${#ISSUE_SLUG} -lt 3 ]; then
-!  ISSUE_SLUG="issue-implementation"
+!# Use external script to avoid bash escaping issues in command execution
+!SCRIPT_PATH="${DOTFILES_ROOT:-.}/scripts/setup-issue-worktree.sh"
+!if [ ! -f "$SCRIPT_PATH" ]; then
+!  echo "Error: setup-issue-worktree.sh not found at $SCRIPT_PATH"
+!  exit 1
 !fi
-!BRANCH_NAME="issue-${ISSUE_NUMBER}-${ISSUE_SLUG}"
 !
-!if [ "$USE_WORKTREE" = "true" ]; then
-!  # Create isolated worktree (recommended for safety)
-!  WORKTREE_PATH="$CONFIG_WORKTREE_BASE/issue-${ISSUE_NUMBER}"
-!  echo "Creating worktree at: $WORKTREE_PATH"
-!  git worktree add "$WORKTREE_PATH" -b "$BRANCH_NAME"
+!# Run the setup script
+# Run the setup script
+if ! SETUP_OUTPUT=$(bash "$SCRIPT_PATH" "$ISSUE_NUMBER" "$ISSUE_TITLE" "$CONFIG_WORKTREE_BASE" "$USE_WORKTREE"); then
+  echo "Error: Failed to execute setup-issue-worktree.sh"
+  exit 1
+fi
+echo "$SETUP_OUTPUT"
+!
+!# Extract variables from script output
+# Extract variables from script output
+WORKTREE_PATH=$(echo "$SETUP_OUTPUT" | grep "^WORKTREE_PATH=" | cut -d= -f2)
+BRANCH_NAME=$(echo "$SETUP_OUTPUT" | grep "^BRANCH_NAME=" | cut -d= -f2)
+
+# Validate that required variables were extracted
+if [ -z "$BRANCH_NAME" ]; then
+  echo "Error: Failed to extract BRANCH_NAME from setup script output"
+  exit 1
+fi
+
+if [ "$USE_WORKTREE" = "true" ] && [ -z "$WORKTREE_PATH" ]; then
+  echo "Error: Failed to extract WORKTREE_PATH from setup script output"
+  exit 1
+fi
+!
+!# Change to worktree if created
+!if [ "$USE_WORKTREE" = "true" ] && [ -n "$WORKTREE_PATH" ]; then
 !  cd "$WORKTREE_PATH"
 !  echo "Working in worktree: $WORKTREE_PATH"
-!else
-!  # Work in main repo (faster, but less isolated)
-!  echo "Working in main repo (no worktree)"
-!  git checkout -b "$BRANCH_NAME"
-!  echo "Created branch: $BRANCH_NAME"
 !fi
 
 ## Implementation
