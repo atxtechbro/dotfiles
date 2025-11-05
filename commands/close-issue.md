@@ -334,8 +334,20 @@ fi
 echo "$SETUP_OUTPUT"
 !
 !# Extract variables from script output
-!WORKTREE_PATH=$(echo "$SETUP_OUTPUT" | grep "^WORKTREE_PATH=" | cut -d= -f2)
-!BRANCH_NAME=$(echo "$SETUP_OUTPUT" | grep "^BRANCH_NAME=" | cut -d= -f2)
+# Extract variables from script output
+WORKTREE_PATH=$(echo "$SETUP_OUTPUT" | grep "^WORKTREE_PATH=" | cut -d= -f2)
+BRANCH_NAME=$(echo "$SETUP_OUTPUT" | grep "^BRANCH_NAME=" | cut -d= -f2)
+
+# Validate that required variables were extracted
+if [ -z "$BRANCH_NAME" ]; then
+  echo "Error: Failed to extract BRANCH_NAME from setup script output"
+  exit 1
+fi
+
+if [ "$USE_WORKTREE" = "true" ] && [ -z "$WORKTREE_PATH" ]; then
+  echo "Error: Failed to extract WORKTREE_PATH from setup script output"
+  exit 1
+fi
 !
 !# Change to worktree if created
 !if [ "$USE_WORKTREE" = "true" ] && [ -n "$WORKTREE_PATH" ]; then
