@@ -4,10 +4,23 @@
 
 set -euo pipefail
 
+# Validate required arguments
+if [ $# -lt 3 ]; then
+  echo "Error: Missing required arguments" >&2
+  echo "Usage: setup-issue-worktree.sh <issue_number> <issue_title> <worktree_base> [use_worktree]" >&2
+  exit 1
+fi
+
 ISSUE_NUMBER="$1"
 ISSUE_TITLE="$2"
 WORKTREE_BASE="$3"
 USE_WORKTREE="${4:-true}"
+
+# Validate issue number is numeric
+if ! [[ "$ISSUE_NUMBER" =~ ^[0-9]+$ ]]; then
+  echo "Error: Issue number must be numeric, got: $ISSUE_NUMBER" >&2
+  exit 1
+fi
 
 # Convert title to slug (avoiding escaping issues in markdown bash blocks)
 ISSUE_SLUG=$(echo "$ISSUE_TITLE" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd '[:alnum:]-' | cut -c1-50)
