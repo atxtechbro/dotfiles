@@ -37,7 +37,10 @@ if [ "$USE_WORKTREE" = "true" ]; then
   echo "WORKTREE_PATH=$WORKTREE_PATH"
 else
   echo "Working in main repo (no worktree)"
-  git checkout -b "$BRANCH_NAME"
+  if ! git checkout -b "$BRANCH_NAME" 2>/dev/null; then
+    echo "Error: Failed to create branch '$BRANCH_NAME'. Branch may already exist." >&2
+    exit 1
+  fi
 fi
 
 echo "BRANCH_NAME=$BRANCH_NAME"
