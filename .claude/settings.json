@@ -1,4 +1,5 @@
 {
+  "model": "opus",
   "cleanupPeriodDays": 90,
   "env": {
     "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8192",
@@ -64,23 +65,17 @@
       "//"
     ]
   },
-  "model": "claude-sonnet-4-5-20250929",
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
     "playwright"
   ],
-  "enabledPlugins": {
-    "dotfiles-commands@dotfiles-marketplace": true
-  },
-  "forceLoginMethod": "claudeai",
-  "alwaysThinkingEnabled": true,
   "hooks": {
     "Notification": [
       {
         "hooks": [
           {
             "type": "command",
-"command": "notify-send 'Claude Code' 'Awaiting your input - please check the terminal'"
+            "command": "notify-send 'Claude Code' 'Awaiting your input - please check the terminal'"
           }
         ]
       }
@@ -95,5 +90,10 @@
         ]
       }
     ]
-  }
+  },
+  "enabledPlugins": {
+    "dotfiles-commands@dotfiles-marketplace": true
+  },
+  "forceLoginMethod": "claudeai",
+  "alwaysThinkingEnabled": true
 }
