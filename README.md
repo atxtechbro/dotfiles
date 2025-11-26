@@ -209,6 +209,24 @@ The setup script automatically handles:
 
 Following the "Spilled Coffee Principle" - the setup script ensures you can be fully operational after running it once.
 
+### Custom Clone Location
+
+By default, these dotfiles assume you clone to `~/ppv/pillars/dotfiles`. If you want to clone to a different location (e.g., `~/dotfiles` or `~/code/dotfiles`), set the `DOT_DEN` environment variable in `~/.bash_exports.local` **before** running `source setup.sh`:
+
+```bash
+# Clone to your preferred location
+git clone https://github.com/atxtechbro/dotfiles.git ~/my/custom/path
+
+# Create ~/.bash_exports.local with your custom path
+echo 'export DOT_DEN="$HOME/my/custom/path"' >> ~/.bash_exports.local
+
+# Now run setup
+cd ~/my/custom/path
+source setup.sh
+```
+
+The `~/.bash_exports.local` file is not tracked in git (it's machine-specific), so each machine can have its own clone location. If you don't create this file, the default `~/ppv/pillars/dotfiles` is used.
+
 ### Parallel Development with Worktrees
 
 For working on multiple features simultaneously, we support git worktrees:

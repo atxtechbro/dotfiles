@@ -2,6 +2,12 @@
 # This file is not version controlled - customize for your specific machine
 # Copy this file to ~/.bash_exports.local and modify as needed
 
+# ==== DOTFILES LOCATION ====
+# Set this if you cloned dotfiles to a non-standard location
+# Default location is ~/ppv/pillars/dotfiles - only set this if you cloned elsewhere
+# See README.md "Custom Clone Location" section for details
+# export DOT_DEN="$HOME/my/custom/dotfiles/path"
+
 # ==== ENVIRONMENT CONFIGURATION ====
 # Set to "true" on work machines, "false" on personal machines
 # Controls which MCP servers are enabled/disabled

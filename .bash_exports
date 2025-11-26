@@ -10,21 +10,23 @@ export RUST_BACKTRACE=full
 : ${QTERM_SESSION_ID:=}
 : ${TTY:=$(tty 2>/dev/null || echo "")}
 
+# Load machine-specific exports FIRST (allows DOT_DEN override for custom clone locations)
+# See README.md "Custom Clone Location" section for details
+if [ -f ~/.bash_exports.local ]; then
+    . ~/.bash_exports.local
+fi
+
 # Dotfiles root directory (required for claude alias and other tools)
-export DOT_DEN="$HOME/ppv/pillars/dotfiles"
+# Override this in ~/.bash_exports.local if you cloned to a non-standard location
+export DOT_DEN="${DOT_DEN:-$HOME/ppv/pillars/dotfiles}"
 
 # Global MCP configuration path (required for claude alias)
 export GLOBAL_MCP_CONFIG="$DOT_DEN/mcp/mcp.json"
 
 # Add MCP wrapper scripts to PATH for cross-machine portability
-export PATH="$PATH:$HOME/ppv/pillars/dotfiles/mcp"
-
-# Load machine-specific exports if they exist
-if [ -f ~/.bash_exports.local ]; then
-    . ~/.bash_exports.local
-fi
+export PATH="$PATH:$DOT_DEN/mcp"
 
 # Source company-specific configuration from flywire-notes (gitignored)
-if [ -f "$HOME/ppv/pillars/dotfiles/flywire-notes/bash-config.sh" ]; then
-    source "$HOME/ppv/pillars/dotfiles/flywire-notes/bash-config.sh"
+if [ -f "$DOT_DEN/flywire-notes/bash-config.sh" ]; then
+    source "$DOT_DEN/flywire-notes/bash-config.sh"
 fi
