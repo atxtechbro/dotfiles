@@ -1,8 +1,9 @@
 # Navigation aliases
 # Include this file in your .bashrc or .bash_aliases
+# DOT_DEN is set by .bash_exports (loaded before aliases in .bashrc)
 
 # Quick navigation to dotfiles directory
-alias dotfiles="NAVIGATION_ALIAS_RUNNING=true; cd ~/ppv/pillars/dotfiles"
+alias dotfiles="NAVIGATION_ALIAS_RUNNING=true; cd \"\$DOT_DEN\""
 
 # Quick navigation to private P.P.V. repository
 alias ppv="NAVIGATION_ALIAS_RUNNING=true; cd ~/ppv"

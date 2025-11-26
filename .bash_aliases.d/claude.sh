@@ -1,8 +1,5 @@
 # Claude Bedrock integration and MCP configuration
-
-# Define the global MCP config location
-DOT_DEN="${DOT_DEN:-$HOME/ppv/pillars/dotfiles}"
-GLOBAL_MCP_CONFIG="$DOT_DEN/mcp/mcp.json"
+# DOT_DEN is set by .bash_exports (loaded before aliases in .bashrc)
 
 # Prevent accidental AWS Bedrock charges with Claude Code
 # Documented in: https://docs.anthropic.com/en/docs/claude-code/amazon-bedrock

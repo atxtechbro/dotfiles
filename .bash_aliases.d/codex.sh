@@ -1,8 +1,6 @@
 # OpenAI Codex CLI integration and MCP configuration
 # Requires ChatGPT Plus/Pro/Team subscription
-
-# Define the dotfiles location
-DOT_DEN="${DOT_DEN:-$HOME/ppv/pillars/dotfiles}"
+# DOT_DEN is set by .bash_exports (loaded before aliases in .bashrc)
 
 # No default alias for `codex`:
 # - Avoids masking the real binary and version-specific flags

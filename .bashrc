@@ -98,6 +98,12 @@ alias l='ls -CF'
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
+# Load exports FIRST (sets DOT_DEN which aliases depend on)
+# This must come before aliases so $DOT_DEN is available
+if [ -f ~/.bash_exports ]; then
+    . ~/.bash_exports
+fi
+
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
@@ -133,16 +139,12 @@ if [ -n "$BASH_VERSION" ] && [[ $- == *i* ]]; then
     bind 'set enable-bracketed-paste off'
 fi
 
-if [ -f ~/.bash_exports ]; then
-    . ~/.bash_exports
-fi
-
 # Load secrets file if it exists
 if [ -f ~/.bash_secrets ]; then
     . ~/.bash_secrets
 fi
 
-DOT_DEN="$HOME/ppv/pillars/dotfiles"
+# DOT_DEN is set by .bash_exports (supports custom clone locations via ~/.bash_exports.local)
 
 # Add your scripts directory to the PATH
 export PATH="$DOT_DEN/bin:$PATH"
