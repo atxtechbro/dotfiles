@@ -30,3 +30,15 @@ export PATH="$PATH:$DOT_DEN/mcp"
 if [ -f "$DOT_DEN/flywire-notes/bash-config.sh" ]; then
     source "$DOT_DEN/flywire-notes/bash-config.sh"
 fi
+
+# Default Patchright backend for Playwright (global, non-intrusive)
+# If a user-level module alias exists at ~/.config/node-module-alias/node_modules,
+# add it to NODE_PATH so that require('playwright') resolves to Patchright.
+# This avoids wrapper scripts and per-repo code changes.
+export PATCHRIGHT_MODULE_ROOT="$HOME/.config/node-module-alias/node_modules"
+if [ -d "$PATCHRIGHT_MODULE_ROOT" ]; then
+    case :$NODE_PATH: in
+        *:$PATCHRIGHT_MODULE_ROOT:*) ;;
+        *) export NODE_PATH="$PATCHRIGHT_MODULE_ROOT:${NODE_PATH}" ;;
+    esac
+fi
