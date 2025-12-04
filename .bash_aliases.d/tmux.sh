@@ -10,3 +10,5 @@ alias tmux-branch='git checkout - && tmux source-file ~/.tmux.conf && echo "Swit
 # Quick access to tmux cheatsheet
 alias tmux-help="less ~/dotfiles/tmux-cheatsheet.md"
 
+# Copy full tmux pane history (joined lines) to system clipboard
+alias tmux-copy-history='tmux capture-pane -p -J -S -999999 | clipboard_copy'
