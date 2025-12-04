@@ -1,7 +1,7 @@
 #!/bin/bash
 # Claude Code configuration script
 # Primary purpose: Configure Claude Code CLI with MCP servers and settings
-# Secondary purpose: Install Claude Code if not present (trivial npm install)
+# Secondary purpose: Install Claude Code if not present (one-line curl install)
 #
 # Configuration is the interesting problem - installation is a solved problem
 
@@ -54,17 +54,6 @@ configure_claude_code() {
 # Installation is a one-time solved problem, configuration is ongoing
 # ============================================================================
 install_claude_if_needed() {
-    # Check prerequisites
-    if ! command -v node &> /dev/null; then
-        echo -e "${RED}Node.js is not installed. Please install Node.js first.${NC}"
-        return 1
-    fi
-    
-    if ! command -v npm &> /dev/null; then
-        echo -e "${RED}npm is not installed. Please install npm first.${NC}"
-        return 1
-    fi
-    
     # Check if Claude Code is already installed
     # Use type -P to ignore aliases and confirm the actual binary exists
     if type -P claude &> /dev/null; then
@@ -74,10 +63,15 @@ install_claude_if_needed() {
         return 0
     fi
     
-    # Perform the trivial installation
-    echo "Installing Claude Code CLI (one-time setup)..."
-    if ! npm install -g @anthropic-ai/claude-code; then
-        echo -e "${RED}Failed to install Claude Code CLI. Please try again or check your npm installation.${NC}"
+    # Perform the one-line curl installation
+    if ! command -v curl &> /dev/null; then
+        echo -e "${RED}curl is not installed. Please install curl first.${NC}"
+        return 1
+    fi
+    
+    echo "Installing Claude Code CLI via official install script..."
+    if ! curl -fsSL https://claude.ai/install.sh | bash; then
+        echo -e "${RED}Failed to install Claude Code CLI. Please try again or check your network connectivity.${NC}"
         return 1
     fi
     hash -r  # ensure the shell picks up the newly installed binary
