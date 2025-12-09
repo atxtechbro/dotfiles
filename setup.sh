@@ -113,8 +113,10 @@ fi
 echo "Detected OS: $OS_TYPE"
 
 # Ensure jq is present on apt-based Linux/WSL
-if [[ "$OS_TYPE" == "Linux" ]] && command -v apt-get >/dev/null; then
-  command -v jq >/dev/null || (sudo apt-get update -y && sudo apt-get install -y jq)
+# Ensure jq is present on apt-based Linux/WSL
+if [[ "$OS_TYPE" == "Linux" ]] && ! command -v jq >/dev/null && command -v apt-get >/dev/null; then
+  echo "Installing jq..."
+  sudo apt-get update -y && sudo apt-get install -y jq
 fi
 
 # Handle WSL-specific setup
