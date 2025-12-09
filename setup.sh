@@ -437,9 +437,19 @@ elif [[ "$OS_TYPE" == "Linux" ]] && command -v apt-get >/dev/null 2>&1; then
   echo "Installing Visual Studio Code (apt-based)..."
 
   # Ensure prerequisites for Microsoft repo
-  sudo apt-get update -y >/dev/null 2>&1
-  sudo apt-get install -y ca-certificates curl gnupg >/dev/null 2>&1
-  sudo install -d -m 0755 /etc/apt/keyrings
+  # Ensure prerequisites for Microsoft repo
+  if ! sudo apt-get update -y >/dev/null 2>&1; then
+    echo -e "${RED}Failed to update package lists. Check your internet connection.${NC}"
+    return 1
+  fi
+  if ! sudo apt-get install -y ca-certificates curl gnupg >/dev/null 2>&1; then
+    echo -e "${RED}Failed to install required prerequisites.${NC}"
+    return 1
+  fi
+  if ! sudo install -d -m 0755 /etc/apt/keyrings; then
+    echo -e "${RED}Failed to create keyrings directory.${NC}"
+    return 1
+  fi
 
   if [[ ! -f /etc/apt/keyrings/microsoft.gpg ]]; then
     curl -fsSL  | gpg --import --import-options show-only --dry-run && curl -fsSL  | gpg --dearmor | sudo tee /etc/apt/keyrings/microsoft.gpg >/dev/null
