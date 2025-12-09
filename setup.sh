@@ -442,7 +442,7 @@ elif [[ "$OS_TYPE" == "Linux" ]] && command -v apt-get >/dev/null 2>&1; then
   sudo install -d -m 0755 /etc/apt/keyrings
 
   if [[ ! -f /etc/apt/keyrings/microsoft.gpg ]]; then
-    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/microsoft.gpg >/dev/null
+    curl -fsSL  | gpg --import --import-options show-only --dry-run && curl -fsSL  | gpg --dearmor | sudo tee /etc/apt/keyrings/microsoft.gpg >/dev/null
   fi
 
   echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null
