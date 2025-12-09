@@ -428,79 +428,12 @@ else
 fi
 
 # Visual Studio Code setup (spilled coffee principle - auto-heal on fresh Ubuntu)
-echo -e "${DIVIDER}"
-echo "Checking Visual Studio Code..."
-
-if command -v code >/dev/null 2>&1; then
-  echo -e "${GREEN}✓ Visual Studio Code is already installed${NC}"
-elif [[ "$OS_TYPE" == "Linux" ]] && command -v apt-get >/dev/null 2>&1; then
-  echo "Installing Visual Studio Code (apt-based)..."
-
-  # Ensure prerequisites for Microsoft repo
-  # Ensure prerequisites for Microsoft repo
-  if ! sudo apt-get update -y >/dev/null 2>&1; then
-    echo -e "${RED}Failed to update package lists. Check your internet connection.${NC}"
-    return 1
-  fi
-  if ! sudo apt-get install -y ca-certificates curl gnupg >/dev/null 2>&1; then
-# Visual Studio Code setup (spilled coffee principle - auto-heal on fresh Ubuntu)
-install_vscode() {
-  echo -e "${DIVIDER}"
-  echo "Checking Visual Studio Code..."
-
-  if command -v code >/dev/null 2>&1; then
-    echo -e "${GREEN}✓ Visual Studio Code is already installed${NC}"
-    return 0
-  elif [[ "$OS_TYPE" == "Linux" ]] && command -v apt-get >/dev/null 2>&1; then
-    echo "Installing Visual Studio Code (apt-based)..."
-
-    # Ensure prerequisites for Microsoft repo
-    if ! sudo apt-get update -y >/dev/null 2>&1; then
-      echo -e "${RED}Failed to update package lists. Check your internet connection.${NC}"
-      return 1
-    fi
-    if ! sudo apt-get install -y ca-certificates curl gnupg >/dev/null 2>&1; then
-      echo -e "${RED}Failed to install required prerequisites.${NC}"
-      return 1
-    fi
-    if ! sudo install -d -m 0755 /etc/apt/keyrings; then
-      echo -e "${RED}Failed to create keyrings directory.${NC}"
-      return 1
-    fi
-
-    if [[ ! -f /etc/apt/keyrings/microsoft.gpg ]]; then
-      if ! curl -fsSL  | gpg --dearmor | sudo tee /etc/apt/keyrings/microsoft.gpg >/dev/null; then
-        echo -e "${RED}Failed to download Microsoft GPG key.${NC}"
-        return 1
-      fi
-    fi
-
-    if ! echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/microsoft.gpg]  stable main" | sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null; then
-      echo -e "${RED}Failed to add VS Code repository.${NC}"
-      return 1
-    fi
-    if ! sudo apt-get update -y >/dev/null 2>&1; then
-      echo -e "${RED}Failed to update package lists after adding VS Code repository.${NC}"
-      return 1
-    fi
-
-    if sudo apt-get install -y code >/dev/null 2>&1; then
-      echo -e "${GREEN}✓ Visual Studio Code installed${NC}"
-      return 0
-    else
-      echo -e "${RED}Visual Studio Code installation failed. Install manually or rerun setup.${NC}"
-      return 1
-    fi
-  else
-    echo -e "${YELLOW}Skipping Visual Studio Code installation (unsupported platform or missing apt).${NC}"
-    return 0
-  fi
-}
-
-# Call the VS Code installation function
-install_vscode || {
-  echo -e "${YELLOW}VS Code installation encountered issues but continuing...${NC}"
-}
+if [[ -f "$DOT_DEN/utils/install-vscode.sh" ]]; then
+  source "$DOT_DEN/utils/install-vscode.sh"
+  install_or_update_vscode || {
+    echo -e "${YELLOW}VS Code installation encountered issues but continuing...${NC}"
+  }
+fi
 
 # Amazon Q removed - was breaking tmux by hijacking shell sessions with qterm
 
