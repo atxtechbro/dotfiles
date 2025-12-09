@@ -455,8 +455,14 @@ elif [[ "$OS_TYPE" == "Linux" ]] && command -v apt-get >/dev/null 2>&1; then
     curl -fsSL  | gpg --import --import-options show-only --dry-run && curl -fsSL  | gpg --dearmor | sudo tee /etc/apt/keyrings/microsoft.gpg >/dev/null
   fi
 
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null
-  sudo apt-get update -y >/dev/null 2>&1
+  if ! echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/microsoft.gpg]  stable main" | sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null; then
+    echo -e "${RED}Failed to add VS Code repository.${NC}"
+    return 1
+  fi
+  if ! sudo apt-get update -y >/dev/null 2>&1; then
+    echo -e "${RED}Failed to update package lists after adding VS Code repository.${NC}"
+    return 1
+  fi
 
   if sudo apt-get install -y code >/dev/null 2>&1; then
     echo -e "${GREEN}✓ Visual Studio Code installed${NC}"
