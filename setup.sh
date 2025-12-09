@@ -427,6 +427,36 @@ else
   fi
 fi
 
+# Visual Studio Code setup (spilled coffee principle - auto-heal on fresh Ubuntu)
+echo -e "${DIVIDER}"
+echo "Checking Visual Studio Code..."
+
+if command -v code >/dev/null 2>&1; then
+  echo -e "${GREEN}✓ Visual Studio Code is already installed${NC}"
+elif [[ "$OS_TYPE" == "Linux" ]] && command -v apt-get >/dev/null 2>&1; then
+  echo "Installing Visual Studio Code (apt-based)..."
+
+  # Ensure prerequisites for Microsoft repo
+  sudo apt-get update -y >/dev/null 2>&1
+  sudo apt-get install -y ca-certificates curl gnupg >/dev/null 2>&1
+  sudo install -d -m 0755 /etc/apt/keyrings
+
+  if [[ ! -f /etc/apt/keyrings/microsoft.gpg ]]; then
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/microsoft.gpg >/dev/null
+  fi
+
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null
+  sudo apt-get update -y >/dev/null 2>&1
+
+  if sudo apt-get install -y code >/dev/null 2>&1; then
+    echo -e "${GREEN}✓ Visual Studio Code installed${NC}"
+  else
+    echo -e "${RED}Visual Studio Code installation failed. Install manually or rerun setup.${NC}"
+  fi
+else
+  echo -e "${YELLOW}Skipping Visual Studio Code installation (unsupported platform or missing apt).${NC}"
+fi
+
 # Amazon Q removed - was breaking tmux by hijacking shell sessions with qterm
 
 # Claude Code Configuration (includes trivial npm install)
