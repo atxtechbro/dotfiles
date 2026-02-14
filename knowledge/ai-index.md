@@ -34,6 +34,7 @@ Your starting point for understanding and working with this dotfiles repository.
 ### Debug or Fix Issues
 - Use [MCP Protocol Smoke Test](procedures/mcp-protocol-smoke-test.md) for MCP issues
 - Follow [MCP Error Reporting](procedures/mcp-error-reporting.md) when MCP tools fail
+- Use [Playwright Headed vs Headless](procedures/playwright-headed-vs-headless.md) for deterministic browser mode behavior
 - Apply [Systems Stewardship](principles/systems-stewardship.md) - Document fixes
 
 ### Improve Documentation
@@ -53,6 +54,7 @@ Your starting point for understanding and working with this dotfiles repository.
 
 ### When MCP Tools Don't Work
 - Follow [MCP Error Reporting](procedures/mcp-error-reporting.md) - We control these servers, we'll fix them!
+- Use [Playwright Headed vs Headless](procedures/playwright-headed-vs-headless.md) for browser mode triage and recovery
 - Creates self-healing systems through proper issue tracking
 - Remember: 80% core work, 20% documenting issues
 

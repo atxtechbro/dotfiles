@@ -37,6 +37,10 @@ Wrapper scripts and configuration for MCP clients (Claude Code, Amazon Q, Cursor
 
 When an MCP server shows as "failed" in Claude Code:
 
+For browser mode selection and stability in AI CLI sessions, use:
+- `knowledge/procedures/playwright-headed-vs-headless.md`
+- `docs/playwright-headed-headless-cheatsheet.md`
+
 ### 1. Quick Health Check
 ```bash
 # Check individual server logs if needed
