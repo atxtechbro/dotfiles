@@ -41,5 +41,5 @@ Quick operational reference for AI-first CLI sessions.
 ## Canonical Runbook
 
 Use full procedure for detailed diagnostics and recovery:
-- `knowledge/procedures/playwright-headed-vs-headless.md`
+- `../knowledge/procedures/playwright-headed-vs-headless.md`
 
