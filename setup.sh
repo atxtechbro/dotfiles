@@ -572,6 +572,20 @@ else
 fi
 echo -e "${DIVIDER}"
 
+# VS Code setup (for read-only code browsing, complementing tmux + Claude Code workflow)
+echo "Setting up VS Code..."
+if [[ -f "$DOT_DEN/utils/install-vscode.sh" ]]; then
+    source "$DOT_DEN/utils/install-vscode.sh"
+    install_vscode || {
+        echo -e "${YELLOW}Failed to setup VS Code. You can install it manually later.${NC}"
+        echo "VS Code is optional - used for read-only code browsing alongside the primary tmux workflow."
+    }
+else
+    echo -e "${YELLOW}VS Code installation script not found at $DOT_DEN/utils/install-vscode.sh${NC}"
+    echo -e "${BLUE}VS Code is optional and can be installed manually if needed for code browsing.${NC}"
+fi
+echo -e "${DIVIDER}"
+
 # urlview setup (for tmux URL extraction)
 echo "Setting up urlview (tmux URL extraction utility)..."
 if [[ -f "$DOT_DEN/utils/install-urlview.sh" ]]; then
