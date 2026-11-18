@@ -12,6 +12,9 @@ on:
     - cron: '0 0 1 * *'
   workflow_dispatch:  # Allow manual triggering
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     strategy:
@@ -34,6 +37,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          persist-credentials: false
         
       - name: Setup test environment
         run: |
