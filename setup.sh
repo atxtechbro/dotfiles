@@ -513,6 +513,21 @@ else
     echo "To use GitHub MCP features, install GitHub CLI and run: export GITHUB_TOKEN=\$(gh auth token)"
 fi
 
+# Google Drive MCP setup
+echo -e "${DIVIDER}"
+echo "Checking Google Drive MCP setup..."
+
+if [[ -f "$DOT_DEN/mcp/setup-gdrive-oauth-complete.sh" ]]; then
+    if [[ -f "$HOME/.config/gdrive/credentials.json" ]] && docker volume ls | grep -q "mcp-gdrive"; then
+        echo -e "${GREEN}✓ Google Drive MCP already configured${NC}"
+    else
+        echo -e "${YELLOW}Google Drive MCP not fully configured${NC}"
+        echo "Run manually when ready: $DOT_DEN/mcp/setup-gdrive-oauth-complete.sh"
+    fi
+else
+    echo -e "${RED}Google Drive MCP setup script not found${NC}"
+fi
+
 # Git Delta setup
 echo -e "${DIVIDER}"
 echo "Checking Git Delta setup..."
