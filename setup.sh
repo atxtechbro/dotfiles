@@ -214,6 +214,28 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 
+# Auto-run MCP setup scripts following Spilled Coffee Principle
+echo "Ensuring all MCP servers are built..."
+for setup_script in "$DOT_DEN"/mcp/setup-*-mcp.sh; do
+    if [[ -f "$setup_script" ]]; then
+        # Extract server name from setup script filename
+        # setup-github-mcp.sh → github
+        server_name=$(basename "$setup_script" | sed 's/setup-\(.*\)-mcp\.sh/\1/')
+        
+        # Check if corresponding binary exists in servers/
+        if [[ ! -f "$DOT_DEN/mcp/servers/$server_name" ]] && [[ ! -d "$DOT_DEN/mcp/servers/${server_name}-mcp-server" ]]; then
+            echo "Running $(basename "$setup_script") - server binary not found..."
+            if bash "$setup_script"; then
+                echo -e "${GREEN}✓ MCP server '$server_name' setup completed${NC}"
+            else
+                echo -e "${YELLOW}⚠ MCP server '$server_name' setup encountered issues (continuing...)${NC}"
+            fi
+        else
+            echo -e "${GREEN}✓ MCP server '$server_name' already built${NC}"
+        fi
+    fi
+done
+
 # Set up Git configuration
 echo "Setting up Git configuration..."
 gitconfig_path="$HOME/.gitconfig"
