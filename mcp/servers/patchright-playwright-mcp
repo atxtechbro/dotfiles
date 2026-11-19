@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Wrapper to run @playwright/mcp with Patchright as the default backend.
+# Opt out by setting USE_PATCHRIGHT=0 or USE_PATCHRIGHT=false
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# mcp/servers -> repo root is ../..
+DOT_DEN="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+USE_PATCHRIGHT_VAL="${USE_PATCHRIGHT:-1}"
+if [[ "$USE_PATCHRIGHT_VAL" != "0" && "$USE_PATCHRIGHT_VAL" != "false" ]]; then
+  # Prepend shim node_modules so require('playwright') resolves to Patchright
+  export NODE_PATH="${DOT_DEN}/mcp/patchright-shim/node_modules${NODE_PATH:+:$NODE_PATH}"
+fi
+
+# Execute the community Playwright MCP server
+exec npx @playwright/mcp@latest "$@"
+
