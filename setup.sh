@@ -513,6 +513,20 @@ else
     echo "To use GitHub MCP features, install GitHub CLI and run: export GITHUB_TOKEN=\$(gh auth token)"
 fi
 
+# GitLab CLI setup
+echo -e "${DIVIDER}"
+echo "Setting up GitLab CLI..."
+if [[ -f "$DOT_DEN/utils/install-glab.sh" ]]; then
+    source "$DOT_DEN/utils/install-glab.sh"
+    ensure_glab_installed || {
+        echo -e "${RED}Failed to setup GitLab CLI completely. Some features may not work.${NC}"
+        echo "You can install it manually later or run the setup script again."
+    }
+else
+    echo -e "${RED}GitLab CLI installation script not found at $DOT_DEN/utils/install-glab.sh${NC}"
+    echo "To use GitLab MCP features, install GitLab CLI manually."
+fi
+
 # Git Delta setup
 echo -e "${DIVIDER}"
 echo "Checking Git Delta setup..."
