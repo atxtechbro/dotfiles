@@ -5,20 +5,75 @@
   "version": "0.2.0",
   "configurations": [
     {
-      // Python debug configuration
+      // Python pytest configuration with declarative breakpoints
+      "name": "Debug Barton Springs Tour Guide",
       "type": "python",
       "request": "launch",
-      "name": "Launch Current File",
-      "program": "${file}",
-      "console": "integratedTerminal"
+      "module": "pytest",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "args": [
+        "-v",
+        "-k", "LadyBird and zilker_entrance",
+        "--no-header",
+        "tests/austin_tours"
+      ],
+      "cwd": "${workspaceFolder}",
+      "breakpoints": [
+        {
+          "path": "${workspaceFolder}/src/tours/locations/springs_location.py",
+          "line": 42
+        },
+        {
+          "path": "${workspaceFolder}/src/tours/locations/springs_location.py",
+          "line": 78
+        },
+        {
+          "path": "${workspaceFolder}/src/tours/base_location.py",
+          "line": 103
+        }
+      ]
+    },
+    {
+      // Python script configuration with environment variables
+      "name": "Debug Sixth Street Music Venue",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/music/venue_manager.py",
+      "args": ["--venue", "continental_club", "--event", "blues_night"],
+      "console": "integratedTerminal",
+      "env": {
+        "AUSTIN_API_KEY": "${env:AUSTIN_API_KEY}",
+        "DEBUG_LEVEL": "verbose"
+      }
+    },
+    {
+      // Flask web application configuration
+      "name": "Debug BBQ Competition API",
+      "type": "python",
+      "request": "launch",
+      "module": "flask",
+      "env": {
+        "FLASK_APP": "src/bbq/app.py",
+        "FLASK_ENV": "development"
+      },
+      "args": [
+        "run",
+        "--no-debugger",
+        "--port", "5000"
+      ],
+      "jinja": true
     },
     {
       // C/C++ (lldb) debug configuration
-      "name": "Launch C/C++ Program",
+      "name": "Debug C++ Trail Mapper",
       "type": "lldb",
       "request": "launch",
-      "program": "${workspaceFolder}/build/<executable>",
-      "args": [],
+      "program": "${workspaceFolder}/build/greenbelt_mapper",
+      "args": ["--trail", "violet_crown", "--format", "gpx"],
       "cwd": "${workspaceFolder}"
     }
   ]
