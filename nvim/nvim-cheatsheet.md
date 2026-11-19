@@ -89,7 +89,7 @@ For more details, see the [Debugging Cheatsheet](./debugging-cheatsheet.md).
 |------------|-------------|
 | `<C-Space>` | Open completion menu |
 | `<C-e>` | Close completion menu |
-| `<Tab>` | Select next item or expand snippet |
+| `<C-j>` | Select next item or expand snippet |
 | `<S-Tab>` | Select previous item |
 | `<CR>` | Confirm selection |
 | `<C-b>` | Scroll docs up |
@@ -99,7 +99,7 @@ For more details, see the [Debugging Cheatsheet](./debugging-cheatsheet.md).
 
 | Keybinding | Description |
 |------------|-------------|
-| `<C-J>` | Accept Copilot suggestion |
+| `<Tab>` | Accept Copilot suggestion |
 | `<C-]>` | Next Copilot suggestion |
 | `<C-[>` | Previous Copilot suggestion |
 | `<leader>tc` | Toggle Copilot on/off |

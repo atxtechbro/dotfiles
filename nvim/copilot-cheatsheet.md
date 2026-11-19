@@ -6,7 +6,7 @@ A quick reference guide for GitHub Copilot integration in our Neovim configurati
 
 | Keybinding | Description |
 |------------|-------------|
-| `<C-J>` | Accept suggestion |
+| `<Tab>` | Accept suggestion |
 | `<C-]>` | Next suggestion |
 | `<C-[>` | Previous suggestion |
 | `<leader>tc` | Toggle Copilot on/off |
@@ -20,5 +20,5 @@ A quick reference guide for GitHub Copilot integration in our Neovim configurati
 
 ## Configuration
 
-Our setup intentionally disables the default Tab key behavior to avoid conflicts with nvim-cmp.
-The configuration can be found in `nvim/lua/plugins/copilot.lua`.
+The Tab key is now configured as the primary key for accepting GitHub Copilot suggestions, while nvim-cmp functionality has been moved to the C-j key.
+The configuration can be found in `nvim/lua/plugins/copilot.lua` and the completion setup in `nvim/init.lua`.
