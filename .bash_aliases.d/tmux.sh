@@ -10,5 +10,20 @@ alias tmux-branch='git checkout - && tmux source-file ~/.tmux.conf && echo "Swit
 # Quick access to tmux cheatsheet
 alias tmux-help="less ~/dotfiles/tmux-cheatsheet.md"
 
-# Copy full tmux pane history (joined lines) to system clipboard
-alias tmux-copy-history='tmux capture-pane -p -J -S -999999 | clipboard_copy'
+# Copy visible history from the active (or last) pane to the system clipboard
+tmux_copy_history() {
+    local target_pane
+
+    if [ -n "$TMUX" ]; then
+        target_pane="$(tmux display-message -p '#{pane_id}')"
+    else
+        if ! target_pane="$(tmux display-message -p -F '#{pane_id}' -t '{last}' 2>/dev/null)"; then
+            echo "tmux-copy-history: no tmux session found" >&2
+            return 1
+        fi
+    fi
+
+    # -S -0 captures from the top of the visible pane (respects a recent clear)
+    tmux capture-pane -p -J -S -0 -t "${target_pane}" | clipboard_copy
+}
+alias tmux-copy-history='tmux_copy_history'
